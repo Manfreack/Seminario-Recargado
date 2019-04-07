@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: MyShaders_Cork
+  m_Shader: {fileID: 4800000, guid: cfd8f55c6ace2724484931a33ca18ba7, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Cork:
+        m_Texture: {fileID: 2800000, guid: 7efd2ea130df5bb4a8219c6d55b0eb50, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Cork_AO:
+        m_Texture: {fileID: 2800000, guid: 4072649e8c833864baab838108020f4d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Cork_DISP:
+        m_Texture: {fileID: 2800000, guid: 58fc500eb5f180141928e2ff7e55988c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Cork_NORM:
+        m_Texture: {fileID: 2800000, guid: 5c7c7c775c39b284fa253863596f6d02, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _AlbedoDarkness: -0.433
+    - __dirty: 0
+    m_Colors: []

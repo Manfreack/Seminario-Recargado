@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Walls (Light Tessel)
+  m_Shader: {fileID: 4800000, guid: 1d963e9b487890845a04e28df9534184, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AllWallsv6_01Default_AO:
+        m_Texture: {fileID: 2800000, guid: 314cc6a9e4975474e8973f06183678bf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AllWallsv6_01Default_AlbedoTR:
+        m_Texture: {fileID: 2800000, guid: 25dd9c54b726426459138e4a9083d3af, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AllWallsv6_01Default_Normal:
+        m_Texture: {fileID: 2800000, guid: 768a5f4e34b92d749b7323d7fea594f0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Wallsv6AO:
+        m_Texture: {fileID: 2800000, guid: 9d8f5958000f53e49be420d73415d8cc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Wallsv6AlbedoTR:
+        m_Texture: {fileID: 2800000, guid: 6306a351d31de434286ab28df0e84285, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Wallsv6Height:
+        m_Texture: {fileID: 2800000, guid: e247c266172b4fd4895e32c353012fc9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Wallsv6MetallicSmth:
+        m_Texture: {fileID: 2800000, guid: b76c7c900ae3e3745bde0117d294d52d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Wallsv6Normal:
+        m_Texture: {fileID: 2800000, guid: 5f9e5b5fbae03074eb65486f6b910d21, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _AmblientOcclusionIntensity: 5
+    - _EdgeLength: 50
+    - _Metallic: 0.097
+    - _Smoothness: 0.247
+    - _TessMax: 25
+    - _TessMaxDisp: 12
+    - _TessMin: 10
+    - _TessValue: 1.3
+    - _TesselDir: 1
+    - _TesselIntensity: 0.03
+    - __dirty: 0
+    m_Colors:
+    - _TesselDirection: {r: 1, g: 0, b: 0, a: 0}

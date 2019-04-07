@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Force Field
+  m_Shader: {fileID: 4800000, guid: f2e5d912ed533bb498cb3482a8cc0b39, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3000
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Flowmap2:
+        m_Texture: {fileID: 2800000, guid: 1207a4adcc48386458eb4425a0a3ecba, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ForceShieldWaves:
+        m_Texture: {fileID: 2800000, guid: faaa54b5537f89c4b8ac7b11c506428e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseSeamless:
+        m_Texture: {fileID: 2800000, guid: 96ae006e06772704bbed55377b01f931, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Snow:
+        m_Texture: {fileID: 2800000, guid: 19ccfdaff4245fb42850b62f3440c776, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Waves:
+        m_Texture: {fileID: 2800000, guid: faaa54b5537f89c4b8ac7b11c506428e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BGOpacity: 2
+    - _BGOpacityFix: 1.1
+    - _BGSpeedMultiplier: 0.26
+    - _BGSpeedX: 0.1
+    - _BGSpeedY: -0.1
+    - _BlackFix: 0.543
+    - _Border: 0.0175
+    - _BorderAmount: 0.0038
+    - _BorderOpacity: 0.635399
+    - _ColorIntensity: 0
+    - _Cutoff: 0.5
+    - _DepthFadeAmount: 0.179
+    - _EdgeLength: 24
+    - _FillAmount: 0.709
+    - _Float0: 1
+    - _Float1: 0.99327177
+    - _FlowMapIntensity: 1
+    - _FlowmapIntensity4Waves: 0
+    - _GlobalOpacity: 0.714
+    - _MovementIntensity: 0.099
+    - _TessMax: 10
+    - _TessMin: 2.89
+    - _TessValue: 7.4
+    - __dirty: 0
+    m_Colors:
+    - _BorderColor: {r: 1, g: 0.72413796, b: 0, a: 0}
+    - _ColorinBlack: {r: 1, g: 0, b: 0, a: 0}
+    - _ColorinWhite: {r: 1, g: 0.93103456, b: 0, a: 0}
+    - _DestructionMovementSpeed: {r: 0.05, g: -0.025, b: 0, a: 0}
