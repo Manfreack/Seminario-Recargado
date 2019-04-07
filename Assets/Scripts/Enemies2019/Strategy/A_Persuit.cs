@@ -8,6 +8,9 @@ public class A_Persuit : i_EnemyActions
 
     public void Actions()
     {
+        _e.target.CombatState();
+        _e.target.saveSword = true;
+
         if (!_e.onDamage)
         {
             _e.target.CombatState();

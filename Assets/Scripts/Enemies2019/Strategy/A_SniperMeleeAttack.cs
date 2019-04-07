@@ -9,6 +9,7 @@ public class A_SniperMeleeAttack : i_EnemyActions
     public void Actions()
     {
         _e.target.CombatState();
+        _e.target.saveSword = true;
         Quaternion targetRotation;
         var _dir = (_e.target.transform.position - _e.transform.position).normalized;
         _dir.y = 0;

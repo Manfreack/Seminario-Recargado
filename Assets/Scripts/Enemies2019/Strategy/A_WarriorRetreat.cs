@@ -9,6 +9,9 @@ public class A_WarriorRetreat : i_EnemyActions
     public void Actions()
     {
 
+        _e.target.CombatState();
+        _e.target.saveSword = true;
+
         if (_e.onRetreat && !_e._view._anim.GetBool("Attack") && _e.timeToRetreat > 0)
         {
 

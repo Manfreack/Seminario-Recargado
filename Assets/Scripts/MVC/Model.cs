@@ -68,6 +68,7 @@ public class Model : MonoBehaviour
     public bool onRollCombat;
     public bool biz;
     public bool sleepAnim;
+    public bool saveSword;
     bool impulse;
     bool starChangeDirAttack;
 
@@ -244,6 +245,7 @@ public class Model : MonoBehaviour
             view.anim.SetBool("IdleCombat", false);
             view.anim.SetBool("Idle", true);
             isInCombat = false;
+            saveSword = false;
         }
 
         WraperAction();
@@ -729,6 +731,15 @@ public class Model : MonoBehaviour
     public void EndCombo()
     {
         timeAnimCombat = 0;
+    }
+
+    public void SaveSword()
+    {
+        timeOnCombat = 0;
+        isInCombat = false;
+        view.anim.SetBool("IdleCombat", false);
+        view.anim.SetBool("Idle", true);
+
     }
 
     public void GetDamage(float damage, Transform enemy, bool isProyectile)

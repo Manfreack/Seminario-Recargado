@@ -10,6 +10,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
     public void Actions()
     {
         _e.target.CombatState();
+        _e.target.saveSword = true;
 
         if (!_e.onDamage)
         {

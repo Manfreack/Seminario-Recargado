@@ -91,13 +91,12 @@ public class Controller : MonoBehaviour
                 view.NoDefence();
                 model.StopDefence();
             }
-            /*if (Input.GetKeyUp(KeyCode.C) && !model.isInCombat)
+
+            if (Input.GetKeyUp(KeyCode.C) && !model.saveSword)
             {
-
-                model.CombatState();
-
+                model.SaveSword();
             }
-            */
+            
             if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A))
             {
 
@@ -272,7 +271,7 @@ public class Controller : MonoBehaviour
             if (pushS && !pushA && !firstPushW && !pushD && !model.isDead && model.countAnimAttack <= 0)
             {
                 firstPushS = true;
-                model.speed = 1f;
+                model.speed = 1.5f;
                 model.runSpeed = 3;
                 model.CombatMovement(-model.mainCamera.forward, false, true);
             }
@@ -316,7 +315,7 @@ public class Controller : MonoBehaviour
             if (!firstPushW && pushA && pushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0)
             {
                 firstPushS = true;
-                model.speed = 1.5f;
+                model.speed = 2f;
                 model.runSpeed = 4f;
                 if (!firstPushD) firstPushA = true;
                 Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
@@ -325,7 +324,7 @@ public class Controller : MonoBehaviour
 
             if (!firstPushW && !firstPushA && pushS && pushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = 1.5f;
+                model.speed = 2f;
                 model.runSpeed = 3.8f;
                 firstPushS = true;
                 if (!firstPushA) firstPushD = true;

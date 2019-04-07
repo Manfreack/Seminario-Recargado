@@ -51,7 +51,7 @@ public class ModelE_Sniper : EnemyEntity
         rb = gameObject.GetComponent<Rigidbody>();
         _view = GetComponent<ViewerE_Sniper>();
         munition = FindObjectOfType<EnemyAmmo>();
-        timeToShoot = UnityEngine.Random.Range(5, 8);
+        timeToShoot = UnityEngine.Random.Range(2, 4);
         timeToMeleeAttack = UnityEngine.Random.Range(2, 4);
         timeToStopBack = UnityEngine.Random.Range(3, 4);
 		maxLife = life;

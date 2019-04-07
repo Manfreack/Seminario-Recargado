@@ -10,7 +10,7 @@ public class A_WarriorWait : i_EnemyActions
     public void Actions()
     {
         _e.target.CombatState();
-
+        _e.target.saveSword = true;
 
         if (!_e.timeToAttack && _e.cm.times > 0)
         {            

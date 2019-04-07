@@ -8,8 +8,10 @@ public class A_GoBackFromAttack : i_EnemyActions
 
     public void Actions()
     {
-      
-            _e.timeToStopBack -= Time.deltaTime;
+        _e.target.CombatState();
+        _e.target.saveSword = true;
+
+        _e.timeToStopBack -= Time.deltaTime;
 
             if (_e.timeToStopBack > 0 && !_e.onDamage)
             {

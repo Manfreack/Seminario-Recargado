@@ -8,6 +8,9 @@ public class A_FollowTarget : i_EnemyActions
 
     public void Actions()
     {
+        _entity.target.CombatState();
+        _entity.target.saveSword = true;
+
         if (!_entity.onDamage)
         {
 

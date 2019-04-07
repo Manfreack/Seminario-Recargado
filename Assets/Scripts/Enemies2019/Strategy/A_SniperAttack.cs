@@ -9,8 +9,8 @@ public class A_SniperAttack : i_EnemyActions
    public void Actions()
    {
         _e.IdleEvent();
-        _e.target.CombatState();  
-
+        _e.target.CombatState();
+        _e.target.saveSword = true;
 
         Quaternion targetRotation;
         var _dir = (_e.target.transform.position - _e.transform.position).normalized;
@@ -41,7 +41,7 @@ public class A_SniperAttack : i_EnemyActions
             if (onSight &&  !_e.onDamage)
             {
                 _e.AttackEvent();
-                _e.timeToShoot = UnityEngine.Random.Range(4, 7);
+                _e.timeToShoot = Random.Range(2, 4);
             }
             
         }
