@@ -5,6 +5,15 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
+    [Header("Speed out of the fight:")]
+    public float _SpeedWalk = 1.2f;
+    public float _SpeedRun = 4f;
+
+    [Header("Speed in the fight:")]
+    public float _SpeedWalkFight = 1.5f;
+    public float _SpeedRunFight = 5.0f;
+
+
     public Model model;
     public Viewer view;
     public GameObject text;
@@ -186,40 +195,40 @@ public class Controller : MonoBehaviour
         {
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = 2;
-                model.runSpeed = 3;
+                model.speed = _SpeedWalk;
+                model.runSpeed = _SpeedRun;
                 firstPushW = true;
                 model.Movement(model.mainCamera.forward);
             }
 
             if (pushS && !pushA && !firstPushW && !pushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = 2;
-                model.runSpeed = 3;
+                model.speed = _SpeedWalk;
+                model.runSpeed = _SpeedRun;
                 firstPushS = true;
                 model.Movement(-model.mainCamera.forward);
             }
 
             if (pushA && !firstPushD && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = 2;
-                model.runSpeed = 3;
+                model.speed = _SpeedWalk;
+                model.runSpeed = _SpeedRun;
                 firstPushA = true;
                 model.Movement(-model.mainCamera.right);
             }
 
             if (pushD && !firstPushA && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = 2;
-                model.runSpeed = 3;
+                model.speed = _SpeedWalk;
+                model.runSpeed = _SpeedRun;
                 firstPushD = true;
                 model.Movement(model.mainCamera.right);
             }
 
             if (pushW && pushA && !firstPushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = 2.8f;
-                model.runSpeed = 4f;
+                model.speed = 1.4f;
+                model.runSpeed = 4.6f;
                 firstPushW = true;
                 if(!firstPushD) firstPushA = true;
                 Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
@@ -228,8 +237,8 @@ public class Controller : MonoBehaviour
 
             if (pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = 2.8f;
-                model.runSpeed = 4f;
+                model.speed = 1.4f;
+                model.runSpeed = 4.6f;
                 firstPushW = true;
                 if (!firstPushA) firstPushD = true;
                 Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
@@ -238,8 +247,8 @@ public class Controller : MonoBehaviour
 
             if (!firstPushW && pushA && pushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = 2.8f;
-                model.runSpeed = 4f;
+                model.speed = 1.4f;
+                model.runSpeed = 4.6f;
                 firstPushS = true;
                 if (!firstPushD) firstPushA = true;
                 Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
@@ -248,8 +257,8 @@ public class Controller : MonoBehaviour
 
             if (!firstPushW && !firstPushA && pushS && pushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = 2.8f;
-                model.runSpeed = 4f;
+                model.speed = 1.4f;
+                model.runSpeed = 4.6f;
                 firstPushS = true;
                 if (!firstPushA) firstPushD = true;
                 Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
@@ -263,7 +272,7 @@ public class Controller : MonoBehaviour
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0)
             {
                 model.speed = 1.5f;
-                model.runSpeed = 3;
+                model.runSpeed = _SpeedRunFight;
                 firstPushW = true;
                 model.CombatMovement(model.mainCamera.forward, true, false);
             }
@@ -272,14 +281,14 @@ public class Controller : MonoBehaviour
             {
                 firstPushS = true;
                 model.speed = 1.5f;
-                model.runSpeed = 3;
+                model.runSpeed = _SpeedRunFight;
                 model.CombatMovement(-model.mainCamera.forward, false, true);
             }
 
             if (pushA && !firstPushD && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
             {
                 model.speed = 1.5f;
-                model.runSpeed = 3;
+                model.runSpeed = _SpeedRunFight;
                 firstPushA = true;
                 model.CombatMovement(-model.mainCamera.right, false, true);
             }
@@ -287,7 +296,7 @@ public class Controller : MonoBehaviour
             if (pushD && !firstPushA && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
             {
                 model.speed = 1.5f;
-                model.runSpeed = 3;
+                model.runSpeed = _SpeedRunFight;
                 firstPushD = true;
                 model.CombatMovement(model.mainCamera.right, false, true);
             }
