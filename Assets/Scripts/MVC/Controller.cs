@@ -172,7 +172,7 @@ public class Controller : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.LeftShift)) model.acceleration = 0;
 
 
-            if (Input.GetKey(KeyCode.Mouse0) && !smashBool && !model.onAir && model.countAnimAttack<4)
+            if (Input.GetKeyDown(KeyCode.Mouse0) && !model.onAir && model.countAnimAttack<4)
             {
                 useSword = true;
                 model.NormalAttack();

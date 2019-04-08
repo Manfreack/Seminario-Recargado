@@ -111,6 +111,7 @@ public class Model : MonoBehaviour
     bool timeToRotate;
     Vector3 dirToDahs;
     public float impulseForce;
+    float timeToPauseAnim;
 
     public IEnumerator PowerColdown(float cdTime, int n)
     {
@@ -289,13 +290,20 @@ public class Model : MonoBehaviour
         if (countAnimAttack > 0)
         {
             timeAnimCombat -= Time.deltaTime;
-            if (timeAnimCombat < 0)
+            timeToPauseAnim -= Time.deltaTime;
+            if (timeAnimCombat <= 0)
+            {
+                timeAnimCombat = 0;
+            }
+
+            if (timeToPauseAnim <= 0)
             {
                 countAnimAttack = 0;
                 view.currentAttackAnimation = 0;
                 view.anim.SetInteger("AttackAnim", 0);
             }
         }
+        
 
         if (onRoll)
         {
@@ -613,12 +621,32 @@ public class Model : MonoBehaviour
 
     public void NormalAttack()
     {
-        if (!isDead && stamina - attackStamina >= 0 && !sleepAnim && !onRoll && !onRollCombat)
+        if (!isDead && stamina - attackStamina >= 0 && timeAnimCombat<=0 && !onRoll && !onRollCombat)
         {
-            if (countAnimAttack == 1) timeAnimCombat = 0.9f;
-            else timeAnimCombat = 0.6f;
-            countAnimAttack++;
-            sleepAnim = true;
+            if (countAnimAttack == 0)
+            {
+                timeAnimCombat = 0.3f;
+                timeToPauseAnim = 0.5f;
+            } 
+            
+            if (countAnimAttack == 1)
+            {
+                timeAnimCombat = 0.6f;
+                timeToPauseAnim = 95f;
+            }
+
+            if (countAnimAttack == 2)
+            {
+                timeAnimCombat = 0.4f;
+                timeToPauseAnim = 0.65f;
+            }
+
+            if (countAnimAttack == 3)
+            {
+                timeToPauseAnim = 0.5f;
+            }
+
+            countAnimAttack++;           
             countAnimAttack = Mathf.Clamp(countAnimAttack, 0, 4);
             Attack();
             starChangeDirAttack = true;
@@ -715,7 +743,7 @@ public class Model : MonoBehaviour
 
     public void AwakeCombo()
     {
-        sleepAnim = false;
+        sleepAnim = false;       
     }
 
     public void Impulse()
@@ -730,7 +758,9 @@ public class Model : MonoBehaviour
 
     public void EndCombo()
     {
-        timeAnimCombat = 0;
+        countAnimAttack = 0;
+        view.currentAttackAnimation = 0;
+        view.anim.SetInteger("AttackAnim", 0);
     }
 
     public void SaveSword()

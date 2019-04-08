@@ -391,7 +391,6 @@ public class Viewer : MonoBehaviour
 
     public void BasicAttack()
     {
-        //if(!model.sleepAnim)
         currentAttackAnimation++;
         Mathf.Clamp(currentAttackAnimation, 0, 4);
         anim.SetInteger("AttackAnim", currentAttackAnimation);
