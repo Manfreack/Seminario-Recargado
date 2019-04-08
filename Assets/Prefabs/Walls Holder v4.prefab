@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 8040207341593634709}
   - component: {fileID: 4929026492994373992}
   - component: {fileID: 4097133966892955811}
-  - component: {fileID: 6491072279980395003}
   m_Layer: 0
   m_Name: Wall Closed-Curve(Left)
   m_TagString: Untagged
@@ -60,8 +59,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -94,23 +93,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3694661, y: 9.60266, z: 7.1034827}
   m_Center: {x: 2.8691845e-14, y: -0.0000005816635, z: 3.55174}
---- !u!114 &6491072279980395003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 183716413491041544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &198298694014729640
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,7 +105,6 @@ GameObject:
   - component: {fileID: 6441935623462791784}
   - component: {fileID: 6008175590101723858}
   - component: {fileID: 4607418626165937960}
-  - component: {fileID: 686193432784640914}
   - component: {fileID: 1371110968026062290}
   - component: {fileID: 1579114238767554917}
   m_Layer: 0
@@ -207,23 +188,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.072511, y: 3.5620642, z: 7.1978498}
   m_Center: {x: -0.2713408, y: -3.0202978, z: 3.5989244}
---- !u!114 &686193432784640914
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 198298694014729640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!65 &1371110968026062290
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -261,7 +225,6 @@ GameObject:
   - component: {fileID: 4481306498450337651}
   - component: {fileID: 984110589398890509}
   - component: {fileID: 5494003415585231804}
-  - component: {fileID: 7946149331813673648}
   m_Layer: 0
   m_Name: Wall Column
   m_TagString: Untagged
@@ -308,8 +271,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -329,23 +292,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &7946149331813673648
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 409605918419523868}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 0
-  tessellationIntensity: 0
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &736432786208129988
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,7 +304,6 @@ GameObject:
   - component: {fileID: 4753045522326877025}
   - component: {fileID: 4619413708589090283}
   - component: {fileID: 7146765959067371577}
-  - component: {fileID: 5814732318658898268}
   m_Layer: 0
   m_Name: Wall Open-Open (1)
   m_TagString: Untagged
@@ -406,8 +351,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -440,23 +385,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3667629, y: 7.568107, z: 7.1034775}
   m_Center: {x: -0.00000017573002, y: 0.00000062276496, z: 3.5517385}
---- !u!114 &5814732318658898268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 736432786208129988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &778430961725734253
 GameObject:
   m_ObjectHideFlags: 0
@@ -469,7 +397,6 @@ GameObject:
   - component: {fileID: 4693234319900869219}
   - component: {fileID: 3712015941686339477}
   - component: {fileID: 4079675206958758294}
-  - component: {fileID: 8882783945199558045}
   m_Layer: 0
   m_Name: Wall Open-Curve(Right) Up (Final)
   m_TagString: Untagged
@@ -516,8 +443,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -550,23 +477,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3541523, y: 7.5844674, z: 7.1054287}
   m_Center: {x: -0.0000019073486, y: 0.000012159347, z: 0}
---- !u!114 &8882783945199558045
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 778430961725734253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &853803635729593751
 GameObject:
   m_ObjectHideFlags: 0
@@ -579,7 +489,6 @@ GameObject:
   - component: {fileID: 1981009194644147816}
   - component: {fileID: 5487073819867537239}
   - component: {fileID: 3868342654163991221}
-  - component: {fileID: 8516608100631846407}
   m_Layer: 0
   m_Name: Wall Door (Up Left)
   m_TagString: Untagged
@@ -629,8 +538,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -663,23 +572,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3855059, y: 9.602659, z: 7.103478}
   m_Center: {x: -0.04639572, y: 0.00000023841858, z: 3.551739}
---- !u!114 &8516608100631846407
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 853803635729593751}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &989301263344193240
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,7 +620,6 @@ GameObject:
   - component: {fileID: 8270887718456868269}
   - component: {fileID: 3550023596626480772}
   - component: {fileID: 5698036280579268564}
-  - component: {fileID: 6187657623762015426}
   m_Layer: 0
   m_Name: Door Left side001
   m_TagString: Untagged
@@ -775,8 +666,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -809,23 +700,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.1195306, y: 0.7757186, z: 4.2803845}
   m_Center: {x: 0.56276226, y: -0.055190746, z: 2.1401923}
---- !u!114 &6187657623762015426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1127911001621238074}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 0
-  tessellationIntensity: 0
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &1275699435123611610
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,7 +712,6 @@ GameObject:
   - component: {fileID: 8969269572947962933}
   - component: {fileID: 310928111574998630}
   - component: {fileID: 7830020762303279617}
-  - component: {fileID: 7552263049363295019}
   m_Layer: 0
   m_Name: Wall Door (UP Right)
   m_TagString: Untagged
@@ -888,8 +761,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -922,23 +795,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3855059, y: 9.602659, z: 7.103478}
   m_Center: {x: -0.04639572, y: 0.00000023841858, z: 3.551739}
---- !u!114 &7552263049363295019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275699435123611610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &1360668347517765008
 GameObject:
   m_ObjectHideFlags: 0
@@ -951,7 +807,6 @@ GameObject:
   - component: {fileID: 1141819422058011736}
   - component: {fileID: 8708104267493498884}
   - component: {fileID: 5829312598793809076}
-  - component: {fileID: 6669658499368893380}
   m_Layer: 0
   m_Name: Wall Open-Open
   m_TagString: Untagged
@@ -1033,23 +888,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3667629, y: 7.568107, z: 7.1034775}
   m_Center: {x: -0.00000017573002, y: 0.00000062276496, z: 3.5517385}
---- !u!114 &6669658499368893380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1360668347517765008}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &1489672004073160861
 GameObject:
   m_ObjectHideFlags: 0
@@ -1062,7 +900,6 @@ GameObject:
   - component: {fileID: 2127144444219850079}
   - component: {fileID: 6625156999299419729}
   - component: {fileID: 4632554425058590567}
-  - component: {fileID: 6750507811865452340}
   m_Layer: 0
   m_Name: Wall Closed-Curve(Left) Up (Final) Back
   m_TagString: Untagged
@@ -1109,8 +946,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1143,23 +980,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3786702, y: 9.60266, z: 7.1034822}
   m_Center: {x: 0.0000009834766, y: 0.0000004768371, z: 0.000007987022}
---- !u!114 &6750507811865452340
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1489672004073160861}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &1493906463306750207
 GameObject:
   m_ObjectHideFlags: 0
@@ -1172,7 +992,6 @@ GameObject:
   - component: {fileID: 5785403485198533575}
   - component: {fileID: 7002764945346285504}
   - component: {fileID: 843426458901485487}
-  - component: {fileID: 6613682924261491554}
   m_Layer: 0
   m_Name: Wall Door Up (Final) Back
   m_TagString: Untagged
@@ -1219,8 +1038,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1253,23 +1072,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3786697, y: 9.602659, z: 7.103478}
   m_Center: {x: -0.00000047683716, y: -0.0000150203705, z: 3.3881318e-21}
---- !u!114 &6613682924261491554
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1493906463306750207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &1728381966949260000
 GameObject:
   m_ObjectHideFlags: 0
@@ -1374,7 +1176,6 @@ GameObject:
   - component: {fileID: 3606823375240894080}
   - component: {fileID: 6045154340678450154}
   - component: {fileID: 7122061525414954229}
-  - component: {fileID: 7843526743319083934}
   - component: {fileID: 5228484902657074388}
   - component: {fileID: 7871992873180197345}
   m_Layer: 0
@@ -1457,23 +1258,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3555076, y: 3.5501902, z: 7.1978493}
   m_Center: {x: 0, y: 3.026235, z: -0.00000047683716}
---- !u!114 &7843526743319083934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1813472059389174240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!65 &5228484902657074388
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1656,7 +1440,6 @@ GameObject:
   - component: {fileID: 284359274248617392}
   - component: {fileID: 8943426124438044711}
   - component: {fileID: 1445153667807004694}
-  - component: {fileID: 3459382791923370317}
   m_Layer: 0
   m_Name: Door (Left side)001
   m_TagString: Untagged
@@ -1703,8 +1486,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1737,23 +1520,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.1195306, y: 0.77571833, z: 4.280385}
   m_Center: {x: 0.56277746, y: -0.0551944, z: 2.1401849}
---- !u!114 &3459382791923370317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2083881437624681498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 0
-  tessellationIntensity: 0
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &2438614341350933399
 GameObject:
   m_ObjectHideFlags: 0
@@ -1810,7 +1576,6 @@ GameObject:
   - component: {fileID: 8952626584007808866}
   - component: {fileID: 6377776951478390694}
   - component: {fileID: 4416415434594216124}
-  - component: {fileID: 905534409423110836}
   m_Layer: 0
   m_Name: Wall Open-Open Up (Final) Back
   m_TagString: Untagged
@@ -1891,23 +1656,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3587972, y: 7.5682063, z: 7.103478}
   m_Center: {x: -1.06581424e-13, y: -0.000004053116, z: 0.000007987022}
---- !u!114 &905534409423110836
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2526891203308830515}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!65 &5716765399268916
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1933,7 +1681,6 @@ GameObject:
   - component: {fileID: 9094566870739313655}
   - component: {fileID: 3699501498437574980}
   - component: {fileID: 6466538898746699333}
-  - component: {fileID: 827761119290074096}
   m_Layer: 0
   m_Name: Wall Open-Curve(Right) Up (Final)
   m_TagString: Untagged
@@ -1980,8 +1727,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2014,23 +1761,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3541523, y: 7.5844674, z: 7.1054287}
   m_Center: {x: -0.0000019073486, y: 0.000012159347, z: 0.0000076293945}
---- !u!114 &827761119290074096
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2896114848083662756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &3545548614713883671
 GameObject:
   m_ObjectHideFlags: 0
@@ -2043,7 +1773,6 @@ GameObject:
   - component: {fileID: 8995154632551671923}
   - component: {fileID: 1865890703755277811}
   - component: {fileID: 6783264422754477194}
-  - component: {fileID: 2397058033774641314}
   m_Layer: 0
   m_Name: Wall Open-Curve(Right) (2)
   m_TagString: Untagged
@@ -2091,8 +1820,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2125,23 +1854,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3668053, y: 7.584468, z: 7.1054287}
   m_Center: {x: -0.0000004470348, y: -0.0000027418143, z: 3.552722}
---- !u!114 &2397058033774641314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3545548614713883671}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &3632897031399313847
 GameObject:
   m_ObjectHideFlags: 0
@@ -2154,7 +1866,6 @@ GameObject:
   - component: {fileID: 905503547005561761}
   - component: {fileID: 8736249953785508705}
   - component: {fileID: 6270870881062461685}
-  - component: {fileID: 1159281634172338841}
   m_Layer: 0
   m_Name: Wall Open-Open Up (Final) Back
   m_TagString: Untagged
@@ -2201,8 +1912,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2235,23 +1946,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3587972, y: 7.5682063, z: 7.103478}
   m_Center: {x: -0.000015258789, y: -0.0000011920929, z: 0.00000035762798}
---- !u!114 &1159281634172338841
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3632897031399313847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &4482781251696135438
 GameObject:
   m_ObjectHideFlags: 0
@@ -2356,7 +2050,6 @@ GameObject:
   - component: {fileID: 217406682707410781}
   - component: {fileID: 3154778430003052386}
   - component: {fileID: 5895439363478088557}
-  - component: {fileID: 8495658965426920288}
   m_Layer: 0
   m_Name: Wall Column (1)
   m_TagString: Untagged
@@ -2403,8 +2096,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2437,23 +2130,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.1349305, y: 2.2529833, z: 5.680808}
   m_Center: {x: 0.00000020861629, y: -0.00000077486027, z: 2.8403964}
---- !u!114 &8495658965426920288
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5309505223327192706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &5435327270992402885
 GameObject:
   m_ObjectHideFlags: 0
@@ -2466,7 +2142,6 @@ GameObject:
   - component: {fileID: 6458423739840177196}
   - component: {fileID: 8852473201381993509}
   - component: {fileID: 3929037210297516734}
-  - component: {fileID: 3858008046005772208}
   m_Layer: 0
   m_Name: Wall Door Up (Final) Back
   m_TagString: Untagged
@@ -2513,8 +2188,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2547,23 +2222,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3786697, y: 9.602659, z: 7.103478}
   m_Center: {x: -0.00000047683716, y: -0.0000150203705, z: 3.3881318e-21}
---- !u!114 &3858008046005772208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5435327270992402885}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &6000152223746722961
 GameObject:
   m_ObjectHideFlags: 0
@@ -2668,7 +2326,6 @@ GameObject:
   - component: {fileID: 6823390705367219007}
   - component: {fileID: 3985273067225088683}
   - component: {fileID: 3669544206635271906}
-  - component: {fileID: 5719286468704815271}
   m_Layer: 0
   m_Name: Wall Open-Open Up (Final) Back
   m_TagString: Untagged
@@ -2715,8 +2372,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2749,23 +2406,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3587972, y: 7.5682063, z: 7.103478}
   m_Center: {x: -0.000015258789, y: -0.0000021457672, z: 0.00000035762798}
---- !u!114 &5719286468704815271
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7154655752961116802}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &7612881679410440904
 GameObject:
   m_ObjectHideFlags: 0
@@ -2812,7 +2452,6 @@ GameObject:
   - component: {fileID: 926963813952469671}
   - component: {fileID: 1663449428161649463}
   - component: {fileID: 7979171974492601296}
-  - component: {fileID: 2043898965205691544}
   m_Layer: 0
   m_Name: Wall Open-Open Up (Final) Back
   m_TagString: Untagged
@@ -2893,23 +2532,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3587962, y: 7.5682077, z: 7.1034794}
   m_Center: {x: -0.0000019073486, y: -0.0000021457677, z: 0.00000035762795}
---- !u!114 &2043898965205691544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7629873738451743602}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &7735429959136607887
 GameObject:
   m_ObjectHideFlags: 0
@@ -2922,7 +2544,6 @@ GameObject:
   - component: {fileID: 4319516027338007815}
   - component: {fileID: 2196079316688230044}
   - component: {fileID: 8797423249353213197}
-  - component: {fileID: 7644355732392731361}
   m_Layer: 0
   m_Name: Wall Open-Open (4)
   m_TagString: Untagged
@@ -2970,8 +2591,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3004,23 +2625,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3667629, y: 7.568107, z: 7.1034775}
   m_Center: {x: -0.00000017573002, y: 0.00000062276496, z: 3.5517385}
---- !u!114 &7644355732392731361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7735429959136607887}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &7800789270626106359
 GameObject:
   m_ObjectHideFlags: 0
@@ -3067,7 +2671,6 @@ GameObject:
   - component: {fileID: 7780636425462217850}
   - component: {fileID: 8158806499162632090}
   - component: {fileID: 2018512278271745518}
-  - component: {fileID: 5159830107302121779}
   m_Layer: 0
   m_Name: Wall Closed-Curve(Left) Up (Final) Back
   m_TagString: Untagged
@@ -3114,8 +2717,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3148,23 +2751,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.37867, y: 9.602661, z: 7.1034822}
   m_Center: {x: 0.0000009834766, y: 0.0000004768374, z: 0.000007987022}
---- !u!114 &5159830107302121779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8026549104336907897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &8179471264211460300
 GameObject:
   m_ObjectHideFlags: 0
@@ -3177,7 +2763,6 @@ GameObject:
   - component: {fileID: 4979771399792884571}
   - component: {fileID: 7269623669717559701}
   - component: {fileID: 4384246244586572633}
-  - component: {fileID: 7159841833474197001}
   m_Layer: 0
   m_Name: Door (Left side)001
   m_TagString: Untagged
@@ -3224,8 +2809,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3258,23 +2843,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.1195306, y: 0.77571833, z: 4.280385}
   m_Center: {x: 0.56277746, y: -0.0551944, z: 2.1401849}
---- !u!114 &7159841833474197001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8179471264211460300}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 0
-  tessellationIntensity: 0
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &8315438104963356004
 GameObject:
   m_ObjectHideFlags: 0
@@ -3287,7 +2855,6 @@ GameObject:
   - component: {fileID: 4653016930203326205}
   - component: {fileID: 7503835835574001836}
   - component: {fileID: 3371272745596687273}
-  - component: {fileID: 3870119867090014937}
   m_Layer: 0
   m_Name: Door Left side001
   m_TagString: Untagged
@@ -3334,8 +2901,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3368,23 +2935,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.1195306, y: 0.7757186, z: 4.2803845}
   m_Center: {x: 0.56276226, y: -0.055190746, z: 2.1401923}
---- !u!114 &3870119867090014937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8315438104963356004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 0
-  tessellationIntensity: 0
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &8587335686815959642
 GameObject:
   m_ObjectHideFlags: 0
@@ -3397,7 +2947,6 @@ GameObject:
   - component: {fileID: 8119004739471677982}
   - component: {fileID: 6332107103360504307}
   - component: {fileID: 2037515920293453971}
-  - component: {fileID: 8877441692614679795}
   m_Layer: 0
   m_Name: Wall Open-Open (3)
   m_TagString: Untagged
@@ -3445,8 +2994,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3479,23 +3028,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3667629, y: 7.568107, z: 7.1034775}
   m_Center: {x: -0.00000017573002, y: -0.0000012845837, z: 3.5517309}
---- !u!114 &8877441692614679795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8587335686815959642}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &8706547143245725195
 GameObject:
   m_ObjectHideFlags: 0
@@ -3508,7 +3040,6 @@ GameObject:
   - component: {fileID: 5104894530343972465}
   - component: {fileID: 82690156291481195}
   - component: {fileID: 6280228912438278488}
-  - component: {fileID: 6178278485225960662}
   m_Layer: 0
   m_Name: Wall Open-Curve(Right)
   m_TagString: Untagged
@@ -3556,8 +3087,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3590,23 +3121,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3668053, y: 7.584468, z: 7.1054287}
   m_Center: {x: -0.0000004470348, y: -0.0000027418143, z: 3.5527143}
---- !u!114 &6178278485225960662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8706547143245725195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &8897273667954322585
 GameObject:
   m_ObjectHideFlags: 0
@@ -3619,7 +3133,6 @@ GameObject:
   - component: {fileID: 4408979417860872755}
   - component: {fileID: 975819914947321732}
   - component: {fileID: 2339857523736908987}
-  - component: {fileID: 1473926969622679088}
   m_Layer: 0
   m_Name: Wall Closed-Curve(Left) (2)
   m_TagString: Untagged
@@ -3667,8 +3180,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3701,23 +3214,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.369466, y: 9.602661, z: 7.1034827}
   m_Center: {x: 0.0000004768372, y: 0.0000015353381, z: 3.5517476}
---- !u!114 &1473926969622679088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8897273667954322585}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &9067326562198324148
 GameObject:
   m_ObjectHideFlags: 0
@@ -3730,7 +3226,6 @@ GameObject:
   - component: {fileID: 7194719650144366219}
   - component: {fileID: 4384391436497374562}
   - component: {fileID: 1546660931154097983}
-  - component: {fileID: 7073807454991432860}
   m_Layer: 0
   m_Name: Wall Open-Open Up (Final) Back
   m_TagString: Untagged
@@ -3777,8 +3272,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   - {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
+  - {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3811,23 +3306,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3587972, y: 7.5682063, z: 7.103478}
   m_Center: {x: -1.06581424e-13, y: -0.0000011920929, z: 0.000007987022}
---- !u!114 &7073807454991432860
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9067326562198324148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: 1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1 &9144538098072382902
 GameObject:
   m_ObjectHideFlags: 0
@@ -3840,7 +3318,6 @@ GameObject:
   - component: {fileID: 8911011581927054284}
   - component: {fileID: 228713688864956520}
   - component: {fileID: 5601912707164157613}
-  - component: {fileID: 3089726025766145959}
   m_Layer: 0
   m_Name: Wall Open-Open
   m_TagString: Untagged
@@ -3922,23 +3399,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.3667619, y: 7.5681086, z: 7.103479}
   m_Center: {x: -0.00000038743016, y: 0.00000083446525, z: 3.5517395}
---- !u!114 &3089726025766145959
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9144538098072382902}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c869393bb064d438f2ff253764ad82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mat: {fileID: 0}
-  tessellationDirection: -1
-  tessellationIntensity: 0.15
-  updateTexture: 0
-  constantUpdate: 0
 --- !u!1001 &1834119023635908145
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4208,12 +3668,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
+      objectReference: {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
     - target: {fileID: 7507520024645293489, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: fa2a6dac367aa9641b331532f21c16b5, type: 2}
+      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
     - target: {fileID: 5832821492117574662, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4253,12 +3713,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
+      objectReference: {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
     - target: {fileID: 1161887534487183871, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: fa2a6dac367aa9641b331532f21c16b5, type: 2}
+      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
     - target: {fileID: 7676178335383952223, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.size
@@ -4268,12 +3728,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
+      objectReference: {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
     - target: {fileID: 7676178335383952223, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: fa2a6dac367aa9641b331532f21c16b5, type: 2}
+      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
     - target: {fileID: 7073172569321369815, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.size
@@ -4283,12 +3743,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
+      objectReference: {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
     - target: {fileID: 7073172569321369815, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: fa2a6dac367aa9641b331532f21c16b5, type: 2}
+      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
     - target: {fileID: 8915978479157610779, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.size
@@ -4298,12 +3758,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
+      objectReference: {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
     - target: {fileID: 8915978479157610779, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: fa2a6dac367aa9641b331532f21c16b5, type: 2}
+      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
     - target: {fileID: 6084054930308925334, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.size
@@ -4313,12 +3773,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
+      objectReference: {fileID: 2100000, guid: e448118bc0439cb4bab73073e784f6db, type: 2}
     - target: {fileID: 6084054930308925334, guid: 68777b75a0828484891ac87626e4db3d,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: fa2a6dac367aa9641b331532f21c16b5, type: 2}
+      objectReference: {fileID: 2100000, guid: 7bb8a46f87c932e42819ccdf44fc8fc2, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68777b75a0828484891ac87626e4db3d, type: 3}
 --- !u!1 &2075915113375705970 stripped
