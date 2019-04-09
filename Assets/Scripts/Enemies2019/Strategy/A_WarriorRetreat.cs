@@ -16,7 +16,7 @@ public class A_WarriorRetreat : i_EnemyActions
         {
 
             _e.timeToAttack = false;
-            _e.MoveEvent();
+            _e.WalkBackEvent();
 
             RaycastHit hit;
 
@@ -41,7 +41,9 @@ public class A_WarriorRetreat : i_EnemyActions
             _e.rb.MovePosition(_e.rb.position - _e.transform.forward * _e.speed * Time.deltaTime);
         }
 
-        else if (!_e.onRetreat) _e.IdleEvent();
+        if (!_e.onRetreat && !_e.flank) _e.CombatIdleEvent();
+        if (!_e.onRetreat && _e.flank && _e.flankSpeed) _e.WalkRightEvent();
+        if (!_e.onRetreat && _e.flank && !_e.flankSpeed) _e.WalkLeftEvent();
 
         if (_e.timeToRetreat <= 0)
         {

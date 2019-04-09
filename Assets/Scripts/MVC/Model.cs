@@ -111,7 +111,8 @@ public class Model : MonoBehaviour
     bool timeToRotate;
     Vector3 dirToDahs;
     public float impulseForce;
-    float timeToPauseAnim;
+    public float timeToPauseAnim;
+    
 
     public IEnumerator PowerColdown(float cdTime, int n)
     {
@@ -287,22 +288,21 @@ public class Model : MonoBehaviour
             currentPotionEffect.PotionEffect();
 
 
-        if (countAnimAttack > 0)
+       
+        timeAnimCombat -= Time.deltaTime;
+        timeToPauseAnim -= Time.deltaTime;
+        if (timeAnimCombat <= 0)
         {
-            timeAnimCombat -= Time.deltaTime;
-            timeToPauseAnim -= Time.deltaTime;
-            if (timeAnimCombat <= 0)
-            {
-                timeAnimCombat = 0;
-            }
-
-            if (timeToPauseAnim <= 0)
-            {
-                countAnimAttack = 0;
-                view.currentAttackAnimation = 0;
-                view.anim.SetInteger("AttackAnim", 0);
-            }
+           timeAnimCombat = 0;
         }
+
+        if (timeToPauseAnim <= 0)
+        {
+          countAnimAttack = 0;
+          view.currentAttackAnimation = 0;
+          view.anim.SetInteger("AttackAnim", 0);
+        }
+       
         
 
         if (onRoll)
@@ -346,6 +346,11 @@ public class Model : MonoBehaviour
             transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
         }
 
+        if(stamina<5)
+        {
+            StopDefence();
+            view.NoDefence();
+        }
         
     }
 
@@ -632,7 +637,7 @@ public class Model : MonoBehaviour
             if (countAnimAttack == 1)
             {
                 timeAnimCombat = 0.6f;
-                timeToPauseAnim = 95f;
+                timeToPauseAnim = 0.95f;
             }
 
             if (countAnimAttack == 2)
@@ -696,11 +701,12 @@ public class Model : MonoBehaviour
 
     public void Defence()
     {
-
-        InAction = true;
-        InActionAttack = true;
-
-        onDefence = true;
+        if (stamina >= 0)
+        {
+            InAction = true;
+            InActionAttack = true;
+            onDefence = true;
+        }
     }
 
     public void StopDefence()

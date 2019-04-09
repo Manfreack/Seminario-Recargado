@@ -25,7 +25,7 @@ public class A_WarriorWait : i_EnemyActions
 
         if (!_e.flank)
         {
-            if (!_e.onDamage) _e.IdleEvent();
+            if (!_e.onDamage) _e.CombatIdleEvent();
 
             Quaternion targetRotation;
             var _dir = (_e.target.transform.position - _e.transform.position).normalized;
@@ -47,9 +47,18 @@ public class A_WarriorWait : i_EnemyActions
              
             var rotateSpeed = 0;
 
-            if (_e.flankSpeed) rotateSpeed = 35;
-            else rotateSpeed = -35;
-            
+            if (_e.flankSpeed)
+            {
+                rotateSpeed = 35;
+                _e.WalkRightEvent();
+            }
+
+            else
+            {
+                rotateSpeed = -35;
+                _e.WalkLeftEvent();
+            }
+
             var dir = (_e.target.transform.position - _e.transform.position).normalized;
             var angle = Vector3.Angle(dir, _e.target.transform.forward);
 
@@ -57,16 +66,14 @@ public class A_WarriorWait : i_EnemyActions
 
             if (angle > 80 && !_e.onDamage)
             {
-                if (angle > 80) _e.MoveEvent();
-                
-
+              
                 var d = Vector3.Distance(_e.transform.position, _e.target.transform.position);
 
                 _e.transform.RotateAround(_e.target.transform.position, Vector3.up, rotateSpeed * Time.deltaTime);
 
                 if (_e.avoidVectObstacles != Vector3.zero && d > 3) _e.transform.position += _e.transform.forward * 4 * Time.deltaTime;
             }
-            else  _e.IdleEvent();
+            else  _e.CombatIdleEvent();
         }
 
         

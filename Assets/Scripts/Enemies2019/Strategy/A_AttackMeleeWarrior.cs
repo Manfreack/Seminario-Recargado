@@ -25,7 +25,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                 targetRotation = Quaternion.LookRotation(dir + avoid, Vector3.up);
                 _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
                 _e.rb.MovePosition(_e.rb.position + _e.transform.forward * _e.speed * 2 * Time.deltaTime);
-                _e.MoveEvent();
+                _e.CombatWalkEvent();
             }
 
             else if(_e.onAttackArea && _e.delayToAttack<0 && !_e.onRetreat)
@@ -40,8 +40,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                 if (player != null && !_e.firstAttack)
                 {
                     _e.AttackEvent();
-                    _e.onRetreat = true;
-                   
+                    _e.onRetreat = true;                
                 }
 
             }      

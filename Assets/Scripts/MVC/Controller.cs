@@ -90,7 +90,7 @@ public class Controller : MonoBehaviour
 
               if (Input.GetKeyUp(KeyCode.Alpha4)) model.CastPower4();
               */
-            if (Input.GetKey(KeyCode.E) && model.isInCombat)
+            if (Input.GetKey(KeyCode.E) && model.isInCombat && model.stamina>5)
             {
                 model.Defence();
                 view.Defence();

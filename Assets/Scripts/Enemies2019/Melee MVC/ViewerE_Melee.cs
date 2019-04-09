@@ -43,11 +43,51 @@ public class ViewerE_Melee : MonoBehaviour
         DamageShader();
     }
 
+    public void CombatWalkAnim()
+    {
+        _anim.SetBool("WalkCombat", true);
+        _anim.SetBool("IdleCombat", false);
+        _anim.SetBool("WalkBack", false);
+        _anim.SetBool("WalkL", false);
+        _anim.SetBool("WalkR", false);
+        _anim.SetBool("Idle", false);
+    }
+
+    public void CombatIdleAnim()
+    {
+        _anim.SetBool("WalkCombat", false);
+        _anim.SetBool("WalkBack", false);
+        _anim.SetBool("IdleCombat", true);
+        _anim.SetBool("WalkL", false);
+        _anim.SetBool("WalkR", false);
+        _anim.SetBool("Idle", false);
+    }
+
+    public void WalkLeftAnim()
+    {
+        _anim.SetBool("WalkL", true);
+        _anim.SetBool("WalkR", false);
+    }
+
+    public void WalkRightAnim()
+    {
+        _anim.SetBool("WalkL", false);
+        _anim.SetBool("WalkR", true);
+    }
+
     public void BlockedAnim()
     {
         sparks.gameObject.SetActive(true);
         sparks.Play();
         _anim.SetBool("Blocked", true);
+    }
+
+    public void WalckBackAnim()
+    {
+        _anim.SetBool("WalkBack", true);
+        _anim.SetBool("WalkCombat", false);
+        _anim.SetBool("IdleCombat", false);
+        _anim.SetBool("Idle", false);
     }
 
     public void BackFromBlocked()
@@ -78,18 +118,18 @@ public class ViewerE_Melee : MonoBehaviour
     public void IdleAnim()
     {
         _anim.SetBool("Idle", true);
+        _anim.SetBool("IdleCombat", false);
     }
 
     public void BackFromIdle()
     {
         _anim.SetBool("Idle", false);
+        _anim.SetBool("IdleCombat", false);
     }
 
     public void BackFromDamage()
     {
-
-        _anim.SetBool("TakeDamage", false);
-        
+        _anim.SetBool("TakeDamage", false);       
     }
 
     public void TakeDamageAnim()
