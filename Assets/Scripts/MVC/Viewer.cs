@@ -89,6 +89,20 @@ public class Viewer : MonoBehaviour
         headBaseRot = head.transform.rotation;
     }
 
+    public void SaveSwordAnim2()
+    {
+        anim.SetLayerWeight(1, 1);
+        anim.SetBool("SaveSword2", true);
+    }
+
+    public void BackSaveSword()
+    {
+        StartCoroutine(SaveSwordAnim());
+        anim.SetBool("IdleCombat", false);
+        anim.SetBool("Idle", true);
+        anim.SetBool("SaveSword2", false);
+    }
+
     public void RollAnim()
     {
         anim.SetBool("Roll", true);

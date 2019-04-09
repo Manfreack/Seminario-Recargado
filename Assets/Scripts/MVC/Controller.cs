@@ -101,7 +101,7 @@ public class Controller : MonoBehaviour
                 model.StopDefence();
             }
 
-            if (Input.GetKeyUp(KeyCode.C) && !model.saveSword)
+            if (Input.GetKeyUp(KeyCode.C) && !model.saveSword && useSword)
             {
                 model.SaveSword();
             }

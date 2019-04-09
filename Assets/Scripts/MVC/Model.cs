@@ -244,8 +244,7 @@ public class Model : MonoBehaviour
 
         if (timeOnCombat <= 0 && isInCombat)
         {
-            view.anim.SetBool("IdleCombat", false);
-            view.anim.SetBool("Idle", true);
+            view.SaveSwordAnim2();
             isInCombat = false;
             saveSword = false;
         }
@@ -773,9 +772,7 @@ public class Model : MonoBehaviour
     {
         timeOnCombat = 0;
         isInCombat = false;
-        view.anim.SetBool("IdleCombat", false);
-        view.anim.SetBool("Idle", true);
-
+        view.SaveSwordAnim2();
     }
 
     public void GetDamage(float damage, Transform enemy, bool isProyectile)

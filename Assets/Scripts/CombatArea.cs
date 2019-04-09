@@ -37,8 +37,7 @@ public class CombatArea : MonoBehaviour
             player.isInCombat = false;
             player.saveSword = false;
             player.timeOnCombat = 0;
-            player.view.anim.SetBool("IdleCombat", false);
-            player.view.anim.SetBool("Idle", true);
+            player.view.SaveSwordAnim2();
             aux = true;
         }
     }
