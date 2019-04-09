@@ -14,7 +14,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
 
         if (!_e.onDamage)
         {
-            if (!_e.onAttackArea && !_e.onAttack)
+            if (!_e.onAttackArea && !_e.onAttack && !_e.firstAttack)
             {
                 _e.viewDistanceAttack = 3.79f;
                 Quaternion targetRotation;
@@ -28,8 +28,9 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                 _e.CombatWalkEvent();
             }
 
-            else if(_e.onAttackArea && _e.delayToAttack<0 && !_e.onRetreat)
+            else if(_e.onAttackArea && _e.delayToAttack<0 && !_e.onRetreat && !_e.firstAttack)
             {
+
 
                 if (!_e.isPersuit && !_e.isAttack) _e.FollowState();
 
@@ -40,7 +41,8 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                 if (player != null && !_e.firstAttack)
                 {
                     _e.AttackEvent();
-                    _e.onRetreat = true;                
+                    _e.onRetreat = true;
+                    _e.firstAttack = true;
                 }
 
             }      
