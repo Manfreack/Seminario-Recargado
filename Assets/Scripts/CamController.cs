@@ -8,6 +8,8 @@ public class CamController : MonoBehaviour {
     public Model model;
     public ProtectCameraFromWallClip wallCam;
     public float distance;
+    public float combatDistance;
+    public float idleDistance;
     float currentX = 0;
     float currentY = 0;
     public float sensitivityX;
@@ -22,6 +24,17 @@ public class CamController : MonoBehaviour {
     public LayerMask layerObst;
     Vector3 startPositionPivot;
     public Camera mainCam;
+    bool rollEvent;
+    public float zoomVelocity;
+
+    IEnumerator CameraStatic()
+    {
+        rollEvent = true;
+        yield return new WaitForSeconds(0.5f);
+        rollEvent = false;
+    }
+
+
 
     void Start () {
         if (invertY)
@@ -59,29 +72,48 @@ public class CamController : MonoBehaviour {
 	
 	void FixedUpdate () {
 
-
-      //  RotateRB();
         if (!cameraActivate)
         {
             if (model.isInCombat)
             {
-              distance += 35 * Time.deltaTime;
-              if (distance >= 5) distance = 5;
+                if (!rollEvent)
+                {
+                    if (distance < combatDistance)
+                    {
+                        distance += zoomVelocity * Time.deltaTime;
+                    }
+
+                    if (distance> combatDistance + 0.2f)
+                    {
+                        distance -= zoomVelocity * Time.deltaTime;
+                    }
+                }
             }     
+
             else
             {
-
-                distance -= 35 * Time.deltaTime;
-                if (distance <= 1) distance = 1;
+                if (!rollEvent)
+                {
+                    distance -= zoomVelocity * Time.deltaTime;
+                    if (distance <= idleDistance) distance = idleDistance;
+                }
             }
             Vector3 direction = new Vector3(0, 0, distance);
             Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
-            transform.position =Vector3.Lerp(player.position, player.position + rotation * direction,Time.deltaTime * smooth);
+            transform.position = Vector3.Lerp(player.position, player.position + rotation * direction,Time.deltaTime * smooth);
             transform.LookAt(player.position);
         }
 
-
+        if(rollEvent)
+        {
+            distance += zoomVelocity * Time.deltaTime;
+        }
+      
     }
    
+    public void RollEvent()
+    {
+        StartCoroutine(CameraStatic());
+    }
     
 }

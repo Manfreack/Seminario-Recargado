@@ -103,6 +103,7 @@ public class Model : MonoBehaviour
     public Action Dead;
     public Action BlockEvent;
     public Action RollEvent;
+    public Action RollCameraEvent;
 
     public Transform closestEnemy;
     public LayerMask enemyLM;
@@ -356,6 +357,7 @@ public class Model : MonoBehaviour
     {
         if (!onRoll && stamina - dashStamina >= 0 && !view.anim.GetBool("Roll"))
         {
+            RollCameraEvent();
             stamina -= dashStamina;
             view.UpdateStaminaBar(stamina / maxStamina);
             if (isInCombat)
@@ -556,53 +558,6 @@ public class Model : MonoBehaviour
                 targetRotation = Quaternion.LookRotation(dir, Vector3.up);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
                 rb.MovePosition(rb.position + dir * acceleration * runSpeed * Time.deltaTime);
-            }
-        }
-    }
-
-    public void MovementBizectriz(Vector3 d1, Vector3 d2, bool key, bool backward)
-    {
-        biz = true;
-        acceleration += 3f * Time.deltaTime;
-        if (acceleration > maxAcceleration) acceleration = maxAcceleration;
-
-        if (!InAction && !onDamage && countAnimAttack == 0 && !onRoll)
-        {
-            Vector3 direction = (d1 + d2) / 2;
-            direction.y = 0;
-
-            Quaternion targetRotation;
-
-            if (key)
-            {
-
-                targetRotation = Quaternion.LookRotation(direction, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-            }
-
-            if (backward)
-            {
-                var turnDir = (d1 + (-d2)) / 2;
-                turnDir.y = 0;
-                targetRotation = Quaternion.LookRotation(turnDir, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-            }
-
-            if (!isRuning && !isInCombat)
-            {
-
-                Trot();
-                rb.MovePosition(rb.position + direction * acceleration * speed * Time.deltaTime);
-            }
-            else if (!isRuning && isInCombat)
-            {
-                Trot();
-                rb.MovePosition(rb.position + direction * acceleration * speed * Time.deltaTime);
-            }
-            else
-            {
-                Run();
-                rb.MovePosition(rb.position + direction * acceleration * runSpeed * Time.deltaTime);
             }
         }
     }

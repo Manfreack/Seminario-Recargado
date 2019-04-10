@@ -55,6 +55,7 @@ public class Controller : MonoBehaviour
         model.Fall += view.Falling;
         model.BlockEvent += view.Blocked;
         model.RollEvent += view.RollAnim;
+        model.RollCameraEvent += model.mainCamera.GetComponent<CamController>().RollEvent;
     }
 
     // Update is called once per frame
