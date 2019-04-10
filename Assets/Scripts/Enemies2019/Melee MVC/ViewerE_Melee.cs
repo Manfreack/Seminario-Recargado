@@ -13,6 +13,8 @@ public class ViewerE_Melee : MonoBehaviour
     public ParticleSystem sparks;
     public ParticleSystem blood;
     EnemyScreenSpace ess;
+    float timeOnDamage;
+    bool auxTakeDamage;
 
     public IEnumerator DeadCorrutine()
     {
@@ -39,8 +41,17 @@ public class ViewerE_Melee : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         DamageShader();
+
+        if (auxTakeDamage)
+        {
+            timeOnDamage -= Time.deltaTime;
+            if (timeOnDamage <= 0)
+            {
+                _anim.SetBool("TakeDamage", false);
+                auxTakeDamage = false;
+            }
+        }
     }
 
     public void CombatWalkAnim()
@@ -140,6 +151,12 @@ public class ViewerE_Melee : MonoBehaviour
         blood.gameObject.SetActive(true);
         blood.Stop();
         blood.Play();
+        timeOnDamage = 0.5f;
+        if (!auxTakeDamage)
+        {
+            auxTakeDamage = true;
+            
+        }
     }
 
     public void DamageShader()

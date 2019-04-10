@@ -231,7 +231,6 @@ public class Model : MonoBehaviour
 
     void Update()
     {
-        ChangeDirAttack();
 
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
@@ -659,23 +658,7 @@ public class Model : MonoBehaviour
 
     }
 
-    public void ChangeDirAttack()
-    {
-        if (starChangeDirAttack)
-        {
-            var camDir = mainCamera.forward.normalized;
-            camDir.y = 0;
-            Quaternion targetRotation;
-            targetRotation = Quaternion.LookRotation(camDir, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-        }
-
-    }
-
-    public void FalseChangeDirForward()
-    {
-        starChangeDirAttack = false;
-    }
+    
 
     public void MakeDamage()
     {
