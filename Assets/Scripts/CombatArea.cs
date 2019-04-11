@@ -36,6 +36,21 @@ public class CombatArea : MonoBehaviour
             cm.flanTicket = false;         
             aux = true;
         }
+
+        var auxMyEntites = 0;
+
+        foreach (var item in myNPCs)
+        {
+            if (item.isDead) auxMyEntites++;
+        }
+
+        if (auxMyEntites == myNPCs.Count && !aux)
+        {
+            foreach (var item in walls) item.SetActive(false);
+            cm.times = 2;
+            cm.flanTicket = false;
+            aux = true;
+        } 
     }
 
     public void OnTriggerEnter(Collider c)

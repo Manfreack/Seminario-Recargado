@@ -328,14 +328,14 @@ public class Model : MonoBehaviour
                     onRollCombat = false;
                 }
                 sleepAnim = false;
-                rb.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
+                transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
             }
 
             if (!isInCombat)
             {
                 if (onDamage) onRoll = false;
                 sleepAnim = false;
-                rb.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
+                transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
             }
         }
 
@@ -355,7 +355,7 @@ public class Model : MonoBehaviour
             if(timeEndImpulse>0)
             {
                 if (onDamage) timeEndImpulse = 0;
-                rb.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
+                transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
             }
         }   
 
@@ -598,9 +598,9 @@ public class Model : MonoBehaviour
 
     public void NormalAttack()
     {
-        if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onRollCombat)
-        {      
-            if (countAnimAttack == 0 && !preAttack1)
+        if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onRollCombat && !onDefence)
+        {
+            if (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2")
             {
                 countAnimAttack++;
                 view.AwakeTrail();
