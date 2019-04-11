@@ -45,6 +45,10 @@ public class Viewer : MonoBehaviour
     CamController cam;
     public GameObject pauseMenu;
 
+    public RawImage startFade;
+    [Header("Time of the initial fade from black:")]
+    public float fadeTime;
+
     public IEnumerator DestroyParticles(GameObject p)
     {
         yield return new WaitForSeconds(0.5f);
@@ -100,6 +104,9 @@ public class Viewer : MonoBehaviour
         camShake = GameObject.Find("FreeLookCameraRig").GetComponentInChildren<CamShake>();
         cam = GameObject.Find("FreeLookCameraRig").GetComponent<CamController>();
         headBaseRot = head.transform.rotation;
+
+        startFade.enabled = true;
+        startFade.CrossFadeAlpha(0, fadeTime, false);
     }
 
     public void SaveSwordAnim2()

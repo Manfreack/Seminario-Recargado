@@ -60,7 +60,7 @@ public class CamController : MonoBehaviour {
             Cursor.lockState = CursorLockMode.None;
         }
 
-         if (!cameraActivate)
+         if (!cameraActivate && model.fadeTimer >= 2)
          {
               currentX += Input.GetAxis("Mouse X") * sensitivityX;
               currentY += Input.GetAxis("Mouse Y") * sensitivityY;

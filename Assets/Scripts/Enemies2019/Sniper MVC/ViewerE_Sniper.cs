@@ -20,7 +20,16 @@ public class ViewerE_Sniper : MonoBehaviour
     public IEnumerator DeadCorrutine()
     {
         yield return new WaitForSeconds(3);
-        gameObject.SetActive(false);
+        GetComponent<CapsuleCollider>().enabled = false;
+        GetComponent<Rigidbody>().useGravity = false;
+        float posY = transform.position.y;
+        while (posY - 2.1f <= transform.position.y)
+        {
+            transform.position += Vector3.down * Time.deltaTime * 0.15f;
+            if (posY - 2 >= transform.position.y)
+                gameObject.SetActive(false);
+            yield return new WaitForEndOfFrame();
+        }
     }
 
     void Awake()

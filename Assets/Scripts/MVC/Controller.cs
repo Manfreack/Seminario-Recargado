@@ -61,9 +61,7 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-
-        if (!model.isPlatformJumping)
+        if (!model.isPlatformJumping && !view.startFade.enabled && !view.pauseMenu.activeSelf)
         {
             if (Input.GetKeyDown(KeyCode.Space) && pushD && !pushW && !pushS && !model.onRoll) model.Roll(transform.right);
 
@@ -185,9 +183,9 @@ public class Controller : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Alpha1)) model.DrinkPotion(1);
             if (Input.GetKeyDown(KeyCode.Alpha3)) model.DrinkPotion(3);
-        }
 
-        if (Input.GetKeyDown(KeyCode.Escape)) view.TogglePause();
+            if (Input.GetKeyDown(KeyCode.Escape)) view.TogglePause();
+        }
     }
 
     private void FixedUpdate()

@@ -126,6 +126,9 @@ public class Model : MonoBehaviour
     bool preAttack3;
     bool preAttack4;
 
+    [HideInInspector]
+    public float fadeTimer;
+
     public IEnumerator PowerColdown(float cdTime, int n)
     {
         float t1;
@@ -239,6 +242,7 @@ public class Model : MonoBehaviour
         potionEffects[1] = new ExtraHealth(this, 60);
         currentPotionEffect = null;
         checking = false;
+        fadeTimer = 0;
     }
 
     void Update()
@@ -297,7 +301,6 @@ public class Model : MonoBehaviour
 
         if (currentPotionEffect != null)
             currentPotionEffect.PotionEffect();
-
 
         animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
 
@@ -361,7 +364,9 @@ public class Model : MonoBehaviour
             StopDefence();
             view.NoDefence();
         }
-        
+
+        if (fadeTimer < view.fadeTime) fadeTimer += Time.deltaTime;
+        else view.startFade.enabled = false;
     }
 
     public void Roll(Vector3 dir)
