@@ -269,7 +269,7 @@ public class Model : MonoBehaviour
 
     void Update()
     {
-
+        if (countAnimAttack == 0) view.SleepTrail();
       
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
@@ -386,7 +386,8 @@ public class Model : MonoBehaviour
             {
                 if (onDamage) timeEndImpulse = 0;
                 if(countAnimAttack == 2 )transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
-                else transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
+                if(countAnimAttack == 1 )transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce / 2) * Time.deltaTime, 2);
+                if(countAnimAttack ==3 || countAnimAttack == 4) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
             }
         }   
 
@@ -644,6 +645,7 @@ public class Model : MonoBehaviour
                preAttack4 = true;
                stamina -= attackStamina + 3;
                view.UpdateStaminaBar(stamina / maxStamina);
+               StartCoroutine(CombatDelayState());
             }
 
 
@@ -660,6 +662,7 @@ public class Model : MonoBehaviour
                 preAttack3 = true;
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
+                StartCoroutine(CombatDelayState());
             }
 
             if (animClipName == "Attack1-Finish" && !preAttack2)
@@ -675,22 +678,29 @@ public class Model : MonoBehaviour
                 preAttack2 = true;
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
+                StartCoroutine(CombatDelayState());
             }
 
             if (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2")
             {
-                countAnimAttack++;
-                view.AwakeTrail();
-                Attack();
-                StartCoroutine(CombatDelayState());
-                timeDamage = 0.066667f;
-                timeEndDamage = 0.1f;
-                timeImpulse = 0.08f;
-                timeEndImpulse = 0.1f;
-                preAttack1 = true;
-                stamina -= attackStamina;
-                view.UpdateStaminaBar(stamina / maxStamina);
+                if (isInCombat)
+                {
+
+                    countAnimAttack++;
+                    view.AwakeTrail();
+                    Attack();
+                    StartCoroutine(CombatDelayState());
+                    timeDamage = 0.066667f;
+                    timeEndDamage = 0.1f;
+                    timeImpulse = 0.08f;
+                    timeEndImpulse = 0.1f;
+                    preAttack1 = true;
+                    stamina -= attackStamina;
+                    view.UpdateStaminaBar(stamina / maxStamina);
+                }
             }
+
+            if (!isInCombat) CombatState();
 
             countAnimAttack = Mathf.Clamp(countAnimAttack, 0, 4);
             
@@ -748,9 +758,14 @@ public class Model : MonoBehaviour
 
     public void CombatState()
     {
+
         timeOnCombat = 10;
-        view.anim.SetBool("IdleCombat", true);
-        view.anim.SetBool("Idle", true);
+        if (!isInCombat)
+        {
+           view.TakeSword2();
+           //view.anim.SetBool("IdleCombat", true);
+           //view.anim.SetBool("Idle", true);
+        }
         isInCombat = true;
     }
 

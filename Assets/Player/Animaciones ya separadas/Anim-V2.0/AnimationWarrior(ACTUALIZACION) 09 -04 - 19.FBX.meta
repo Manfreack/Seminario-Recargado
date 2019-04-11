@@ -233,12 +233,13 @@ ModelImporter:
     4300042: Box008
     4300044: Bolsa
     4300046: Box010
-    7400000: Take 001
+    7400000: TakeSword.V3
     7400002: Idel Whit Sword sheathe
     7400004: Run Whit Sword 2
     7400006: Run Whit Sword And sheathe
     7400008: 'Walk Whit Sword and sheathe '
     7400010: Idel - V2.0
+    7400012: TakeSword.V2
     9500000: //RootNode
     13700000: ArmorF
     13700002: ArmorFront
@@ -294,10 +295,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Take 001
+      name: TakeSword.V3
       takeName: Take 001
-      firstFrame: 0
-      lastFrame: 2005.0001
+      firstFrame: 824
+      lastFrame: 836
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -316,7 +317,14 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.9981928
+        functionName: BackTakeSword2
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -450,6 +458,41 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: TakeSword.V2
+      takeName: Take 001
+      firstFrame: 1997
+      lastFrame: 2005.0001
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.9939919
+        functionName: BackTakeSword2
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

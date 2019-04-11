@@ -63,6 +63,12 @@ public class Viewer : MonoBehaviour
         anim.SetLayerWeight(1, 0);
     }
 
+    public IEnumerator TakeSwordAnim()
+    {
+        yield return new WaitForSeconds(0.3f);
+        anim.SetLayerWeight(1, 0);
+    }
+
     public IEnumerator SmashParticleEvent()
     {
         smashParticle.SetActive(false);
@@ -84,8 +90,8 @@ public class Viewer : MonoBehaviour
         {
             anim.SetBool("PreAttack", true);
   
-        }    
-       
+        }
+
         var velocityX = Input.GetAxis("Vertical");
         var velocityZ = Input.GetAxis("Horizontal");
 
@@ -129,6 +135,21 @@ public class Viewer : MonoBehaviour
         anim.SetBool("IdleCombat", false);
         anim.SetBool("Idle", true);
         anim.SetBool("SaveSword2", false);
+    }
+
+    public void TakeSword2()
+    {
+        anim.SetLayerWeight(1, 1);
+        anim.SetBool("TakeSword2", true);
+        
+    }
+
+    public void BackTakeSword2()
+    {
+        StartCoroutine(TakeSwordAnim());
+        anim.SetBool("IdleCombat", true);
+        anim.SetBool("Idle", false);
+        anim.SetBool("TakeSword2", false);
     }
 
     public void RollAnim()
