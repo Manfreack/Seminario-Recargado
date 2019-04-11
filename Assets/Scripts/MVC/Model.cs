@@ -29,7 +29,11 @@ public class Model : MonoBehaviour
     public float runSpeed;
     public float acceleration;
     public float maxAcceleration;
+
+    [Header("Player Combat:")]
+
     public float timeOnCombat;
+    public float timeToHeal;
 
     [Header("Player StaminaStats:")]
 
@@ -44,8 +48,11 @@ public class Model : MonoBehaviour
     public float runStamina;
     public float attackStamina;
     public float powerStamina;
-    public float dashStamina;
+    public float rollStamina;
     public float recoveryStamina;
+    public float recoveryStaminaInCombat;
+    public float blockStamina;
+
 
 
     [Header("Player Damage:")]
@@ -289,9 +296,9 @@ public class Model : MonoBehaviour
         {
             float prevS = stamina;
 
-            if(isInCombat) stamina += recoveryStamina * Time.deltaTime;
+            if(isInCombat) stamina += recoveryStaminaInCombat * Time.deltaTime;
 
-            else stamina += recoveryStamina * Time.deltaTime * 2;
+            else stamina += recoveryStamina * Time.deltaTime;
 
             if (stamina > maxStamina)
                 stamina = maxStamina;
@@ -368,7 +375,8 @@ public class Model : MonoBehaviour
             if(timeEndImpulse>0)
             {
                 if (onDamage) timeEndImpulse = 0;
-                transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
+                if(countAnimAttack == 2 )transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
+                else transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
             }
         }   
 
@@ -384,10 +392,10 @@ public class Model : MonoBehaviour
 
     public void Roll(Vector3 dir)
     {
-        if (!onRoll && stamina - dashStamina >= 0 && !view.anim.GetBool("Roll"))
+        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll"))
         {
             RollCameraEvent();
-            stamina -= dashStamina;
+            stamina -= rollStamina;
             view.UpdateStaminaBar(stamina / maxStamina);
             if (isInCombat)
             {
@@ -786,7 +794,7 @@ public class Model : MonoBehaviour
         if (angle < 90) isBehind = true;
         if (!isBehind && !isProyectile && onDefence)
         {
-            stamina -= 10;
+            stamina -= blockStamina;
             view.UpdateStaminaBar(stamina / maxStamina);
             BlockEvent();
         }
