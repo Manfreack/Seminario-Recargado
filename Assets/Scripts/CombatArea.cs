@@ -33,11 +33,7 @@ public class CombatArea : MonoBehaviour
         {
             foreach (var item in walls) item.SetActive(false);
             cm.times = 2;
-            cm.flanTicket = false;
-            player.isInCombat = false;
-            player.saveSword = false;
-            player.timeOnCombat = 0;
-            player.view.SaveSwordAnim2();
+            cm.flanTicket = false;         
             aux = true;
         }
     }

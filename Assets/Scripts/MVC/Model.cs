@@ -112,8 +112,19 @@ public class Model : MonoBehaviour
     bool timeToRotate;
     Vector3 dirToDahs;
     public float impulseForce;
-    public float timeToPauseAnim;
-    
+
+    float timeDamage;
+    float timeEndDamage;
+
+    float timeImpulse;
+    float timeEndImpulse;
+
+    string animClipName;
+
+    bool preAttack1;
+    bool preAttack2;
+    bool preAttack3;
+    bool preAttack4;
 
     public IEnumerator PowerColdown(float cdTime, int n)
     {
@@ -207,10 +218,10 @@ public class Model : MonoBehaviour
         onDamage = false;
     }
 
-    public IEnumerator CountAttack()
+    public IEnumerator CombatDelayState()
     {
-        yield return new WaitForSeconds(0.7f);
-        countAnimAttack = 0;
+        yield return new WaitForSeconds(0.4f);
+        CombatState();
     }
 
     public enum PotionName { Health, Extra_Health, Stamina, Costless_Hit, Mana };
@@ -233,11 +244,12 @@ public class Model : MonoBehaviour
     void Update()
     {
 
+      
+
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
         {
             view.anim.SetBool("IdleCombat", true);
-
         }
 
         if (timeOnCombat <= 0) timeOnCombat = 0;
@@ -287,22 +299,7 @@ public class Model : MonoBehaviour
             currentPotionEffect.PotionEffect();
 
 
-       
-        timeAnimCombat -= Time.deltaTime;
-        timeToPauseAnim -= Time.deltaTime;
-        if (timeAnimCombat <= 0)
-        {
-           timeAnimCombat = 0;
-        }
-
-        if (timeToPauseAnim <= 0)
-        {
-          countAnimAttack = 0;
-          view.currentAttackAnimation = 0;
-          view.anim.SetInteger("AttackAnim", 0);
-        }
-       
-        
+        animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
 
         if (onRoll)
         {
@@ -328,22 +325,36 @@ public class Model : MonoBehaviour
                     onRollCombat = false;
                 }
                 sleepAnim = false;
-                transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
+                rb.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
             }
 
             if (!isInCombat)
             {
                 if (onDamage) onRoll = false;
                 sleepAnim = false;
-                transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
+                rb.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
             }
         }
 
-        if (impulse)
+        timeDamage -= Time.deltaTime;
+
+        if (timeDamage < 0)
         {
-            if (onDamage) impulse = false;
-            transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
+            timeEndDamage -= Time.deltaTime;
+            if (timeEndDamage > 0) MakeDamage();
         }
+
+        timeImpulse -= Time.deltaTime;
+
+        if (timeImpulse < 0)
+        {
+            timeEndImpulse -= Time.deltaTime;
+            if(timeEndImpulse>0)
+            {
+                if (onDamage) timeEndImpulse = 0;
+                rb.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
+            }
+        }   
 
         if(stamina<5)
         {
@@ -375,6 +386,9 @@ public class Model : MonoBehaviour
 
     public void StartRoll()
     {
+        timeDamage = 0;
+        timeEndDamage = 0;
+        impulse = false;
         onRoll = true;
         if (isInCombat) onRollCombat = true;
     }
@@ -579,34 +593,63 @@ public class Model : MonoBehaviour
 
     public void NormalAttack()
     {
-        if (!isDead && stamina - attackStamina >= 0 && timeAnimCombat<=0 && !onRoll && !onRollCombat)
-        {
-            if (countAnimAttack == 0)
+        if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onRollCombat)
+        {      
+            if (countAnimAttack == 0 && !preAttack1)
             {
-                timeAnimCombat = 0.3f;
-                timeToPauseAnim = 0.5f;
-            } 
+                countAnimAttack++;
+                view.AwakeTrail();
+                Attack();
+                StartCoroutine(CombatDelayState());
+                timeDamage = 0.066667f;
+                timeEndDamage = 0.1f;
+                timeImpulse = 0.08f;
+                timeEndImpulse = 0.1f;
+                preAttack1 = true;
+            }
+
+          
+            if (animClipName == "Attack1-Finish" && !preAttack2)
+            {
+                countAnimAttack++;
+                view.AwakeTrail();
+                if (countAnimAttack > 2) countAnimAttack = 2;
+                Attack();
+                timeDamage = 0.1f;
+                timeEndDamage = 0.12f;
+                timeImpulse = 0.01f;
+                timeEndImpulse = 0.3f;
+                preAttack2 = true;
+            }
+
+            if (animClipName == "Attack2-Finish" && !preAttack3)
+            {
+               countAnimAttack++;
+               view.AwakeTrail();
+               if (countAnimAttack > 3) countAnimAttack = 3;
+               Attack();
+               timeDamage = 0.066667f;
+               timeEndDamage = 0.1f;
+               timeImpulse = 0.01f;
+               timeEndImpulse = 0.2f;
+               preAttack3 = true;
+            }
+
+            if ((animClipName == "Attack3-END" && !preAttack4) || (animClipName == "Attack3-DAMAGE" && !preAttack4))
+            {
+               view.AwakeTrail();
+               countAnimAttack++;
+               Attack();
+               timeDamage = 0.066667f;
+               timeEndDamage = 0.1f;
+               timeImpulse = 0.01f;
+               timeEndImpulse = 0.2f;
+               preAttack4 = true;
+            }
             
-            if (countAnimAttack == 1)
-            {
-                timeAnimCombat = 0.6f;
-                timeToPauseAnim = 0.95f;
-            }
 
-            if (countAnimAttack == 2)
-            {
-                timeAnimCombat = 0.4f;
-                timeToPauseAnim = 0.65f;
-            }
-
-            if (countAnimAttack == 3)
-            {
-                timeToPauseAnim = 0.5f;
-            }
-
-            countAnimAttack++;           
             countAnimAttack = Mathf.Clamp(countAnimAttack, 0, 4);
-            Attack();
+            
             starChangeDirAttack = true;
         }
         if (!InActionAttack) InActionAttack = true;
@@ -617,10 +660,7 @@ public class Model : MonoBehaviour
 
     public void MakeDamage()
     {
-        stamina -= attackStamina;
-        view.UpdateStaminaBar(stamina / maxStamina);
-
-
+       
         var col = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>());
         var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()); ;
         foreach (var item in col)
@@ -628,11 +668,14 @@ public class Model : MonoBehaviour
             view.StartCoroutine(view.SlowSpeed());
             item.GetDamage(10);
             item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
+            timeDamage = 0;
+            timeEndDamage = 0;
         }
 
         foreach (var item in desMesh)
         {
             item.StartCoroutine(item.startDisolve());
+            timeDamage = 0;
         }
     }
 
@@ -678,32 +721,16 @@ public class Model : MonoBehaviour
     {
         onDamage = false;
     }
-
-    public void SleepCombo()
-    {
-        sleepAnim = true;
-    }
-
-    public void AwakeCombo()
-    {
-        sleepAnim = false;       
-    }
-
-    public void Impulse()
-    {
-        impulse = true;
-    }
-
-    public void StopImpulse()
-    {
-        impulse = false;
-    }
-
+  
     public void EndCombo()
     {
         countAnimAttack = 0;
         view.currentAttackAnimation = 0;
         view.anim.SetInteger("AttackAnim", 0);
+        preAttack1 = false;
+        preAttack2 = false;
+        preAttack3 = false;
+        preAttack4 = false;
     }
 
     public void SaveSword()
@@ -723,6 +750,10 @@ public class Model : MonoBehaviour
         sleepAnim = false;
         bool isBehind = false;
         StartCoroutine(OnDamageDelay());
+        timeEndImpulse = 0;
+        timeImpulse = 0;
+        timeDamage = 0;
+        timeEndDamage = 0;
         Vector3 dir = transform.position - enemy.position;
         float angle = Vector3.Angle(dir, transform.forward);
         if (angle < 90) isBehind = true;

@@ -328,13 +328,7 @@ public class ModelE_Melee : EnemyEntity
                     RemoveNearEntity(item);
                 }              
             }
-            
-            if(nearEntities.Count <=0)
-            {
-                target.timeOnCombat = 0;
-                target.isInCombat = false;
-            }
-
+                   
             ca.myEntities--;
         };
 
