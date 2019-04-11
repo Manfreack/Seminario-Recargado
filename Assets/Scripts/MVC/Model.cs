@@ -703,10 +703,15 @@ public class Model : MonoBehaviour
     
 
     public void MakeDamage()
-    {
-       
+    {      
         var col = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>());
-        var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()); ;
+        var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>());
+
+        if (col.Count() > 0)
+        {
+            if(countAnimAttack<=3) view.ShakeCameraDamage(0.5f);
+        }
+
         foreach (var item in col)
         {
             view.StartCoroutine(view.SlowSpeed());

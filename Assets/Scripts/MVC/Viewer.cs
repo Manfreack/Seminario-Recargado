@@ -68,6 +68,7 @@ public class Viewer : MonoBehaviour
         smashParticle.SetActive(false);
         yield return new WaitForSeconds(0.25f);
         smashParticle.SetActive(true);
+        ShakeCameraDamage(1);
     }
 
     public void Update()
@@ -422,6 +423,11 @@ public class Viewer : MonoBehaviour
             var random = Random.Range(1, 4);
             anim.SetInteger("TakeDamage", random);
         }
+    }
+
+    public void ShakeCameraDamage(float f)
+    {
+        camShake.ShakeCamera(f, 1);
     }
 
     public void NoReciveDamage()
