@@ -49,6 +49,8 @@ public class Viewer : MonoBehaviour
     [Header("Time of the initial fade from black:")]
     public float fadeTime;
 
+    public GameObject smashParticle;
+
     public IEnumerator DestroyParticles(GameObject p)
     {
         yield return new WaitForSeconds(0.5f);
@@ -59,6 +61,13 @@ public class Viewer : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         anim.SetLayerWeight(1, 0);
+    }
+
+    public IEnumerator SmashParticleEvent()
+    {
+        smashParticle.SetActive(false);
+        yield return new WaitForSeconds(0.25f);
+        smashParticle.SetActive(true);
     }
 
     public void Update()
@@ -74,9 +83,7 @@ public class Viewer : MonoBehaviour
         {
             anim.SetBool("PreAttack", true);
   
-        }
-
-      
+        }    
        
         var velocityX = Input.GetAxis("Vertical");
         var velocityZ = Input.GetAxis("Horizontal");
@@ -426,13 +433,17 @@ public class Viewer : MonoBehaviour
     public void BasicAttack()
     {
         if(currentAttackAnimation == 0) preAttacktime = 0.001f;
-        if(currentAttackAnimation == 3) preAttacktime = 0.001f;
         if(currentAttackAnimation == 4) preAttacktime = 0.001f;
+        if (currentAttackAnimation == 3)
+        {
+            preAttacktime = 0.001f;
+            StartCoroutine(SmashParticleEvent());
+        }
         currentAttackAnimation++;
         Mathf.Clamp(currentAttackAnimation, 0, 4);
         anim.SetInteger("AttackAnim", currentAttackAnimation);
     }
-
+  
 
     public void Dead()
     {

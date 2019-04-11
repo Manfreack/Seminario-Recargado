@@ -17,13 +17,22 @@ public class Model : MonoBehaviour
     public float extraFireDamage;
     public float extraSlameDamage;
     public float skillPoints;
+
+    [Header("Player Life:")]
+
     public float life;
     public float maxLife;
+
+    [Header("Player Speed:")]
+
     public float speed;
     public float runSpeed;
     public float acceleration;
     public float maxAcceleration;
     public float timeOnCombat;
+
+    [Header("Player StaminaStats:")]
+
     public float stamina;
     public float maxStamina;
     public float mana;
@@ -32,14 +41,17 @@ public class Model : MonoBehaviour
     public float armor;
     public float maxArmor;
     public bool armorActive;
-
     public float runStamina;
     public float attackStamina;
     public float powerStamina;
     public float dashStamina;
     public float recoveryStamina;
-    public float timeAnimCombat;
 
+
+    [Header("Player Damage:")]
+
+    public float timeAnimCombat;
+    public float attackDamage;
 
     public int[] potions = new int[5];
     public IPotionEffect currentPotionEffect;
@@ -601,20 +613,37 @@ public class Model : MonoBehaviour
     {
         if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onRollCombat && !onDefence)
         {
-            if (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2")
+                    
+            if ((animClipName == "Attack3-END" && !preAttack4) || (animClipName == "Attack3-DAMAGE" && !preAttack4))
+            {
+               view.AwakeTrail();
+               countAnimAttack++;
+               Attack();
+               timeDamage = 0.066667f;
+               timeEndDamage = 0.1f;
+               timeImpulse = 0.01f;
+               timeEndImpulse = 0.2f;
+               preAttack4 = true;
+               stamina -= attackStamina + 3;
+               view.UpdateStaminaBar(stamina / maxStamina);
+            }
+
+
+            if (animClipName == "Attack2-Finish" && !preAttack3)
             {
                 countAnimAttack++;
                 view.AwakeTrail();
+                if (countAnimAttack > 3) countAnimAttack = 3;
                 Attack();
-                StartCoroutine(CombatDelayState());
                 timeDamage = 0.066667f;
                 timeEndDamage = 0.1f;
-                timeImpulse = 0.08f;
-                timeEndImpulse = 0.1f;
-                preAttack1 = true;
+                timeImpulse = 0.01f;
+                timeEndImpulse = 0.2f;
+                preAttack3 = true;
+                stamina -= attackStamina;
+                view.UpdateStaminaBar(stamina / maxStamina);
             }
 
-          
             if (animClipName == "Attack1-Finish" && !preAttack2)
             {
                 countAnimAttack++;
@@ -626,33 +655,24 @@ public class Model : MonoBehaviour
                 timeImpulse = 0.01f;
                 timeEndImpulse = 0.3f;
                 preAttack2 = true;
+                stamina -= attackStamina;
+                view.UpdateStaminaBar(stamina / maxStamina);
             }
 
-            if (animClipName == "Attack2-Finish" && !preAttack3)
+            if (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2")
             {
-               countAnimAttack++;
-               view.AwakeTrail();
-               if (countAnimAttack > 3) countAnimAttack = 3;
-               Attack();
-               timeDamage = 0.066667f;
-               timeEndDamage = 0.1f;
-               timeImpulse = 0.01f;
-               timeEndImpulse = 0.2f;
-               preAttack3 = true;
+                countAnimAttack++;
+                view.AwakeTrail();
+                Attack();
+                StartCoroutine(CombatDelayState());
+                timeDamage = 0.066667f;
+                timeEndDamage = 0.1f;
+                timeImpulse = 0.08f;
+                timeEndImpulse = 0.1f;
+                preAttack1 = true;
+                stamina -= attackStamina;
+                view.UpdateStaminaBar(stamina / maxStamina);
             }
-
-            if ((animClipName == "Attack3-END" && !preAttack4) || (animClipName == "Attack3-DAMAGE" && !preAttack4))
-            {
-               view.AwakeTrail();
-               countAnimAttack++;
-               Attack();
-               timeDamage = 0.066667f;
-               timeEndDamage = 0.1f;
-               timeImpulse = 0.01f;
-               timeEndImpulse = 0.2f;
-               preAttack4 = true;
-            }
-            
 
             countAnimAttack = Mathf.Clamp(countAnimAttack, 0, 4);
             
@@ -672,7 +692,8 @@ public class Model : MonoBehaviour
         foreach (var item in col)
         {
             view.StartCoroutine(view.SlowSpeed());
-            item.GetDamage(10);
+            if(countAnimAttack>=3) item.GetDamage(attackDamage * 2);
+            else item.GetDamage(attackDamage);
             item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
             timeDamage = 0;
             timeEndDamage = 0;
