@@ -51,7 +51,7 @@ MonoBehaviour:
       ambientOnly: 0
       highPrecision: 1
   screenSpaceReflection:
-    m_Enabled: 1
+    m_Enabled: 0
     m_Settings:
       reflection:
         blendType: 1
@@ -70,19 +70,19 @@ MonoBehaviour:
       screenEdgeMask:
         intensity: 0.03
   depthOfField:
-    m_Enabled: 1
+    m_Enabled: 0
     m_Settings:
       focusDistance: 15
-      aperture: 2
-      focalLength: 64
-      useCameraFov: 1
+      aperture: 32
+      focalLength: 235
+      useCameraFov: 0
       kernelSize: 3
   motionBlur:
     m_Enabled: 1
     m_Settings:
       shutterAngle: 10
       sampleCount: 10
-      frameBlending: 0.632
+      frameBlending: 0.023
   eyeAdaptation:
     m_Enabled: 0
     m_Settings:
@@ -122,9 +122,9 @@ MonoBehaviour:
         neutralWhiteClip: 10
       basic:
         postExposure: 0.1
-        temperature: 8
-        tint: -2
-        hueShift: 2
+        temperature: 1
+        tint: 1
+        hueShift: 3
         saturation: 1
         contrast: 1
       channelMixer:
@@ -135,9 +135,9 @@ MonoBehaviour:
       colorWheels:
         mode: 1
         log:
-          slope: {r: 0.9909002, g: 1, b: 0.7768986, a: 0}
-          power: {r: 0.8682788, g: 1, b: 0.8368272, a: 0}
-          offset: {r: 0.8777724, g: 0.89669675, b: 1, a: 0}
+          slope: {r: 1, g: 0.97523415, b: 0.9828439, a: 0}
+          power: {r: 0.8413403, g: 1, b: 0.8210571, a: 0}
+          offset: {r: 0.93264425, g: 0.9107004, b: 1, a: 0}
         linear:
           lift: {r: 0, g: 0, b: 0, a: 0}
           gamma: {r: 0, g: 0, b: 0, a: 0}
@@ -320,7 +320,7 @@ MonoBehaviour:
   vignette:
     m_Enabled: 0
     m_Settings:
-      mode: 0
+      mode: 1
       color: {r: 0, g: 0, b: 0, a: 1}
       center: {x: 0.5, y: 0.5}
       intensity: 0.45
