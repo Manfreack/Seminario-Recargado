@@ -48,7 +48,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100004, guid: 633053170550dd64f9134ab166f81c53, type: 3}
+  - {fileID: 2100000, guid: 13c8e79887c0f1448b1b802ad56611df, type: 2}
   - {fileID: 2100000, guid: 13c8e79887c0f1448b1b802ad56611df, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -2871,12 +2871,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02fb13fcc330cdb4fb3ef610a7514237, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  life: 0
+  totalLife: 0
   avoidVectObstacles: {x: 0, y: 0, z: 0}
+  entitiesAvoidVect: {x: 0, y: 0, z: 0}
   isPersuit: 0
   isAttack: 0
   onAttack: 0
-  isFollow: 0
+  isAnswerCall: 0
+  isDead: 0
   onDamage: 0
+  onRetreat: 0
+  firstSaw: 0
+  timeOnDamage: 0
   target: {fileID: 0}
   currentIndex: 0
   speed: 3
@@ -2884,6 +2891,7 @@ MonoBehaviour:
   angleToPersuit: 105.2
   viewDistanceAttack: 3.79
   angleToAttack: 105.2
+  nearEntities: []
   pathToTarget: []
   myNodes:
   - {fileID: 0}
@@ -2895,10 +2903,14 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   rb: {fileID: 0}
-  dileyToAttack: 0
+  delayToAttack: 0
+  maxDelayToAttack: 0
   knockbackForce: 10
   radiusAttack: 0.61
   attackDamage: 10
+  timeToStopBack: 0
+  positionToBack: {x: 0, y: 0, z: 0}
+  ca: {fileID: 0}
   timeToPatrol: 0
   layerPlayer:
     serializedVersion: 2
@@ -2906,10 +2918,29 @@ MonoBehaviour:
   layerObst:
     serializedVersion: 2
     m_Bits: 1280
+  layerEntites:
+    serializedVersion: 2
+    m_Bits: 0
+  layerAttack:
+    serializedVersion: 2
+    m_Bits: 0
   timeToAttack: 0
+  flank: 0
   cm: {fileID: 0}
   myWarriorFriends: []
   attackPivot: {fileID: 6891305672447886370}
+  warriorVectAvoidance: {x: 0, y: 0, z: 0}
+  warriorVectAvoidanceFlank: {x: 0, y: 0, z: 0}
+  _view: {fileID: 0}
+  distanceToHit: 0
+  angleToHit: 0
+  onAttackArea: 0
+  firstAttack: 0
+  checkTurn: 0
+  flankSpeed: 0
+  testEnemy: 0
+  timeToRetreat: 0
+  startRetreat: 0
 --- !u!1 &7421329270622348644
 GameObject:
   m_ObjectHideFlags: 0
