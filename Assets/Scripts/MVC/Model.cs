@@ -34,6 +34,8 @@ public class Model : MonoBehaviour
 
     public float timeOnCombat;
     public float timeToHeal;
+    public float maxTimeToHeal;
+    public float lifeRecoveredForSec;
 
     [Header("Player StaminaStats:")]
 
@@ -269,13 +271,12 @@ public class Model : MonoBehaviour
     {
 
       
-
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
         {
             view.anim.SetBool("IdleCombat", true);
         }
-
+      
         if (timeOnCombat <= 0) timeOnCombat = 0;
 
         if (timeOnCombat <= 0 && isInCombat)
@@ -283,6 +284,15 @@ public class Model : MonoBehaviour
             view.SaveSwordAnim2();
             isInCombat = false;
             saveSword = false;
+        }
+
+        timeToHeal -= Time.deltaTime;
+
+        if(timeToHeal<=0)
+        {
+            life += lifeRecoveredForSec * Time.deltaTime;
+            if (life > maxLife) life = maxLife;
+            view.UpdateLifeBar(life / maxLife);
         }
 
         WraperAction();
@@ -814,6 +824,7 @@ public class Model : MonoBehaviour
                 armor = 0;
                 view.UpdateArmorBar(armor / maxArmor);
                 life -= dmg;
+                timeToHeal = maxTimeToHeal;
                 view.UpdateLifeBar(life / maxLife);
                 sleepAnim = false;
                 impulse = false;
