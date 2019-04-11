@@ -79,6 +79,7 @@ public class Model : MonoBehaviour
     public bool InAction;
     public bool InActionAttack;
     bool WraperInAction;
+    bool dieOnce;
 
     public bool onDamage;
 
@@ -801,10 +802,13 @@ public class Model : MonoBehaviour
             if (life > 0) OnDamage();
             else
             {
-
-                Dead();
-                isDead = true;
-                StartCoroutine(view.YouDied());
+                if (!dieOnce)
+                {
+                    Dead();
+                    isDead = true;
+                    StartCoroutine(view.YouDied());
+                    dieOnce = true;
+                }
             }
 
             onRoll = false;

@@ -41,7 +41,7 @@ public class A_SniperAttack : i_EnemyActions
             if (onSight &&  !_e.onDamage)
             {
                 _e.AttackEvent();
-                _e.timeToShoot = Random.Range(2, 4);
+                _e.timeToShoot = Random.Range(3, 5);
             }
             
         }
