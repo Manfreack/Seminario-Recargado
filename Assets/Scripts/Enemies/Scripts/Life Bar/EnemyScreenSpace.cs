@@ -47,7 +47,7 @@ public class EnemyScreenSpace : MonoBehaviour
 
         if (timer > 0)
         {
-            if (healthFill.fillAmount > 0 && IsVisible() && (vp.x >= 0 && vp.x <= 1 && vp.y >= 0 && vp.y <= 1 && vp.z > 0))
+            if (healthFill.fillAmount > 0 && (vp.x >= 0 && vp.x <= 1 && vp.y >= 0 && vp.y <= 1 && vp.z > 0))
                 healthBar.SetActive(true);
             else
                 healthBar.SetActive(false);
@@ -81,12 +81,5 @@ public class EnemyScreenSpace : MonoBehaviour
         if (canvas)
             canvas.GetComponent<ScreenSpaceCanvas>().RemoveFromCanvas(healthBar);
         Destroy(healthBar);
-    }
-
-    bool IsVisible()
-    {
-        RaycastHit hit;
-        Physics.Raycast(transform.position, enemy.target.transform.position - transform.position, out hit, 15, lm);
-        return hit.collider.gameObject.GetComponent<Model>();
     }
 }

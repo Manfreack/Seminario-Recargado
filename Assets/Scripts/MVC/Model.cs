@@ -37,6 +37,7 @@ public class Model : MonoBehaviour
     public float maxTimeToHeal;
     public float lifeRecoveredForSec;
     public float lifeRecoveredForSecInCombat;
+    public float maxTimeOnCombat;
 
     [Header("Player StaminaStats:")]
 
@@ -685,7 +686,8 @@ public class Model : MonoBehaviour
                 StartCoroutine(CombatDelayState());
             }
 
-            if (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2")
+            if (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
+                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2" || !view.anim.GetBool("TakeSword2"))
             {
                 if (isInCombat)
                 {
@@ -762,12 +764,10 @@ public class Model : MonoBehaviour
     public void CombatState()
     {
 
-        timeOnCombat = 10;
+        timeOnCombat = maxTimeOnCombat;
         if (!isInCombat)
         {
            view.TakeSword2();
-           //view.anim.SetBool("IdleCombat", true);
-           //view.anim.SetBool("Idle", true);
         }
         isInCombat = true;
     }
