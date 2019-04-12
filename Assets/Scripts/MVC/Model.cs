@@ -36,6 +36,7 @@ public class Model : MonoBehaviour
     public float timeToHeal;
     public float maxTimeToHeal;
     public float lifeRecoveredForSec;
+    public float lifeRecoveredForSecInCombat;
 
     [Header("Player StaminaStats:")]
 
@@ -291,6 +292,9 @@ public class Model : MonoBehaviour
         if(timeToHeal<=0 && life>0)
         {
             life += lifeRecoveredForSec * Time.deltaTime;
+            if (isInCombat) life += lifeRecoveredForSecInCombat * Time.deltaTime;
+            else life += lifeRecoveredForSec * Time.deltaTime;
+
             if (life > maxLife) life = maxLife;
             view.UpdateLifeBar(life / maxLife);
         }
@@ -685,7 +689,6 @@ public class Model : MonoBehaviour
             {
                 if (isInCombat)
                 {
-
                     countAnimAttack++;
                     view.AwakeTrail();
                     Attack();

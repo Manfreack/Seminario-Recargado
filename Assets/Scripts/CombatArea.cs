@@ -58,7 +58,7 @@ public class CombatArea : MonoBehaviour
         foreach (var item in myNPCs) item.target = player;
         foreach (var item in walls)
         {
-          if(myEntities>0) item.SetActive(true);
+          if(myEntities>0 && !aux) item.SetActive(true);
         }
     }
 }
