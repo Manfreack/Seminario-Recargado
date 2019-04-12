@@ -288,7 +288,7 @@ public class Model : MonoBehaviour
 
         timeToHeal -= Time.deltaTime;
 
-        if(timeToHeal<=0)
+        if(timeToHeal<=0 && life>0)
         {
             life += lifeRecoveredForSec * Time.deltaTime;
             if (life > maxLife) life = maxLife;
