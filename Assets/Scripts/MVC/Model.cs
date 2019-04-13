@@ -638,7 +638,8 @@ public class Model : MonoBehaviour
         if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onRollCombat && !onDefence)
         {
                     
-            if ((animClipName == "Attack3-END" && !preAttack4) || (animClipName == "Attack3-DAMAGE" && !preAttack4))
+           // if ((animClipName == "Attack3N-FINISH" && !preAttack4) || (animClipName == "Attack3-DAMAGE" && !preAttack4))
+            if ((animClipName == "Attack3N-FINISH" && !preAttack4))
             {
                view.AwakeTrail();
                countAnimAttack++;
@@ -654,7 +655,7 @@ public class Model : MonoBehaviour
             }
 
 
-            if (animClipName == "Attack2-Finish" && !preAttack3)
+            if (animClipName == "Attack2N-FINISH" && !preAttack3)
             {
                 countAnimAttack++;
                 view.AwakeTrail();
@@ -670,7 +671,7 @@ public class Model : MonoBehaviour
                 StartCoroutine(CombatDelayState());
             }
 
-            if (animClipName == "Attack1-Finish" && !preAttack2)
+            if (animClipName == "Attack1N-FINISH" && !preAttack2)
             {
                 countAnimAttack++;
                 view.AwakeTrail();
@@ -687,10 +688,11 @@ public class Model : MonoBehaviour
             }
 
             if (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
-                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2" || !view.anim.GetBool("TakeSword2"))
+                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2")
             {
                 if (isInCombat)
                 {
+
                     countAnimAttack++;
                     view.AwakeTrail();
                     Attack();
