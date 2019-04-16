@@ -27,7 +27,7 @@ public class ModelE_Melee : EnemyEntity
     public bool onAttackArea;
     public bool firstAttack;
     public bool checkTurn;
-    public bool flankSpeed;
+    public int flankDir;
     public bool testEnemy;
     bool firstHit;
     bool impulse;
@@ -48,6 +48,7 @@ public class ModelE_Melee : EnemyEntity
     float maxLife;
     public float timeToRetreat;
     public float startRetreat;
+    Vector3 vectoToNodeRetreat;
 
     public IEnumerator RetreatCorrutine()
     {
@@ -57,6 +58,7 @@ public class ModelE_Melee : EnemyEntity
 
     public void Awake()
     {
+        playerNodes.AddRange(FindObjectsOfType<CombatNode>());
         delayToAttack = UnityEngine.Random.Range(1f, 2f);
         maxDelayToAttack = delayToAttack;
         rb = gameObject.GetComponent<Rigidbody>();
@@ -192,9 +194,25 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnEnter += x =>
         {
-            int r = UnityEngine.Random.Range(0, 2);
-            if (r <= 0) flankSpeed = true;
-            if (r > 0) flankSpeed = false;
+            bool right = false;
+            bool left = false;
+
+          
+            foreach (var item in myWarriorFriends)
+            {
+                var relativePoint = transform.InverseTransformPoint(item.transform.position);
+
+                if (relativePoint.x < 0.0) left = true;
+    
+                else if (relativePoint.x > 0.0)  right = true;
+
+            }
+
+            if (right && !left) flankDir = 1;
+
+            if (!right && left) flankDir = 2;
+
+            if (!right && !left) flankDir = 0;
 
             delayToAttack = UnityEngine.Random.Range(1f, 2f);
 
@@ -249,12 +267,14 @@ public class ModelE_Melee : EnemyEntity
         retreat.OnEnter += x =>
         {
             timeToRetreat = startRetreat;
+            vectoToNodeRetreat = (FindNearCombatNode().transform.position - transform.position).normalized;
+            vectoToNodeRetreat.y = 0;
         };
 
         retreat.OnFixedUpdate += () =>
         {
 
-            currentAction = new A_WarriorRetreat(this);
+            currentAction = new A_WarriorRetreat(this, vectoToNodeRetreat);
 
             if (!isDead && !isAttack && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
 
@@ -273,10 +293,14 @@ public class ModelE_Melee : EnemyEntity
 
         follow.OnEnter += x =>
         {
+            pathToTarget.Clear();
+
             Node start = GetMyNode();
             Node end = GetMyTargetNode();
 
-            pathToTarget = MyBFS.GetPath(start, end, myNodes);
+            var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
+            originalPathToTarget.Remove(start);
+            pathToTarget.AddRange(originalPathToTarget);
             currentIndex = pathToTarget.Count;
 
             angleToPersuit = 180;
@@ -591,5 +615,16 @@ public class ModelE_Melee : EnemyEntity
     public void RemoveWarriorFriend(ModelE_Melee e)
     {
         e.myWarriorFriends.Remove(this);
+    }
+
+    public override CombatNode FindNearCombatNode()
+    {
+        var node = playerNodes.Where(x => !x.isBusy && x.meleeNode).OrderBy(x =>
+         {
+             var d = Vector3.Distance(x.transform.position, transform.position);
+             return d;
+         }).First();
+
+        return node;
     }
 }

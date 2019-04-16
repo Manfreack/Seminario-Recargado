@@ -150,6 +150,8 @@ public class Model : MonoBehaviour
     bool preAttack3;
     bool preAttack4;
 
+    public Transform test;
+
     [HideInInspector]
     public float fadeTimer;
 
@@ -641,13 +643,14 @@ public class Model : MonoBehaviour
            // if ((animClipName == "Attack3N-FINISH" && !preAttack4) || (animClipName == "Attack3-DAMAGE" && !preAttack4))
             if ((animClipName == "Attack3N-FINISH" && !preAttack4))
             {
+                Debug.Log(4);
                view.AwakeTrail();
                countAnimAttack++;
                Attack();
                timeDamage = 0.066667f;
                timeEndDamage = 0.1f;
-               timeImpulse = 0.01f;
-               timeEndImpulse = 0.2f;
+               timeImpulse = 0.1f;
+               timeEndImpulse = 0.1f;
                preAttack4 = true;
                stamina -= attackStamina + 3;
                view.UpdateStaminaBar(stamina / maxStamina);
@@ -657,13 +660,14 @@ public class Model : MonoBehaviour
 
             if (animClipName == "Attack2N-FINISH" && !preAttack3)
             {
+                Debug.Log(3);
                 countAnimAttack++;
                 view.AwakeTrail();
                 if (countAnimAttack > 3) countAnimAttack = 3;
                 Attack();
                 timeDamage = 0.066667f;
                 timeEndDamage = 0.1f;
-                timeImpulse = 0.01f;
+                timeImpulse = 0.1f;
                 timeEndImpulse = 0.2f;
                 preAttack3 = true;
                 stamina -= attackStamina;
@@ -673,6 +677,7 @@ public class Model : MonoBehaviour
 
             if (animClipName == "Attack1N-FINISH" && !preAttack2)
             {
+                Debug.Log(2);
                 countAnimAttack++;
                 view.AwakeTrail();
                 if (countAnimAttack > 2) countAnimAttack = 2;
@@ -692,14 +697,14 @@ public class Model : MonoBehaviour
             {
                 if (isInCombat)
                 {
-
+                    Debug.Log(1);
                     countAnimAttack++;
                     view.AwakeTrail();
                     Attack();
                     StartCoroutine(CombatDelayState());
                     timeDamage = 0.066667f;
                     timeEndDamage = 0.1f;
-                    timeImpulse = 0.08f;
+                    timeImpulse = 0.2f;
                     timeEndImpulse = 0.1f;
                     preAttack1 = true;
                     stamina -= attackStamina;
@@ -731,7 +736,7 @@ public class Model : MonoBehaviour
 
         foreach (var item in col)
         {
-            view.StartCoroutine(view.SlowSpeed());
+           // view.StartCoroutine(view.SlowSpeed());
             if(countAnimAttack>=3) item.GetDamage(attackDamage * 2);
             else item.GetDamage(attackDamage);
             item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);

@@ -483,4 +483,9 @@ public class ModelE_Sniper : EnemyEntity
     {
         nearEntities.Remove(e);
     }
+
+    public override CombatNode FindNearCombatNode()
+    {
+        throw new NotImplementedException();
+    }
 }

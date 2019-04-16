@@ -12,10 +12,10 @@ public class A_Persuit : i_EnemyActions
         _e.target.saveSword = true;
 
         if (!_e.onDamage)
-        {
+        {         
             _e.target.CombatState();
             Quaternion targetRotation;
-            var dir = (_e.target.transform.position - _e.transform.position).normalized;
+            var dir = (_e.FindNearCombatNode().transform.position - _e.transform.position).normalized;
             dir.y = 0;
             var avoid = _e.avoidVectObstacles.normalized;
             avoid.y = 0;

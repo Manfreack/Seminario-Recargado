@@ -79,19 +79,7 @@ public class Viewer : MonoBehaviour
 
     public void Update()
     {
-        preAttacktime -= Time.deltaTime;
-
-        if (preAttacktime < 0)
-        {
-            anim.SetBool("PreAttack", false);
-     
-        }
-        else
-        {
-            anim.SetBool("PreAttack", true);
-  
-        }
-
+       
         var velocityX = Input.GetAxis("Vertical");
         var velocityZ = Input.GetAxis("Horizontal");
 
@@ -458,9 +446,7 @@ public class Viewer : MonoBehaviour
     }
 
     public void BasicAttack()
-    {
-        if(currentAttackAnimation == 0) preAttacktime = 0.001f;
-        if(currentAttackAnimation == 4) preAttacktime = 0.001f;
+    {    
         if (currentAttackAnimation == 3)
         {
             preAttacktime = 0.001f;

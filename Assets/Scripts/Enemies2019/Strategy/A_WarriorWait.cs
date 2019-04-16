@@ -16,7 +16,11 @@ public class A_WarriorWait : i_EnemyActions
         {            
             _e.cm.times--;
             _e.timeToAttack = true;
-            if (!_e.cm.flanTicket && !_e.testEnemy)
+
+            var dir = (_e.target.transform.position - _e.transform.position).normalized;
+            var angle = Vector3.Angle(dir, _e.target.transform.forward);
+
+            if (!_e.cm.flanTicket && !_e.testEnemy && angle>90)
             {
                 _e.flank = true;
                 _e.cm.flanTicket = true;
@@ -32,6 +36,8 @@ public class A_WarriorWait : i_EnemyActions
             _dir.y = 0;
             targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
             _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
+
+          
             if (_e.warriorVectAvoidanceFlank != Vector3.zero)
             {
                 _e.viewDistanceAttack = 7;
@@ -47,16 +53,22 @@ public class A_WarriorWait : i_EnemyActions
              
             var rotateSpeed = 0;
 
-            if (_e.flankSpeed)
+            if (_e.flankDir==1)
             {
                 rotateSpeed = 35;
                 _e.WalkRightEvent();
             }
 
-            else
+            else if (_e.flankDir == 2)
             {
                 rotateSpeed = -35;
                 _e.WalkLeftEvent();
+            }
+
+            else
+            {
+                rotateSpeed = 0;
+                _e.CombatIdleEvent();
             }
 
             var dir = (_e.target.transform.position - _e.transform.position).normalized;

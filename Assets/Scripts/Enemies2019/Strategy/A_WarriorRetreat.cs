@@ -5,6 +5,7 @@ using UnityEngine;
 public class A_WarriorRetreat : i_EnemyActions
 {
     ModelE_Melee _e;
+    Vector3 _dir;
 
     public void Actions()
     {
@@ -16,13 +17,12 @@ public class A_WarriorRetreat : i_EnemyActions
         {
 
             _e.timeToAttack = false;
-            _e.WalkBackEvent();
-            _e.rb.MovePosition(_e.rb.position - _e.transform.forward * _e.speed * Time.deltaTime);
+            _e.WalkBackEvent();      
+            _e.transform.LookAt(_e.target.transform.position);
+            _e.rb.MovePosition(_e.rb.position + _dir * _e.speed * Time.deltaTime);
         }
 
         if (!_e.onRetreat && !_e.flank) _e.CombatIdleEvent();
-        if (!_e.onRetreat && _e.flank && _e.flankSpeed) _e.WalkRightEvent();
-        if (!_e.onRetreat && _e.flank && !_e.flankSpeed) _e.WalkLeftEvent();
 
         if (_e.timeToRetreat <= 0)
         {
@@ -42,8 +42,9 @@ public class A_WarriorRetreat : i_EnemyActions
         }
     }
 
-    public A_WarriorRetreat( ModelE_Melee e)
+    public A_WarriorRetreat( ModelE_Melee e , Vector3 dir)
     {
         _e = e;
+        _dir = dir;
     }
 }
