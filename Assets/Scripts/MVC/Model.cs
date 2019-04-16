@@ -38,6 +38,7 @@ public class Model : MonoBehaviour
     public float lifeRecoveredForSec;
     public float lifeRecoveredForSecInCombat;
     public float maxTimeOnCombat;
+    public float timeToRoll;
 
     [Header("Player StaminaStats:")]
 
@@ -343,36 +344,24 @@ public class Model : MonoBehaviour
 
         if (onRoll)
         {
-            if (isInCombat && timeToRotate)
+            timeToRoll -= Time.deltaTime;
+         
+            transform.forward = dirToDahs;               
+            
+            transform.position += transform.forward * 6 * Time.deltaTime;
+
+            if (timeToRoll <= 0)
             {
-                if (onDamage)
-                {
-                    onRoll = false;
-                    onRollCombat = false;
-                }
-                sleepAnim = false;
-                transform.forward = dirToDahs;
-                Quaternion targetRotation;
-                targetRotation = Quaternion.LookRotation(dirToDahs, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-                if (transform.forward == dirToDahs) timeToRotate = false;
-            }
-            else if (isInCombat && !timeToRotate && onRollCombat)
-            {
-                if (onDamage)
-                {
-                    onRoll = false;
-                    onRollCombat = false;
-                }
-                sleepAnim = false;
-                transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
+                var dir = mainCamera.forward;
+                dir.y = 0;
+                transform.forward = dir;
+                onRoll = false;
             }
 
-            if (!isInCombat)
+            if (onDamage)
             {
-                if (onDamage) onRoll = false;
-                sleepAnim = false;
-                transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * Time.deltaTime * 6, 2);
+                onRoll = false;
+                onRollCombat = false;
             }
         }
 
@@ -415,32 +404,33 @@ public class Model : MonoBehaviour
             RollCameraEvent();
             stamina -= rollStamina;
             view.UpdateStaminaBar(stamina / maxStamina);
-            if (isInCombat)
-            {
-                onRoll = true;
-                RollEvent();
-                dirToDahs = dir;
-                timeToRotate = true;
-            }
-            else RollEvent();
-
+      
+            RollEvent();
+            onRoll = true;
+            dirToDahs = dir;
+            dirToDahs.y = 0;
+            timeDamage = 0;
+            timeEndDamage = 0;
+            impulse = false;
+            timeToRoll = 0.45f;
             lastPosition = transform.position;
         }
     }
 
     public void StartRoll()
     {
-        timeDamage = 0;
+        /*timeDamage = 0;
         timeEndDamage = 0;
         impulse = false;
         onRoll = true;
         if (isInCombat) onRollCombat = true;
+        */
     }
 
     public void StopRoll()
     {
-        onRoll = false;
-        if (isInCombat) onRollCombat = false;
+       // onRoll = false;
+        //if (isInCombat) onRollCombat = false;
     }
 
     public void DrinkPotion(int i)
@@ -639,11 +629,9 @@ public class Model : MonoBehaviour
     {
         if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onRollCombat && !onDefence)
         {
-                    
-           // if ((animClipName == "Attack3N-FINISH" && !preAttack4) || (animClipName == "Attack3-DAMAGE" && !preAttack4))
+                           
             if ((animClipName == "Attack3N-FINISH" && !preAttack4))
             {
-                Debug.Log(4);
                view.AwakeTrail();
                countAnimAttack++;
                Attack();
@@ -660,7 +648,6 @@ public class Model : MonoBehaviour
 
             if (animClipName == "Attack2N-FINISH" && !preAttack3)
             {
-                Debug.Log(3);
                 countAnimAttack++;
                 view.AwakeTrail();
                 if (countAnimAttack > 3) countAnimAttack = 3;
@@ -677,7 +664,6 @@ public class Model : MonoBehaviour
 
             if (animClipName == "Attack1N-FINISH" && !preAttack2)
             {
-                Debug.Log(2);
                 countAnimAttack++;
                 view.AwakeTrail();
                 if (countAnimAttack > 2) countAnimAttack = 2;
@@ -695,9 +681,8 @@ public class Model : MonoBehaviour
             if (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
                 || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2")
             {
-                if (isInCombat)
+                if (isInCombat && !view.anim.GetBool("TakeSword2"))
                 {
-                    Debug.Log(1);
                     countAnimAttack++;
                     view.AwakeTrail();
                     Attack();

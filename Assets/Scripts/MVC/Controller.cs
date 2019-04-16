@@ -63,32 +63,63 @@ public class Controller : MonoBehaviour
     {
         if (!model.isPlatformJumping && !view.startFade.enabled && !view.pauseMenu.activeSelf)
         {
-            if (Input.GetKeyDown(KeyCode.Space) && pushD && !pushW && !pushS && !model.onRoll) model.Roll(transform.right);
 
-            if (Input.GetKeyDown(KeyCode.Space) && pushA && !pushW && !pushS && !model.onRoll) model.Roll(-transform.right);
-
-            if (Input.GetKeyDown(KeyCode.Space) && pushW && !pushS && !pushD && !pushA && !model.onRoll) model.Roll(transform.forward);
-
-            if (Input.GetKeyDown(KeyCode.Space) && pushS && !pushW && !pushD && !pushA && !model.onRoll)
-            {
-                model.Roll(-model.transform.forward);
+            if (Input.GetKeyDown(KeyCode.Space) && pushW && !pushA && !firstPushS && !pushD && !model.isDead)
+            {             
+                firstPushW = true;
+                model.Roll(model.mainCamera.forward);
             }
-            if (Input.GetKeyDown(KeyCode.Space) && pushW && pushD && !pushS && !model.onRoll) model.Roll(transform.forward);
 
-            if (Input.GetKeyDown(KeyCode.Space) && pushW && pushA && !pushS && !model.onRoll) model.Roll(transform.forward);
+            if (Input.GetKeyDown(KeyCode.Space) && pushS && !pushA && !firstPushW && !pushD && !model.isDead)
+            {            
+                firstPushS = true;
+                model.Roll(-model.mainCamera.forward);
+            }
 
-            if (Input.GetKeyDown(KeyCode.Space) && pushS && pushD && !pushW && !model.onRoll) model.Roll(-transform.forward);
+            if (Input.GetKeyDown(KeyCode.Space) && pushA && !firstPushD && !pushS && !pushW && !model.isDead)
+            {              
+                firstPushA = true;
+                model.Roll(-model.mainCamera.right);
+            }
 
-            if (Input.GetKeyDown(KeyCode.Space) && pushS && pushA && !pushW && !model.onRoll) model.Roll(-transform.forward);
+            if (Input.GetKeyDown(KeyCode.Space) && pushD && !firstPushA && !pushS && !pushW && !model.isDead)
+            {          
+                firstPushD = true;
+                model.Roll(model.mainCamera.right);
+            }
 
-            /*  if (Input.GetKeyUp(KeyCode.Alpha1)) model.CastPower1();
+            if (Input.GetKeyDown(KeyCode.Space) && pushW && pushA && !firstPushS && !firstPushD && !model.isDead)
+            {
+                firstPushW = true;
+                if (!firstPushD) firstPushA = true;
+                Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
+                if (firstPushA) model.Roll(dir);
+            }
 
-              if (Input.GetKeyUp(KeyCode.Alpha2)) model.CastPower2();
+            if (Input.GetKeyDown(KeyCode.Space) && pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0)
+            {
+                firstPushW = true;
+                if (!firstPushA) firstPushD = true;
+                Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
+                if (firstPushD) model.Roll(dir);
+            }
 
-              if (Input.GetKeyUp(KeyCode.Alpha3)) model.CastPower3();
+            if (Input.GetKeyDown(KeyCode.Space) && !firstPushW && pushA && pushS && !firstPushD && !model.isDead)
+            {
+                firstPushS = true;
+                if (!firstPushD) firstPushA = true;
+                Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
+                if (firstPushA) model.Roll(dir);
+            }
 
-              if (Input.GetKeyUp(KeyCode.Alpha4)) model.CastPower4();
-              */
+            if (Input.GetKeyDown(KeyCode.Space) && !firstPushW && !firstPushA && pushS && pushD && !model.isDead)
+            {
+                firstPushS = true;
+                if (!firstPushA) firstPushD = true;
+                Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
+                if (firstPushD) model.Roll(dir);
+            }
+
             if (Input.GetKey(KeyCode.E) && model.isInCombat && model.stamina>5)
             {
                 model.Defence();

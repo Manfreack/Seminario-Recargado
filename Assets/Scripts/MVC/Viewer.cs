@@ -453,7 +453,7 @@ public class Viewer : MonoBehaviour
             StartCoroutine(SmashParticleEvent());
         }
         currentAttackAnimation++;
-        Mathf.Clamp(currentAttackAnimation, 0, 4);
+        //Mathf.Clamp(currentAttackAnimation, 0, 4);
         anim.SetInteger("AttackAnim", currentAttackAnimation);
     }
   
