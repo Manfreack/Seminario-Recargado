@@ -625,11 +625,12 @@ public class Model : MonoBehaviour
         isIdle = false;
     }
 
-    public void NormalAttack()
+    public void NormalAttack(short key)
     {
         if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onRollCombat && !onDefence)
         {
-                           
+            CheckKey(key);
+
             if ((animClipName == "Attack3N-FINISH" && !preAttack4))
             {
                view.AwakeTrail();
@@ -707,8 +708,61 @@ public class Model : MonoBehaviour
 
     }
 
-    
+    public void CheckKey (short key)
+    {
+        Vector3 dir = Vector3.zero;
 
+        switch (key)
+        {
+            case 1:
+                dir = -mainCamera.forward + -mainCamera.right;
+                break;
+            case 2:
+                dir = -mainCamera.forward;
+                break;
+            case 3:
+                dir = -mainCamera.forward + mainCamera.right;
+                break;
+            case 4:
+                dir = -mainCamera.right;
+                break;
+            case 6:
+                dir = mainCamera.right;
+                break;
+            case 7:
+                dir = mainCamera.forward + -mainCamera.right;
+                break;
+            case 8:
+                dir = mainCamera.forward;
+                break;
+            case 9:
+                dir = mainCamera.forward + mainCamera.right;
+                break;
+
+            default:
+                break;
+        }
+
+        if (dir != Vector3.zero)
+        {
+            dir.y = 0;
+            StartCoroutine(RotatePlayer(dir));
+        }
+    }
+    
+    public IEnumerator RotatePlayer(Vector3 dir)
+    {
+        float speed = 350 / Vector3.Angle(transform.forward, dir);
+        float lerpAmount = 0;
+
+        while (Vector3.Angle(transform.forward, dir) > 1)
+        {
+            lerpAmount += Time.deltaTime * speed;
+            transform.forward = Vector3.Slerp(transform.forward, dir, lerpAmount);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+    
     public void MakeDamage()
     {      
         var col = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>());

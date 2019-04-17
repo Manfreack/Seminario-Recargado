@@ -65,25 +65,25 @@ public class Controller : MonoBehaviour
         {
 
             if (Input.GetKeyDown(KeyCode.Space) && pushW && !pushA && !firstPushS && !pushD && !model.isDead)
-            {             
+            {
                 firstPushW = true;
                 model.Roll(model.mainCamera.forward);
             }
 
             if (Input.GetKeyDown(KeyCode.Space) && pushS && !pushA && !firstPushW && !pushD && !model.isDead)
-            {            
+            {
                 firstPushS = true;
                 model.Roll(-model.mainCamera.forward);
             }
 
             if (Input.GetKeyDown(KeyCode.Space) && pushA && !firstPushD && !pushS && !pushW && !model.isDead)
-            {              
+            {
                 firstPushA = true;
                 model.Roll(-model.mainCamera.right);
             }
 
             if (Input.GetKeyDown(KeyCode.Space) && pushD && !firstPushA && !pushS && !pushW && !model.isDead)
-            {          
+            {
                 firstPushD = true;
                 model.Roll(model.mainCamera.right);
             }
@@ -120,7 +120,7 @@ public class Controller : MonoBehaviour
                 if (firstPushD) model.Roll(dir);
             }
 
-            if (Input.GetKey(KeyCode.E) && model.isInCombat && model.stamina>5)
+            if (Input.GetKey(KeyCode.E) && model.isInCombat && model.stamina > 5)
             {
                 model.Defence();
                 view.Defence();
@@ -135,17 +135,17 @@ public class Controller : MonoBehaviour
             {
                 model.SaveSword();
             }
-            
+
             if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A))
             {
 
                 if (!model.isRuning) view.FalseTrotAnim();
                 view.FalseAnimWalk();
             }
-        
+
             if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
             {
-                if(!view.anim.GetBool("IdleCombat")) view.anim.SetBool("Idle", true);
+                if (!view.anim.GetBool("IdleCombat")) view.anim.SetBool("Idle", true);
                 model.acceleration = 0;
                 view.FalseAnimRunSword();
                 view.FalseRunAnim();
@@ -185,12 +185,12 @@ public class Controller : MonoBehaviour
             if (Input.GetKey(KeyCode.S)) pushS = true;
             if (Input.GetKey(KeyCode.D)) pushD = true;
             if (Input.GetKey(KeyCode.A)) pushA = true;
-         
 
-            if (Input.GetKey(KeyCode.LeftShift) && model.stamina>5 )
+
+            if (Input.GetKey(KeyCode.LeftShift) && model.stamina > 5)
             {
-               view.FalseTrotAnim();
-               model.isRuning = true;
+                view.FalseTrotAnim();
+                model.isRuning = true;
             }
 
             if (!Input.GetKey(KeyCode.LeftShift))
@@ -202,10 +202,10 @@ public class Controller : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.LeftShift)) model.acceleration = 0;
 
 
-            if (Input.GetKeyDown(KeyCode.Mouse0) && !model.onAir && model.countAnimAttack<4)
+            if (Input.GetKeyDown(KeyCode.Mouse0) && !model.onAir && model.countAnimAttack < 4)
             {
                 useSword = true;
-                model.NormalAttack();
+                model.NormalAttack(AttackDirection());
             }
 
             if (Input.GetKeyDown(KeyCode.E)) model.StartInteraction();
@@ -260,9 +260,9 @@ public class Controller : MonoBehaviour
                 model.speed = 1.2f;
                 model.runSpeed = 3.1f;
                 firstPushW = true;
-                if(!firstPushD) firstPushA = true;
+                if (!firstPushD) firstPushA = true;
                 Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
-                if(firstPushA) model.Movement(dir);
+                if (firstPushA) model.Movement(dir);
             }
 
             if (pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0)
@@ -272,7 +272,7 @@ public class Controller : MonoBehaviour
                 firstPushW = true;
                 if (!firstPushA) firstPushD = true;
                 Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
-                if(firstPushD) model.Movement(dir);
+                if (firstPushD) model.Movement(dir);
             }
 
             if (!firstPushW && pushA && pushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0)
@@ -338,7 +338,7 @@ public class Controller : MonoBehaviour
                 model.runSpeed = 3.2f;
                 if (!firstPushD) firstPushA = true;
                 Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
-                if(firstPushA) model.CombatMovement(dir, true, false);
+                if (firstPushA) model.CombatMovement(dir, true, false);
             }
 
             if (pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0)
@@ -370,7 +370,48 @@ public class Controller : MonoBehaviour
                 Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
                 if (firstPushD) model.CombatMovement(dir, false, true);
             }
-        }      
+        }
+    }
+
+    public short AttackDirection()
+    {
+        if (Input.GetKey(KeyCode.W))
+        {
+            if (Input.GetKey(KeyCode.A))
+                return 7;
+            if (Input.GetKey(KeyCode.D))
+                return 9;
+            return 8;
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            if (Input.GetKey(KeyCode.A))
+                return 1;
+            if (Input.GetKey(KeyCode.D))
+                return 3;
+            return 2;
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            if (Input.GetKey(KeyCode.W))
+                return 7;
+            if (Input.GetKey(KeyCode.S))
+                return 1;
+            return 4;
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            if (Input.GetKey(KeyCode.W))
+                return 9;
+            if (Input.GetKey(KeyCode.S))
+                return 3;
+            return 6;
+        }
+
+        return 5;
     }
 }
 
