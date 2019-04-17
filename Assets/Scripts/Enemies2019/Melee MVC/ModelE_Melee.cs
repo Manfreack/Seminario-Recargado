@@ -568,6 +568,8 @@ public class ModelE_Melee : EnemyEntity
         life -= damage;
         _view.LifeBar(life / maxLife);
 
+        _view.CreatePopText(damage);
+
         if (life <= 0 && !isDead)
         {
             isDead = true;

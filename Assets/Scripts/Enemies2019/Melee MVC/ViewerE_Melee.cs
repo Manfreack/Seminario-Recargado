@@ -15,6 +15,7 @@ public class ViewerE_Melee : MonoBehaviour
     EnemyScreenSpace ess;
     float timeOnDamage;
     bool auxTakeDamage;
+    public GameObject prefabTextDamage;
 
     public IEnumerator DeadCorrutine()
     {
@@ -47,7 +48,6 @@ public class ViewerE_Melee : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         DamageShader();
@@ -163,9 +163,20 @@ public class ViewerE_Melee : MonoBehaviour
         timeOnDamage = 0.5f;
         if (!auxTakeDamage)
         {
-            auxTakeDamage = true;
-            
+            auxTakeDamage = true;          
         }
+
+    }
+
+    public void CreatePopText(float damage)
+    {
+        var damageText = Instantiate(prefabTextDamage);     
+        Vector2 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+        damageText.transform.position = screenPos;
+        damageText.GetComponent<PopText>().damageText = damage;
+        float distance = Vector3.Distance(transform.position, Camera.main.transform.position);
+        var depthUI = damageText.GetComponent<DepthUI>();
+        depthUI.depth = -distance;
     }
 
     public void DamageShader()
