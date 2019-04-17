@@ -58,21 +58,16 @@ public class Controller : MonoBehaviour
         if (!model.isPlatformJumping && !view.startFade.enabled && !view.pauseMenu.activeSelf)
         {         
 
-            if (Input.GetKey(KeyCode.E) && model.isInCombat && model.stamina>5)
+            if (Input.GetKey(KeyCode.Mouse1) && model.isInCombat && model.stamina>5)
             {
                 model.Defence();
                 view.Defence();
             }
-            if (!Input.GetKey(KeyCode.E))
+            if (!Input.GetKey(KeyCode.Mouse1))
             {
                 view.NoDefence();
                 model.StopDefence();
-            }
-
-            if (Input.GetKeyUp(KeyCode.C) && !model.saveSword && useSword)
-            {
-                model.SaveSword();
-            }
+            }        
             
             if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A))
             {

@@ -61,6 +61,8 @@ public class ViewerE_Melee : MonoBehaviour
                 auxTakeDamage = false;
             }
         }
+
+        if(_model.isDead) foreach (var item in myMats) item.SetFloat("_Intensity", 0);
     }
 
     public void CombatWalkAnim()
@@ -170,13 +172,16 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void CreatePopText(float damage)
     {
-        var damageText = Instantiate(prefabTextDamage);     
-        Vector2 screenPos = Camera.main.WorldToScreenPoint(transform.position);
-        damageText.transform.position = screenPos;
-        damageText.GetComponent<PopText>().damageText = damage;
-        float distance = Vector3.Distance(transform.position, Camera.main.transform.position);
-        var depthUI = damageText.GetComponent<DepthUI>();
-        depthUI.depth = -distance;
+        if (!_model.isDead)
+        {
+            var damageText = Instantiate(prefabTextDamage);
+            Vector2 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+            damageText.transform.position = screenPos;
+            damageText.GetComponent<PopText>().damageText = damage;
+            float distance = Vector3.Distance(transform.position, Camera.main.transform.position);
+            var depthUI = damageText.GetComponent<DepthUI>();
+            depthUI.depth = -distance;
+        }
     }
 
     public void DamageShader()

@@ -228,11 +228,12 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnUpdate += () =>
         {
-            var angle = transform.InverseTransformPoint(target.transform.position);
+            var dir = (target.transform.position - transform.position).normalized;
+            var angle = Vector3.Angle(dir, target.transform.forward);
 
-            if (timeToAttack && angle.z > 0 ) delayToAttack -= Time.deltaTime;
+            if (timeToAttack && angle > 80) delayToAttack -= Time.deltaTime;
 
-            else if (timeToAttack && angle.z < 0) delayToAttack -= Time.deltaTime / 2;
+            if (timeToAttack && angle < 80) delayToAttack -= Time.deltaTime / 2;
 
             angleToAttack = 110;
 
@@ -358,13 +359,7 @@ public class ModelE_Melee : EnemyEntity
             ca.myEntities--;
         };
 
-        _myFsm = new EventFSM<EnemyInputs>(patrol);
-
-        die.OnUpdate += () =>
-        {
-            Debug.Log("mori");
-            Debug.Log(currentAction);
-        };
+        _myFsm = new EventFSM<EnemyInputs>(patrol);     
 
     }
     public void SendInputToFSM(EnemyInputs inp)
@@ -388,14 +383,19 @@ public class ModelE_Melee : EnemyEntity
         avoidVectObstacles = ObstacleAvoidance();
         entitiesAvoidVect = EntitiesAvoidance();
 
-        if (target != null  && !isAttack && !onAttackArea && SearchForTarget.SearchTarget(target.transform, viewDistancePersuit, angleToPersuit, transform, true, layerObst)) isPersuit = true;
-        else isPersuit = false;
+        if (target != null)
+        {
 
-        if (target != null  && !onAttackArea && SearchForTarget.SearchTarget(target.transform, viewDistanceAttack, angleToAttack, transform, true, layerObst)) isAttack = true;
-        else isAttack = false;
+            if (!isAttack && !onAttackArea && SearchForTarget.SearchTarget(target.transform, viewDistancePersuit, angleToPersuit, transform, true, layerObst)) isPersuit = true;
+            else isPersuit = false;
 
-        if (target != null && SearchForTarget.SearchTarget(target.transform, distanceToHit, angleToHit , transform, true, layerObst)) onAttackArea = true;
-        else onAttackArea = false;
+            if (!onAttackArea && SearchForTarget.SearchTarget(target.transform, viewDistanceAttack, angleToAttack, transform, true, layerObst)) isAttack = true;
+            else isAttack = false;
+
+            if (SearchForTarget.SearchTarget(target.transform, distanceToHit, angleToHit, transform, true, layerObst)) onAttackArea = true;
+            else onAttackArea = false;
+
+        }
 
         if (onDamage)
         {
@@ -412,7 +412,7 @@ public class ModelE_Melee : EnemyEntity
             SendInputToFSM(EnemyInputs.DIE);
         }
 
-        if (_view._anim.GetBool("Attack"))
+        if (_view._anim.GetBool("Attack") && !isDead)
         {
             transform.LookAt(target.transform.position);
         }
@@ -560,7 +560,6 @@ public class ModelE_Melee : EnemyEntity
     public override void GetDamage(float damage)
     {
         timeToRetreat = startRetreat;
-        delayToAttack -= 0.5f;
         timeOnDamage = 0.5f;
         if (!onDamage) onDamage = true;
         if (delayToAttack >= maxDelayToAttack) delayToAttack = maxDelayToAttack;

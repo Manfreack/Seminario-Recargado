@@ -8,7 +8,7 @@ public class A_FollowTarget : i_EnemyActions
 
     public void Actions()
     {
-        Debug.Log("follow");
+
 
         _entity.target.CombatState();
         _entity.target.saveSword = true;

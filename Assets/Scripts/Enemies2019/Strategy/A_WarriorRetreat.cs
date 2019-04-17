@@ -39,7 +39,7 @@ public class A_WarriorRetreat : i_EnemyActions
             _e.onRetreat = false;
             _e.timeToAttack = false;
 
-            if(_e.myWarriorFriends.Count>=2)
+            if(_e.myWarriorFriends.Count>2)
             {
                if(!_e.checkTurn) _e.StartCoroutine(_e.DelayTurn());
             }

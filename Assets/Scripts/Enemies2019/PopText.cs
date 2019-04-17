@@ -18,8 +18,9 @@ public class PopText : MonoBehaviour
     void Start()
     {
         transform.SetParent(FindObjectOfType<Canvas>().transform, false);
-        myText = GetComponent<Text>();        
-        myText.text = damageText.ToString();
+        myText = GetComponent<Text>();
+        int damage = (int)damageText;
+        myText.text = damage.ToString();
         StartCoroutine(Destroy());
     }
 

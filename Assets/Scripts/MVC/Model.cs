@@ -39,6 +39,7 @@ public class Model : MonoBehaviour
     public float lifeRecoveredForSecInCombat;
     public float maxTimeOnCombat;
     public float timeToRoll;
+    bool makingDamage;
 
     [Header("Player StaminaStats:")]
 
@@ -129,9 +130,6 @@ public class Model : MonoBehaviour
     bool timeToRotate;
     Vector3 dirToDahs;
     public float impulseForce;
-
-    float timeDamage;
-    float timeEndDamage;
 
     float timeImpulse;
     float timeEndImpulse;
@@ -286,9 +284,8 @@ public class Model : MonoBehaviour
             currentPotionEffect.PotionEffect();
 
         animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-
       
-        TimeOnDamage();
+        TimeToDoDamage();
         ImpulseAttackAnimation();
         RollImpulse();
 
@@ -302,15 +299,21 @@ public class Model : MonoBehaviour
         else view.startFade.enabled = false;
     }
 
-    public void TimeOnDamage()
+    public void TimeToDoDamage()
     {
-        timeDamage -= Time.deltaTime;
+        if (makingDamage && animClipName == "Attack4N-DAMAGE") MakeDamage();
+        if (makingDamage && animClipName == "Attack3N-DAMAGE") MakeDamage();
+        if (makingDamage && animClipName == "Attack2N-DAMAGE") MakeDamage();
+        if (makingDamage && animClipName == "Attack1N-DAMAGE") MakeDamage();
+
+       /* timeDamage -= Time.deltaTime;
 
         if (timeDamage < 0)
         {
             timeEndDamage -= Time.deltaTime;
             if (timeEndDamage > 0) MakeDamage();
         }
+        */
     }
 
     public void ImpulseAttackAnimation()
@@ -342,8 +345,7 @@ public class Model : MonoBehaviour
             onRoll = true;
             dirToDahs = dir;
             dirToDahs.y = 0;
-            timeDamage = 0;
-            timeEndDamage = 0;
+            makingDamage = false;
             impulse = false;
             timeToRoll = 0.45f;
             lastPosition = transform.position;
@@ -600,22 +602,25 @@ public class Model : MonoBehaviour
     {
         dirToRotateAttack = d;
 
-        if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onDefence)
+        if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onDefence && !view.anim.GetBool("SaveSword2"))
         {
-                           
+
+            view.anim.SetLayerWeight(0, 1);
+            view.anim.SetLayerWeight(1, 0);
+            view.anim.SetBool("TakeSword2", false);
+
             if ((animClipName == "Attack3N-FINISH" && !preAttack4))
             {
                view.AwakeTrail();
                countAnimAttack++;
                Attack();
-               timeDamage = 0.066667f;
-               timeEndDamage = 0.1f;
+               makingDamage = true;
                timeImpulse = 0.1f;
                timeEndImpulse = 0.1f;
                preAttack4 = true;
                stamina -= attackStamina + 3;
                view.UpdateStaminaBar(stamina / maxStamina);
-               StartCoroutine(CombatDelayState());
+               CombatState();
                timeToRotateAttack = 0.3f;
             }
 
@@ -626,14 +631,13 @@ public class Model : MonoBehaviour
                 view.AwakeTrail();
                 if (countAnimAttack > 3) countAnimAttack = 3;
                 Attack();
-                timeDamage = 0.066667f;
-                timeEndDamage = 0.1f;
+                makingDamage = true;
                 timeImpulse = 0.1f;
                 timeEndImpulse = 0.2f;
                 preAttack3 = true;
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
-                StartCoroutine(CombatDelayState());
+                CombatState();
                 timeToRotateAttack = 0.3f;
             }
 
@@ -643,29 +647,28 @@ public class Model : MonoBehaviour
                 view.AwakeTrail();
                 if (countAnimAttack > 2) countAnimAttack = 2;
                 Attack();
-                timeDamage = 0.1f;
-                timeEndDamage = 0.12f;
+                makingDamage = true;
                 timeImpulse = 0.01f;
                 timeEndImpulse = 0.3f;
                 preAttack2 = true;
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
-                StartCoroutine(CombatDelayState());
+                CombatState();
                 timeToRotateAttack = 0.3f;
             }
 
             if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
-                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2") && !preAttack1)
+                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2") && !preAttack1 && countAnimAttack==0)
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
                 {
+
+                    
                     countAnimAttack++;
                     view.AwakeTrail();
                     Attack();
-                    StartCoroutine(CombatDelayState());
-                    timeDamage = 0.066667f;
-                    timeEndDamage = 0.1f;
-                    timeImpulse = 0.2f;
+                    makingDamage = true;
+                    timeImpulse = 0.02f;
                     timeEndImpulse = 0.1f;
                     preAttack1 = true;
                     stamina -= attackStamina;
@@ -701,14 +704,13 @@ public class Model : MonoBehaviour
             if(countAnimAttack>=3) item.GetDamage(attackDamage * 2);
             else item.GetDamage(attackDamage);
             item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
-            timeDamage = 0;
-            timeEndDamage = 0;
+            makingDamage = false;
         }
 
         foreach (var item in desMesh)
         {
             item.StartCoroutine(item.startDisolve());
-            timeDamage = 0;
+            makingDamage = false;
         }
     }
 
@@ -786,8 +788,7 @@ public class Model : MonoBehaviour
         StartCoroutine(OnDamageDelay());
         timeEndImpulse = 0;
         timeImpulse = 0;
-        timeDamage = 0;
-        timeEndDamage = 0;
+        makingDamage = false;
         Vector3 dir = transform.position - enemy.position;
         float angle = Vector3.Angle(dir, transform.forward);
         if (angle < 90) isBehind = true;
