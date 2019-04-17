@@ -44,7 +44,6 @@ public class PowerManager : MonoBehaviour {
     public void WarriorRotatePower(Powers power, Model model) {
 
         model.ReturnBulletToPool(power);
-        currentPowerAction = new RotateAttackWarrior(model.transform);
         currentPowerAction.Ipower();
         constancepower = false;
     }
@@ -52,21 +51,18 @@ public class PowerManager : MonoBehaviour {
     public void JumpAttackWarrior(Powers power, Model model) {
 
         model.ReturnBulletToPool(power);
-        currentPowerAction = new JumpAttackWarrior(mousePosition, model.transform, model);
         constancepower = true;
     }
 
     public void StocadaWarrior(Powers power, Model model) {
 
         model.ReturnBulletToPool(power);
-        currentPowerAction = new StocadaWarrior(model, this);
         constancepower = true;
     }
 
     public void UppercutWarrior(Powers power, Model model) {
 
         model.ReturnBulletToPool(power);
-        currentPowerAction = new UppercutWarrior(model);
         currentPowerAction.Ipower();
         constancepower = false;
     }
@@ -95,7 +91,6 @@ public class PowerManager : MonoBehaviour {
     public void ChargeTanke(Powers power, Model model) {
 
         model.ReturnBulletToPool(power);
-        currentPowerAction = new ChargeTanke(model);
         constancepower = true;
     }
 

@@ -56,6 +56,14 @@ public class ModelE_Melee : EnemyEntity
         onRetreat = true;
     }
 
+    public IEnumerator DelayTurn()
+    {
+        checkTurn = true;
+        yield return new WaitForSeconds(2);
+        checkTurn = false;
+
+    }
+
     public void Awake()
     {
         playerNodes.AddRange(FindObjectsOfType<CombatNode>());
@@ -220,8 +228,11 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnUpdate += () =>
         {
+            var angle = transform.InverseTransformPoint(target.transform.position);
 
-            if (timeToAttack) delayToAttack -= Time.deltaTime;
+            if (timeToAttack && angle.z > 0 ) delayToAttack -= Time.deltaTime;
+
+            else if (timeToAttack && angle.z < 0) delayToAttack -= Time.deltaTime / 2;
 
             angleToAttack = 110;
 
@@ -582,8 +593,6 @@ public class ModelE_Melee : EnemyEntity
 
     public override void MakeDamage()
     {
-        checkTurn = false;
-
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
         if (player != null)
         {

@@ -43,16 +43,10 @@ public class Controller : MonoBehaviour
     void Awake()
     {
         model.Attack += view.BasicAttack;
-        model.OnDamage += view.ReciveDamage;
-        model.Estocada += view.Estocada;
-        model.RotateAttack += view.GolpeGiratorio;
-        model.SaltoyGolpe1 += view.SaltoyGolpe1;
-        model.SaltoyGolpe2 += view.SaltoyGolpe2;
-        model.Uppercut += view.Uppercut;
+        model.OnDamage += view.ReciveDamage;       
         model.Dead += view.Dead;
         model.Trot += view.TrotAnim;
         model.Run += view.RunAnim;
-        model.Fall += view.Falling;
         model.BlockEvent += view.Blocked;
         model.RollEvent += view.RollAnim;
         model.RollCameraEvent += model.mainCamera.GetComponent<CamController>().RollEvent;
@@ -62,65 +56,9 @@ public class Controller : MonoBehaviour
     void Update()
     {
         if (!model.isPlatformJumping && !view.startFade.enabled && !view.pauseMenu.activeSelf)
-        {
+        {         
 
-            if (Input.GetKeyDown(KeyCode.Space) && pushW && !pushA && !firstPushS && !pushD && !model.isDead)
-            {
-                firstPushW = true;
-                model.Roll(model.mainCamera.forward);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && pushS && !pushA && !firstPushW && !pushD && !model.isDead)
-            {
-                firstPushS = true;
-                model.Roll(-model.mainCamera.forward);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && pushA && !firstPushD && !pushS && !pushW && !model.isDead)
-            {
-                firstPushA = true;
-                model.Roll(-model.mainCamera.right);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && pushD && !firstPushA && !pushS && !pushW && !model.isDead)
-            {
-                firstPushD = true;
-                model.Roll(model.mainCamera.right);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && pushW && pushA && !firstPushS && !firstPushD && !model.isDead)
-            {
-                firstPushW = true;
-                if (!firstPushD) firstPushA = true;
-                Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
-                if (firstPushA) model.Roll(dir);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0)
-            {
-                firstPushW = true;
-                if (!firstPushA) firstPushD = true;
-                Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
-                if (firstPushD) model.Roll(dir);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && !firstPushW && pushA && pushS && !firstPushD && !model.isDead)
-            {
-                firstPushS = true;
-                if (!firstPushD) firstPushA = true;
-                Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
-                if (firstPushA) model.Roll(dir);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && !firstPushW && !firstPushA && pushS && pushD && !model.isDead)
-            {
-                firstPushS = true;
-                if (!firstPushA) firstPushD = true;
-                Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
-                if (firstPushD) model.Roll(dir);
-            }
-
-            if (Input.GetKey(KeyCode.E) && model.isInCombat && model.stamina > 5)
+            if (Input.GetKey(KeyCode.E) && model.isInCombat && model.stamina>5)
             {
                 model.Defence();
                 view.Defence();
@@ -135,17 +73,17 @@ public class Controller : MonoBehaviour
             {
                 model.SaveSword();
             }
-
+            
             if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A))
             {
 
                 if (!model.isRuning) view.FalseTrotAnim();
                 view.FalseAnimWalk();
             }
-
+        
             if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
             {
-                if (!view.anim.GetBool("IdleCombat")) view.anim.SetBool("Idle", true);
+                if(!view.anim.GetBool("IdleCombat")) view.anim.SetBool("Idle", true);
                 model.acceleration = 0;
                 view.FalseAnimRunSword();
                 view.FalseRunAnim();
@@ -154,7 +92,6 @@ public class Controller : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.A))
             {
                 view.anim.SetBool("Idle", false);
-                //view.anim.SetBool("IdleCombat", false);
             }
 
             if (!Input.GetKey(KeyCode.W))
@@ -185,12 +122,12 @@ public class Controller : MonoBehaviour
             if (Input.GetKey(KeyCode.S)) pushS = true;
             if (Input.GetKey(KeyCode.D)) pushD = true;
             if (Input.GetKey(KeyCode.A)) pushA = true;
+         
 
-
-            if (Input.GetKey(KeyCode.LeftShift) && model.stamina > 5)
+            if (Input.GetKey(KeyCode.LeftShift) && model.stamina>5 )
             {
-                view.FalseTrotAnim();
-                model.isRuning = true;
+               view.FalseTrotAnim();
+               model.isRuning = true;
             }
 
             if (!Input.GetKey(KeyCode.LeftShift))
@@ -202,15 +139,76 @@ public class Controller : MonoBehaviour
             if (Input.GetKeyUp(KeyCode.LeftShift)) model.acceleration = 0;
 
 
-            if (Input.GetKeyDown(KeyCode.Mouse0) && !model.onAir && model.countAnimAttack < 4)
+            if (Input.GetKeyDown(KeyCode.Mouse0) && model.countAnimAttack<4)
             {
                 useSword = true;
-                model.NormalAttack(AttackDirection());
+
+                if (!pushW && !pushA && !pushS && !pushD) model.NormalAttack(model.transform.forward);
+                if (pushW && !pushA && !firstPushS && !pushD) model.NormalAttack(model.mainCamera.forward);
+                if (pushS && !pushA && !firstPushW && !pushD) model.NormalAttack(-model.mainCamera.forward);
+                if (pushA && !firstPushD && !pushS && !pushW) model.NormalAttack(-model.mainCamera.right);
+                if (pushD && !firstPushA && !pushS && !pushW) model.NormalAttack(model.mainCamera.right);
+
+                if (pushW && pushA && !firstPushS && !firstPushD)
+                {
+                    Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
+                    model.NormalAttack(dir);
+                }
+
+                if (pushW && !firstPushA && !firstPushS && pushD)
+                {                  
+                    Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
+                    model.NormalAttack(dir);
+                }
+
+                if (!firstPushW && pushA && pushS && !firstPushD)
+                {                  
+                    Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
+                    model.NormalAttack(dir);
+                }
+
+                if (!firstPushW && !firstPushA && pushS && pushD)
+                {
+                    Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
+                    model.NormalAttack(dir);
+                }
+
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (!pushW && !pushA && !pushS && !pushD) model.Roll(model.transform.forward);
+                if (pushW && !pushA && !firstPushS && !pushD) model.Roll(model.mainCamera.forward);
+                if (pushS && !pushA && !firstPushW && !pushD) model.Roll(-model.mainCamera.forward);
+                if (pushA && !firstPushD && !pushS && !pushW) model.Roll(-model.mainCamera.right);
+                if (pushD && !firstPushA && !pushS && !pushW) model.Roll(model.mainCamera.right);
+
+                if (pushW && pushA && !firstPushS && !firstPushD)
+                {
+                    Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
+                    model.Roll(dir);
+                }
+
+                if (pushW && !firstPushA && !firstPushS && pushD)
+                {
+                    Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
+                    model.Roll(dir);
+                }
+
+                if (!firstPushW && pushA && pushS && !firstPushD)
+                {
+                    Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
+                    model.Roll(dir);
+                }
+
+                if (!firstPushW && !firstPushA && pushS && pushD)
+                {
+                    Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
+                    model.Roll(dir);
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.E)) model.StartInteraction();
-
-            if (Input.GetKeyDown(KeyCode.J)) StartCoroutine(model.PlatformJump());
 
             if (Input.GetKeyDown(KeyCode.Alpha1)) model.DrinkPotion(1);
             if (Input.GetKeyDown(KeyCode.Alpha2)) model.DrinkPotion(3);
@@ -223,7 +221,7 @@ public class Controller : MonoBehaviour
     {
         if (!model.isInCombat)
         {
-            if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0)
+            if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = _SpeedWalk;
                 model.runSpeed = _SpeedRun;
@@ -231,7 +229,7 @@ public class Controller : MonoBehaviour
                 model.Movement(model.mainCamera.forward);
             }
 
-            if (pushS && !pushA && !firstPushW && !pushD && !model.isDead && model.countAnimAttack <= 0)
+            if (pushS && !pushA && !firstPushW && !pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = _SpeedWalk;
                 model.runSpeed = _SpeedRun;
@@ -239,7 +237,7 @@ public class Controller : MonoBehaviour
                 model.Movement(-model.mainCamera.forward);
             }
 
-            if (pushA && !firstPushD && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
+            if (pushA && !firstPushD && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = _SpeedWalk;
                 model.runSpeed = _SpeedRun;
@@ -247,7 +245,7 @@ public class Controller : MonoBehaviour
                 model.Movement(-model.mainCamera.right);
             }
 
-            if (pushD && !firstPushA && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
+            if (pushD && !firstPushA && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = _SpeedWalk;
                 model.runSpeed = _SpeedRun;
@@ -255,27 +253,27 @@ public class Controller : MonoBehaviour
                 model.Movement(model.mainCamera.right);
             }
 
-            if (pushW && pushA && !firstPushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0)
+            if (pushW && pushA && !firstPushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = 1.2f;
                 model.runSpeed = 3.1f;
                 firstPushW = true;
-                if (!firstPushD) firstPushA = true;
+                if(!firstPushD) firstPushA = true;
                 Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
-                if (firstPushA) model.Movement(dir);
+                if(firstPushA) model.Movement(dir);
             }
 
-            if (pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0)
+            if (pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = 1.2f;
                 model.runSpeed = 3.1f;
                 firstPushW = true;
                 if (!firstPushA) firstPushD = true;
                 Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
-                if (firstPushD) model.Movement(dir);
+                if(firstPushD) model.Movement(dir);
             }
 
-            if (!firstPushW && pushA && pushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0)
+            if (!firstPushW && pushA && pushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = 1.2f;
                 model.runSpeed = 3.1f;
@@ -285,7 +283,7 @@ public class Controller : MonoBehaviour
                 if (firstPushA) model.Movement(dir);
             }
 
-            if (!firstPushW && !firstPushA && pushS && pushD && !model.isDead && model.countAnimAttack <= 0)
+            if (!firstPushW && !firstPushA && pushS && pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = 1.2f;
                 model.runSpeed = 3.1f;
@@ -299,7 +297,7 @@ public class Controller : MonoBehaviour
 
         else
         {
-            if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0)
+            if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = _SpeedWalkFight;
                 model.runSpeed = _SpeedRunFight;
@@ -307,7 +305,7 @@ public class Controller : MonoBehaviour
                 model.CombatMovement(model.mainCamera.forward, true, false);
             }
 
-            if (pushS && !pushA && !firstPushW && !pushD && !model.isDead && model.countAnimAttack <= 0)
+            if (pushS && !pushA && !firstPushW && !pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 firstPushS = true;
                 model.speed = _SpeedWalkFight;
@@ -315,7 +313,7 @@ public class Controller : MonoBehaviour
                 model.CombatMovement(-model.mainCamera.forward, false, true);
             }
 
-            if (pushA && !firstPushD && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
+            if (pushA && !firstPushD && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = _SpeedWalkFight;
                 model.runSpeed = _SpeedRunFight;
@@ -323,7 +321,7 @@ public class Controller : MonoBehaviour
                 model.CombatMovement(-model.mainCamera.right, false, true);
             }
 
-            if (pushD && !firstPushA && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
+            if (pushD && !firstPushA && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = _SpeedWalkFight;
                 model.runSpeed = _SpeedRunFight;
@@ -331,17 +329,17 @@ public class Controller : MonoBehaviour
                 model.CombatMovement(model.mainCamera.right, false, true);
             }
 
-            if (pushW && pushA && !firstPushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0)
+            if (pushW && pushA && !firstPushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 firstPushW = true;
                 model.speed = 1.7f;
                 model.runSpeed = 3.2f;
                 if (!firstPushD) firstPushA = true;
                 Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
-                if (firstPushA) model.CombatMovement(dir, true, false);
+                if(firstPushA) model.CombatMovement(dir, true, false);
             }
 
-            if (pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0)
+            if (pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 firstPushW = true;
                 model.speed = 1.7f;
@@ -351,7 +349,7 @@ public class Controller : MonoBehaviour
                 if (firstPushD) model.CombatMovement(dir, true, false);
             }
 
-            if (!firstPushW && pushA && pushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0)
+            if (!firstPushW && pushA && pushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 firstPushS = true;
                 model.speed = 1.7f;
@@ -361,7 +359,7 @@ public class Controller : MonoBehaviour
                 if (firstPushA) model.CombatMovement(dir, false, true);
             }
 
-            if (!firstPushW && !firstPushA && pushS && pushD && !model.isDead && model.countAnimAttack <= 0)
+            if (!firstPushW && !firstPushA && pushS && pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
                 model.speed = 1.7f;
                 model.runSpeed = 3.2f;
@@ -370,48 +368,7 @@ public class Controller : MonoBehaviour
                 Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
                 if (firstPushD) model.CombatMovement(dir, false, true);
             }
-        }
-    }
-
-    public short AttackDirection()
-    {
-        if (Input.GetKey(KeyCode.W))
-        {
-            if (Input.GetKey(KeyCode.A))
-                return 7;
-            if (Input.GetKey(KeyCode.D))
-                return 9;
-            return 8;
-        }
-
-        if (Input.GetKey(KeyCode.S))
-        {
-            if (Input.GetKey(KeyCode.A))
-                return 1;
-            if (Input.GetKey(KeyCode.D))
-                return 3;
-            return 2;
-        }
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            if (Input.GetKey(KeyCode.W))
-                return 7;
-            if (Input.GetKey(KeyCode.S))
-                return 1;
-            return 4;
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            if (Input.GetKey(KeyCode.W))
-                return 9;
-            if (Input.GetKey(KeyCode.S))
-                return 3;
-            return 6;
-        }
-
-        return 5;
+        }      
     }
 }
 

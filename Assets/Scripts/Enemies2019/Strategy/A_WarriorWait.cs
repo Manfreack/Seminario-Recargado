@@ -9,10 +9,11 @@ public class A_WarriorWait : i_EnemyActions
 
     public void Actions()
     {
+
         _e.target.CombatState();
         _e.target.saveSword = true;
 
-        if (!_e.timeToAttack && _e.cm.times > 0)
+        if (!_e.timeToAttack && _e.cm.times > 0 && !_e.checkTurn)
         {            
             _e.cm.times--;
             _e.timeToAttack = true;
@@ -37,15 +38,12 @@ public class A_WarriorWait : i_EnemyActions
             targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
             _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
 
-          
-            if (_e.warriorVectAvoidanceFlank != Vector3.zero)
+            if(_e.warriorVectAvoidance != Vector3.zero)
             {
-                _e.viewDistanceAttack = 7;
-                _e.MoveEvent();
-                _e.transform.position -= _e.transform.forward * _e.speed * Time.deltaTime;
+                _e.transform.position += _e.warriorVectAvoidance * _e.speed * Time.deltaTime;
             }
-            else _e.viewDistanceAttack = 3.79f;
-
+          
+      
         }
 
         if (_e.flank && !_e.onDamage)

@@ -321,15 +321,6 @@ public class Viewer : MonoBehaviour
         }
     }
 
-    public void Falling()
-    {
-        anim.SetBool("FallBool", true);
-    }
-
-    public void FalseFall()
-    {
-        anim.SetBool("FallBool", false);
-    }
 
     public void DesactivateLayer()
     {
@@ -338,44 +329,6 @@ public class Viewer : MonoBehaviour
         anim.SetBool("TakeSword", false);
     }
 
-    public void Estocada()
-    {
-        //  anim.SetLayerWeight(1, 0);
-        anim.SetBool("EstocadaBool", true);
-    }
-
-    public void NoEstocada()
-    {
-        //  anim.SetLayerWeight(1, 0);
-        anim.SetBool("EstocadaBool", false);
-    }
-
-    public void BackEstocada()
-    {
-        //  anim.SetLayerWeight(1, 0);
-        anim.SetBool("BackEstocada", true);
-    }
-
-    public void NoBackEstocada()
-    {
-        anim.SetBool("BackEstocada", false);
-    }
-
-    public void GolpeGiratorio()
-    {
-        // anim.SetLayerWeight(1, 0);
-        if (!model.mySkills.secondRotate) anim.SetBool("GolpeGiratorio2", true);
-
-        else anim.SetBool("GolpeGiratorio", true);
-    }
-
-    public void NoGolpeGiratorio()
-    {
-        //  anim.SetLayerWeight(1, 0);
-        if (!model.mySkills.secondRotate) anim.SetBool("GolpeGiratorio2", false);
-
-        else anim.SetBool("GolpeGiratorio", false);
-    }
 
     public void Defence()
     {
@@ -387,48 +340,12 @@ public class Viewer : MonoBehaviour
         anim.SetBool("Defence", false);
     }
 
-    public void SaltoyGolpe1()
-    {
-        //  anim.SetLayerWeight(1, 0);
-        anim.SetBool("JumpAttack", true);
-    }
-
-    public void NoSaltoyGolpe1()
-    {
-        // anim.SetLayerWeight(1, 0);
-        anim.SetBool("JumpAttack", false);
-    }
-
-    public void SaltoyGolpe2()
-    {
-        // anim.SetLayerWeight(1, 0);
-        anim.SetBool("JumpAttack2", true);
-    }
-
-    public void NoSaltoyGolpe2()
-    {
-        // anim.SetLayerWeight(1, 0);
-        anim.SetBool("JumpAttack2", false);
-    }
-
-    public void Uppercut()
-    {
-        // anim.SetLayerWeight(1, 0);
-        anim.SetBool("Uppercut", true);
-    }
-
-    public void FalseUppercut()
-    {
-        //  anim.SetLayerWeight(1, 0);
-        anim.SetBool("Uppercut", false);
-    }
 
     public void ReciveDamage()
     {
         if (!model.onPowerState)
         {
             camShake.ShakeCamera(3.5f, 1);
-            //  anim.SetLayerWeight(1, 0);
             var random = Random.Range(1, 4);
             anim.SetInteger("TakeDamage", random);
         }
@@ -441,7 +358,6 @@ public class Viewer : MonoBehaviour
 
     public void NoReciveDamage()
     {
-        //  anim.SetLayerWeight(1, 0);
         anim.SetInteger("TakeDamage", 0);
     }
 
@@ -453,7 +369,6 @@ public class Viewer : MonoBehaviour
             StartCoroutine(SmashParticleEvent());
         }
         currentAttackAnimation++;
-        //Mathf.Clamp(currentAttackAnimation, 0, 4);
         anim.SetInteger("AttackAnim", currentAttackAnimation);
     }
   
