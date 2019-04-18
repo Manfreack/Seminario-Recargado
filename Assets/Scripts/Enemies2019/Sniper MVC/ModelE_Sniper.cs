@@ -20,7 +20,6 @@ public class ModelE_Sniper : EnemyEntity
     public bool onMeleeAttack;
     public float timeToMeleeAttack;
     public bool cooldwonToGoBack;
-    
 
     public Action TakeDamageEvent;
     public Action DeadEvent;
@@ -48,11 +47,12 @@ public class ModelE_Sniper : EnemyEntity
 
     public void Awake()
     {
+        playerNodes.AddRange(FindObjectsOfType<CombatNode>());
         rb = gameObject.GetComponent<Rigidbody>();
         _view = GetComponent<ViewerE_Sniper>();
         munition = FindObjectOfType<EnemyAmmo>();
         timeToShoot = UnityEngine.Random.Range(3, 5);
-        timeToMeleeAttack = UnityEngine.Random.Range(2, 4);
+        timeToMeleeAttack = UnityEngine.Random.Range(1, 3);
         timeToStopBack = UnityEngine.Random.Range(3, 4);
 		maxLife = life;
 
@@ -127,6 +127,7 @@ public class ModelE_Sniper : EnemyEntity
 
         patrol.OnFixedUpdate += () =>
         {
+
             currentAction = new A_SniperPatrol(this);
 
             if (!isDead && isPersuit && !isAttack) SendInputToFSM(EnemyInputs.PERSUIT);
@@ -150,6 +151,7 @@ public class ModelE_Sniper : EnemyEntity
 
         answerCall.OnFixedUpdate += () =>
         {
+
             angleToPersuit = 180;
             currentAction = new A_FollowTarget(this);
             if (!onDamage) MoveEvent();
@@ -160,6 +162,7 @@ public class ModelE_Sniper : EnemyEntity
 
         persuit.OnFixedUpdate += () =>
         {
+
             isAnswerCall = false;
 
             firstSaw = true;
@@ -181,13 +184,14 @@ public class ModelE_Sniper : EnemyEntity
 
         attack.OnUpdate += () =>
         {
+
             isAnswerCall = false;
 
             firstSaw = true;
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
-            if (!onDamage) timeToShoot -= Time.deltaTime;
+            timeToShoot -= Time.deltaTime;
 
             currentAction = new A_SniperAttack(this);
 
@@ -202,13 +206,14 @@ public class ModelE_Sniper : EnemyEntity
  
         melee_attack.OnUpdate += () =>
         {
+
             isAnswerCall = false;
 
             firstSaw = true;
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
-            if (!onDamage) timeToMeleeAttack -= Time.deltaTime;
+            timeToMeleeAttack -= Time.deltaTime;
            
             currentAction = new A_SniperMeleeAttack(this);
 
@@ -225,37 +230,16 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnEnter += x =>
         {
-            timeToStopBack = UnityEngine.Random.Range(3, 4);
+            timeToStopBack = UnityEngine.Random.Range(5, 6);
 
-            List<Vector3> sides = new List<Vector3>();
-
-            RaycastHit hit;
-
-            if (Physics.Raycast(transform.position, -transform.right, out hit, 2)) sides.Remove(-transform.right);
-            else sides.Add(-transform.right);
-
-            if (Physics.Raycast(transform.position, transform.right, out hit, 2)) sides.Remove(transform.right); 
-            else sides.Add(transform.right);
-
-            if (Physics.Raycast(transform.position, -transform.forward, out hit, 2)) sides.Remove(-transform.forward);
-            else sides.Add(-transform.forward);
-
-            if (sides.Count > 0)
-            {
-                int r = UnityEngine.Random.Range(0, sides.Count - 1);
-                positionToBack = sides[r];
-            }
-
-            else positionToBack = transform.forward;
-
-             
+            positionToBack = FindNearCombatNode().transform.position;
+            
         };
 
         retreat.OnUpdate += () =>
         {
-            Debug.Log("retreat");
 
-            if (!onDamage) timeToStopBack -= Time.deltaTime;
+            timeToStopBack -= Time.deltaTime;
 
             currentAction = new A_GoBackFromAttack(this);
 
@@ -271,17 +255,20 @@ public class ModelE_Sniper : EnemyEntity
         };
 
         follow.OnEnter += x =>
-        {
+        {           
             Node start = GetMyNode();
             Node end = GetMyTargetNode();
-        
-            pathToTarget = MyBFS.GetPath(start, end, myNodes);
+
+            var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
+            originalPathToTarget.Remove(start);
+            pathToTarget.AddRange(originalPathToTarget);
             currentIndex = pathToTarget.Count;
         };
 
 
         follow.OnUpdate += () =>
         {
+
             currentAction = new A_FollowTarget(this);
 
             if (!onDamage) MoveEvent();
@@ -367,7 +354,7 @@ public class ModelE_Sniper : EnemyEntity
 
     public override Vector3 EntitiesAvoidance()
     {
-        var obs = Physics.OverlapSphere(transform.position, 2, layerEntites);
+        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites);
         if (obs.Count() > 0)
         {
             var dir = transform.position - obs.First().transform.position;
@@ -469,12 +456,12 @@ public class ModelE_Sniper : EnemyEntity
         }
     }
 
-    public override void RetreatTrue()
+    public void RetreatTrue()
     {
         if (!cooldwonToGoBack) onRetreat = true;
     }
 
-    public override void OnDamageFalse()
+    public void OnDamageFalse()
     {
         onDamage = false;
     }
@@ -484,8 +471,15 @@ public class ModelE_Sniper : EnemyEntity
         nearEntities.Remove(e);
     }
 
+ 
     public override CombatNode FindNearCombatNode()
     {
-        throw new NotImplementedException();
+        var node = playerNodes.Where(x => !x.isBusy && x.rangeNode).OrderBy(x =>
+        {
+            var d = Vector3.Distance(x.transform.position, transform.position);
+            return d;
+        }).First();
+
+        return node;
     }
 }

@@ -19,7 +19,7 @@ public class A_SniperMeleeAttack : i_EnemyActions
         if (_e.timeToMeleeAttack <= 0)
         {
             _e.AttackMeleeEvent();
-            _e.timeToMeleeAttack = Random.Range(3, 4);
+            _e.timeToMeleeAttack = Random.Range(1,3);
         }
 
     }

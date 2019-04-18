@@ -189,6 +189,8 @@ public class ModelE_Melee : EnemyEntity
 
             firstSaw = true;
 
+            if(timeToAttack) delayToAttack -= Time.deltaTime;
+
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
             currentAction = new A_Persuit(this);
@@ -222,7 +224,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!right && !left) flankDir = 0;
 
-            delayToAttack = UnityEngine.Random.Range(1f, 2f);
+            if(!timeToAttack) delayToAttack = UnityEngine.Random.Range(1f, 2f);
 
         };
 
@@ -561,6 +563,7 @@ public class ModelE_Melee : EnemyEntity
     {
         timeToRetreat = startRetreat;
         timeOnDamage = 0.5f;
+        delayToAttack -= 0.25f;
         if (!onDamage) onDamage = true;
         if (delayToAttack >= maxDelayToAttack) delayToAttack = maxDelayToAttack;
         TakeDamageEvent();      
@@ -605,16 +608,6 @@ public class ModelE_Melee : EnemyEntity
             if (player.onDefence && angle >= 90) BlockedEvent();
             player.GetDamage(attackDamage, transform, false);
         }
-    }
-
-    public override void RetreatTrue()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void OnDamageFalse()
-    {
-        throw new NotImplementedException();
     }
 
     public override void RemoveNearEntity(EnemyEntity e)

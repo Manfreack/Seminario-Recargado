@@ -33,8 +33,6 @@ public abstract class EnemyEntity: MonoBehaviour
     public List<Node> pathToTarget = new List<Node>();
     public abstract void GetDamage(float damage);
     public abstract void MakeDamage();
-    public abstract void RetreatTrue();
-    public abstract void OnDamageFalse();
     public List<Node> myNodes = new List<Node>();
     public i_EnemyActions currentAction;
     public Rigidbody rb;

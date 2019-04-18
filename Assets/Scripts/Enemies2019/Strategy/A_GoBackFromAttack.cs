@@ -11,17 +11,29 @@ public class A_GoBackFromAttack : i_EnemyActions
         _e.target.CombatState();
         _e.target.saveSword = true;
 
-        _e.timeToStopBack -= Time.deltaTime;
-
             if (_e.timeToStopBack > 0 && !_e.onDamage)
             {
                 _e.MoveEvent();
                 Quaternion targetRotation;
-                var _dir = _e.positionToBack.normalized;
-                _dir.y = 0;
-                targetRotation = Quaternion.LookRotation(-_dir, Vector3.up);
-                _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                _e.rb.MovePosition(_e.rb.position + _dir * _e.speed * Time.deltaTime);
+
+                if (_e.avoidVectObstacles == Vector3.zero)
+                {
+                    var _dir = (_e.positionToBack - _e.transform.position).normalized;
+                    _dir.y = 0;
+                    targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
+                    _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
+                    _e.rb.MovePosition(_e.rb.position + _dir * _e.speed * Time.deltaTime);
+                }
+
+                else
+                {
+                    var _dir = (_e.avoidVectObstacles - _e.transform.position).normalized;
+                    _dir.y = 0;
+                    targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
+                    _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
+                    _e.rb.MovePosition(_e.rb.position + _dir * _e.speed * Time.deltaTime);
+                 }   
+
             }
 
             if(_e.timeToStopBack <= 0)
