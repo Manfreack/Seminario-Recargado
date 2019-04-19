@@ -305,15 +305,6 @@ public class Model : MonoBehaviour
         if (makingDamage && animClipName == "Attack3N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack2N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack1N-DAMAGE") MakeDamage();
-
-       /* timeDamage -= Time.deltaTime;
-
-        if (timeDamage < 0)
-        {
-            timeEndDamage -= Time.deltaTime;
-            if (timeEndDamage > 0) MakeDamage();
-        }
-        */
     }
 
     public void ImpulseAttackAnimation()
@@ -615,8 +606,8 @@ public class Model : MonoBehaviour
                countAnimAttack++;
                Attack();
                makingDamage = true;
-               timeImpulse = 0.1f;
-               timeEndImpulse = 0.1f;
+               timeImpulse = 0.04f;
+               timeEndImpulse = 0.2f;
                preAttack4 = true;
                stamina -= attackStamina + 3;
                view.UpdateStaminaBar(stamina / maxStamina);
@@ -668,8 +659,8 @@ public class Model : MonoBehaviour
                     view.AwakeTrail();
                     Attack();
                     makingDamage = true;
-                    timeImpulse = 0.02f;
-                    timeEndImpulse = 0.1f;
+                   // timeImpulse = 0.02f;
+                   // timeEndImpulse = 0.1f;
                     preAttack1 = true;
                     stamina -= attackStamina;
                     view.UpdateStaminaBar(stamina / maxStamina);

@@ -50,6 +50,11 @@ public class ModelE_Melee : EnemyEntity
     public float startRetreat;
     Vector3 vectoToNodeRetreat;
 
+    [Header("Enemy Combat:")]
+
+    public float timeMinAttack;
+    public float timeMaxAttack;
+
     public IEnumerator RetreatCorrutine()
     {
         yield return new WaitForSeconds(0.5f);
@@ -67,7 +72,7 @@ public class ModelE_Melee : EnemyEntity
     public void Awake()
     {
         playerNodes.AddRange(FindObjectsOfType<CombatNode>());
-        delayToAttack = UnityEngine.Random.Range(1f, 2f);
+        delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
         maxDelayToAttack = delayToAttack;
         rb = gameObject.GetComponent<Rigidbody>();
         _view = GetComponent<ViewerE_Melee>();
@@ -224,7 +229,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!right && !left) flankDir = 0;
 
-            if(!timeToAttack) delayToAttack = UnityEngine.Random.Range(1f, 2f);
+            if(!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
 
         };
 

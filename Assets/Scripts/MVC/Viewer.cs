@@ -74,6 +74,7 @@ public class Viewer : MonoBehaviour
         smashParticle.SetActive(false);
         yield return new WaitForSeconds(0.25f);
         smashParticle.SetActive(true);
+        trail.SetActive(false);
         ShakeCameraDamage(1);
     }
 
