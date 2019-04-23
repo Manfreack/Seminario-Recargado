@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Fog2
+  m_Shader: {fileID: 4800000, guid: 1f2c441d2d1ef184a9643322c073e9bc, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 2999
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseFog:
+        m_Texture: {fileID: 2800000, guid: 7921f8dc65bddfc4683992a67b3e2335, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Flowmap:
+        m_Texture: {fileID: 2800000, guid: 1207a4adcc48386458eb4425a0a3ecba, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _EdgeLength: 2
+    - _EmissionSubstractor: 0.842
+    - _EndGradient: 0.3
+    - _EndPosition: 1.1
+    - _Float0: 0.85
+    - _FogBrightness_1: 0.37
+    - _FogBrightness_2: 0.17
+    - _FogBrightness_3: 0.23
+    - _HMovement_1: 0.000018
+    - _HMovement_2: 0.05
+    - _HMovement_3: 0.000164
+    - _MidEndLerp: 0
+    - _MidGradient: 0.3
+    - _MidPosition: 1.1
+    - _UVDistortion_1: 0.3
+    - _UVDistortion_2: 0
+    - _UVDistortion_3: 0.3
+    - _VMaxMovement_1: 0
+    - _VMaxMovement_2: 0
+    - _VMaxMovement_3: 0.000014
+    - _VMinMovement_1: -0.000033
+    - _VMinMovement_2: 0.000009
+    - _VMinMovement_3: 0.000019
+    - _VertexOffsetMultiplier: 0.05
+    - __dirty: 0
+    m_Colors:
+    - _UVTiling: {r: 3, g: 3, b: 0, a: 0}

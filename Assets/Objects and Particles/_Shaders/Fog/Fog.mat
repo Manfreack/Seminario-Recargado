@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Fog
+  m_Shader: {fileID: 4800000, guid: a42672b9941cb79489750a38432aabba, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3000
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseFog:
+        m_Texture: {fileID: 2800000, guid: 7921f8dc65bddfc4683992a67b3e2335, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Flowmap:
+        m_Texture: {fileID: 2800000, guid: 1207a4adcc48386458eb4425a0a3ecba, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SmokeVector:
+        m_Texture: {fileID: 2800000, guid: 60eb88b45d51c7648a88332393e44209, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Squaregradient:
+        m_Texture: {fileID: 2800000, guid: 49d138d8d33a5ff44a117779da5a0109, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureSample0:
+        m_Texture: {fileID: 2800000, guid: f8b4f631d8791ef41bfd326e68272ebb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureSample1:
+        m_Texture: {fileID: 2800000, guid: 7921f8dc65bddfc4683992a67b3e2335, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureSample2:
+        m_Texture: {fileID: 2800000, guid: f8b4f631d8791ef41bfd326e68272ebb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _ASEOutlineWidth: 0
+    - _EdgeLength: 15
+    - _EndGradient: 0.3
+    - _EndPosition: 1.1
+    - _FogBrightness: 0.17
+    - _FogBrightness_1: 0.37
+    - _FogBrightness_2: 0.17
+    - _Gradient: 0.271
+    - _HMovement_1: 0.000018
+    - _HMovement_2: 0.05
+    - _HorizontalMaxMovement: -0.00001
+    - _HorizontalMinMovement: 0.00001
+    - _HorizontalMovement: -0.019
+    - _HorizontalMovement_1: -0.019
+    - _HorizontalMovement_2: -0.019
+    - _LinesDarkness: 0.12632804
+    - _MidEndLerp: 0
+    - _MidGradient: 0.3
+    - _MidPosition: 1.1
+    - _Position: 1.14
+    - _UVDistortion: 0.445
+    - _UVDistortion_1: 0.3
+    - _UVDistortion_2: 0
+    - _VMaxMovement_1: 0
+    - _VMaxMovement_2: 0
+    - _VMinMovement_1: -0.000033
+    - _VMinMovement_2: 0.000009
+    - _VertexOffsetMultiplier: 1
+    - _VerticalMaxMovement: -0.00001
+    - _VerticalMaxMovement_1: 0.00001
+    - _VerticalMaxMovement_2: -0.00001
+    - _VerticalMinMovement: 0.00001
+    - _VerticalMinMovement_1: -0.00001
+    - _VerticalMinMovement_2: 0.00001
+    - _VerticalMovement: -0.019
+    - __dirty: 0
+    m_Colors:
+    - _ASEOutlineColor: {r: 0, g: 0, b: 0, a: 0}
+    - _UVTiling: {r: 1, g: 1, b: 0, a: 0}
