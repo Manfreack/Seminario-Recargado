@@ -100,6 +100,20 @@ public class Viewer : MonoBehaviour
         anim.SetFloat("VelZ", velocityZ);
     }
 
+    public void Streak()
+    {
+        anim.SetBool("Streak", true);
+        trail.SetActive(true);
+        model.onPowerState = true;
+    }
+
+    public void StreakFalse()
+    {
+        anim.SetBool("Streak", false);
+        model.onPowerState = false;
+        trail.SetActive(false);
+    }
+
     public void Awake()
     {
         trail.SetActive(false);

@@ -48,12 +48,17 @@ public class ModelE_Melee : EnemyEntity
     float maxLife;
     public float timeToRetreat;
     public float startRetreat;
+    float maxViewDistanceToAttack;
     Vector3 vectoToNodeRetreat;
 
     [Header("Enemy Combat:")]
 
     public float timeMinAttack;
     public float timeMaxAttack;
+    public float timeStartImpulse;
+    public float timeEndImpulse;
+    public float impulseStart;
+    public float impulseEnd;
 
     public IEnumerator RetreatCorrutine()
     {
@@ -77,6 +82,7 @@ public class ModelE_Melee : EnemyEntity
         rb = gameObject.GetComponent<Rigidbody>();
         _view = GetComponent<ViewerE_Melee>();
         maxLife = life;
+        maxViewDistanceToAttack = viewDistanceAttack;
 
         TakeDamageEvent += _view.TakeDamageAnim;
         DeadEvent += _view.DeadAnim;
@@ -153,7 +159,7 @@ public class ModelE_Melee : EnemyEntity
             timeToPatrol -= Time.deltaTime;
             currentAction = new A_Patrol(this);
 
-            if ((!isDead && isPersuit && !isAttack) && onDamage) SendInputToFSM(EnemyInputs.PERSUIT);
+            if ((!isDead && isPersuit && !isAttack && !target.view.startFade.enabled) || onDamage) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && isAnswerCall) SendInputToFSM(EnemyInputs.ANSWER);
 
@@ -187,7 +193,7 @@ public class ModelE_Melee : EnemyEntity
 
         persuit.OnFixedUpdate += () =>
         {
-
+            Debug.Log("persuit");
             if (!onDamage) CombatWalkEvent();
 
             isAnswerCall = false;
@@ -209,9 +215,12 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnEnter += x =>
         {
+            
+
             bool right = false;
             bool left = false;
 
+            viewDistanceAttack += 1;
           
             foreach (var item in myWarriorFriends)
             {
@@ -233,8 +242,15 @@ public class ModelE_Melee : EnemyEntity
 
         };
 
+        wait.OnExit += x =>
+        {
+
+            viewDistanceAttack = maxViewDistanceToAttack;
+        };
+
         wait.OnUpdate += () =>
         {
+            Debug.Log("Wait");
             var dir = (target.transform.position - transform.position).normalized;
             var angle = Vector3.Angle(dir, target.transform.forward);
 
@@ -261,7 +277,7 @@ public class ModelE_Melee : EnemyEntity
 
         attack.OnFixedUpdate += () =>
         {
-
+            Debug.Log("attack");
             currentAction = new A_AttackMeleeWarrior(this);
 
             isAnswerCall = false;
@@ -285,14 +301,15 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnEnter += x =>
         {
-            timeToRetreat = startRetreat;
+            startRetreat = 0.5f;
+            timeToRetreat = 0.7f;         
             vectoToNodeRetreat = (FindNearCombatNode().transform.position - transform.position).normalized;
             vectoToNodeRetreat.y = 0;
         };
 
         retreat.OnFixedUpdate += () =>
         {
-
+            Debug.Log("retreat");
             currentAction = new A_WarriorRetreat(this, vectoToNodeRetreat);
 
             if (!isDead && !isAttack && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
@@ -307,13 +324,15 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
-            if (!_view._anim.GetBool("Attack")) timeToRetreat -= Time.deltaTime;
+            if ( startRetreat <= 0) timeToRetreat -= Time.deltaTime;
+
+            if(_view._anim.GetBool("Attack") == false) startRetreat -= Time.deltaTime;
         };
 
         follow.OnEnter += x =>
         {
             pathToTarget.Clear();
-
+            
             Node start = GetMyNode();
             Node end = GetMyTargetNode();
 
@@ -332,7 +351,7 @@ public class ModelE_Melee : EnemyEntity
 
         follow.OnUpdate += () =>
         {
-
+            Debug.Log("follow");
             currentAction = new A_FollowTarget(this);
 
             if (!onDamage) CombatWalkEvent();
@@ -424,10 +443,18 @@ public class ModelE_Melee : EnemyEntity
             transform.LookAt(target.transform.position);
         }
 
-        if(impulse)
+
+        impulseStart -= Time.deltaTime;
+   
+        if (impulseStart < 0)
         {
-            transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * 2 * Time.deltaTime, 2);
+            impulseEnd -= Time.deltaTime;
+            if (impulseEnd > 0)
+            {
+                transform.position += transform.forward * 2 * Time.deltaTime;
+            }
         }
+
     }
 
     private void FixedUpdate()
@@ -566,6 +593,8 @@ public class ModelE_Melee : EnemyEntity
 
     public override void GetDamage(float damage)
     {
+        impulseStart = 0.6f;
+        impulseEnd = timeEndImpulse;
         timeToRetreat = startRetreat;
         timeOnDamage = 0.5f;
         delayToAttack -= 0.25f;
@@ -634,5 +663,27 @@ public class ModelE_Melee : EnemyEntity
          }).First();
 
         return node;
+    }
+
+    public void StopRetreat()
+    {
+        if (cm.times < 2)
+        {
+            cm.times++;
+            if (flank)
+            {
+                flank = false;
+                cm.flanTicket = false;
+            }
+        }
+
+        firstAttack = false;
+        onRetreat = false;
+        timeToAttack = false;
+
+        if (myWarriorFriends.Count > 2)
+        {
+            if (!checkTurn) StartCoroutine(DelayTurn());
+        }
     }
 }

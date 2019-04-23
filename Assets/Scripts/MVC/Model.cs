@@ -38,8 +38,13 @@ public class Model : MonoBehaviour
     public float lifeRecoveredForSec;
     public float lifeRecoveredForSecInCombat;
     public float maxTimeOnCombat;
-    public float timeToRoll;
+    public float timeToRoll;   
     bool makingDamage;
+
+    [Header("Player Combat:")]
+
+    public float timeCdPower2;
+    public float damagePower1;
 
     [Header("Player StaminaStats:")]
 
@@ -89,7 +94,7 @@ public class Model : MonoBehaviour
     bool impulse;
     bool starChangeDirAttack;
 
-    bool cdPower1;
+    public bool cdPower1;
     bool cdPower2;
     bool cdPower3;
     bool cdPower4;
@@ -122,6 +127,7 @@ public class Model : MonoBehaviour
     public Action BlockEvent;
     public Action RollEvent;
     public Action RollCameraEvent;
+    public Action StreakEvent;
 
     public Transform closestEnemy;
     public LayerMask enemyLM;
@@ -145,6 +151,13 @@ public class Model : MonoBehaviour
 
     [HideInInspector]
     public float fadeTimer;
+
+    public IEnumerator PowerDelayImpulse(float timeStart, float timeEnd, float time1, float time2)
+    {
+        yield return new WaitForSeconds(timeStart + timeEnd);
+        timeImpulse = time1;
+        timeEndImpulse = time2;
+    }
 
     public IEnumerator PowerColdown(float cdTime, int n)
     {
@@ -199,7 +212,20 @@ public class Model : MonoBehaviour
             view.UpdatePowerCD(n, 1);
         }
     }
- 
+
+
+    public IEnumerator PowerInternCD(float time, int power)
+    {
+        if (power == 1) cdPower1 = true;
+        if (power == 2) cdPower2 = true;
+        if (power == 3) cdPower3 = true;
+        if (power == 4) cdPower4 = true;
+        yield return new WaitForSeconds(time);
+        if (power == 1) cdPower1 = false;
+        if (power == 2) cdPower2 = false;
+        if (power == 3) cdPower3 = false;
+        if (power == 4) cdPower4 = false;
+    }
 
     public IEnumerator OnDamageDelay()
     {
@@ -320,6 +346,7 @@ public class Model : MonoBehaviour
                 if (countAnimAttack == 2) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
                 if (countAnimAttack == 1) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce / 2) * Time.deltaTime, 2);
                 if (countAnimAttack == 3 || countAnimAttack == 4) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
+                if (countAnimAttack == 0) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
             }
         }
     }
@@ -345,7 +372,7 @@ public class Model : MonoBehaviour
 
     public void CombatParameters()
     {
-        if (countAnimAttack == 0) view.SleepTrail();
+        if (countAnimAttack == 0 && !onPowerState) view.SleepTrail();
 
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
@@ -438,24 +465,26 @@ public class Model : MonoBehaviour
         }
     }
 
-    public void CastPower1()
+    public void CastPower2()
     {
-        if (!cdPower1 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0)
+        if (!cdPower2 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0 && isInCombat)
         {
             stamina -= powerStamina;
             view.UpdateStaminaBar(stamina / maxStamina);
-
-            Powers newPower = powerPool.GetObjectFromPool();
-            newPower.myCaller = transform;
-            powerManager.SetIPower(0, newPower, this);
-            Estocada();
-            onPowerState = true;
+            StreakEvent();
+            CombatState();
+            timeImpulse = 0.05f;
+            timeEndImpulse = 0.2f;
+            StartCoroutine(PowerDelayImpulse(0.05f, 0.2f, 0.1f, 0.2f));
+            StartCoroutine(PowerColdown(timeCdPower2, 2));
+            StartCoroutine(PowerInternCD(timeCdPower2, 2));
+            Power1Damage();
         }
     }
 
-    public void CastPower2()
+    public void CastPower1()
     {
-        if (!cdPower2 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0)
+        if (!cdPower1 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0)
         {
             stamina -= powerStamina;
             view.UpdateStaminaBar(stamina / maxStamina);
@@ -701,6 +730,30 @@ public class Model : MonoBehaviour
         foreach (var item in desMesh)
         {
             item.StartCoroutine(item.startDisolve());
+            makingDamage = false;
+        }
+    }
+
+    public void Power1Damage()
+    {
+        var col = Physics.OverlapSphere(transform.position, 2).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>());
+        var desMesh = Physics.OverlapSphere(transform.position,2).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>());
+
+        foreach (var item in desMesh)
+        {
+            item.StartCoroutine(item.startDisolve());
+            makingDamage = false;
+        }
+
+        foreach (var item in col)
+        {
+            item.GetDamage(damagePower1);
+            if (item.GetComponent<ViewerE_Melee>())
+            {
+                item.GetComponent<ViewerE_Melee>().BackFromAttack();
+                item.GetComponent<ModelE_Melee>().StopRetreat();
+            }
+            item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 8, ForceMode.Impulse);
             makingDamage = false;
         }
     }

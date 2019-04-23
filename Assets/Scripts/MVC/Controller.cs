@@ -50,6 +50,7 @@ public class Controller : MonoBehaviour
         model.BlockEvent += view.Blocked;
         model.RollEvent += view.RollAnim;
         model.RollCameraEvent += model.mainCamera.GetComponent<CamController>().RollEvent;
+        model.StreakEvent += view.Streak;
     }
 
     // Update is called once per frame
@@ -57,6 +58,11 @@ public class Controller : MonoBehaviour
     {
         if (!model.isPlatformJumping && !view.startFade.enabled && !view.pauseMenu.activeSelf)
         {         
+
+            if(Input.GetKeyDown(KeyCode.Q))
+            {
+                model.CastPower2();
+            }
 
             if (Input.GetKey(KeyCode.Mouse1) && model.isInCombat && model.stamina>5)
             {
@@ -214,7 +220,7 @@ public class Controller : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!model.isInCombat)
+        if (!model.isInCombat && !model.onPowerState)
         {
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
@@ -290,7 +296,7 @@ public class Controller : MonoBehaviour
 
         }
 
-        else
+        else if(model.isInCombat && !model.onPowerState)
         {
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {

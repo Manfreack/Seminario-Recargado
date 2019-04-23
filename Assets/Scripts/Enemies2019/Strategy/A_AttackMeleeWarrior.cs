@@ -44,6 +44,8 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                     _e.AttackEvent();
                     _e.onRetreat = true;
                     _e.firstAttack = true;
+                    _e.impulseStart = _e.timeStartImpulse;
+                    _e.impulseEnd = _e.timeEndImpulse;
                 }
 
             }      
