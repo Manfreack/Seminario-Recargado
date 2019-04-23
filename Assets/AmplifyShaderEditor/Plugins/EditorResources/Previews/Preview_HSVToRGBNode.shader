@@ -30,7 +30,7 @@ Shader "Hidden/HSVToRGBNode"
 				float3 p = abs ( frac ( (h).xxx + K.xyz ) * 6.0 - K.www );
 				float3 hsvToRgb = v * lerp ( K.xxx, clamp ( p - K.xxx, 0.0, 1.0 ), (s).xxx );
 
-				return float4( hsvToRgb, 1 );
+				return float4( GammaToLinearSpace(hsvToRgb), 1 );
 			}
 			ENDCG
 		}

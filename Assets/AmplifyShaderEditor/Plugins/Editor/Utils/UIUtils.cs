@@ -198,6 +198,16 @@ namespace AmplifyShaderEditor
 		VertexData
 	}
 
+	public enum TransformSpace
+	{
+		Object = 0,
+		World,
+		View,
+		Clip,
+		Tangent
+		//Screen??
+	}
+
 	public class UIUtils
 	{
 		public static int SerializeHelperCounter = 0;
@@ -380,7 +390,8 @@ namespace AmplifyShaderEditor
 			"UNITY_PASS_FORWARDBASE",
 			"UNITY_PASS_FORWARDADD",
 			"UNITY_PASS_DEFERRED",
-			"UNITY_PASS_SHADOWCASTER"
+			"UNITY_PASS_SHADOWCASTER",
+			"UNITY_INSTANCING_ENABLED"
 		};
 
 		public static readonly string[] CategoryPresets =
@@ -620,9 +631,9 @@ namespace AmplifyShaderEditor
 
 		private static Dictionary<PrecisionType, string> m_precisionTypeToCg = new Dictionary<PrecisionType, string>()
 		{
-			{ PrecisionType.Float,	"float"},
+			{PrecisionType.Float,	"float"},
 			{PrecisionType.Half,	"half"},
-			{PrecisionType.Fixed,	"fixed"}
+			{PrecisionType.Fixed,	"half"}
 		};
 
 		private static Dictionary<VariableQualifiers, string> m_qualifierToCg = new Dictionary<VariableQualifiers, string>()
@@ -661,7 +672,8 @@ namespace AmplifyShaderEditor
 			{WirePortDataType.SAMPLER1D,	"sampler1D"},
 			{WirePortDataType.SAMPLER2D,	"sampler2D"},
 			{WirePortDataType.SAMPLER3D,	"sampler3D"},
-			{WirePortDataType.SAMPLERCUBE,	"samplerCUBE"}
+			{WirePortDataType.SAMPLERCUBE,	"samplerCUBE"},
+			{WirePortDataType.UINT,			"uint"}
 		};
 
 		private static Dictionary<KeyCode, string> m_keycodeToString = new Dictionary<KeyCode, string>()
@@ -912,10 +924,16 @@ namespace AmplifyShaderEditor
 			LockIconClosed = new GUIContent( EditorGUIUtility.IconContent( "LockIcon" ) );
 			LockIconClosed.tooltip = "Click to lock and auto-generate the variable name";
 
-			FloatIntIconON = new GUIContent( EditorGUIUtility.IconContent( "CircularToggle_ON" ) );
-			//FloatIntIconON.tooltip = "Click to unlock and customize the variable name";
-			FloatIntIconOFF = new GUIContent( EditorGUIUtility.IconContent( "CircularToggle_OFF" ) );
-			//FloatIntIconOFF.tooltip = "Click to lock and auto-generate the variable name";
+			if( UsingProSkin )
+			{
+				FloatIntIconON = new GUIContent( EditorGUIUtility.IconContent( "CircularToggle_ON" ) );
+				FloatIntIconOFF = new GUIContent( EditorGUIUtility.IconContent( "CircularToggle_OFF" ) );
+			}
+			else
+			{
+				FloatIntIconON = new GUIContent( ( AssetDatabase.LoadAssetAtPath( AssetDatabase.GUIDToAssetPath( "ac0860a6a77e29d4091ba790a17daa0f" ), typeof( Texture2D ) ) as Texture2D ) );
+				FloatIntIconOFF = new GUIContent( ( AssetDatabase.LoadAssetAtPath( AssetDatabase.GUIDToAssetPath( "1aaca50d084b0bb43854f075ce2f302b" ), typeof( Texture2D ) ) as Texture2D ) );
+			}
 
 			CommentaryTitle = new GUIStyle( MainSkin.customStyles[ (int)CustomStyle.CommentaryTitle ] );
 			InputPortLabel = new GUIStyle( MainSkin.customStyles[ (int)CustomStyle.InputPortlabel ] );
@@ -1018,7 +1036,10 @@ namespace AmplifyShaderEditor
 			FetchMenuItemStyles();
 		}
 
-
+		public static bool IsLoading
+		{
+			get { return CurrentWindow.OutsideGraph.IsLoading; }
+		}
 
 		public static void CheckNullMaterials()
 		{
@@ -1214,6 +1235,9 @@ namespace AmplifyShaderEditor
 			if( type == WirePortDataType.INT )
 				return m_wirePortToCgType[ type ];
 
+			if( type == WirePortDataType.UINT )
+				return m_wirePortToCgType[ type ];
+
 			return string.Format( m_precisionWirePortToCgType[ type ], m_precisionTypeToCg[ finalPrecision ] );
 		}
 
@@ -1223,6 +1247,9 @@ namespace AmplifyShaderEditor
 				return string.Empty;
 
 			if( type == WirePortDataType.INT )
+				return m_wirePortToCgType[ type ];
+
+			if( type == WirePortDataType.UINT )
 				return m_wirePortToCgType[ type ];
 
 			return string.Format( m_precisionWirePortToCgType[ type ], m_precisionTypeToCg[ precisionType ] );
@@ -1700,6 +1727,7 @@ namespace AmplifyShaderEditor
 				case WirePortDataType.FLOAT4x4: return 16;
 				case WirePortDataType.COLOR: return 4;
 				case WirePortDataType.INT: return 1;
+				case WirePortDataType.UINT: return 1;
 			}
 			return 0;
 		}
@@ -1718,8 +1746,16 @@ namespace AmplifyShaderEditor
 			return WirePortDataType.FLOAT;
 		}
 
-		public static string GenerateUniformName( WirePortDataType dataType, string dataName ) { return string.Format( Constants.UniformDec, WirePortToCgType( dataType ), dataName ); }
-		public static string GenerateUniformName( string dataType, string dataName ) { return string.Format( Constants.UniformDec, dataType, dataName ); }
+		public static string GenerateUniformName( bool excludeUniformKeyword, WirePortDataType dataType, string dataName )
+		{
+			return GenerateUniformName( excludeUniformKeyword, WirePortToCgType( dataType ), dataName );
+		}
+
+		public static string GenerateUniformName( bool excludeUniformKeyword, string dataType, string dataName )
+		{
+			int index = excludeUniformKeyword ? 1 : 0;
+			return string.Format( Constants.UniformDec[index], dataType, dataName );
+		}
 
 		public static string GeneratePropertyName( string name, PropertyType propertyType, bool forceUnderscore = false )
 		{
@@ -1737,21 +1773,21 @@ namespace AmplifyShaderEditor
 
 			return name;
 		}
-
+		
 		public static string UrlReplaceInvalidStrings( string originalString )
 		{
-			foreach( KeyValuePair<string, string> kvp in Constants.UrlReplacementStringValues )
+			for( int i = 0; i < Constants.UrlReplacementStringValuesLen; i++ )
 			{
-				originalString = originalString.Replace( kvp.Key, kvp.Value );
+				originalString = originalString.Replace( Constants.UrlReplacementStringValues[i,0], Constants.UrlReplacementStringValues[i,1] );
 			}
 			return originalString;
 		}
 
 		public static string ReplaceInvalidStrings( string originalString )
 		{
-			foreach( KeyValuePair<string, string> kvp in Constants.ReplacementStringValues )
+			for(int i = 0; i< Constants.ReplacementStringValuesLen;i++ )
 			{
-				originalString = originalString.Replace( kvp.Key, kvp.Value );
+				originalString = originalString.Replace( Constants.ReplacementStringValues[i,0], Constants.ReplacementStringValues[ i, 1 ] );
 			}
 			return originalString;
 		}
@@ -1802,6 +1838,16 @@ namespace AmplifyShaderEditor
 			return originalString;
 		}
 
+		public static bool IsUnityNativeShader( Shader shader )
+		{
+			string pathName = AssetDatabase.GetAssetPath( shader );
+
+			if( pathName.Contains( "unity_builtin_extra") || 
+				pathName.Contains( "unity default resources" ))
+			return true;
+
+			return false;
+		}
 		public static bool IsUnityNativeShader( string path ) { return m_unityNativeShaderPaths.ContainsKey( path ); }
 
 		public static string GetComponentForPosition( int pos, WirePortDataType type, bool addDot = false )
@@ -1934,13 +1980,14 @@ namespace AmplifyShaderEditor
 
 			if( string.IsNullOrEmpty( customPath ) )
 			{
-				IOUtils.GetShaderName( out shaderName, out pathName, "New AmplifyShader", m_latestOpenedFolder );
+				IOUtils.GetShaderName( out shaderName, out pathName, Constants.DefaultShaderName, m_latestOpenedFolder );
 			}
 			else
 			{
 				pathName = customPath;
-				shaderName = "New AmplifyShader";
-				string uniquePath = pathName.Remove( 0, pathName.IndexOf( "Assets" ) );
+				shaderName = Constants.DefaultShaderName;
+				int indexOfAssets = pathName.IndexOf( "Assets" );
+				string uniquePath = ( indexOfAssets > 0 )? pathName.Remove( 0, indexOfAssets ) : pathName;
 				string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath( uniquePath + shaderName + ".shader" );
 				pathName = assetPathAndName;
 				shaderName = assetPathAndName.Remove( 0, assetPathAndName.IndexOf( shaderName ) );
@@ -1986,13 +2033,14 @@ namespace AmplifyShaderEditor
 
 			if( string.IsNullOrEmpty( customPath ) )
 			{
-				IOUtils.GetShaderName( out shaderName, out pathName, "New AmplifyShader", m_latestOpenedFolder );
+				IOUtils.GetShaderName( out shaderName, out pathName, Constants.DefaultShaderName, m_latestOpenedFolder );
 			}
 			else
 			{
 				pathName = customPath;
-				shaderName = "New AmplifyShader";
-				string uniquePath = pathName.Remove( 0, pathName.IndexOf( "Assets" ) );
+				shaderName = Constants.DefaultShaderName;
+				int indexOfAssets = pathName.IndexOf( "Assets" );
+				string uniquePath = ( indexOfAssets > 0 ) ? pathName.Remove( 0, indexOfAssets ) : pathName;
 				string assetPathAndName = AssetDatabase.GenerateUniqueAssetPath( uniquePath + shaderName + ".shader" );
 				pathName = assetPathAndName;
 				shaderName = assetPathAndName.Remove( 0, assetPathAndName.IndexOf( shaderName ) );
@@ -2146,6 +2194,15 @@ namespace AmplifyShaderEditor
 			if( CurrentWindow != null )
 			{
 				return CurrentWindow.CurrentGraph.GetNode( nodeId );
+			}
+			return null;
+		}
+
+		public static PropertyNode GetInternalTemplateNode( int nodeId )
+		{
+			if( CurrentWindow != null )
+			{
+				return CurrentWindow.CurrentGraph.GetInternalTemplateNode( nodeId );
 			}
 			return null;
 		}
@@ -2379,15 +2436,6 @@ namespace AmplifyShaderEditor
 			return floatStr;
 		}
 
-		public static int CurrentVersion()
-		{
-			if( CurrentWindow != null )
-			{
-				return CurrentWindow.CurrentVersion;
-			}
-			return -1;
-		}
-
 		public static int CurrentShaderVersion()
 		{
 			if( CurrentWindow != null )
@@ -2446,9 +2494,21 @@ namespace AmplifyShaderEditor
 
 		public static void CopyValuesFromMaterial( Material mat )
 		{
-			if( CurrentWindow != null )
+			if( CurrentWindow != null && CurrentWindow.CurrentMaterial == mat )
 			{
 				CurrentWindow.CurrentGraph.CopyValuesFromMaterial( mat );
+			}
+			else
+			{
+				int aseWindowCount = IOUtils.AllOpenedWindows.Count;
+				for( int i = 0; i < aseWindowCount; i++ )
+				{
+					if( IOUtils.AllOpenedWindows[ i ] != m_currentWindow && IOUtils.AllOpenedWindows[ i ].CurrentMaterial == mat )
+					{
+						IOUtils.AllOpenedWindows[ i ].CurrentGraph.CopyValuesFromMaterial( mat );
+						break;
+					}
+				}
 			}
 		}
 
@@ -2469,6 +2529,20 @@ namespace AmplifyShaderEditor
 		public static PropertyNode GetFloatIntNode( int idx ) { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.FloatIntNodes.GetNode( idx ); } return null; }
 		public static void UpdateFloatIntDataNode( int uniqueId, string data ) { if( CurrentWindow != null ) { CurrentWindow.CurrentGraph.FloatIntNodes.UpdateDataOnNode( uniqueId, data ); } }
 		public static int GetFloatIntNodeRegisterId( int uniqueId ) { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.FloatIntNodes.GetNodeRegisterIdx( uniqueId ); } return -1; }
+		public static int GetNodeIdByName( string name )
+		{
+			if( CurrentWindow != null )
+			{
+				UsageListFloatIntNodes list = CurrentWindow.CurrentGraph.FloatIntNodes;
+				int count = list.Count;
+				for( int i = 0; i < count; i++ )
+				{
+					if( list.NodesList[ i ].PropertyName.Equals( name ) )
+						return list.NodesList[ i ].UniqueId;
+				}
+			}
+			return -1;
+		}
 		public static PropertyNode GetFloatIntNodeByUniqueId( int uniqueId ) { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.FloatIntNodes.GetNodeByUniqueId( uniqueId ); } return null; }
 		//public static int GetFloatNodeAmount() { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.FloatNodes.NodesList.Count; } return -1; }
 
@@ -2489,6 +2563,10 @@ namespace AmplifyShaderEditor
 		public static void UpdateTextureArrayDataNode( int uniqueId, string data ) { if( CurrentWindow != null ) { CurrentWindow.CurrentGraph.TextureArrayNodes.UpdateDataOnNode( uniqueId, data ); } }
 		public static int GetTextureArrayNodeRegisterId( int uniqueId ) { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.TextureArrayNodes.GetNodeRegisterIdx( uniqueId ); } return -1; }
 		public static int GetTextureArrayNodeAmount() { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.TextureArrayNodes.NodesList.Count; } return -1; }
+
+		// Raw Property Node
+		public static void RegisterRawPropertyNode( PropertyNode node ) { if( CurrentWindow != null ) { CurrentWindow.OutsideGraph.RawPropertyNodes.AddNode( node ); } }
+		public static void UnregisterRawPropertyNode( PropertyNode node ) { if( CurrentWindow != null ) { CurrentWindow.OutsideGraph.RawPropertyNodes.RemoveNode( node ); } }
 
 		// Property Node
 		public static void RegisterPropertyNode( PropertyNode node ) { if( CurrentWindow != null ) { CurrentWindow.CurrentGraph.PropertyNodes.AddNode( node ); } }
@@ -2552,6 +2630,16 @@ namespace AmplifyShaderEditor
 		public static int GetLocalVarNodeRegisterId( int uniqueId ) { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.LocalVarNodes.GetNodeRegisterIdx( uniqueId ); } return -1; }
 		public static RegisterLocalVarNode GetLocalVarNode( int idx ) { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.LocalVarNodes.GetNode( idx ); } return null; }
 		public static void UpdateLocalVarDataNode( int uniqueId, string data ) { if( CurrentWindow != null ) { CurrentWindow.CurrentGraph.LocalVarNodes.UpdateDataOnNode( uniqueId, data ); } }
+
+		//Global Array
+		public static void RegisterGlobalArrayNode( GlobalArrayNode node ) { if( CurrentWindow != null ) { CurrentWindow.CurrentGraph.GlobalArrayNodes.AddNode( node ); } }
+		public static void UnregisterGlobalArrayNode( GlobalArrayNode node ) { if( CurrentWindow != null ) { CurrentWindow.CurrentGraph.GlobalArrayNodes.RemoveNode( node ); } }
+		public static string[] GlobalArrayNodeArr() { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.GlobalArrayNodes.NodesArr; } return null; }
+		public static GlobalArrayNode GetGlobalArrayNode( int idx ) { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.GlobalArrayNodes.GetNode( idx ); } return null; }
+		public static int GetGlobalArrayNodeRegisterId( int uniqueId ) { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.GlobalArrayNodes.GetNodeRegisterIdx( uniqueId ); } return -1; }
+		public static void UpdateGlobalArrayDataNode( int uniqueId, string data ) { if( CurrentWindow != null ) { CurrentWindow.CurrentGraph.GlobalArrayNodes.UpdateDataOnNode( uniqueId, data ); } }
+		public static int GetGlobalArrayNodeAmount() { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.GlobalArrayNodes.NodesList.Count; } return -1; }
+
 
 		public static void FocusOnNode( ParentNode node, float zoom, bool selectNode ) { if( CurrentWindow != null ) { CurrentWindow.FocusOnNode( node, zoom, selectNode ); } }
 		public static PrecisionType CurrentPrecision() { if( CurrentWindow != null ) { return CurrentWindow.CurrentGraph.CurrentPrecision; } return PrecisionType.Float; }

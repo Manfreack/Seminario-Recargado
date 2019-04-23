@@ -42,13 +42,8 @@ namespace AmplifyShaderEditor
 			"View Projection",
 			"Transpose Model View",
 			"Inverse Transpose Model View",
-			//"Texture 0",
-			//"Texture 1",
-			//"Texture 2",
-			//"Texture 3",
 			"Object to World",
-			"Word to Object"//,
-			//"Scale"
+			"Word to Object"
 		};
 
 		private UpperLeftWidgetHelper m_upperLeftWidget = new UpperLeftWidgetHelper();
@@ -100,7 +95,41 @@ namespace AmplifyShaderEditor
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
 			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
-			return m_selectedType.ToString();
+			if( dataCollector.IsTemplate && dataCollector.IsSRP )
+			{
+				switch( m_selectedType )
+				{
+					case BuiltInShaderTransformTypes.UNITY_MATRIX_MVP:
+						return "mul(GetWorldToHClipMatrix(),GetObjectToWorldMatrix())";
+					case BuiltInShaderTransformTypes.UNITY_MATRIX_MV:
+						return "mul( GetWorldToViewMatrix(),GetObjectToWorldMatrix())";
+					case BuiltInShaderTransformTypes.UNITY_MATRIX_V:
+						return "GetWorldToViewMatrix()";
+					case BuiltInShaderTransformTypes.UNITY_MATRIX_P:
+						return "GetViewToHClipMatrix()";
+					case BuiltInShaderTransformTypes.UNITY_MATRIX_VP:
+						return "GetWorldToHClipMatrix()";
+					case BuiltInShaderTransformTypes._Object2World:
+						return "GetObjectToWorldMatrix()";
+					case BuiltInShaderTransformTypes._World2Object:
+						return "GetWorldToObjectMatrix()";
+					case BuiltInShaderTransformTypes.UNITY_MATRIX_T_MV:
+					case BuiltInShaderTransformTypes.UNITY_MATRIX_IT_MV:
+					default:
+					{
+						UIUtils.ShowMessage( "Matrix not declared natively on SRP. Must create it manually inside ASE" );
+						return "float4x4(" +
+								"1,0,0,0," +
+								"0,1,0,0," +
+								"0,0,1,0," +
+								"0,0,0,1)";
+					}
+				}
+			}
+			else
+			{
+				return m_selectedType.ToString();
+			}
 		}
 
 		public override void ReadFromString( ref string[] nodeParams )

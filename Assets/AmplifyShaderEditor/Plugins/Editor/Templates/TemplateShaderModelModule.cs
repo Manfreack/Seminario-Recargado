@@ -12,13 +12,17 @@ namespace AmplifyShaderEditor
 	{
 		private const string ShaderModelStr = "Shader Model";
 		private const string ShaderModelFormatStr = "#pragma target ";
+		private const string ShaderModelEncapsulateFormatStr = "CGINCLUDE\n#pragma target {0}\nENDCG";
 
 		[SerializeField]
 		private int m_shaderModelIdx = 2;
 
+		[SerializeField]
+		private bool m_encapsulateOnCGInlude = false;
+
 		public TemplateShaderModelModule() : base("Shader Model"){ }
 		
-		public override void Draw( ParentNode owner, bool style = true )
+		public override void Draw( UndoParentNode owner, bool style = true )
 		{
 			EditorGUI.BeginChangeCheck();
 			m_shaderModelIdx = owner.EditorGUILayoutPopup( ShaderModelStr, m_shaderModelIdx, TemplateHelperFunctions.AvailableShaderModels );
@@ -28,9 +32,15 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-		public void CopyFrom( TemplateShaderModelModule other )
+		public void CopyFrom( TemplateShaderModelModule other , bool allData )
 		{
-			m_shaderModelIdx = other.CurrentShaderModel;
+			if( allData )
+			{
+				m_independentModule = other.IndependentModule;
+				m_encapsulateOnCGInlude = other.EncapsulateOnCGInlude;
+			}
+
+			m_shaderModelIdx = other.CurrentShaderModelIdx;
 		}
 
 		public override void ReadFromString( ref uint index, ref string[] nodeParams )
@@ -52,9 +62,16 @@ namespace AmplifyShaderEditor
 				IOUtils.AddFieldValueToString( ref nodeInfo, m_shaderModelIdx );
 		}
 
-		public override string GenerateShaderData()
+		public override string GenerateShaderData( bool isSubShader )
 		{
-			return ShaderModelFormatStr + TemplateHelperFunctions.AvailableShaderModels[ m_shaderModelIdx ];
+			if( m_encapsulateOnCGInlude )
+			{
+				return string.Format( ShaderModelEncapsulateFormatStr, TemplateHelperFunctions.AvailableShaderModels[ m_shaderModelIdx ] );
+			}
+			else
+			{
+				return ShaderModelFormatStr + TemplateHelperFunctions.AvailableShaderModels[ m_shaderModelIdx ];
+			}
 		}
 
 		public void ConfigureFromTemplateData( TemplateShaderModelData data )
@@ -63,16 +80,21 @@ namespace AmplifyShaderEditor
 
 			if( newValidData && m_validData != newValidData )
 			{
+				m_independentModule = data.IndependentModule;
+
 				if( TemplateHelperFunctions.ShaderModelToArrayIdx.ContainsKey( data.Value ) )
 				{
 					m_shaderModelIdx = TemplateHelperFunctions.ShaderModelToArrayIdx[ data.Value ];
 				}
+				m_encapsulateOnCGInlude = data.Encapsulate;
 			}
 
 			m_validData = newValidData;
 		}
 
-		public int CurrentShaderModel { get { return m_shaderModelIdx; } }
+		public int CurrentShaderModelIdx { get { return m_shaderModelIdx; } }
+		public string CurrentShaderModel { get { return TemplateHelperFunctions.AvailableShaderModels[ m_shaderModelIdx ]; } }
+		public bool EncapsulateOnCGInlude { get { return m_encapsulateOnCGInlude; } }
 		public int InterpolatorAmount
 		{
 			get

@@ -12,6 +12,7 @@ namespace AmplifyShaderEditor
 		ModuleShaderModel,
 		ModuleBlendMode,
 		ModuleBlendOp,
+		ModuleAlphaToMask,
 		ModuleCullMode,
 		ModuleColorMask,
 		ModuleStencil,
@@ -29,7 +30,9 @@ namespace AmplifyShaderEditor
 		PassFragmentFunction,
 		PassVertexData,
 		PassInterpolatorData,
-		PassNameData
+		PassNameData,
+		AllModules
+		//EndPass
 	}
 
 	public enum TemplateSRPType
@@ -64,6 +67,9 @@ namespace AmplifyShaderEditor
 		private TemplateTagData m_globalsTag = new TemplateTagData( TemplatesManager.TemplateGlobalsTag, true );
 
 		[SerializeField]
+		private TemplateTagData m_allModulesTag = new TemplateTagData( TemplatesManager.TemplateAllModulesTag, true );
+
+		[SerializeField]
 		private TemplateTagData m_functionsTag = new TemplateTagData( TemplatesManager.TemplateFunctionsTag, true );
 
 		[SerializeField]
@@ -85,10 +91,19 @@ namespace AmplifyShaderEditor
 		private TemplateSRPType m_srpType = TemplateSRPType.BuiltIn;
 
 		[SerializeField]
+		private bool m_srpIsPBR = false;
+
+		[SerializeField]
 		private string m_uniquePrefix;
 
 		[SerializeField]
 		private TemplateIncludePragmaContainter m_includePragmaContainer = new TemplateIncludePragmaContainter();
+
+		[SerializeField]
+		private bool m_allModulesMode = false;
+
+		[SerializeField]
+		private string m_passUniqueName = string.Empty;
 
 		public void Destroy()
 		{
@@ -100,6 +115,7 @@ namespace AmplifyShaderEditor
 			m_tagData.Destroy();
 			m_tagData = null;
 			m_globalsTag = null;
+			m_allModulesTag = null;
 			m_functionsTag = null;
 			m_pragmaTag = null;
 			m_passTag = null;
@@ -120,14 +136,12 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-		public TemplateModulesData( TemplateIdManager idManager, TemplatePropertyContainer propertyContainer, string uniquePrefix, int offsetIdx, string subBody, bool isSubShader )
+		public TemplateModulesData( TemplateOptionsContainer optionsContainer, TemplateIdManager idManager, TemplatePropertyContainer propertyContainer, string uniquePrefix, int offsetIdx, string subBody, bool isSubShader )
 		{
 			if ( string.IsNullOrEmpty( subBody ) )
 				return;
 
 			m_uniquePrefix = uniquePrefix;
-
-
 			//PRAGMAS AND INCLUDES
 			TemplateHelperFunctions.CreatePragmaIncludeList( subBody, m_includePragmaContainer );
 
@@ -135,15 +149,26 @@ namespace AmplifyShaderEditor
 			ConfigureCommonTag( m_globalsTag, propertyContainer, idManager, uniquePrefix, offsetIdx, subBody );
 			ConfigureCommonTag( m_functionsTag, propertyContainer, idManager, uniquePrefix, offsetIdx, subBody );
 			ConfigureCommonTag( m_pragmaTag, propertyContainer, idManager, uniquePrefix, offsetIdx, subBody );
-			ConfigureCommonTag( m_passTag, propertyContainer, idManager, uniquePrefix, offsetIdx, subBody );
+			if( !TemplateHelperFunctions.GetPassUniqueId( m_passTag, propertyContainer, idManager, uniquePrefix, offsetIdx, subBody, ref m_passUniqueName ) )
+			{
+				ConfigureCommonTag( m_passTag, propertyContainer, idManager, uniquePrefix, offsetIdx, subBody );
+			}
 			ConfigureCommonTag( m_inputsVertTag, propertyContainer, idManager, uniquePrefix, offsetIdx, subBody );
 			ConfigureCommonTag( m_inputsFragTag, propertyContainer, idManager, uniquePrefix, offsetIdx, subBody );
 
+			// If Options are enabled then remove them so they won't influence Regex matches
+			if( optionsContainer.Enabled && optionsContainer.EndIndex  > 0 )
+			{
+				offsetIdx += optionsContainer.EndIndex;
+				subBody = subBody.Substring( optionsContainer.EndIndex );
+			}
 			//BlEND MODE
 			{
-				int blendModeIdx = subBody.IndexOf( "Blend" );
-				if ( blendModeIdx > 0 )
+				Match blendModeMatch = Regex.Match( subBody, TemplateHelperFunctions.BlendWholeWordPattern );
+				if( blendModeMatch.Success )
 				{
+					int blendModeIdx = blendModeMatch.Index;
+					
 					int end = subBody.IndexOf( TemplatesManager.TemplateNewLine, blendModeIdx );
 					string blendParams = subBody.Substring( blendModeIdx, end - blendModeIdx );
 					m_blendData.BlendModeId = blendParams;
@@ -151,94 +176,131 @@ namespace AmplifyShaderEditor
 					idManager.RegisterId( m_blendData.BlendModeStartIndex, uniquePrefix + m_blendData.BlendModeId, m_blendData.BlendModeId );
 
 					TemplateHelperFunctions.CreateBlendMode( blendParams, ref m_blendData );
-					if ( m_blendData.ValidBlendMode )
+					if( m_blendData.ValidBlendMode )
 					{
 						propertyContainer.AddId( subBody, blendParams, false );
 					}
+					
 				}
 			}
 			//BLEND OP
 			{
-				int blendOpIdx = subBody.IndexOf( "BlendOp" );
-				if ( blendOpIdx > 0 )
+				Match blendOpMatch = Regex.Match( subBody, TemplateHelperFunctions.BlendOpWholeWordPattern );
+				if( blendOpMatch.Success )
 				{
+					int blendOpIdx = blendOpMatch.Index;
 					int end = subBody.IndexOf( TemplatesManager.TemplateNewLine, blendOpIdx );
 					string blendOpParams = subBody.Substring( blendOpIdx, end - blendOpIdx );
 					m_blendData.BlendOpId = blendOpParams;
 					BlendData.BlendOpStartIndex = offsetIdx + blendOpIdx;
 					idManager.RegisterId( m_blendData.BlendOpStartIndex, uniquePrefix + m_blendData.BlendOpId, m_blendData.BlendOpId );
 					TemplateHelperFunctions.CreateBlendOp( blendOpParams, ref m_blendData );
-					if ( m_blendData.ValidBlendOp )
+					if( m_blendData.ValidBlendOp )
 					{
 						propertyContainer.AddId( subBody, blendOpParams, false );
 					}
 				}
-
-				m_blendData.DataCheck = ( m_blendData.ValidBlendMode || m_blendData.ValidBlendOp ) ? TemplateDataCheck.Valid : TemplateDataCheck.Invalid;
+				
 			}
+
+			//ALPHA TO MASK
+			{
+				Match alphaToMaskMatch = Regex.Match( subBody, TemplateHelperFunctions.ALphaToMaskPattern );
+				if( alphaToMaskMatch.Success )
+				{
+					m_blendData.ValidAlphaToMask = true;
+					m_blendData.AlphaToMaskId = alphaToMaskMatch.Groups[ 0 ].Value;
+					if( alphaToMaskMatch.Groups.Count > 1 )
+						m_blendData.AlphaToMaskValue = alphaToMaskMatch.Groups[ 1 ].Value.Equals( "On" ) ? true : false;
+					m_blendData.IndependentAlphaToMask = true;
+					idManager.RegisterId( offsetIdx + alphaToMaskMatch.Index, uniquePrefix + m_blendData.AlphaToMaskId, m_blendData.AlphaToMaskId );
+					propertyContainer.AddId( subBody, m_blendData.AlphaToMaskId, false );
+				}
+
+				m_blendData.DataCheck = ( m_blendData.ValidBlendMode || m_blendData.ValidBlendOp || m_blendData.ValidAlphaToMask ) ? TemplateDataCheck.Valid : TemplateDataCheck.Invalid;
+			}
+
 			//CULL MODE
 			{
-				int cullIdx = subBody.IndexOf( "Cull" );
-				if ( cullIdx > 0 )
+				Match cullMatch = Regex.Match( subBody, TemplateHelperFunctions.CullWholeWordPattern );
+				if( cullMatch.Success )
 				{
+					int cullIdx = cullMatch.Index;
 					int end = subBody.IndexOf( TemplatesManager.TemplateNewLine, cullIdx );
 					string cullParams = subBody.Substring( cullIdx, end - cullIdx );
 					m_cullModeData.CullModeId = cullParams;
 					m_cullModeData.StartIdx = offsetIdx + cullIdx;
 					idManager.RegisterId( m_cullModeData.StartIdx, uniquePrefix + m_cullModeData.CullModeId, m_cullModeData.CullModeId );
 					TemplateHelperFunctions.CreateCullMode( cullParams, ref m_cullModeData );
-					if ( m_cullModeData.DataCheck == TemplateDataCheck.Valid )
+					if( m_cullModeData.DataCheck == TemplateDataCheck.Valid )
 						propertyContainer.AddId( subBody, cullParams, false, string.Empty );
+					
 				}
 			}
 			//COLOR MASK
 			{
-				int colorMaskIdx = subBody.IndexOf( "ColorMask" );
-				if ( colorMaskIdx > 0 )
+				Match colorMaskMatch = Regex.Match( subBody, TemplateHelperFunctions.ColorMaskWholeWordPattern );
+				if( colorMaskMatch.Success )
 				{
+					int colorMaskIdx = colorMaskMatch.Index;
 					int end = subBody.IndexOf( TemplatesManager.TemplateNewLine, colorMaskIdx );
 					string colorMaskParams = subBody.Substring( colorMaskIdx, end - colorMaskIdx );
 					m_colorMaskData.ColorMaskId = colorMaskParams;
 					m_colorMaskData.StartIdx = offsetIdx + colorMaskIdx;
 					idManager.RegisterId( m_colorMaskData.StartIdx, uniquePrefix + m_colorMaskData.ColorMaskId, m_colorMaskData.ColorMaskId );
 					TemplateHelperFunctions.CreateColorMask( colorMaskParams, ref m_colorMaskData );
-					if ( m_colorMaskData.DataCheck == TemplateDataCheck.Valid )
+					if( m_colorMaskData.DataCheck == TemplateDataCheck.Valid )
 						propertyContainer.AddId( subBody, colorMaskParams, false );
+					
 				}
 			}
 			//STENCIL
 			{
-				int stencilIdx = subBody.IndexOf( "Stencil" );
-				if ( stencilIdx > -1 )
+				Match stencilMatch = Regex.Match( subBody, TemplateHelperFunctions.StencilWholeWordPattern );
+				if( stencilMatch.Success )
 				{
+					int stencilIdx = stencilMatch.Index;
 					int stencilEndIdx = subBody.IndexOf( "}", stencilIdx );
-					if ( stencilEndIdx > 0 )
+					if( stencilEndIdx > 0 )
 					{
 						string stencilParams = subBody.Substring( stencilIdx, stencilEndIdx + 1 - stencilIdx );
 						m_stencilData.StencilBufferId = stencilParams;
 						m_stencilData.StartIdx = offsetIdx + stencilIdx;
 						idManager.RegisterId( m_stencilData.StartIdx, uniquePrefix + m_stencilData.StencilBufferId, m_stencilData.StencilBufferId );
 						TemplateHelperFunctions.CreateStencilOps( stencilParams, ref m_stencilData );
-						if ( m_stencilData.DataCheck == TemplateDataCheck.Valid )
+						if( m_stencilData.DataCheck == TemplateDataCheck.Valid )
 						{
 							propertyContainer.AddId( subBody, stencilParams, true );
 						}
 					}
 				}
+				else
+				{
+					int stencilTagIdx = subBody.IndexOf( TemplatesManager.TemplateStencilTag );
+					if( stencilTagIdx > -1 )
+					{
+						m_stencilData.SetIndependentDefault();
+						m_stencilData.StencilBufferId = TemplatesManager.TemplateStencilTag;
+						m_stencilData.StartIdx = offsetIdx + stencilTagIdx;
+						idManager.RegisterId( m_stencilData.StartIdx, uniquePrefix + m_stencilData.StencilBufferId, m_stencilData.StencilBufferId );
+						propertyContainer.AddId( subBody, m_stencilData.StencilBufferId, true );
+					}
+				}
 			}
 			//ZWRITE
 			{
-				int zWriteOpIdx = subBody.IndexOf( "ZWrite" );
-				if ( zWriteOpIdx > -1 )
+				Match zWriteMatch = Regex.Match( subBody, TemplateHelperFunctions.ZWriteWholeWordPattern );
+				if( zWriteMatch.Success )
 				{
+					int zWriteOpIdx = zWriteMatch.Index;
 					int zWriteEndIdx = subBody.IndexOf( TemplatesManager.TemplateNewLine, zWriteOpIdx );
-					if ( zWriteEndIdx > 0 )
+					if( zWriteEndIdx > 0 )
 					{
 						m_depthData.ZWriteModeId = subBody.Substring( zWriteOpIdx, zWriteEndIdx + 1 - zWriteOpIdx );
 						m_depthData.ZWriteStartIndex = offsetIdx + zWriteOpIdx;
 						idManager.RegisterId( m_depthData.ZWriteStartIndex, uniquePrefix + m_depthData.ZWriteModeId, m_depthData.ZWriteModeId );
 						TemplateHelperFunctions.CreateZWriteMode( m_depthData.ZWriteModeId, ref m_depthData );
-						if ( m_depthData.DataCheck == TemplateDataCheck.Valid )
+						if( m_depthData.DataCheck == TemplateDataCheck.Valid )
 						{
 							propertyContainer.AddId( subBody, m_depthData.ZWriteModeId, true );
 						}
@@ -248,17 +310,18 @@ namespace AmplifyShaderEditor
 
 			//ZTEST
 			{
-				int zTestOpIdx = subBody.IndexOf( "ZTest" );
-				if ( zTestOpIdx > -1 )
+				Match zTestMatch = Regex.Match( subBody, TemplateHelperFunctions.ZTestWholeWordPattern );
+				if( zTestMatch.Success )
 				{
+					int zTestOpIdx = zTestMatch.Index;
 					int zTestEndIdx = subBody.IndexOf( TemplatesManager.TemplateNewLine, zTestOpIdx );
-					if ( zTestEndIdx > 0 )
+					if( zTestEndIdx > 0 )
 					{
 						m_depthData.ZTestModeId = subBody.Substring( zTestOpIdx, zTestEndIdx + 1 - zTestOpIdx );
 						m_depthData.ZTestStartIndex = offsetIdx + zTestOpIdx;
 						idManager.RegisterId( m_depthData.ZTestStartIndex, uniquePrefix + m_depthData.ZTestModeId, m_depthData.ZTestModeId );
 						TemplateHelperFunctions.CreateZTestMode( m_depthData.ZTestModeId, ref m_depthData );
-						if ( m_depthData.DataCheck == TemplateDataCheck.Valid )
+						if( m_depthData.DataCheck == TemplateDataCheck.Valid )
 						{
 							propertyContainer.AddId( subBody, m_depthData.ZTestModeId, true );
 						}
@@ -268,28 +331,31 @@ namespace AmplifyShaderEditor
 
 			//ZOFFSET
 			{
-				int zOffsetIdx = subBody.IndexOf( "Offset" );
-				if ( zOffsetIdx > -1 )
+				Match zOffsetMatch = Regex.Match( subBody, TemplateHelperFunctions.ZOffsetWholeWordPattern );
+				if( zOffsetMatch.Success )
 				{
+					int zOffsetIdx = zOffsetMatch.Index;
 					int zOffsetEndIdx = subBody.IndexOf( TemplatesManager.TemplateNewLine, zOffsetIdx );
-					if ( zOffsetEndIdx > 0 )
+					if( zOffsetEndIdx > 0 )
 					{
 						m_depthData.OffsetId = subBody.Substring( zOffsetIdx, zOffsetEndIdx + 1 - zOffsetIdx );
 						m_depthData.OffsetStartIndex = offsetIdx + zOffsetIdx;
 						idManager.RegisterId( m_depthData.OffsetStartIndex, uniquePrefix + m_depthData.OffsetId, m_depthData.OffsetId );
 						TemplateHelperFunctions.CreateZOffsetMode( m_depthData.OffsetId, ref m_depthData );
-						if ( m_depthData.DataCheck == TemplateDataCheck.Valid )
+						if( m_depthData.DataCheck == TemplateDataCheck.Valid )
 						{
 							propertyContainer.AddId( subBody, m_depthData.OffsetId, true );
 						}
 					}
 				}
+				m_depthData.SetDataCheck();
 			}
 			//TAGS
 			{
-				int tagsIdx = subBody.IndexOf( "Tags" );
-				if ( tagsIdx > -1 )
+				Match tagsMatch = Regex.Match( subBody, TemplateHelperFunctions.TagsWholeWordPattern );
+				if ( tagsMatch.Success )
 				{
+					int tagsIdx = tagsMatch.Index;
 					int tagsEndIdx = subBody.IndexOf( "}", tagsIdx );
 					if ( tagsEndIdx > -1 )
 					{
@@ -298,6 +364,7 @@ namespace AmplifyShaderEditor
 						m_tagData.StartIdx = offsetIdx + tagsIdx;
 						idManager.RegisterId( m_tagData.StartIdx, uniquePrefix + m_tagData.TagsId, m_tagData.TagsId );
 						m_srpType = TemplateHelperFunctions.CreateTags( ref m_tagData, isSubShader );
+
 						propertyContainer.AddId( subBody, m_tagData.TagsId, false );
 						m_tagData.DataCheck = TemplateDataCheck.Valid;
 					}
@@ -332,6 +399,38 @@ namespace AmplifyShaderEditor
 					}
 				}
 			}
+
+			// ALL MODULES
+			int allModulesIndex = subBody.IndexOf( TemplatesManager.TemplateAllModulesTag );
+			if( allModulesIndex > 0 )
+			{
+				//ONLY REGISTER MISSING TAGS
+				ConfigureCommonTag( m_allModulesTag, propertyContainer, idManager, uniquePrefix, offsetIdx, subBody );
+				m_allModulesMode = true;
+				
+				m_blendData.SetAllModulesDefault();
+
+				if( !m_cullModeData.IsValid )
+					m_cullModeData.SetAllModulesDefault();
+
+				if( !m_colorMaskData.IsValid )
+					m_colorMaskData.SetAllModulesDefault();
+
+				if( !m_stencilData.IsValid )
+					m_stencilData.SetAllModulesDefault();
+
+				if( !m_depthData.IsValid )
+					m_depthData.SetAllModulesDefault();
+
+				if( !m_shaderModel.IsValid )
+					m_shaderModel.SetAllModulesDefault();
+			}
+		}
+
+		public void SetPassUniqueNameIfUndefined( string value )
+		{
+			if( string.IsNullOrEmpty( m_passUniqueName ) )
+				m_passUniqueName = value;
 		}
 
 		public bool HasValidData
@@ -346,6 +445,7 @@ namespace AmplifyShaderEditor
 						m_tagData.DataCheck == TemplateDataCheck.Valid ||
 						m_shaderModel.DataCheck == TemplateDataCheck.Valid ||
 						m_globalsTag.IsValid ||
+						m_allModulesTag.IsValid ||
 						m_functionsTag.IsValid ||
 						m_pragmaTag.IsValid ||
 						m_passTag.IsValid ||
@@ -361,14 +461,20 @@ namespace AmplifyShaderEditor
 		public TemplateDepthData DepthData { get { return m_depthData; } }
 		public TemplateTagsModuleData TagData { get { return m_tagData; } }
 		public TemplateTagData GlobalsTag { get { return m_globalsTag; } }
+		public TemplateTagData AllModulesTag { get { return m_allModulesTag; } }
 		public TemplateTagData FunctionsTag { get { return m_functionsTag; } }
 		public TemplateTagData PragmaTag { get { return m_pragmaTag; } }
 		public TemplateTagData PassTag { get { return m_passTag; } }
 		public TemplateTagData InputsVertTag { get { return m_inputsVertTag; } }
 		public TemplateTagData InputsFragTag { get { return m_inputsFragTag; } }
 		public TemplateShaderModelData ShaderModel { get { return m_shaderModel; } }
-		public TemplateSRPType SRPType { get { return m_srpType; } }
+		public TemplateSRPType SRPType { get { return m_srpType; } set { m_srpType = value; } }
+		public bool SRPIsPBR { get { return m_srpIsPBR; } set { m_srpIsPBR = value; } }
+		public bool SRPIsPBRHD { get { return m_srpIsPBR && m_srpType == TemplateSRPType.HD; }  }
 		public string UniquePrefix { get { return m_uniquePrefix; } }
+		public string PassUniqueName { get { return m_passUniqueName; } }
+		public bool HasPassUniqueName { get { return !string.IsNullOrEmpty( m_passUniqueName ); } }
 		public TemplateIncludePragmaContainter IncludePragmaContainer { get { return m_includePragmaContainer; } }
+		public bool AllModulesMode { get { return m_allModulesMode; } }
 	}
 }

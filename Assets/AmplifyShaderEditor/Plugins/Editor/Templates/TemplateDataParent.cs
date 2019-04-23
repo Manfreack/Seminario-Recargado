@@ -16,6 +16,8 @@ namespace AmplifyShaderEditor
 	[Serializable]
 	public class TemplateIncludePragmaContainter
 	{
+		[SerializeField]
+		private List<string> m_nativeDirectivesList = new List<string>();
 
 		[SerializeField]
 		private List<string> m_includesList = new List<string>();
@@ -117,8 +119,17 @@ namespace AmplifyShaderEditor
 			}
 		}
 
+		public void AddNativeDirective( string native )
+		{
+			m_nativeDirectivesList.Add( native );
+		}
+
 		public void Destroy()
 		{
+			m_nativeDirectivesList.Clear();
+			m_nativeDirectivesList = null;
+
+
 			m_includesList.Clear();
 			m_includesDict.Clear();
 			m_includesList = null;
@@ -138,6 +149,8 @@ namespace AmplifyShaderEditor
 		public List<string> IncludesList { get { return m_includesList; } }
 		public List<string> PragmasList { get { return m_pragmasList; } }
 		public List<string> DefinesList { get { return m_definesList; } }
+		public List<string> NativeDirectivesList { get { return m_nativeDirectivesList; } }
+
 	}
 
 	[Serializable]
@@ -147,15 +160,21 @@ namespace AmplifyShaderEditor
 		public string Data = string.Empty;
 		public int Index = -1;
 		public bool IsValid { get { return Index > -1; } }
+		public void Reset()
+		{
+			Id = string.Empty;
+			Data = string.Empty;
+			Index = -1;
+		}
 	}
 
 	[Serializable]
-	public class TemplateDataParent
+	public class TemplateDataParent : ScriptableObject
 	{
 		[SerializeField]
-		private TemplateDataType m_templateType;
+		protected TemplateDataType m_templateType;
 
-		[ SerializeField]
+		[SerializeField]
 		protected string m_name;
 
 		[SerializeField]
@@ -173,17 +192,21 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		protected bool m_communityTemplate = false;
 
-		public TemplateDataParent( TemplateDataType templateType )
-		{
-			m_templateType = templateType;
-		}
 		public virtual void Destroy() { }
-		public virtual void Reload() { }
-		public string Name { get { return m_name; } set { m_name = value; } }
+		public virtual bool Reload() { return true; }
+		public string Name
+		{
+			get { return m_name; }
+			set
+			{
+				m_name = value.StartsWith( "Hidden/" ) ? value.Replace( "Hidden/", string.Empty ) : value;
+			}
+		}
 		public string GUID { get { return m_guid; } set { m_guid = value; } }
 		public int OrderId { get { return m_orderId; } set { m_orderId = value; } }
 		public string DefaultShaderName { get { return m_defaultShaderName; } set { m_defaultShaderName = value; } }
 		public bool IsValid { get { return m_isValid; } }
 		public TemplateDataType TemplateType { get { return m_templateType; } }
+		public virtual void Init( string name, string guid, bool isCommunity ) { m_communityTemplate = isCommunity; }
 	}
 }

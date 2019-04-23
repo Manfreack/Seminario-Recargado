@@ -37,20 +37,28 @@ public class AmplifyShaderFunction : ScriptableObject
 
 	[SerializeField]
 	private AdditionalIncludesHelper m_additionalIncludes = new AdditionalIncludesHelper();
-	public AdditionalIncludesHelper AdditionalIncludes
-	{
-		get { return m_additionalIncludes; }
-		set { m_additionalIncludes = value; }
-	}
+	//public AdditionalIncludesHelper AdditionalIncludes
+	//{
+	//	get { return m_additionalIncludes; }
+	//	set { m_additionalIncludes = value; }
+	//}
 
 	[SerializeField]
 	private AdditionalPragmasHelper m_additionalPragmas = new AdditionalPragmasHelper();
-	public AdditionalPragmasHelper AdditionalPragmas
-	{
-		get { return m_additionalPragmas; }
-		set { m_additionalPragmas = value; }
-	}
+	//public AdditionalPragmasHelper AdditionalPragmas
+	//{
+	//	get { return m_additionalPragmas; }
+	//	set { m_additionalPragmas = value; }
+	//}
 
+	[SerializeField]
+	private TemplateAdditionalDirectivesHelper m_additionalDirectives = new TemplateAdditionalDirectivesHelper( " Additional Directives" );
+	public TemplateAdditionalDirectivesHelper AdditionalDirectives
+	{
+		get { return m_additionalDirectives; }
+		set { m_additionalDirectives = value; }
+	}
+	
 	[SerializeField]
 	private FunctionNodeCategories m_nodeCategory = FunctionNodeCategories.Functions;
 	public FunctionNodeCategories NodeCategory
@@ -79,13 +87,40 @@ public class AmplifyShaderFunction : ScriptableObject
 			}
 		}
 	}
-
+	
 	[SerializeField]
 	private PreviewLocation m_previewPosition = PreviewLocation.Auto;
 	public PreviewLocation PreviewPosition
 	{
 		get { return m_previewPosition; }
 		set { m_previewPosition = value; }
+	}
+
+	[SerializeField]
+	private bool m_hidden = false;
+	public bool Hidden
+	{
+		get { return m_hidden; }
+		set { m_hidden = value; }
+	}
+
+	public void UpdateDirectivesList()
+	{
+		m_additionalDirectives.CleanNullDirectives();
+		m_additionalDirectives.UpdateDirectivesFromSaveItems();
+
+		if( m_additionalIncludes.IncludeList.Count > 0 )
+		{
+			m_additionalDirectives.AddItems( AdditionalLineType.Include, m_additionalIncludes.IncludeList );
+			m_additionalIncludes.IncludeList.Clear();
+		}
+
+		if( m_additionalPragmas.PragmaList.Count > 0 )
+		{
+			m_additionalDirectives.AddItems( AdditionalLineType.Pragma, m_additionalPragmas.PragmaList );
+			m_additionalPragmas.PragmaList.Clear();
+		}
+
 	}
 }
 

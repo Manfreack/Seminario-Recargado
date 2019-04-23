@@ -16,7 +16,11 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		protected string m_funcLWFormatOverride = string.Empty;
 
+		[SerializeField]
+		protected string m_funcHDFormatOverride = string.Empty;
+
 		protected string m_localVarName = null;
+
 		protected override void CommonInit( int uniqueId )
 		{
 			base.CommonInit( uniqueId );
@@ -29,36 +33,60 @@ namespace AmplifyShaderEditor
 		{
 			return Constants.UnityCgLibFuncs;
 		}
+
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
 			if( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
 				return GetOutputVectorItem( 0, outputId, m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory ) );
 
-			if( !( dataCollector.IsTemplate && dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight ) )
+			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
+
+			if( !( dataCollector.IsTemplate && dataCollector.IsSRP ) )
 				dataCollector.AddToIncludes( UniqueId, Constants.UnityCgLibFuncs );
 
 			string concatResults = string.Empty;
+			bool first = true;
 			for( int i = 0; i < m_inputPorts.Count; i++ )
 			{
-				string result = string.Empty;
-				if( m_inputPorts[ i ].IsConnected )
+				if( m_inputPorts[ i ].Visible )
 				{
-					result = m_inputPorts[ i ].GeneratePortInstructions( ref dataCollector );
-				}
-				else
-				{
-					result = m_inputPorts[ i ].WrappedInternalData;
-				}
+					if( !first )
+					{
+						concatResults += " , ";
+					}
+					else
+					{
+						first = false;
+					}
 
-				concatResults += result;
-				if( i != ( m_inputPorts.Count - 1 ) )
-					concatResults += " , ";
+					string result = string.Empty;
+					if( m_inputPorts[ i ].IsConnected )
+					{
+						result = m_inputPorts[ i ].GeneratePortInstructions( ref dataCollector );
+					}
+					else
+					{
+						result = m_inputPorts[ i ].WrappedInternalData;
+					}
+
+					concatResults += result;
+				}
 			}
 			string finalResult = m_funcType + "( " + concatResults + " )";
-			if( dataCollector.IsTemplate && dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight && !string.IsNullOrEmpty( m_funcLWFormatOverride ) )
-				finalResult = string.Format( m_funcLWFormatOverride, concatResults );
-			RegisterLocalVariable( 0, finalResult, ref dataCollector, m_localVarName );
+			if( dataCollector.IsTemplate )
+			{
+				if( dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight && !string.IsNullOrEmpty( m_funcLWFormatOverride ) )
+				{
+					finalResult = string.Format( m_funcLWFormatOverride, concatResults );
+				}
+				else if( dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.HD && !string.IsNullOrEmpty( m_funcHDFormatOverride ) )
+				{
+					finalResult = string.Format( m_funcHDFormatOverride, concatResults );
+				}
 
+			}
+
+			RegisterLocalVariable( 0, finalResult, ref dataCollector, m_localVarName );
 			return GetOutputVectorItem( 0, outputId, m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory ) );
 		}
 	}

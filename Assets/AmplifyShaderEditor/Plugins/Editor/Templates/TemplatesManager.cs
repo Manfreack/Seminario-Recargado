@@ -23,7 +23,7 @@ namespace AmplifyShaderEditor
 		public string DefaultValue;
 		public string LinkId;
 
-		public TemplateInputData( int tagLocalStartIdx, int tagGlobalStartIdx, string tagId, string portName, string defaultValue, WirePortDataType dataType, MasterNodePortCategory portCategory, int portUniqueId, int orderId , string linkId )
+		public TemplateInputData( int tagLocalStartIdx, int tagGlobalStartIdx, string tagId, string portName, string defaultValue, WirePortDataType dataType, MasterNodePortCategory portCategory, int portUniqueId, int orderId, string linkId )
 		{
 			DefaultValue = defaultValue;
 			PortName = portName;
@@ -51,6 +51,8 @@ namespace AmplifyShaderEditor
 		}
 	}
 
+
+
 	[Serializable]
 	public class TemplatePropertyContainer
 	{
@@ -61,6 +63,7 @@ namespace AmplifyShaderEditor
 
 		public void AddId( TemplateProperty templateProperty )
 		{
+			BuildInfo();
 			m_propertyList.Add( templateProperty );
 			m_propertyDict.Add( templateProperty.Id, templateProperty );
 		}
@@ -72,25 +75,38 @@ namespace AmplifyShaderEditor
 
 		public void AddId( string body, string ID, bool searchIndentation, string customIndentation )
 		{
+			BuildInfo();
+
 			int propertyIndex = body.IndexOf( ID );
 			if( propertyIndex > -1 )
 			{
 				if( searchIndentation )
 				{
-					int indentationIndex = -1;
-					for( int i = propertyIndex; i > 0; i-- )
+					int identationIndex = -1;
+					for( int i = propertyIndex; i >= 0; i-- )
 					{
 						if( body[ i ] == TemplatesManager.TemplateNewLine )
 						{
-							indentationIndex = i + 1;
+							identationIndex = i + 1;
 							break;
 						}
+
+						if( i == 0 )
+						{
+							identationIndex = 0;
+						}
 					}
-					if( indentationIndex > -1 )
+					if( identationIndex > -1 )
 					{
-						int length = propertyIndex - indentationIndex;
-						string indentation = ( length > 0 ) ? body.Substring( indentationIndex, length ) : string.Empty;
+						int length = propertyIndex - identationIndex;
+						string indentation = ( length > 0 ) ? body.Substring( identationIndex, length ) : string.Empty;
 						TemplateProperty templateProperty = new TemplateProperty( ID, indentation, false );
+						m_propertyList.Add( templateProperty );
+						m_propertyDict.Add( templateProperty.Id, templateProperty );
+					}
+					else
+					{
+						TemplateProperty templateProperty = new TemplateProperty( ID, string.Empty, false );
 						m_propertyList.Add( templateProperty );
 						m_propertyDict.Add( templateProperty.Id, templateProperty );
 					}
@@ -104,7 +120,7 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-	
+
 		public void AddId( string body, string ID, int propertyIndex, bool searchIndentation )
 		{
 			AddId( body, ID, propertyIndex, searchIndentation, string.Empty );
@@ -112,34 +128,36 @@ namespace AmplifyShaderEditor
 
 		public void AddId( string body, string ID, int propertyIndex, bool searchIndentation, string customIndentation )
 		{
-			if( propertyIndex > -1 )
+			if( body == null || string.IsNullOrEmpty( body ) )
+				return;
+
+			BuildInfo();
+			if( searchIndentation && propertyIndex > -1 && propertyIndex < body.Length )
 			{
-				if( searchIndentation )
+				int indentationIndex = -1;
+				for( int i = propertyIndex; i > 0; i-- )
 				{
-					int indentationIndex = -1;
-					for( int i = propertyIndex; i > 0; i-- )
+					if( body[ i ] == TemplatesManager.TemplateNewLine )
 					{
-						if( body[ i ] == TemplatesManager.TemplateNewLine )
-						{
-							indentationIndex = i + 1;
-							break;
-						}
-					}
-					if( indentationIndex > -1 )
-					{
-						int length = propertyIndex - indentationIndex;
-						string indentation = ( length > 0 ) ? body.Substring( indentationIndex, length ) : string.Empty;
-						TemplateProperty templateProperty = new TemplateProperty( ID, indentation, false );
-						m_propertyList.Add( templateProperty );
-						m_propertyDict.Add( templateProperty.Id, templateProperty );
+						indentationIndex = i + 1;
+						break;
 					}
 				}
-				else
+
+				if( indentationIndex > -1 )
 				{
-					TemplateProperty templateProperty = new TemplateProperty( ID, customIndentation, true );
+					int length = propertyIndex - indentationIndex;
+					string indentation = ( length > 0 ) ? body.Substring( indentationIndex, length ) : string.Empty;
+					TemplateProperty templateProperty = new TemplateProperty( ID, indentation, false );
 					m_propertyList.Add( templateProperty );
 					m_propertyDict.Add( templateProperty.Id, templateProperty );
 				}
+			}
+			else
+			{
+				TemplateProperty templateProperty = new TemplateProperty( ID, customIndentation, true );
+				m_propertyList.Add( templateProperty );
+				m_propertyDict.Add( templateProperty.Id, templateProperty );
 			}
 
 		}
@@ -184,7 +202,14 @@ namespace AmplifyShaderEditor
 		}
 
 
-		public Dictionary<string, TemplateProperty> PropertyDict { get { return m_propertyDict; } }
+		public Dictionary<string, TemplateProperty> PropertyDict
+		{
+			get
+			{
+				BuildInfo();
+				return m_propertyDict;
+			}
+		}
 		public List<TemplateProperty> PropertyList { get { return m_propertyList; } }
 	}
 
@@ -307,27 +332,33 @@ namespace AmplifyShaderEditor
 		//StencilOp	= 12
 	}
 
-	public class TemplatesManager
+	[Serializable]
+	public class TemplatesManager : ScriptableObject
 	{
 		public static int MPShaderVersion = 14503;
-		public static bool Initialized = false;
+		
 		public static readonly string TemplateShaderNameBeginTag = "/*ase_name*/";
-
-		//public static readonly string TemplateLocalVarTag = "/*ase_local_var*/";
+		public static readonly string TemplateStencilTag = "/*ase_stencil*/\n";
+		public static readonly string TemplateAllModulesTag = "/*ase_all_modules*/\n";
 		public static readonly string TemplateMPSubShaderTag = "\\bSubShader\\b\\s*{";
+		//public static readonly string TemplateMPPassTag = "^\\s*Pass\b\\s*{";//"\\bPass\\b\\s*{";
 		public static readonly string TemplateMPPassTag = "\\bPass\\b\\s*{";
 		public static readonly string TemplateLocalVarTag = "/*ase_local_var*/";
+		public static readonly string TemplateDependenciesListTag = "/*ase_dependencies_list*/";
 		public static readonly string TemplatePragmaTag = "/*ase_pragma*/";
 		public static readonly string TemplatePassTag = "/*ase_pass*/";
+		public static readonly string TemplatePassesEndTag = "/*ase_pass_end*/";
+		//public static readonly string TemplatePassTagPattern = @"\s\/\*ase_pass\*\/";
+		public static readonly string TemplatePassTagPattern = @"\s\/\*ase_pass[:\*]+";
 		public static readonly string TemplatePropertyTag = "/*ase_props*/\n";
 		public static readonly string TemplateGlobalsTag = "/*ase_globals*/\n";
 		public static readonly string TemplateInterpolatorBeginTag = "/*ase_interp(";
 		public static readonly string TemplateVertexDataTag = "/*ase_vdata:";
 
-		public static readonly string TemplateExcludeFromGraphTag = "/*ase_hide_pass*/";
+		//public static readonly string TemplateExcludeFromGraphTag = "/*ase_hide_pass*/";
 		public static readonly string TemplateMainPassTag = "/*ase_main_pass*/";
 
-		public static readonly string TemplateFunctionsTag = "/*ase_functions*/\n";
+		public static readonly string TemplateFunctionsTag = "/*ase_funcs*/\n";
 		//public static readonly string TemplateTagsTag = "/*ase_tags*/";
 
 		//public static readonly string TemplateCullModeTag = "/*ase_cull_mode*/";
@@ -375,45 +406,79 @@ namespace AmplifyShaderEditor
 																//new TemplateTagData( TemplateStencilOpTag,true),
 																};
 
-
-
-		private static Dictionary<string, TemplateDataParent> m_availableTemplates;
-		private static List<TemplateDataParent> m_sortedTemplates;
-		public static string[] AvailableTemplateNames;
-		public static string CurrTemplateGUIDLoaded = string.Empty;
-		public static bool IsTestTemplate { get { return CurrTemplateGUIDLoaded.Equals( "834460efe370abf4687f27dfa49b7f9c" ); } }
 		public static Dictionary<string, string> OfficialTemplates = new Dictionary<string, string>()
 		{
-			{ "1976390536c6c564abb90fe41f6ee334","SRP/Lightweight"},
-			{ "c71b220b631b6344493ea3cf87110c93","Single Pass/Post Process" },
-			{ "6e114a916ca3e4b4bb51972669d463bf","Single Pass/Default Unlit" },
-			{ "5056123faa0c79b47ab6ad7e8bf059a4","Single Pass/Default UI" },
-			{ "0f8ba0101102bb14ebf021ddadce9b49","Single Pass/Default Sprites" },
-			{ "0b6a9f8b4f707c74ca64c0be8e590de0","Single Pass/Particles Alpha Blended" },
-			{ "e1de45c0d41f68c41b2cc20c8b9c05ef","Multi Pass/Unlit" }
+			{ "0770190933193b94aaa3065e307002fa","Unlit"},
+			{ "32139be9c1eb75640a847f011acf3bcf","Post-Processing Stack"},
+			{ "6ce779933eb99f049b78d6163735e06f","Custom RT Init"},
+			{ "32120270d1b3a8746af2aca8bc749736","Custom RT Update"},
+			{ "1976390536c6c564abb90fe41f6ee334","Lightweight PBR"},
+			{ "e2514bdcf5e5399499a9eb24d175b9db","Lightweight Unlit"},
+			{ "091c43ba8bd92c9459798d59b089ce4e","HD Lit"},
+			{ "bb308bce79762c34e823049efce65141","HD PBR"},
+			{ "dfe2f27ac20b08c469b2f95c236be0c3","HD Unlit"},
+			{ "c71b220b631b6344493ea3cf87110c93","Legacy/Post Process" },
+			{ "6e114a916ca3e4b4bb51972669d463bf","Legacy/Default Unlit" },
+			{ "5056123faa0c79b47ab6ad7e8bf059a4","Legacy/Default UI" },
+			{ "899e609c083c74c4ca567477c39edef0","Legacy/Unlit Lightmap" },
+			{ "0f8ba0101102bb14ebf021ddadce9b49","Legacy/Default Sprites" },
+			{ "0b6a9f8b4f707c74ca64c0be8e590de0","Legacy/Particles Alpha Blended" },
+			{ "e1de45c0d41f68c41b2cc20c8b9c05ef","Legacy/Multi Pass Unlit" }
 		};
 
-		public static void Init()
+		public static readonly string TemplateMenuItemsFileGUID = "da0b931bd234a1e43b65f684d4b59bfb";
+
+		private Dictionary<string, TemplateDataParent> m_availableTemplates = new Dictionary<string, TemplateDataParent>();
+
+		[SerializeField]
+		private List<TemplateDataParent> m_sortedTemplates = new List<TemplateDataParent>();
+
+		[SerializeField]
+		public string[] AvailableTemplateNames;
+
+		[SerializeField]
+		public bool Initialized = false;
+
+		private Dictionary<string, bool> m_optionsInitialSetup = new Dictionary<string, bool>();
+
+		public static string CurrTemplateGUIDLoaded = string.Empty;
+
+		public static bool IsTestTemplate { get { return CurrTemplateGUIDLoaded.Equals( "a95a019bbc760714bb8228af04c291d1" ); } }
+		public static bool ShowDebugMessages = false;
+		public void RefreshAvailableTemplates()
+		{
+			if( m_availableTemplates.Count != m_sortedTemplates.Count )
+			{
+				m_availableTemplates.Clear();
+				int count = m_sortedTemplates.Count;
+				for( int i = 0; i < count; i++ )
+				{
+					m_availableTemplates.Add( m_sortedTemplates[ i ].GUID, m_sortedTemplates[ i ] );
+				}
+			}
+		}
+
+		public void Init()
 		{
 			if( !Initialized )
 			{
-				m_availableTemplates = new Dictionary<string, TemplateDataParent>();
-				m_sortedTemplates = new List<TemplateDataParent>();
+				if( ShowDebugMessages )
+					Debug.Log( "Initialize" );
+
+				string templateMenuItems = IOUtils.LoadTextFileFromDisk( AssetDatabase.GUIDToAssetPath( TemplateMenuItemsFileGUID ) );
+				bool refreshTemplateMenuItems = false;
 
 				foreach( KeyValuePair<string, string> kvp in OfficialTemplates )
 				{
 					if( !string.IsNullOrEmpty( AssetDatabase.GUIDToAssetPath( kvp.Key ) ) )
 					{
-						AddTemplate( new TemplateMultiPass( kvp.Value, kvp.Key ) );
+						TemplateMultiPass template = ScriptableObject.CreateInstance<TemplateMultiPass>();
+						template.Init( kvp.Value, kvp.Key, false );
+						AddTemplate( template );
+						if( !refreshTemplateMenuItems && templateMenuItems.IndexOf( kvp.Value ) < 0 )
+							refreshTemplateMenuItems = true;
 					}
 				}
-
-				//	AddTemplate( new TemplateMultiPass( "SRP/Lightweight", "1976390536c6c564abb90fe41f6ee334" ) );
-				//	AddTemplate( new TemplateMultiPass( "Post Process", "c71b220b631b6344493ea3cf87110c93" ));
-				//	AddTemplate( new TemplateMultiPass( "Default Unlit", "6e114a916ca3e4b4bb51972669d463bf" ));
-				//	AddTemplate( new TemplateMultiPass( "Default UI", "5056123faa0c79b47ab6ad7e8bf059a4" ));
-				//	AddTemplate( new TemplateMultiPass( "Default Sprites", "0f8ba0101102bb14ebf021ddadce9b49" ) );
-				//	AddTemplate( new TemplateMultiPass( "Particles Alpha Blended", "0b6a9f8b4f707c74ca64c0be8e590de0" ));
 
 				// Search for other possible templates on the project
 				string[] allShaders = AssetDatabase.FindAssets( "t:shader" );
@@ -433,13 +498,15 @@ namespace AmplifyShaderEditor
 					m_sortedTemplates[ i ].OrderId = i;
 					AvailableTemplateNames[ i + 1 ] = m_sortedTemplates[ i ].Name;
 				}
+
+				if( refreshTemplateMenuItems )
+					CreateTemplateMenuItems();
+
 				Initialized = true;
 			}
-
 		}
 
-		//[MenuItem( "Window/ASE Create Menu Items" )]
-		public static void CreateTemplateMenuItems()
+		public void CreateTemplateMenuItems()
 		{
 			if( m_sortedTemplates == null || m_sortedTemplates.Count == 0 )
 				return;
@@ -456,7 +523,7 @@ namespace AmplifyShaderEditor
 			int fixedPriority = 85;
 			for( int i = 0; i < m_sortedTemplates.Count; i++ )
 			{
-				fileContents.AppendFormat( "\t\t[ MenuItem( \"Assets/Create/Amplify Shader/{0}\", false, {1} )]\n", m_sortedTemplates[ i ].Name, fixedPriority );
+				fileContents.AppendFormat( "\t\t[MenuItem( \"Assets/Create/Amplify Shader/{0}\", false, {1} )]\n", m_sortedTemplates[ i ].Name, fixedPriority );
 				fileContents.AppendFormat( "\t\tpublic static void ApplyTemplate{0}()\n", i );
 				fileContents.Append( "\t\t{\n" );
 				fileContents.AppendFormat( "\t\t\tAmplifyShaderEditorWindow.CreateNewTemplateShader( \"{0}\" );\n", m_sortedTemplates[ i ].GUID );
@@ -464,12 +531,12 @@ namespace AmplifyShaderEditor
 			}
 			fileContents.Append( "\t}\n" );
 			fileContents.Append( "}\n" );
-			string filePath = AssetDatabase.GUIDToAssetPath( "da0b931bd234a1e43b65f684d4b59bfb" );
+			string filePath = AssetDatabase.GUIDToAssetPath( TemplateMenuItemsFileGUID );
 			IOUtils.SaveTextfileToDisk( fileContents.ToString(), filePath, false );
 			AssetDatabase.ImportAsset( filePath );
 		}
 
-		public static int GetIdForTemplate( TemplateData templateData )
+		public int GetIdForTemplate( TemplateData templateData )
 		{
 			if( templateData == null )
 				return -1;
@@ -484,11 +551,11 @@ namespace AmplifyShaderEditor
 
 
 
-		public static void AddTemplate( TemplateDataParent templateData )
+		public void AddTemplate( TemplateDataParent templateData )
 		{
 			if( templateData == null || !templateData.IsValid )
 				return;
-
+			RefreshAvailableTemplates();
 			if( !m_availableTemplates.ContainsKey( templateData.GUID ) )
 			{
 				m_sortedTemplates.Add( templateData );
@@ -496,17 +563,19 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-		public static void RemoveTemplate( string guid )
+		public void RemoveTemplate( string guid )
 		{
-				TemplateDataParent templateData = GetTemplate( guid );
-				if( templateData != null )
-				{
-					RemoveTemplate( templateData );
-				}
+			TemplateDataParent templateData = GetTemplate( guid );
+			if( templateData != null )
+			{
+				RemoveTemplate( templateData );
+			}
 		}
 
-		public static void RemoveTemplate( TemplateDataParent templateData )
+		public void RemoveTemplate( TemplateDataParent templateData )
 		{
+			RefreshAvailableTemplates();
+
 			if( m_availableTemplates != null )
 				m_availableTemplates.Remove( templateData.GUID );
 
@@ -514,8 +583,10 @@ namespace AmplifyShaderEditor
 			templateData.Destroy();
 		}
 
-		public static void Destroy()
+		public void Destroy()
 		{
+			if( TemplatesManager.ShowDebugMessages )
+				Debug.Log( "Destroy Manager" );
 			if( m_availableTemplates != null )
 			{
 				foreach( KeyValuePair<string, TemplateDataParent> kvp in m_availableTemplates )
@@ -525,12 +596,21 @@ namespace AmplifyShaderEditor
 				m_availableTemplates.Clear();
 				m_availableTemplates = null;
 			}
-			AvailableTemplateNames = null;
+			int count = m_sortedTemplates.Count;
 
+			for( int i = 0; i < count; i++ )
+			{
+				ScriptableObject.DestroyImmediate( m_sortedTemplates[ i ] );
+			}
+
+			m_sortedTemplates.Clear();
+			m_sortedTemplates = null;
+
+			AvailableTemplateNames = null;
 			Initialized = false;
 		}
 
-		public static TemplateDataParent GetTemplate( int id )
+		public TemplateDataParent GetTemplate( int id )
 		{
 			if( id < m_sortedTemplates.Count )
 				return m_sortedTemplates[ id ];
@@ -538,8 +618,9 @@ namespace AmplifyShaderEditor
 			return null;
 		}
 
-		public static TemplateDataParent GetTemplate( string guid )
+		public TemplateDataParent GetTemplate( string guid )
 		{
+			RefreshAvailableTemplates();
 			if( m_availableTemplates == null && m_sortedTemplates != null )
 			{
 				m_availableTemplates = new Dictionary<string, TemplateDataParent>();
@@ -556,8 +637,9 @@ namespace AmplifyShaderEditor
 		}
 
 
-		public static TemplateDataParent GetTemplateByName( string name )
+		public TemplateDataParent GetTemplateByName( string name )
 		{
+			RefreshAvailableTemplates();
 			if( m_availableTemplates == null && m_sortedTemplates != null )
 			{
 				m_availableTemplates = new Dictionary<string, TemplateDataParent>();
@@ -574,11 +656,10 @@ namespace AmplifyShaderEditor
 					return kvp.Value;
 				}
 			}
-
 			return null;
 		}
-		
-		public static TemplateDataParent CheckAndLoadTemplate( string guid )
+
+		public TemplateDataParent CheckAndLoadTemplate( string guid )
 		{
 			TemplateDataParent templateData = GetTemplate( guid );
 			if( templateData == null )
@@ -588,16 +669,8 @@ namespace AmplifyShaderEditor
 
 				if( body.IndexOf( TemplatesManager.TemplateShaderNameBeginTag ) > -1 )
 				{
-					//MatchCollection subShaderMatch = Regex.Matches( body, TemplatesManager.TemplateMPSubShaderTag );
-					//MatchCollection passMatch = Regex.Matches( body , TemplatesManager.TemplateMPPassTag );
-					//if( subShaderMatch.Count > 1 || passMatch.Count > 1 )
-					//{
-					templateData = new TemplateMultiPass( string.Empty, guid );
-					//}
-					//else
-					//{
-					//	templateData = new TemplateData( string.Empty, guid, body );
-					//}
+					templateData = ScriptableObject.CreateInstance<TemplateMultiPass>();
+					templateData.Init( string.Empty, guid, true );
 					if( templateData.IsValid )
 					{
 						AddTemplate( templateData );
@@ -605,10 +678,45 @@ namespace AmplifyShaderEditor
 					}
 				}
 			}
+
 			return null;
 		}
 
-		
-		public static int TemplateCount { get { return m_sortedTemplates.Count; } }
+		private void OnEnable()
+		{
+			if( !Initialized )
+			{
+				Init();
+			}
+			else
+			{
+				RefreshAvailableTemplates();
+			}
+			hideFlags = HideFlags.HideAndDontSave;
+			if( ShowDebugMessages )
+				Debug.Log( "On Enable Manager: " + this.GetInstanceID() );
+		}
+
+		public void ResetOptionsSetupData()
+		{
+			if( ShowDebugMessages )
+			Debug.Log( "Reseting options setup data" );
+			m_optionsInitialSetup.Clear();
+		}
+
+		public bool SetOptionsValue( string optionId, bool value )
+		{
+			if( m_optionsInitialSetup.ContainsKey( optionId ) )
+			{
+				m_optionsInitialSetup[ optionId ] = m_optionsInitialSetup[ optionId ] || value;
+			}
+			else
+			{
+				m_optionsInitialSetup.Add( optionId, value );
+			}
+			return m_optionsInitialSetup[ optionId ];
+		}
+
+		public int TemplateCount { get { return m_sortedTemplates.Count; } }
 	}
 }

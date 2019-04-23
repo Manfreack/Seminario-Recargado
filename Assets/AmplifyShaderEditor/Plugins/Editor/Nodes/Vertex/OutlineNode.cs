@@ -1,4 +1,4 @@
-// Amplify Shader Editor - Advanced Bloom Post-Effect for Unity
+// Amplify Shader Editor - Visual Shader Editing Tool
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
 
 using System;
@@ -19,6 +19,7 @@ namespace AmplifyShaderEditor
 			AlphaPremultiplied
 		};
 
+		private const string CullModePortNameStr = "Cull Mode";
 		private const string AlphaModePortNameStr = "Alpha";
 		private const string MaskedModePortNamStr = "Opacity Mask";
 		private const string OutlineAlphaModeStr = "Alpha Mode";
@@ -51,6 +52,9 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private int m_zWriteMode = 0;
 
+		[SerializeField]
+		private CullMode m_cullMode = CullMode.Front;
+
 		protected override void CommonInit( int uniqueId )
 		{
 			base.CommonInit( uniqueId );
@@ -78,8 +82,11 @@ namespace AmplifyShaderEditor
 			if( GetInputPortByUniqueId( 2 ).IsConnected )
 				dataCollector.UsingCustomOutlineAlpha = true;
 
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.ZWriteMode = m_zWriteMode;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.OffsetMode = m_currentSelectedMode;
+			if( !dataCollector.IsTemplate )
+			{
+				UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.ZWriteMode = m_zWriteMode;
+				UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.OffsetMode = m_currentSelectedMode;
+			}
 		}
 
 		public override void AfterCommonInit()
@@ -162,7 +169,7 @@ namespace AmplifyShaderEditor
 				{
 					if( m_masterNode == null )
 					{
-						m_masterNode = m_containerGraph.CurrentMasterNode as StandardSurfaceOutputNode;
+						m_masterNode = UIUtils.CurrentWindow.OutsideGraph.CurrentMasterNode as StandardSurfaceOutputNode;
 					}
 
 					if( m_masterNode != null )
@@ -171,6 +178,7 @@ namespace AmplifyShaderEditor
 					}
 				}
 
+				m_cullMode = (CullMode)EditorGUILayoutEnumPopup( CullModePortNameStr, m_cullMode ); 
 				m_zWriteMode = EditorGUILayoutPopup( ZBufferOpHelper.ZWriteModeStr, m_zWriteMode, ZBufferOpHelper.ZWriteModeValues );
 				m_zTestMode = EditorGUILayoutPopup( ZBufferOpHelper.ZTestModeStr, m_zTestMode, ZBufferOpHelper.ZTestModeLabels );
 				m_noFog = EditorGUILayoutToggle( "No Fog", m_noFog );
@@ -194,22 +202,24 @@ namespace AmplifyShaderEditor
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
 			if( dataCollector.IsTemplate )
-				return "0";
+				return "float3(0,0,0)";
 
 			if( dataCollector.IsFragmentCategory )
 			{
 				UIUtils.ShowMessage( ErrorMessage );
-				return "0";
+				return "float3(0,0,0)";
 			}
+
 			if( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
-				return "0";
+				return "float3(0,0,0)";
 
 			m_outputPorts[ 0 ].SetLocalValue( "0", dataCollector.PortCategory );
 
-			StandardSurfaceOutputNode masterNode = m_containerGraph.CurrentMasterNode as StandardSurfaceOutputNode;
+			StandardSurfaceOutputNode masterNode = UIUtils.CurrentWindow.OutsideGraph.CurrentMasterNode as StandardSurfaceOutputNode;
 
 			MasterNodeDataCollector outlineDataCollector = new MasterNodeDataCollector();
 			outlineDataCollector.IsOutlineDataCollector = true;
+			outlineDataCollector.DirtyNormal = true;
 			InputPort colorPort = GetInputPortByUniqueId( 0 );
 			InputPort alphaPort = GetInputPortByUniqueId( 2 );
 			InputPort vertexPort = GetInputPortByUniqueId( 1 );
@@ -227,7 +237,7 @@ namespace AmplifyShaderEditor
 				outlineDataCollector.ClearVertexLocalVariables();
 
 				// need to check whether this breaks other outputs or not
-				ContainerGraph.ResetNodesLocalVariables();
+				UIUtils.CurrentWindow.OutsideGraph.ResetNodesLocalVariables();
 			}
 
 			outlineDataCollector.PortCategory = MasterNodePortCategory.Fragment;
@@ -281,27 +291,30 @@ namespace AmplifyShaderEditor
 
 			if( masterNode != null )
 			{
-				masterNode.AdditionalIncludes.AddToDataCollector( ref outlineDataCollector );
-				masterNode.AdditionalPragmas.AddToDataCollector( ref outlineDataCollector );
-				masterNode.AdditionalDefines.AddToDataCollector( ref outlineDataCollector );
+				//masterNode.AdditionalIncludes.AddToDataCollector( ref outlineDataCollector );
+				//masterNode.AdditionalPragmas.AddToDataCollector( ref outlineDataCollector );
+				//masterNode.AdditionalDefines.AddToDataCollector( ref outlineDataCollector );
+				masterNode.AdditionalDirectives.AddAllToDataCollector( ref outlineDataCollector );
 			}
-
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.InputList = outlineDataCollector.InputList;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.Inputs = outlineDataCollector.Inputs;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.DirtyInput = outlineDataCollector.DirtyInputs;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.Includes = outlineDataCollector.Includes;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.Pragmas = outlineDataCollector.Pragmas;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.Defines = outlineDataCollector.Defines;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.Uniforms = outlineDataCollector.Uniforms;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.UniformList = outlineDataCollector.UniformsList;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.VertexData = outlineDataCollector.VertexData;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.Instructions = outlineDataCollector.Instructions;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.Functions = outlineDataCollector.Functions;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.LocalFunctions = outlineDataCollector.LocalFunctions;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.ZTestMode = m_zTestMode;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.ZWriteMode = m_zWriteMode;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.OffsetMode = m_currentSelectedMode;
-			ContainerGraph.CurrentStandardSurface.OutlineHelper.CustomNoFog = m_noFog;
+			
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.InputList = outlineDataCollector.InputList;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.Inputs = outlineDataCollector.Inputs;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.DirtyInput = outlineDataCollector.DirtyInputs;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.Includes = outlineDataCollector.Includes;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.Pragmas = outlineDataCollector.Pragmas;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.Defines = outlineDataCollector.Defines;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.Uniforms = outlineDataCollector.Uniforms;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.GrabPasses = outlineDataCollector.GrabPass;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.UniformList = outlineDataCollector.UniformsList;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.VertexData = outlineDataCollector.VertexData;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.Instructions = outlineDataCollector.Instructions;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.Functions = outlineDataCollector.Functions;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.LocalFunctions = outlineDataCollector.LocalFunctions;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.OutlineCullMode = m_cullMode;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.ZTestMode = m_zTestMode;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.ZWriteMode = m_zWriteMode;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.OffsetMode = m_currentSelectedMode;
+			UIUtils.CurrentWindow.OutsideGraph.CurrentStandardSurface.OutlineHelper.CustomNoFog = m_noFog;
 			dataCollector.CustomOutlineSelectedAlpha = (int)m_currentAlphaMode;
 
 			for( int i = 0; i < outlineDataCollector.PropertiesList.Count; i++ )
@@ -309,7 +322,7 @@ namespace AmplifyShaderEditor
 				dataCollector.AddToProperties( UniqueId, outlineDataCollector.PropertiesList[ i ].PropertyName, outlineDataCollector.PropertiesList[ i ].OrderIndex );
 			}
 
-			ContainerGraph.ResetNodesLocalVariablesIfNot( MasterNodePortCategory.Vertex );
+			UIUtils.CurrentWindow.OutsideGraph.ResetNodesLocalVariablesIfNot( MasterNodePortCategory.Vertex );
 			return "0";
 		}
 
@@ -327,6 +340,11 @@ namespace AmplifyShaderEditor
 				m_zTestMode = Convert.ToInt32( GetCurrentParam( ref nodeParams ) );
 			}
 
+			if( UIUtils.CurrentShaderVersion() > 15304 )
+			{
+				m_cullMode = (CullMode)Enum.Parse( typeof( CullMode ), GetCurrentParam( ref nodeParams ) );
+			}
+
 			SetAdditonalTitleText( string.Format( Constants.SubTitleTypeFormatStr, AvailableOutlineModes[ m_currentSelectedMode ] ) );
 			UpdatePorts();
 			CheckAlphaPortVisibility();
@@ -340,6 +358,7 @@ namespace AmplifyShaderEditor
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_currentAlphaMode );
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_zWriteMode );
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_zTestMode );
+			IOUtils.AddFieldValueToString( ref nodeInfo, m_cullMode );
 		}
 	}
 }

@@ -69,9 +69,8 @@ namespace AmplifyShaderEditor
 			UIUtils.UnregisterFloatIntNode( this );
 		}
 
-		public override void OnPropertyNameChanged()
+		public override void OnDirtyProperty()
 		{
-			base.OnPropertyNameChanged();
 			UIUtils.UpdateFloatIntDataNode( UniqueId, PropertyInspectorName );
 		}
 
@@ -79,6 +78,7 @@ namespace AmplifyShaderEditor
 		{
 			base.RefreshExternalReferences();
 			OnPropertyNameChanged();
+			OnDirtyProperty();
 		}
 
 		public void SetFloatMode( bool value )
@@ -507,5 +507,19 @@ namespace AmplifyShaderEditor
 			m_materialValue = val;
 			m_requireMaterialUpdate = true;
 		}
+#if UNITY_POST_PROCESSING_STACK_V2
+		public override void GeneratePPSInfo( ref string propertyDeclaration, ref string propertySet )
+		{
+			string additionalHeaders = string.Empty;
+			if( !m_floatMode )
+			{
+				additionalHeaders = string.Format( "Range( {0}, {1} ),", m_min, m_max );
+			}
+			propertyDeclaration += string.Format( ASEPPSHelperTool.PPSPropertyDecFormat, additionalHeaders, PropertyInspectorName,
+			ASEPPSHelperTool.WireToPPSType[ WirePortDataType.FLOAT ], PropertyName, m_defaultValue );
+
+			propertySet += string.Format( ASEPPSHelperTool.PPSPropertySetFormat, "Float", PropertyName );
+		}
+#endif
 	}
 }

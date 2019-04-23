@@ -78,7 +78,7 @@ namespace AmplifyShaderEditor
 					string varName = "customSurfaceDepth" + OutputId;
 					GenerateInputInVertex( ref dataCollector, 0, varName, false );
 					string instruction = "-UnityObjectToViewPos( " + varName + " ).z" + space;
-					if( dataCollector.IsLightweight )
+					if( dataCollector.IsSRP )
 						instruction = "-TransformWorldToView(TransformObjectToWorld( " + varName + " )).z" + space;
 					string eyeVarName = "customEye" + OutputId;
 					dataCollector.TemplateDataCollectorInstance.RegisterCustomInterpolatedData( eyeVarName, WirePortDataType.FLOAT, m_currentPrecisionType, instruction );
@@ -154,14 +154,14 @@ namespace AmplifyShaderEditor
 					GenerateInputInVertex( ref dataCollector, 0, varName, false );
 					dataCollector.AddToInput( UniqueId, varName, WirePortDataType.FLOAT );
 					string instruction = "-UnityObjectToViewPos( " + varName + " ).z" + space;
-					dataCollector.AddVertexInstruction( Constants.VertexShaderOutputStr + "." + varName + " = " + instruction, UniqueId );
+					dataCollector.AddToVertexLocalVariables( UniqueId , Constants.VertexShaderOutputStr + "." + varName + " = " + instruction+";" );
 					return Constants.InputVarStr + "." + varName;
 				}
 				else
 				{
 					dataCollector.AddToInput( UniqueId, m_vertexNameStr[ m_viewSpaceInt ], WirePortDataType.FLOAT );
 					string instruction = "-UnityObjectToViewPos( " + Constants.VertexShaderInputStr + ".vertex.xyz ).z" + space;
-					dataCollector.AddVertexInstruction( Constants.VertexShaderOutputStr + "." + m_vertexNameStr[ m_viewSpaceInt ] + " = " + instruction, UniqueId );
+					dataCollector.AddToVertexLocalVariables( UniqueId , Constants.VertexShaderOutputStr + "." + m_vertexNameStr[ m_viewSpaceInt ] + " = " + instruction+";" );
 					return Constants.InputVarStr + "." + m_vertexNameStr[ m_viewSpaceInt ];
 				}
 			}

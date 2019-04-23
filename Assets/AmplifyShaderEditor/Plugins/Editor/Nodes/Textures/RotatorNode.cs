@@ -53,7 +53,7 @@ namespace AmplifyShaderEditor
 			string time = m_inputPorts[ 2 ].GeneratePortInstructions( ref dataCollector );
 			if ( !m_inputPorts[ 2 ].IsConnected )
 			{
-				if( !( dataCollector.IsTemplate && dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight ) )
+				if( !( dataCollector.IsTemplate && dataCollector.IsSRP ) )
 					dataCollector.AddToIncludes( UniqueId, Constants.UnityShaderVariables );
 				time += " * _Time.y";
 			}

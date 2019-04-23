@@ -19,19 +19,50 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private CullMode m_cullMode = CullMode.Back;
 
-		public override void Draw( ParentNode owner, bool style = true )
+		[SerializeField]
+		private InlineProperty m_inlineCullMode = new InlineProperty();
+		
+		public void CopyFrom( TemplateCullModeModule other , bool allData )
 		{
-			EditorGUI.BeginChangeCheck();
-			m_cullMode = (CullMode)owner.EditorGUILayoutEnumPopup( CullModeStr, m_cullMode );
-			if( EditorGUI.EndChangeCheck() )
-			{
-				m_isDirty = true;
-			}
+			if( allData )
+				m_independentModule = other.IndependentModule;
+
+			m_cullMode = other.CurrentCullMode;
+			m_inlineCullMode.CopyFrom( other.CullInlineProperty );
 		}
 
-		public void CopyFrom( TemplateCullModeModule other )
+		public void ConfigureFromTemplateData( TemplateCullModeData data )
 		{
-			m_cullMode = other.CurrentCullMode;
+			bool newValidData = ( data.DataCheck == TemplateDataCheck.Valid );
+
+			if( newValidData && m_validData != newValidData )
+			{
+				m_independentModule = data.IndependentModule;
+				if( string.IsNullOrEmpty( data.InlineData ) )
+				{
+					m_cullMode = data.CullModeData;
+					m_inlineCullMode.IntValue = (int)m_cullMode;
+					m_inlineCullMode.ResetProperty();
+				}
+				else
+				{
+					m_inlineCullMode.SetInlineByName( data.InlineData );
+				}
+			}
+
+			m_validData = newValidData;
+		}
+
+		public override void Draw( UndoParentNode owner, bool style = true )
+		{
+			EditorGUI.BeginChangeCheck();
+			//m_cullMode = (CullMode)owner.EditorGUILayoutEnumPopup( CullModeStr, m_cullMode );
+			m_inlineCullMode.CustomDrawer( ref owner, ( x ) => { m_cullMode = (CullMode)owner.EditorGUILayoutEnumPopup( CullModeStr, m_cullMode ); }, CullModeStr );
+			if( EditorGUI.EndChangeCheck() )
+			{
+				m_inlineCullMode.IntValue = (int)m_cullMode;
+				m_isDirty = true;
+			}
 		}
 
 		public override void ReadFromString( ref uint index, ref string[] nodeParams )
@@ -42,32 +73,53 @@ namespace AmplifyShaderEditor
 				validDataOnMeta = Convert.ToBoolean( nodeParams[ index++ ] );
 			}
 
-			if( validDataOnMeta ) 
-				m_cullMode = (CullMode)Enum.Parse( typeof( CullMode ), nodeParams[ index++ ] );
+			if( validDataOnMeta )
+			{
+				if( UIUtils.CurrentShaderVersion() < 15304 )
+				{
+					m_cullMode = (CullMode)Enum.Parse( typeof( CullMode ), nodeParams[ index++ ] );
+					m_inlineCullMode.IntValue = (int)m_cullMode;
+				}
+				else
+				{
+					m_inlineCullMode.ReadFromString( ref index, ref nodeParams );
+					m_cullMode = (CullMode)m_inlineCullMode.IntValue;
+				}
+			}
 		}
 
 		public override void WriteToString( ref string nodeInfo )
 		{
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_validData );
 			if( m_validData )
-				IOUtils.AddFieldValueToString( ref nodeInfo, m_cullMode );
+			{
+				//IOUtils.AddFieldValueToString( ref nodeInfo, m_cullMode );
+				m_inlineCullMode.WriteToString( ref nodeInfo );
+			}
 		}
 
-		public override string GenerateShaderData()
+		public override string GenerateShaderData( bool isSubShader )
 		{
-			return CullModeFormatStr + m_cullMode.ToString();
+			//return CullModeFormatStr + m_cullMode.ToString();
+			return CullModeFormatStr + m_inlineCullMode.GetValueOrProperty( m_cullMode.ToString());
 		}
-
-		public void ConfigureFromTemplateData( TemplateCullModeData data )
+		
+		public override void Destroy()
 		{
-			bool newValidData = ( data.DataCheck == TemplateDataCheck.Valid );
-
-			if( newValidData && m_validData != newValidData )
-				m_cullMode = data.CullModeData;
-
-			m_validData = newValidData;
+			base.Destroy();
+			m_inlineCullMode = null;
 		}
 
-        public CullMode CurrentCullMode { get { return m_cullMode; } }
+		public CullMode CurrentCullMode
+		{
+			get { return m_cullMode; }
+			set
+			{
+				m_cullMode = value;
+				m_inlineCullMode.IntValue = (int)value;
+				m_inlineCullMode.Active = false;
+			}
+		}
+		public InlineProperty CullInlineProperty { get { return m_inlineCullMode; } }
 	}
 }

@@ -404,7 +404,7 @@ namespace AmplifyShaderEditor
 
 		private string SamplerWrappedData( ref MasterNodeDataCollector dataCollector )
 		{
-			m_internalData = "sampler" + PortId + UIUtils.GetNode( m_nodeId ).OutputId;
+			m_internalData = "_Sampler" + PortId + UIUtils.GetNode( m_nodeId ).OutputId;
 			dataCollector.AddToUniforms( m_nodeId, "uniform sampler2D " + m_internalData + ";" );
 
 			return m_internalData;
@@ -534,7 +534,7 @@ namespace AmplifyShaderEditor
 
 		public void WriteToString( ref string myString )
 		{
-			if( m_externalReferences.Count != 1 )
+			if( m_externalReferences.Count != 1 || m_isDummy )
 			{
 				return;
 			}
@@ -545,6 +545,82 @@ namespace AmplifyShaderEditor
 			IOUtils.AddFieldValueToString( ref myString, m_externalReferences[ 0 ].NodeId );
 			IOUtils.AddFieldValueToString( ref myString, m_externalReferences[ 0 ].PortId );
 			IOUtils.AddLineTerminator( ref myString );
+		}
+
+		public void ShowInternalData( Rect rect, UndoParentNode owner, bool useCustomLabel = false, string customLabel = null )
+		{
+			string label = ( useCustomLabel == true && customLabel != null ) ? customLabel : m_internalDataPropertyLabel;
+			switch( m_dataType )
+			{
+				case WirePortDataType.OBJECT:
+				case WirePortDataType.FLOAT:
+				{
+					FloatInternalData = owner.EditorGUIFloatField( rect, label, FloatInternalData );
+				}
+				break;
+				case WirePortDataType.FLOAT2:
+				{
+					Vector2InternalData = owner.EditorGUIVector2Field( rect, label, Vector2InternalData );
+				}
+				break;
+				case WirePortDataType.FLOAT3:
+				{
+					Vector3InternalData = owner.EditorGUIVector3Field( rect, label, Vector3InternalData );
+				}
+				break;
+				case WirePortDataType.FLOAT4:
+				{
+					Vector4InternalData = owner.EditorGUIVector4Field( rect, label, Vector4InternalData );
+				}
+				break;
+				case WirePortDataType.FLOAT3x3:
+				{
+					Matrix4x4 matrix = Matrix4x4InternalData;
+					Vector3 currVec3 = Vector3.zero;
+					for( int i = 0; i < 3; i++ )
+					{
+						Vector4 currVec = matrix.GetRow( i );
+						currVec3.Set( currVec.x, currVec.y, currVec.z );
+						EditorGUI.BeginChangeCheck();
+						currVec3 = owner.EditorGUIVector3Field( rect, label + "[ " + i + " ]", currVec3 );
+						rect.y += 2*EditorGUIUtility.singleLineHeight;
+						if( EditorGUI.EndChangeCheck() )
+						{
+							currVec.Set( currVec3.x, currVec3.y, currVec3.z, currVec.w );
+							matrix.SetRow( i, currVec );
+						}
+					}
+					Matrix4x4InternalData = matrix;
+				}
+				break;
+				case WirePortDataType.FLOAT4x4:
+				{
+					Matrix4x4 matrix = Matrix4x4InternalData;
+					for( int i = 0; i < 4; i++ )
+					{
+						Vector4 currVec = matrix.GetRow( i );
+						EditorGUI.BeginChangeCheck();
+						currVec = owner.EditorGUIVector4Field( rect, label + "[ " + i + " ]", currVec );
+						rect.y += 2*EditorGUIUtility.singleLineHeight;
+						if( EditorGUI.EndChangeCheck() )
+						{
+							matrix.SetRow( i, currVec );
+						}
+					}
+					Matrix4x4InternalData = matrix;
+				}
+				break;
+				case WirePortDataType.COLOR:
+				{
+					ColorInternalData = owner.EditorGUIColorField( rect, label, ColorInternalData );
+				}
+				break;
+				case WirePortDataType.INT:
+				{
+					IntInternalData = owner.EditorGUIIntField( rect, label, IntInternalData );
+				}
+				break;
+			}
 		}
 
 		public void ShowInternalData( UndoParentNode owner, bool useCustomLabel = false, string customLabel = null )
@@ -620,7 +696,38 @@ namespace AmplifyShaderEditor
 				break;
 			}
 		}
+		public bool IsZeroInternalData
+		{
+			get
+			{
+				switch( m_dataType )
+				{
+					
+					case WirePortDataType.FLOAT: return Mathf.Abs(m_previewInternalFloat) < 0.001f;
+					case WirePortDataType.UINT:
+					case WirePortDataType.INT: return m_previewInternalInt == 0;
+					case WirePortDataType.FLOAT2:
+					return (Mathf.Abs( m_previewInternalVec2.x ) < 0.001f && 
+							Mathf.Abs( m_previewInternalVec2.y ) < 0.001f);
+					case WirePortDataType.FLOAT3:
+					return (Mathf.Abs( m_previewInternalVec3.x ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec3.y ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec3.z ) < 0.001f );
+					case WirePortDataType.FLOAT4:
+					return (Mathf.Abs( m_previewInternalVec4.x ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec4.y ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec4.z ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec4.w ) < 0.001f );
+					case WirePortDataType.COLOR:
+					return (Mathf.Abs( m_previewInternalColor.r ) < 0.001f &&
+							Mathf.Abs( m_previewInternalColor.g ) < 0.001f &&
+							Mathf.Abs( m_previewInternalColor.b ) < 0.001f &&
+							Mathf.Abs( m_previewInternalColor.a ) < 0.001f);
 
+				}
+				return true;
+			}
+		}
 		public float FloatInternalData
 		{
 			set { m_previewInternalFloat = value; m_internalDataUpdated = false; }
@@ -1309,7 +1416,10 @@ namespace AmplifyShaderEditor
 				}
 			}
 		}
+
+		public bool HasOwnOrLinkConnection { get { return IsConnected || HasConnectedExternalLink; } }
 		public bool HasExternalLink { get { return m_externalNodeLink > -1 && m_externalPortLink > -1; } }
+
 		public bool HasConnectedExternalLink
 		{
 			get
@@ -1318,6 +1428,7 @@ namespace AmplifyShaderEditor
 				return ( link != null && link.IsConnected );
 			}
 		}
+
 		public InputPort ExternalLink
 		{
 			get

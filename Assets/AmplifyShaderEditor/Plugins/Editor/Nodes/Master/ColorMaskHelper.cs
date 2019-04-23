@@ -27,6 +27,7 @@ namespace AmplifyShaderEditor
 		{
 			m_inlineMask.CustomDrawer( ref owner, DrawColorMaskControls, ColorMaskContent.text );
 		}
+
 		private void DrawColorMaskControls( UndoParentNode owner )
 		{
 			if( m_leftToggleColorMask == null || m_leftToggleColorMask.normal.background == null )

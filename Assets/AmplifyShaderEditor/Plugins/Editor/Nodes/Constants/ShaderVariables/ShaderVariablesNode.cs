@@ -19,7 +19,7 @@ namespace AmplifyShaderEditor
 		}
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
-			if( !( dataCollector.IsTemplate && dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight ) )
+			if( !( dataCollector.IsTemplate && dataCollector.TemplateDataCollectorInstance.IsSRP ) )
 				dataCollector.AddToIncludes( UniqueId, Constants.UnityShaderVariables );
 			return string.Empty;
 		}

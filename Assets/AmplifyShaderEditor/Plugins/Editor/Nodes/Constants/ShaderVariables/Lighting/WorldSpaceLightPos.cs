@@ -35,7 +35,7 @@ namespace AmplifyShaderEditor
 		{
 			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalVar );
 			string finalVar = m_lightPosValue;
-			if( dataCollector.IsTemplate && dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight )
+			if( dataCollector.IsTemplate && dataCollector.TemplateDataCollectorInstance.IsSRP )
 				finalVar = "_MainLightPosition";
 			if( outputId == 1 )
 			{

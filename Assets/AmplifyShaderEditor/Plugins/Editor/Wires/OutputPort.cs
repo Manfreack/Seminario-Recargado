@@ -39,12 +39,12 @@ namespace AmplifyShaderEditor
 					case WirePortDataType.OBJECT:
 					case WirePortDataType.INT:
 					case WirePortDataType.FLOAT: value = "0"; break;
-					case WirePortDataType.FLOAT2: value = "fixed2(0,0)"; break;
-					case WirePortDataType.FLOAT3: value = "fixed3(0,0,0)"; break;
+					case WirePortDataType.FLOAT2: value = "half2(0,0)"; break;
+					case WirePortDataType.FLOAT3: value = "half3(0,0,0)"; break;
 					case WirePortDataType.COLOR:
-					case WirePortDataType.FLOAT4: value = "fixed4(0,0,0,0)"; break;
-					case WirePortDataType.FLOAT3x3: value = "fixed3x3(0,0,0,0,0,0,0,0,0)"; break;
-					case WirePortDataType.FLOAT4x4: value = "fixed4x4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)"; break;
+					case WirePortDataType.FLOAT4: value = "half4(0,0,0,0)"; break;
+					case WirePortDataType.FLOAT3x3: value = "half3x3(0,0,0,0,0,0,0,0,0)"; break;
+					case WirePortDataType.FLOAT4x4: value = "half4x4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)"; break;
 				}
 				return value;
 			}
@@ -61,6 +61,19 @@ namespace AmplifyShaderEditor
 			UIUtils.DeleteConnection( false, m_nodeId, m_portId, true, true );
 		}
 
+		public bool HasConnectedNode
+		{
+			get
+			{
+				int count = m_externalReferences.Count;
+				for( int i = 0; i < count; i++ )
+				{
+					if( UIUtils.GetNode( m_externalReferences[ i ].NodeId ).IsConnected )
+						return true;
+				}
+				return false;
+			}
+		}
 		public InputPort GetInputConnection( int connID = 0 )
 		{
 			if( connID < m_externalReferences.Count )

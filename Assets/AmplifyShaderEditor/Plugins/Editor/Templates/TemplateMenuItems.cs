@@ -6,33 +6,43 @@ namespace AmplifyShaderEditor
 {
 	public class TemplateMenuItems
 	{
-		[ MenuItem( "Assets/Create/Amplify Shader/Single Pass/Post Process", false, 85 )]
+		[MenuItem( "Assets/Create/Amplify Shader/Unlit", false, 85 )]
 		public static void ApplyTemplate0()
+		{
+			AmplifyShaderEditorWindow.CreateNewTemplateShader( "0770190933193b94aaa3065e307002fa" );
+		}
+		[MenuItem( "Assets/Create/Amplify Shader/Legacy/Post Process", false, 85 )]
+		public static void ApplyTemplate1()
 		{
 			AmplifyShaderEditorWindow.CreateNewTemplateShader( "c71b220b631b6344493ea3cf87110c93" );
 		}
-		[ MenuItem( "Assets/Create/Amplify Shader/Single Pass/Default Unlit", false, 85 )]
-		public static void ApplyTemplate1()
+		[MenuItem( "Assets/Create/Amplify Shader/Legacy/Default Unlit", false, 85 )]
+		public static void ApplyTemplate2()
 		{
 			AmplifyShaderEditorWindow.CreateNewTemplateShader( "6e114a916ca3e4b4bb51972669d463bf" );
 		}
-		[ MenuItem( "Assets/Create/Amplify Shader/Single Pass/Default UI", false, 85 )]
-		public static void ApplyTemplate2()
+		[MenuItem( "Assets/Create/Amplify Shader/Legacy/Default UI", false, 85 )]
+		public static void ApplyTemplate3()
 		{
 			AmplifyShaderEditorWindow.CreateNewTemplateShader( "5056123faa0c79b47ab6ad7e8bf059a4" );
 		}
-		[ MenuItem( "Assets/Create/Amplify Shader/Single Pass/Default Sprites", false, 85 )]
-		public static void ApplyTemplate3()
+		[MenuItem( "Assets/Create/Amplify Shader/Legacy/Unlit Lightmap", false, 85 )]
+		public static void ApplyTemplate4()
+		{
+			AmplifyShaderEditorWindow.CreateNewTemplateShader( "899e609c083c74c4ca567477c39edef0" );
+		}
+		[MenuItem( "Assets/Create/Amplify Shader/Legacy/Default Sprites", false, 85 )]
+		public static void ApplyTemplate5()
 		{
 			AmplifyShaderEditorWindow.CreateNewTemplateShader( "0f8ba0101102bb14ebf021ddadce9b49" );
 		}
-		[ MenuItem( "Assets/Create/Amplify Shader/Single Pass/Particles Alpha Blended", false, 85 )]
-		public static void ApplyTemplate4()
+		[MenuItem( "Assets/Create/Amplify Shader/Legacy/Particles Alpha Blended", false, 85 )]
+		public static void ApplyTemplate6()
 		{
 			AmplifyShaderEditorWindow.CreateNewTemplateShader( "0b6a9f8b4f707c74ca64c0be8e590de0" );
 		}
-		[ MenuItem( "Assets/Create/Amplify Shader/Multi Pass/Unlit", false, 85 )]
-		public static void ApplyTemplate5()
+		[MenuItem( "Assets/Create/Amplify Shader/Legacy/Multi Pass Unlit", false, 85 )]
+		public static void ApplyTemplate7()
 		{
 			AmplifyShaderEditorWindow.CreateNewTemplateShader( "e1de45c0d41f68c41b2cc20c8b9c05ef" );
 		}

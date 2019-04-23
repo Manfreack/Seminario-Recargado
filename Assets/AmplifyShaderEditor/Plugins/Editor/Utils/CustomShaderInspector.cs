@@ -166,32 +166,45 @@ namespace UnityEditor
 				GUI.DrawTexture( r, resultRender, ScaleMode.StretchToFill, false );
 			}
 		}
-
+		
 		void OnDestroy()
 		{
-			if ( m_previewRenderUtility != null )
+			CleanUp();
+		}
+
+		public void OnDisable()
+		{
+			CleanUp();
+		}
+		
+		void CleanUp()
+		{
+			if( m_previewRenderUtility != null )
 			{
 				m_previewRenderUtility.Cleanup();
 				m_previewRenderUtility = null;
 			}
 
-			if ( m_previewMesh != null )
+			if( m_previewMesh != null )
 			{
 				Resources.UnloadAsset( m_previewMesh );
 				m_previewMesh = null;
 			}
 
+			if( m_previewRenderUtility != null )
+			{
+				m_previewRenderUtility.Cleanup();
+				m_previewRenderUtility = null;
+			}
 			m_material = null;
 		}
-
 
 		public virtual void OnEnable()
 		{
 			Shader s = this.target as Shader;
 			ShaderUtilEx.FetchCachedErrors( s );
 		}
-
-
+		
 		private static string GetPropertyType( Shader s, int index )
 		{
 			UnityEditor.ShaderUtil.ShaderPropertyType propertyType = UnityEditor.ShaderUtil.GetPropertyType( s, index );
@@ -222,7 +235,14 @@ namespace UnityEditor
 
 				if ( GUILayout.Button( "Open in Text Editor" ) )
 				{
-					AssetDatabase.OpenAsset( shader, 1 );
+					if( UIUtils.IsUnityNativeShader( shader ) )
+					{
+						Debug.LogWarningFormat( "Action not allowed. Attempting to load the native {0} shader into Text Editor", shader.name );
+					}
+					else
+					{
+						AssetDatabase.OpenAsset( shader, 1 );
+					}
 				}
 			}
 			GUILayout.EndHorizontal();
@@ -253,6 +273,17 @@ namespace UnityEditor
 					break;
 				}
 				EditorGUILayout.LabelField( "Disable batching", label, new GUILayoutOption[ 0 ] );
+
+#if UNITY_2018_3_OR_NEWER
+				int shaderActiveSubshaderIndex = ShaderUtilEx.GetShaderActiveSubshaderIndex( shader );
+				int sRPBatcherCompatibilityCode = ShaderUtilEx.GetSRPBatcherCompatibilityCode( shader, shaderActiveSubshaderIndex );
+				string label2 = ( sRPBatcherCompatibilityCode != 0 ) ? "not compatible" : "compatible";
+				EditorGUILayout.LabelField( "SRP Batcher", label2 );
+				if( sRPBatcherCompatibilityCode != 0 )
+				{
+					EditorGUILayout.HelpBox( ShaderUtilEx.GetSRPBatcherCompatibilityIssueReason( shader, shaderActiveSubshaderIndex, sRPBatcherCompatibilityCode ), MessageType.Info );
+				}
+#endif
 				CustomShaderInspector.ShowShaderProperties( shader );
 			}
 		}
@@ -650,6 +681,23 @@ namespace UnityEditor
 		{
 			return ( bool ) ShaderUtilEx.Type.InvokeMember( "DoesIgnoreProjector", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { s } );
 		}
+
+#if UNITY_2018_3_OR_NEWER
+		public static int GetShaderActiveSubshaderIndex( Shader s )
+		{
+			return (int)ShaderUtilEx.Type.InvokeMember( "GetShaderActiveSubshaderIndex", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { s } );
+		}
+
+		public static int GetSRPBatcherCompatibilityCode( Shader s, int subShaderIdx )
+		{
+			return (int)ShaderUtilEx.Type.InvokeMember( "GetSRPBatcherCompatibilityCode", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { s, subShaderIdx } );
+		}
+
+		public static string GetSRPBatcherCompatibilityIssueReason( Shader s, int subShaderIdx, int err )
+		{
+			return (string)ShaderUtilEx.Type.InvokeMember( "GetSRPBatcherCompatibilityIssueReason", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { s, subShaderIdx, err } );
+		}
+#endif
 	}
 
 	public static class FileUtilEx
@@ -693,6 +741,23 @@ namespace UnityEditor
 			return ( bool ) EditorGUIEx.Type.InvokeMember( "ButtonMouseDown", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { position, content, focusType, style } );
 #endif
 		}
+
+		public static float kObjectFieldMiniThumbnailHeight
+		{
+			get
+			{
+				return (float)EditorGUIEx.Type.InvokeMember( "kObjectFieldMiniThumbnailHeight", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.GetField, null, null, new object[] {} );
+			}
+		}
+
+		public static float kSingleLineHeight
+		{
+			get
+			{
+				return (float)EditorGUIEx.Type.InvokeMember( "kSingleLineHeight", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.GetField, null, null, new object[] { } );
+			}
+		}
+
 	}
 
 	public static class ShaderInspectorPlatformsPopupEx

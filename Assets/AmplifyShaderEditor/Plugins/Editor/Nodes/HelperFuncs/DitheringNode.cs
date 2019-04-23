@@ -20,6 +20,9 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private int m_selectedPatternInt = 0;
 
+		[SerializeField]
+		private bool m_customScreenPos = false;
+
 		private readonly string[] PatternsFuncStr = { "4x4Bayer", "8x8Bayer", "NoiseTex" };
 		private readonly string[] PatternsStr = { "4x4 Bayer", "8x8 Bayer", "Noise Texture" };
 
@@ -30,8 +33,10 @@ namespace AmplifyShaderEditor
 			base.CommonInit( uniqueId );
 			AddInputPort( WirePortDataType.FLOAT, false, Constants.EmptyPortValue );
 			AddInputPort( WirePortDataType.SAMPLER2D, false, "Pattern");
+			AddInputPort( WirePortDataType.FLOAT4, false, "Screen Position" );
+
 			AddOutputPort( WirePortDataType.FLOAT, Constants.EmptyPortValue );
-			m_textLabelWidth = 100;
+			m_textLabelWidth = 110;
 			m_autoWrapProperties = true;
 			m_hasLeftDropdown = true;
 			SetAdditonalTitleText( string.Format( Constants.SubTitleTypeFormatStr, PatternsStr[ m_selectedPatternInt ] ) );
@@ -79,17 +84,19 @@ namespace AmplifyShaderEditor
 				UpdatePorts();
 				GeneratePattern();
 			}
+			EditorGUI.BeginChangeCheck();
+			m_customScreenPos = EditorGUILayoutToggle( "Screen Position", m_customScreenPos );
+			if( EditorGUI.EndChangeCheck() )
+			{
+				UpdatePorts();
+			}
 		}
 
 		private void UpdatePorts()
 		{
-			if( m_selectedPatternInt == 2)
-			{
-				m_inputPorts[ 1 ].Visible = true;
-			} else
-			{
-				m_inputPorts[ 1 ].Visible = false;
-			}
+			m_inputPorts[ 1 ].Visible = ( m_selectedPatternInt == 2 );
+			m_inputPorts[ 2 ].Visible = m_customScreenPos;
+			m_sizeIsDirty = true;
 		}
 
 		private void GeneratePattern()
@@ -160,26 +167,34 @@ namespace AmplifyShaderEditor
 
 			GeneratePattern();
 
-			if( !( dataCollector.IsTemplate && dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight ) )
+			if( !( dataCollector.IsTemplate && dataCollector.IsSRP ) )
 				dataCollector.AddToIncludes( UniqueId, Constants.UnityShaderVariables );
 			string varName = string.Empty;
 			bool isFragment = dataCollector.IsFragmentCategory;
-			if ( dataCollector.TesselationActive && isFragment )
+			if( m_customScreenPos && m_inputPorts[ 2 ].IsConnected )
 			{
-				varName = GeneratorUtils.GenerateClipPositionOnFrag( ref dataCollector, UniqueId, m_currentPrecisionType );
+				varName = "ditherCustomScreenPos" + OutputId;
+				string customScreenPosVal = m_inputPorts[ 2 ].GeneratePortInstructions( ref dataCollector );
+				dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT4, varName, customScreenPosVal );
 			}
 			else
 			{
-				if ( dataCollector.IsTemplate )
+				if( dataCollector.TesselationActive && isFragment )
 				{
-					varName = dataCollector.TemplateDataCollectorInstance.GetScreenPosNormalized();
+					varName = GeneratorUtils.GenerateClipPositionOnFrag( ref dataCollector, UniqueId, m_currentPrecisionType );
 				}
 				else
 				{
-					varName = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+					if( dataCollector.IsTemplate )
+					{
+						varName = dataCollector.TemplateDataCollectorInstance.GetScreenPosNormalized();
+					}
+					else
+					{
+						varName = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+					}
 				}
 			}
-
 			string surfInstruction = varName + ".xy * _ScreenParams.xy";
 			m_showErrorMessage = false;
 			string functionResult = "";
@@ -230,6 +245,10 @@ namespace AmplifyShaderEditor
 		{
 			base.ReadFromString( ref nodeParams );
 			m_selectedPatternInt = Convert.ToInt32( GetCurrentParam( ref nodeParams ) );
+			if( UIUtils.CurrentShaderVersion() > 15404 )
+			{
+				m_customScreenPos = Convert.ToBoolean( GetCurrentParam( ref nodeParams ) );
+			}
 			UpdatePorts();
 			GeneratePattern();
 		}
@@ -238,6 +257,7 @@ namespace AmplifyShaderEditor
 		{
 			base.WriteToString( ref nodeInfo, ref connectionsInfo );
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_selectedPatternInt );
+			IOUtils.AddFieldValueToString( ref nodeInfo, m_customScreenPos );
 		}
 	}
 }

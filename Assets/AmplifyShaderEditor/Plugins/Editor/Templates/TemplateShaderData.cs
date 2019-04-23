@@ -84,15 +84,26 @@ namespace AmplifyShaderEditor
 						subShaderData.StartIdx = subshaderBeginIndex;
 
 						//PASS
-						MatchCollection passMatch = Regex.Matches( subShaderData.Data, TemplatesManager.TemplateMPPassTag );
+						MatchCollection passMatch = Regex.Matches( subShaderData.Data, TemplatesManager.TemplatePassTagPattern );
+						if( passMatch.Count == 0 )
+						{
+							passMatch = Regex.Matches( subShaderData.Data, TemplatesManager.TemplateMPPassTag );
+						}
+
 						int passCount = passMatch.Count;
 						if( passCount > 0 )
 						{
+							int lastPassIndex = subShaderData.Data.LastIndexOf( TemplatesManager.TemplatePassesEndTag );
+							if( lastPassIndex < 0 )
+							{
+								lastPassIndex = subShaderData.Data.Length - 1;
+							}
+
 							subShaderData.Modules = subShaderData.Data.Substring( 0, passMatch[ 0 ].Index );
 							for( int passIdx = 0; passIdx < passCount; passIdx++ )
 							{
 								int passBeginIndex = passMatch[ passIdx ].Index;
-								int passEndIdx = ( passIdx == ( passCount - 1 ) ) ? subShaderData.Data.Length - 1 : passMatch[ passIdx + 1 ].Index;
+								int passEndIdx = ( passIdx == ( passCount - 1 ) ) ? lastPassIndex : passMatch[ passIdx + 1 ].Index;
 								TemplatePassInfo passData = new TemplatePassInfo();
 								passData.Data = subShaderData.Data.Substring( passBeginIndex, passEndIdx - passBeginIndex );
 								passData.GlobalStartIdx = subshaderBeginIndex + passBeginIndex;

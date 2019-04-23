@@ -31,13 +31,14 @@ namespace AmplifyShaderEditor
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
-			if( !( dataCollector.IsTemplate && dataCollector.IsLightweight ) )
+			if( !( dataCollector.IsTemplate && dataCollector.IsSRP ) )
 				dataCollector.AddToIncludes( UniqueId, Constants.UnityStandardUtilsLibFuncs );
+
 			string _inputA = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
 			string _inputB = m_inputPorts[ 1 ].GeneratePortInstructions( ref dataCollector );
 			string result = "BlendNormals( " + _inputA + " , " + _inputB + " )";
 
-			if( dataCollector.IsTemplate && dataCollector.IsLightweight )
+			if( dataCollector.IsTemplate && dataCollector.IsSRP )
 			{
 				switch( m_selectedMode )
 				{
@@ -60,7 +61,7 @@ namespace AmplifyShaderEditor
 		public override void DrawProperties()
 		{
 			base.DrawProperties();
-			if( ContainerGraph.CurrentSRPType == TemplateSRPType.Lightweight )
+			if( ContainerGraph.IsSRP )
 			{
 				NodeUtils.DrawPropertyGroup( ref m_propertiesFoldout, Constants.ParameterLabelStr, () =>
 				{

@@ -31,8 +31,7 @@ namespace AmplifyShaderEditor
 
 		public TemplateAdditionalParentHelper( string moduleName ) : base( moduleName ) { }
 		public bool IsValid { set{ m_validData = value; } get{ return m_validData; } }
-
-
+		
 		public void FillNativeItems( List<string> nativeItems )
 		{
 			m_nativeItems.Clear();
@@ -42,7 +41,9 @@ namespace AmplifyShaderEditor
 		public void Draw( ParentNode owner )
 		{
 			m_currentOwner = owner;
-			NodeUtils.DrawNestedPropertyGroup( ref m_foldoutValue, m_moduleName, DrawMainBody, DrawButtons );
+			bool foldout = owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedAdditionalDefines;
+			NodeUtils.DrawNestedPropertyGroup( ref foldout, m_moduleName, DrawMainBody, DrawButtons );
+			owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedAdditionalDefines = foldout;
 		}
 
 		public void CopyFrom( TemplateAdditionalParentHelper other )

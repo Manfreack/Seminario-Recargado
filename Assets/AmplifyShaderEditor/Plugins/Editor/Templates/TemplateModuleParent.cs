@@ -22,16 +22,20 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		protected string m_moduleName = string.Empty;
 
+		//[SerializeField]
+		//protected bool m_foldoutValue = false;
+
 		[SerializeField]
-		protected bool m_foldoutValue = false;
+		protected bool m_independentModule = true;
 
 		public TemplateModuleParent( string moduleName ) { m_moduleName = moduleName; m_unreadableMessage = UnreadableDataMessagePrefix + moduleName; }
-		public virtual void Draw( ParentNode owner , bool style = true) { }
+		public virtual void Draw( UndoParentNode owner , bool style = true) { }
 		public virtual void ReadFromString( ref uint index, ref string[] nodeParams ) { }
 		public virtual void WriteToString( ref string nodeInfo ) { }
-		public virtual string GenerateShaderData() { return string.Empty; }
+		public virtual string GenerateShaderData( bool isSubShader ) { return string.Empty; }
 		public virtual void Destroy() { }
 		public bool ValidData { get { return m_validData; } }
+		public bool ValidAndIndependent { get { return m_validData && m_independentModule; } }
 
 		public virtual void ShowUnreadableDataMessage( ParentNode owner )
 		{
@@ -47,6 +51,12 @@ namespace AmplifyShaderEditor
 		{
 			get { return m_isDirty; }
 			set { m_isDirty = value; }
+		}
+
+		public bool IndependentModule
+		{
+			get { return m_independentModule; }
+			set { m_independentModule = value; }
 		}
 	}
 }

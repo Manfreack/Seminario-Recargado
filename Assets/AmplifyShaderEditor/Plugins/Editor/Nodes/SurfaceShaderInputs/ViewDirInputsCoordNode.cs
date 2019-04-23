@@ -95,8 +95,8 @@ namespace AmplifyShaderEditor
 		{
 			if( dataCollector.IsTemplate )
 			{
-				string varName = ( m_viewDirSpace == ViewSpace.World ) ? dataCollector.TemplateDataCollectorInstance.GetViewDir() :
-																		dataCollector.TemplateDataCollectorInstance.GetTangentViewDir( m_currentPrecisionType );
+				string varName = ( m_viewDirSpace == ViewSpace.World ) ? dataCollector.TemplateDataCollectorInstance.GetViewDir(true,MasterNodePortCategory.Fragment, m_safeNormalize?NormalizeType.Safe:NormalizeType.Regular) :
+																		dataCollector.TemplateDataCollectorInstance.GetTangentViewDir( m_currentPrecisionType ,true,MasterNodePortCategory.Fragment, m_safeNormalize ? NormalizeType.Safe : NormalizeType.Regular );
 				return GetOutputVectorItem( 0, outputId, varName );
 			}
 
@@ -110,7 +110,7 @@ namespace AmplifyShaderEditor
 			{
 				if( m_viewDirSpace == ViewSpace.World )
 				{
-					if( dataCollector.DirtyNormal )
+					if( dataCollector.DirtyNormal || m_safeNormalize )
 					{
 						dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_POS );
 						string result = GeneratorUtils.GenerateViewDirection( ref dataCollector, UniqueId );
@@ -125,8 +125,20 @@ namespace AmplifyShaderEditor
 				}
 				else
 				{
-					dataCollector.ForceNormal = true;
-					return base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalVar );
+					if( m_safeNormalize )
+					{
+						dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
+						dataCollector.AddToInput( UniqueId, SurfaceInputs.INTERNALDATA, addSemiColon: false );
+						dataCollector.ForceNormal = true;
+						dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_POS );
+						string result = GeneratorUtils.GenerateViewDirection( ref dataCollector, UniqueId, ViewSpace.Tangent );
+						return GetOutputVectorItem( 0, outputId, result );
+					}
+					else
+					{
+						dataCollector.ForceNormal = true;
+						return base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalVar );
+					}
 				}
 			}
 		}

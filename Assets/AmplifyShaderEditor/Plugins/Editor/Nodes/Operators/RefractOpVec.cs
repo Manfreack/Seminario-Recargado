@@ -79,10 +79,12 @@ namespace AmplifyShaderEditor
 		{
 			if( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
 				return m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory );
+
 			string incident = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
-			string normal = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
+			string normal = m_inputPorts[ 1 ].GeneratePortInstructions( ref dataCollector );
 			string interp = m_inputPorts[ 2 ].GeneratePortInstructions( ref dataCollector );
 			string result = "refract( " + incident + " , " + normal + " , " + interp + " )";
+
 			return CreateOutputLocalVariable( 0, result, ref dataCollector );
 		}
 		

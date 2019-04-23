@@ -9,7 +9,7 @@ public class SimpleGPUInstancingExample : MonoBehaviour
 #if UNITY_5_6_OR_NEWER
 		InstancedMaterial.enableInstancing = true;
 #endif
-		int range = 5;
+		float range = 4f;
 
 		for ( int i = 0; i < 1000; i++ )
 		{

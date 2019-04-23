@@ -84,10 +84,12 @@ namespace AmplifyShaderEditor
 			AddInputPort( WirePortDataType.FLOAT2, false, "DDX", -1, MasterNodePortCategory.Fragment, 4 );
 			AddInputPort( WirePortDataType.FLOAT2, false, "DDY", -1, MasterNodePortCategory.Fragment, 5 );
 			m_inputPorts[ 2 ].AutoDrawInternalData = true;
+
 			m_texPort = m_inputPorts[ 0 ];
 			m_uvPort = m_inputPorts[ 1 ];
 			m_indexPort = m_inputPorts[ 2 ];
 			m_lodPort = m_inputPorts[ 3 ];
+
 			m_lodPort.Visible = false;
 			m_normalPort = m_inputPorts[ 4 ];
 			m_normalPort.Visible = m_autoUnpackNormals;
@@ -99,6 +101,9 @@ namespace AmplifyShaderEditor
 			m_insideSize.Set( 128, 128 + 5 );
 			m_drawPrecisionUI = false;
 			m_currentParameterType = PropertyType.Property;
+
+			m_availableAttribs.Add( new PropertyAttributes( "No Scale Offset", "[NoScaleOffset]" ) );
+
 			m_freeType = false;
 			m_showPreview = true;
 			m_drawPreviewExpander = false;
@@ -666,21 +671,19 @@ namespace AmplifyShaderEditor
 						isScaledNormal = true;
 					}
 				}
-				if( isScaledNormal )
+
+				string scaleValue = isScaledNormal?m_normalPort.GeneratePortInstructions( ref dataCollector ):"1.0";
+				m_normalMapUnpackMode = TemplateHelperFunctions.CreateUnpackNormalStr( dataCollector, isScaledNormal, scaleValue );
+				if(  isScaledNormal && (! dataCollector.IsTemplate || !dataCollector.IsSRP ))
 				{
-					string scaleValue = m_normalPort.GeneratePortInstructions( ref dataCollector );
 					dataCollector.AddToIncludes( UniqueId, Constants.UnityStandardUtilsLibFuncs );
-					m_normalMapUnpackMode = "UnpackScaleNormal( {0} ," + scaleValue + " )";
 				}
-				else
-				{
-					m_normalMapUnpackMode = "UnpackNormal( {0} )";
-				}
+				
 			}
 
 			string result = string.Empty;
 
-			if( m_containerGraph.CurrentMasterNode.CurrentDataCollector.IsTemplate && m_containerGraph.CurrentMasterNode.CurrentDataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight )
+			if( dataCollector.IsTemplate && dataCollector.IsSRP )
 			{
 				//CAREFUL mipbias here means derivative (this needs index changes)
 				//TODO: unity now supports bias as well
@@ -750,9 +753,10 @@ namespace AmplifyShaderEditor
 			return PropertyAttributes + PropertyName + "(\"" + PropertyInspectorName + "\", 2DArray ) = \"\" {}";
 		}
 
-		public override bool GetUniformData( out string dataType, out string dataName )
+		public override bool GetUniformData( out string dataType, out string dataName, ref bool fullValue )
 		{
-			if( m_containerGraph.CurrentMasterNode.CurrentDataCollector.IsTemplate && m_containerGraph.CurrentMasterNode.CurrentDataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight )
+			MasterNode currMasterNode = ( m_containerGraph.CurrentMasterNode != null ) ? m_containerGraph.CurrentMasterNode : m_containerGraph.ParentWindow.OutsideGraph.CurrentMasterNode;
+			if( currMasterNode != null && currMasterNode.CurrentDataCollector.IsTemplate && currMasterNode.CurrentDataCollector.IsSRP )
 			{
 				dataType = "TEXTURE2D_ARRAY( " + PropertyName + "";
 				dataName = ");\nuniform SAMPLER( sampler" + PropertyName + " )";

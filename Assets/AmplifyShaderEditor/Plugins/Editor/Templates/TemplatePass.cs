@@ -1,6 +1,6 @@
 // Amplify Shader Editor - Visual Shader Editing Tool
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
-
+#define CUSTOM_OPTIONS_AVAILABLE
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace AmplifyShaderEditor
 {
+
 	[Serializable]
 	public class TemplatePass
 	{
@@ -18,6 +19,9 @@ namespace AmplifyShaderEditor
 
 		[SerializeField]
 		private bool m_isInvisible = false;
+
+		[SerializeField]
+		private int m_invisibleOptions = 0;
 
 		[SerializeField]
 		private bool m_isMainPass = false;
@@ -55,16 +59,27 @@ namespace AmplifyShaderEditor
 
 		[SerializeField]
 		TemplateInfoContainer m_passNameContainer = new TemplateInfoContainer();
-
-		public TemplatePass( TemplateModulesData subShaderModule, int subshaderIdx, int passIdx, TemplateIdManager idManager, string uniquePrefix, int offsetIdx, TemplatePassInfo passInfo, ref Dictionary<string, TemplateShaderPropertyData> duplicatesHelper )
+#if CUSTOM_OPTIONS_AVAILABLE
+		[SerializeField]
+		TemplateOptionsContainer m_customOptionsContainer = new TemplateOptionsContainer();
+#endif
+		public TemplatePass( TemplateSubShader subShader,  int subshaderIdx, int passIdx, TemplateIdManager idManager, string uniquePrefix, int offsetIdx, TemplatePassInfo passInfo, ref Dictionary<string, TemplateShaderPropertyData> duplicatesHelper )
 		{
-			m_idx = passIdx; 
+			m_idx = passIdx;
 
 			m_uniquePrefix = uniquePrefix;
-
+			idManager.RegisterPassId( passInfo.Data );
 			m_isMainPass = passInfo.Data.Contains( TemplatesManager.TemplateMainPassTag );
-			if( !m_isMainPass ) 
-				m_isInvisible = passInfo.Data.Contains( TemplatesManager.TemplateExcludeFromGraphTag );
+			if( !m_isMainPass )
+			{
+				string id = string.Empty;
+				int idIndex = 0;
+				m_isInvisible = TemplateHelperFunctions.FetchInvisibleInfo( passInfo.Data, ref m_invisibleOptions, ref id, ref idIndex );
+				if( m_isInvisible )
+				{
+					idManager.RegisterId( idIndex, uniquePrefix + id, id, true );
+				}
+			}
 
 			FetchPassName( offsetIdx, passInfo.Data );
 			if( m_passNameContainer.Index > -1 )
@@ -76,13 +91,38 @@ namespace AmplifyShaderEditor
 				m_passNameContainer.Data = string.Format( DefaultPassNameStr, subshaderIdx, passIdx );
 			}
 
-			m_modules = new TemplateModulesData( idManager, m_templateProperties, uniquePrefix + "Module", offsetIdx, passInfo.Data, false );
+#if CUSTOM_OPTIONS_AVAILABLE
+			m_customOptionsContainer = TemplateOptionsToolsHelper.GenerateOptionsContainer( false, passInfo.Data );
+			if( m_customOptionsContainer.Enabled )
+			{
+				idManager.RegisterId( m_customOptionsContainer.Index, uniquePrefix + m_customOptionsContainer.Body, m_customOptionsContainer.Body, true );
+			}
+			//m_customOptionsContainer.CopyPortOptionsFrom( subShader.CustomOptionsContainer, m_passNameContainer.Data );
+#endif
+			m_modules = new TemplateModulesData( m_customOptionsContainer,idManager, m_templateProperties, uniquePrefix + "Module", offsetIdx, passInfo.Data, false );
+
+			if( !m_modules.PassTag.IsValid )
+			{
+				m_modules.PassTag.StartIdx = passInfo.GlobalStartIdx;
+				m_templateProperties.AddId( passInfo.Data, m_modules.PassTag.Id, passInfo.LocalStartIdx, false );
+				//m_modules.PassTag.StartIdx -= m_templateProperties.PropertyDict[ m_modules.PassTag.Id ].Indentation.Length;
+				//m_templateProperties.PropertyDict[ m_modules.PassTag.Id ].UseIndentationAtStart = false;
+				idManager.RegisterId( m_modules.PassTag.StartIdx, m_modules.UniquePrefix + m_modules.PassTag.Id, string.Empty );
+			}
+			m_modules.SetPassUniqueNameIfUndefined( m_passNameContainer.Data );
+
+			m_modules.SRPType = subShader.Modules.SRPType;
+			if( m_modules.SRPType == TemplateSRPType.HD )
+			{
+				m_modules.SRPIsPBR = passInfo.Data.Contains( TemplateHelperFunctions.HDPBRTag );
+
+			}
 
 			Dictionary<string, TemplateShaderPropertyData> ownDuplicatesDict = new Dictionary<string, TemplateShaderPropertyData>( duplicatesHelper );
 			TemplateHelperFunctions.CreateShaderGlobalsList( passInfo.Data, ref m_availableShaderGlobals, ref ownDuplicatesDict );
 
 			// Vertex and Interpolator data
-			FetchVertexAndInterpData( subShaderModule,offsetIdx, passInfo.Data );
+			FetchVertexAndInterpData( subShader.Modules, offsetIdx, passInfo.Data );
 			if( m_vertexDataContainer != null )
 				idManager.RegisterId( m_vertexDataContainer.VertexDataStartIdx, uniquePrefix + m_vertexDataContainer.VertexDataId, m_vertexDataContainer.VertexDataId );
 
@@ -102,7 +142,7 @@ namespace AmplifyShaderEditor
 			if( m_fragmentFunctionData != null )
 				FetchInputs( offsetIdx, MasterNodePortCategory.Fragment, passInfo.Data );
 
-			if( m_vertexFunctionData != null)
+			if( m_vertexFunctionData != null )
 				FetchInputs( offsetIdx, MasterNodePortCategory.Vertex, passInfo.Data );
 
 			//Fetch local variables must be done after fetching code areas as it needs them to see is variable is on vertex or fragment
@@ -128,6 +168,34 @@ namespace AmplifyShaderEditor
 					idManager.RegisterId( m_inputDataList[ i ].TagGlobalStartIdx, uniquePrefix + m_inputDataList[ i ].TagId, m_inputDataList[ i ].TagId );
 			}
 
+			//int passEndIndex = passInfo.Data.LastIndexOf( "}" );
+			//if( passEndIndex > 0 )
+			//{
+			//	int identationIndex = -1;
+			//	for( int i = passEndIndex; i >= 0; i-- )
+			//	{
+			//		if( passInfo.Data[ i ] == TemplatesManager.TemplateNewLine )
+			//		{
+			//			identationIndex = i + 1;
+			//			break;
+			//		}
+
+			//		if( i == 0 )
+			//		{
+			//			identationIndex = 0;
+			//		}
+			//	}
+
+			//	if( identationIndex > -1 )
+			//	{
+			//		int length = passEndIndex - identationIndex;
+			//		string indentation = ( length > 0 ) ? passInfo.Data.Substring( identationIndex, length ) : string.Empty;
+			//		TemplateProperty templateProperty = new TemplateProperty( TemplatesManager.TemplateEndPassTag, indentation, false );
+			//		m_templateProperties.AddId( templateProperty );
+			//		idManager.RegisterId( offsetIdx + passEndIndex, uniquePrefix + TemplatesManager.TemplateEndPassTag, string.Empty );
+			//	}
+			//}
+
 			ownDuplicatesDict.Clear();
 			ownDuplicatesDict = null;
 		}
@@ -135,8 +203,12 @@ namespace AmplifyShaderEditor
 		public void Destroy()
 		{
 			m_passNameContainer = null;
+#if CUSTOM_OPTIONS_AVAILABLE
+			m_customOptionsContainer = null;
+#endif
 			if( m_templateProperties != null )
 				m_templateProperties.Destroy();
+
 			m_templateProperties = null;
 
 			if( m_modules != null )
@@ -248,7 +320,7 @@ namespace AmplifyShaderEditor
 					int dataBeginIdx = body.LastIndexOf( '{', interpDataBegin, interpDataBegin );
 					string interpData = body.Substring( dataBeginIdx + 1, interpDataBegin - dataBeginIdx );
 
-					int interpolatorAmount = TemplateHelperFunctions.AvailableInterpolators["2.5"];
+					int interpolatorAmount = TemplateHelperFunctions.AvailableInterpolators[ "2.5" ];
 
 					if( m_modules.ShaderModel.IsValid )
 					{
@@ -350,7 +422,7 @@ namespace AmplifyShaderEditor
 					int length = inputEndIdx - beginIndex;
 					string inputData = body.Substring( beginIndex, length );
 					string[] inputDataArray = inputData.Split( IOUtils.FIELD_SEPARATOR );
-					
+
 					if( inputDataArray != null && inputDataArray.Length > 0 )
 					{
 						try
@@ -404,6 +476,9 @@ namespace AmplifyShaderEditor
 			}
 		}
 
+#if CUSTOM_OPTIONS_AVAILABLE
+		public TemplateOptionsContainer CustomOptionsContainer { get { return m_customOptionsContainer; } }
+#endif
 		public TemplateModulesData Modules { get { return m_modules; } }
 		public List<TemplateInputData> InputDataList { get { return m_inputDataList; } }
 		public TemplateFunctionData VertexFunctionData { get { return m_vertexFunctionData; } }
@@ -416,7 +491,8 @@ namespace AmplifyShaderEditor
 		public List<TemplateLocalVarData> LocalVarsList { get { return m_localVarsList; } }
 		public TemplateInfoContainer PassNameContainer { get { return m_passNameContainer; } }
 		public bool IsMainPass { get { return m_isMainPass; } set { m_isMainPass = value; } }
-		public bool IsInvisible { get { return m_isInvisible; } set { m_isInvisible = value; } }
+		public bool IsInvisible { get { return m_isInvisible; } }
+		public int InvisibleOptions { get { return m_invisibleOptions; } }
 		public int Idx { get { return m_idx; } }
 		public bool AddToList
 		{

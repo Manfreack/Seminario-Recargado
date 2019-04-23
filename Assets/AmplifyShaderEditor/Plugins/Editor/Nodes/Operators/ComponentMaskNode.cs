@@ -315,11 +315,17 @@ namespace AmplifyShaderEditor
 
 			if ( count > 0 )
 			{
-				value = string.Format("({0}).",value);
+				bool firstElement = true;
+				value = string.Format("({0})",value);
 				for ( int i = 0; i < count; i++ )
 				{
 					if ( m_selection[ i ] )
 					{
+						if( firstElement )
+						{
+							firstElement = false;
+							value += ".";
+						}
 						value += UIUtils.GetComponentForPosition( i, m_inputPorts[ 0 ].DataType );
 					}
 				}

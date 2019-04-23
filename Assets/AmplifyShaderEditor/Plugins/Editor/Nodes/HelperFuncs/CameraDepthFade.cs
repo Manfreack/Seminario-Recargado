@@ -1,3 +1,6 @@
+// Amplify Shader Editor - Visual Shader Editing Tool
+// Copyright (c) Amplify Creations, Lda <info@amplify.pt>
+
 using System;
 namespace AmplifyShaderEditor
 {
@@ -44,7 +47,7 @@ namespace AmplifyShaderEditor
 					GenerateInputInVertex( ref dataCollector, 2, varName, false );
 
 					string formatStr = string.Empty;
-					if( dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight )
+					if( dataCollector.IsSRP )
 						formatStr = "-TransformWorldToView(TransformObjectToWorld({0})).z";
 					else
 						formatStr = "-UnityObjectToViewPos({0}).z";
@@ -105,14 +108,14 @@ namespace AmplifyShaderEditor
 					GenerateInputInVertex( ref dataCollector, 2, varName, false );
 					dataCollector.AddToInput( UniqueId, varName, WirePortDataType.FLOAT );
 					string vertexInstruction = "-UnityObjectToViewPos( " + varName + " ).z";
-					dataCollector.AddVertexInstruction( Constants.VertexShaderOutputStr + "." + varName + " = " + vertexInstruction, UniqueId );
+					dataCollector.AddToVertexLocalVariables( UniqueId, Constants.VertexShaderOutputStr + "." + varName + " = " + vertexInstruction + ";" );
 					eyeDepth = Constants.InputVarStr + "." + varName;
 				}
 				else
 				{
 					dataCollector.AddToInput( UniqueId, "eyeDepth", WirePortDataType.FLOAT );
 					string instruction = "-UnityObjectToViewPos( " + Constants.VertexShaderInputStr + ".vertex.xyz ).z";
-					dataCollector.AddVertexInstruction( Constants.VertexShaderOutputStr + ".eyeDepth = " + instruction, UniqueId );
+					dataCollector.AddToVertexLocalVariables( UniqueId, Constants.VertexShaderOutputStr + ".eyeDepth = " + instruction + ";" );
 					eyeDepth = Constants.InputVarStr + ".eyeDepth";
 				}
 			}

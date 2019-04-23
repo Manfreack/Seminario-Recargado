@@ -25,7 +25,7 @@ Shader "Hidden/RGBToHSVNode"
 				float d = q.x - min ( q.w, q.y );
 				float e = 1.0e-10;
 				float3 rgbTohsv = float3( abs ( q.z + ( q.w - q.y ) / ( 6.0 * d + e ) ), d / ( q.x + e ), q.x );
-				return float4( rgbTohsv, 1 );
+				return float4( GammaToLinearSpace(rgbTohsv), 1 );
 			}
 			ENDCG
 		}

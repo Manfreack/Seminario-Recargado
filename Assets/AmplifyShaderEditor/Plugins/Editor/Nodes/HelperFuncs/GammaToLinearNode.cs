@@ -40,7 +40,7 @@ namespace AmplifyShaderEditor
 		public override void DrawProperties()
 		{
 			base.DrawProperties();
-			if( ContainerGraph.CurrentSRPType == TemplateSRPType.Lightweight )
+			if( ContainerGraph.IsSRP )
 			{
 				m_selectedMode = EditorGUILayoutIntPopup( "Mode", m_selectedMode, ModeListStrLW, ModeListIntLW );
 				EditorGUILayout.HelpBox( "Fast sRGB: fast approximation from sRGB to Linear\n\nExact sRGB: a more expensive but exact calculation from sRGB to Linear.\n\nGamma 2.0: crude approximation from Gamma to Linear using a power of 2.0 gamma value\n\nGamma 2.2: an approximation from Gamma to Linear using a power of 2.2 gamma value", MessageType.None );
@@ -56,7 +56,7 @@ namespace AmplifyShaderEditor
 		{
 			string result = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
 
-			if( ContainerGraph.CurrentSRPType != TemplateSRPType.Lightweight )
+			if( !dataCollector.IsSRP )
 			{
 				m_selectedMode = Mathf.Min( m_selectedMode, 1 );
 
@@ -70,20 +70,26 @@ namespace AmplifyShaderEditor
 			}
 			else
 			{
+				dataCollector.AddToIncludes( UniqueId, TemplateHelperFunctions.CoreCommonLib );
+				dataCollector.AddToIncludes( UniqueId, TemplateHelperFunctions.CoreColorLib );
 				switch( m_selectedMode )
 				{
 					default:
 					case 0:
 					m_funcLWFormatOverride = "FastSRGBToLinear( {0} )";
+					m_funcHDFormatOverride = "FastSRGBToLinear( {0} )";
 					break;
 					case 1:
 					m_funcLWFormatOverride = "SRGBToLinear( {0} )";
+					m_funcHDFormatOverride = "SRGBToLinear( {0} )";
 					break;
 					case 2:
 					m_funcLWFormatOverride = "Gamma20ToLinear( {0} )";
+					m_funcHDFormatOverride = "Gamma20ToLinear( {0} )";
 					break;
 					case 3:
 					m_funcLWFormatOverride = "Gamma22ToLinear( {0} )";
+					m_funcHDFormatOverride = "Gamma22ToLinear( {0} )";
 					break;
 				}
 

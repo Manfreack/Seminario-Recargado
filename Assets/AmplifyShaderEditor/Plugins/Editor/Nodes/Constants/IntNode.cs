@@ -52,9 +52,8 @@ namespace AmplifyShaderEditor
 			UIUtils.UnregisterFloatIntNode( this );
 		}
 
-		public override void OnPropertyNameChanged()
+		public override void OnDirtyProperty()
 		{
-			base.OnPropertyNameChanged();
 			UIUtils.UpdateFloatIntDataNode( UniqueId, PropertyInspectorName );
 		}
 
@@ -62,6 +61,7 @@ namespace AmplifyShaderEditor
 		{
 			base.RefreshExternalReferences();
 			OnPropertyNameChanged();
+			OnDirtyProperty();
 		}
 
 		public override void SetPreviewInputs()

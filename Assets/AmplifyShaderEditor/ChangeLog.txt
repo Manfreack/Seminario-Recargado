@@ -1,4 +1,851 @@
 Release Notes:
+v1.6.4 rev 00:
+* Fixes:
+    * 'Indirect Diffuse Light' node now works on the HD SRP templates
+    * Fixed memory leak on closing ASE windows
+    * Fixed port define issue with linked ports over template options (API)
+    * Fixed loading issue on 'Reconstruct World Position From Depth' shader function
+
+v1.6.3 rev 09:
+* Fixes:
+    * Added missing ase_frag_input tag on Lightweight Unlit SRP template
+    * Fixed compiler issues when using 'Face' and 'Switch by Face' nodes on Vertex Ports
+
+* Improvements:
+    * Minor tweak on Simple GPU Instancing sample for GPU Instancing behavior to be more evident
+
+v1.6.3 rev 08:
+* Improvements:
+    * Standard Surface custom ASE shadow caster can now be turned off
+        * Toggle on new 'Use Default Shadowcaster' option over Rendering Options group
+
+* Fixes:
+    * Nodes 'Face' and 'Switch by Face' now properly work over the HD Unlit template
+        * Fixed issue on missing ase_frag_input tags over HD Unlit
+    * Template Port Options can now be properly registered over SubShader (API)
+
+v1.6.3 rev 07:
+* Fixes:
+    * Removed unnecessary code being used when on Custom Lighting 
+    * Fixed 'Light Color' node not being correctly reset when on subtractive lightmaps
+        * Removed gi.light.color usage from Blinn Phong Light shader function as it was a temporary fix for the above
+
+v1.6.3 rev 06:
+* Fixes:
+    * Fixed issues on 'Light Attenuation' node over Lightweight SRP
+        * Removed incorrect N.L contribution 
+        * Fixed issue on duplicate variables when using multiple nodes
+
+v1.6.3 rev 05:
+* New Sample:
+    * SRP HD Omni Decal
+
+* Fixes:
+    * 'Indirect Diffuse Light', 'Indirect Specular Light' and 'Light Attenuation' now works on Lightweight SRP
+    * Fixed issue on 'Screen Position' node previewer when on Screen Mode
+    * Fixed 'Screen Depth' node issue over Particle Alpha Blended template
+
+* Improvements:
+    * 'Static Switch' nodes now have a Reference mode
+        * Can use other nodes as reference, similar to 'Texture Sample' node
+    * Minor cleanup on 'Reconstruct World Position From Depth' shader function
+    * Can set shader functions as hidden so it wont show on context menu
+        * Activate Hidden toggle over shader function General options
+
+v1.6.3 rev 04:
+* Fixes:
+    * Minor fix on Screen Space Detail sample
+    * Fixed issue on instanced surface terrains not being able to be picked/selected
+    * Fixed issue with lightmaps and instanced standard surface terrains
+    * Fixed issue with 'Four Splats First Pass Terrain' shader function on default templates
+    * Fixed issue with duplicate local variables on 'Texture Coordinates'
+    * Fixed issue on duplicate ST variable when using Particle Texture Parameter over Particles template
+
+* Improvements:
+    * 'Switch By Pipeline' node now takes default template and surface into account
+    * UsePasses can be directly registered by nodes on data collector(API)
+    * ASE Custom Shader Inspector now also shows SRP Batcher compatibility status
+
+v1.6.3 rev 03:
+* Fixes:
+    * Fixed issues with Custom Lighting on Subtractive Lighting Mode
+    * Fixed issue on Diffusion Profile Id not being correctly written when Transmission is activated on HD Lit template
+
+v1.6.3 rev 02:
+* Fixes:
+    * Fixed issue with Mosaic Effect PPS sample not opening correctly on Unity 2018.1 and 2018.2
+    * Fixed issue on Multi Pass Distortion sample not taking skybox into account
+
+* Improvements:
+    * User can now specify sub-shader tags 
+        * Moved RenderType tag to sub-shader level
+
+v1.6.3 rev 01:
+* Fixes:
+    * Fixed issue on screen position calculation across all templates
+    * Fixed issue with 'Parallax Occlusion Mapping' node
+
+* Improvements:
+    * Minor tweak on Post-Processing Stack template
+
+v1.6.3 rev 00:
+* Fixes:
+    * Fixed multiple issues with 'Triplanar Sample' node over SRP
+
+v1.6.2 rev 11:
+* Fixes:
+    * Fixed issue on ST registry at 'Parallax Occlusion Mapping' node not taking SRP name convention into account
+    * 'Reconstruct World Position From Depth' shader function now compatible with HDRP
+    * Fixed crash caused by the 'Outline' node when attempting to be used on nested shader functions
+    * Fixed issues with 'Screen Position', 'Depth Fade' and 'Screen Depth' nodes on PPS template
+
+v1.6.2 rev 10:
+* New Template:
+    * PostProcessStack
+        * Post-Processing shader based on Unity provided example
+
+* New Sample:
+    * Mosaic Effect PPS
+
+* New Tool:
+    * Post-Processing Stack Tool
+        * Generates a cs script with a PPS Renderer and Settings from a given shader
+
+* New Shader Function:
+    * Decoding Directional Lightmap
+
+* Improvements:
+    * Added inline property for Alpha to Coverage option on Standard Surface Shader Type
+
+* Fixes:
+    * Fixed 'Triplanar Sample' and 'Parallax Occlusion Mapping' nodes issues with texture arrays on SRP
+    * Fixed crash caused by the 'Outline' node when attempting to be used on templates
+        * This node is specific to Standard Surface Shader Type
+    * Fixed issue with using Lightweight PBR legacy template
+
+v1.6.2 rev 08/09:
+* Fixes:
+    * Fixed issue with depth texture fetching on Lightweight SRP
+
+v1.6.2 rev 07:
+* Fixes:
+    * Fixed issue on template asset post processor
+
+v1.6.2 rev 06:
+* Improvements:
+    * Updated Decals code and removed warnings from HD Lit template
+    * Improved behavior when loading outdated meta from shaders using modified templates
+    * Added No Scale and Offset attribute to 'Texture Array' node
+
+* Fixes:
+    * Fixed instancing issues over HD Lit template
+
+v1.6.2 rev 05:
+* New Shader Function:
+    * Blinn Phong Light Wrap
+
+* Fixes:
+    * Fixed issue with null pointer exception when hacking selection on dynamic ports
+        * Input ports which appear on p.e. 'Add' and 'Multiply' nodes when dragging wires
+    * Fixed shadow issues on HD PBR samples
+    * Fixed 'Billboard' node issues on HD SRP
+    * Fixed D3D11 internal compiler error on Android + VR over multiple templates
+    * Fixed issue with Depth Texture declaration on particles template over Android + VR
+    * Fixed issue with local var declaration of custom types on 'Custom Expression' node
+    * Fixed issue with 'Object To World','World To Object' and 'Transform Position' nodes
+
+* Improvements:
+    * Added the action of (de)activating ZWrite when Surface type is selected on HD Lit template
+    * Added the action of selecting correct Blend RGB when Surface Type is selected on HD Lit template
+    * Improved failsafe to when template creators changes order on passes, removes or add new ones
+    * Depth Texture now being declared with Unity's own macro on Unity 5.6 and above to prevent issues
+    * Updated HD templates and samples to v.4.9.0
+        * Users can still use v4.8.0 although template shaders will present an error
+        * Final compiled shader will have error removed
+    * Added Refraction's Chromatic Aberration as an Inline Property on Standard Surface
+        * Located on Blend Mode menu, bellow Refraction Layer option
+        * Only shows when Refraction port is connected
+    * 'DecodeLightmap' now working on latest SRP templates
+    * 'Fetch Lightmap Value' shader function now takes SRP into account
+
+v1.6.2 rev 04:
+* Fixes:
+    * Fixed World To Object and Object To World operations on Lightweight SRP
+
+* Improvements:
+    * Added support for Terrain instancing over Unity 2018.3
+    * Correctly handling when user wants to disable main output node
+    * Minor tweaks over SRP templates global tags to be able to properly inject code dependent on vertex data
+
+v1.6.2 rev 03:
+* Fixes:
+    * Fixed issue on HD Lit Motion Vector's pass
+    * Fixed issue with Default UI template when used on Sprite Renderers
+
+* Improvements:
+    * SRP templates no longer have CBuffer block pre-written
+        * Instanced Properties now correctly declare CBlocks
+    * Added new Receive Shadows option into Lightweight templates to correctly handle shadows
+
+v1.6.2 rev 02:
+* New Node:
+    * Instance Id
+
+* Fixes:
+    * Fixed issue on not being able to have multiple property nodes fetching the same variable
+    * Fixed version issue on both HD and LW samples
+
+* Improvements:
+    * Removed hard cap on interpolator usage on templates
+        * Message is thrown to the user if maximum allowed by shader model is reached
+
+v1.6.2 rev 01:
+* New Template:
+    * HD Lit
+
+* New Sample:
+    * SRP HD Lit Refraction
+
+* Improvements:
+    * Can add options on template which lets users change its behavior when using it on ASE
+    * Added Vertex Position option into Unlit and SRP templates
+        * Specified value on Vertex input port can now be either a relative value or an absolute one
+    * Passes can now be excluded from final shader through Available Passes menu over SubShader Properties
+
+* Fixes:
+    * Fixed issues with Lightweight PBR Shadow Caster on WebGL and Android
+
+v1.6.2 rev 00 / v1.6.1 rev 05:
+* New Template:
+    * Unlit Lightmap
+
+* New Sample:
+    * Unlit With Lightmap
+
+* Fixes:
+    * Fixed issue on 'Depth Fade' node with custom Vertex Positions
+    * Fixed issue with using the X,Y,Z,W output ports on 'Object To World' node
+
+v1.6.1 rev 04:
+* New Node:
+    * Linear Depth
+        * Converts values given on logarithmic space to linear
+
+* Improvements:
+    * Minor improvement on nodes loading time when initializing ASE
+
+* Fixes:
+    * Fixed local variable duplicate issue when using 'Depth Fade' and 'Screen Position' nodes
+    * Fixed serialization issue with Additional Use Passes and Fallback data when going into play mode
+    * Fixed HDRP issues on Motion Vectors pass
+    * Fixed issue with uniform keyword usage inside cbuffers (SRP templates) over PS4
+    * Fixed issue with 'Common Transform Matrices' node over SRP templates
+    * Fixed object to world/world to object space transform on transform nodes over HD templates
+        * 'Transform Position', 'Object To World' and 'World To Object' nodes 
+        * They now take SHADEROPTIONS_CAMERA_RELATIVE_RENDERING keyword into account
+    * Fixed issue with 'Pixelate UV' node when used over vertex functions
+    * Fixed foldout issue between Additional Surface Options and Custom SubShader Tags on Surface node properties
+
+v1.6.1 rev 03:
+* New Shader Functions:
+    * Terrain Wind Value
+    * Terrain Wind Animate Vertex
+        * Updated Simple Terrain sample to use this shader function
+
+* Improvements:
+    * Updated HDRP PBR template to v4.6.0
+    * Added Alpha To Coverage/Alpha To Mask option into templates
+        * Set under the Blend Mode area
+
+* Fixes:
+    * Fixed issue on Emission color being added over Forward Add pass when using 'Standard Surface Light' node
+
+v1.6.1 rev 02:
+* Fixes:
+    * Fixed issue with reordering material properties for Translucency and Refraction port's properties
+    * Fixed issue with 'Texture Sample' node when referencing an unconnected node
+
+v1.6.1 rev 01:
+* Improvements:
+    * Updated HDRP templates to v4.3.0
+    * 'Vertex Tangent' node now has Size option
+    * Added access to all 8 UV sets on Surface shaders
+    * Re-added 'Clip' node
+        * First Input Port acts as a relay
+        * Clip uses difference between Alpha and Threshold ( Alpha - Threshold )
+
+* Fixes:
+    * Fixed issue with late directives being injected on globals tag when functions area is available
+        * Affected usage of 'World Space Light' nodes on HDRP templates
+    * Fixed division by 0 issue on 'Triplanar Sample' node
+    * Fixed incorrect directional light vector usage on HDRP templates
+
+v1.6.1 rev 00:
+* Fixes:
+    * Excluding Primitive ID source code from MacOS 
+
+v1.6.0 rev 00:
+* Improvements:
+    * Updated SRP templates to v4.2.0
+
+* Fixes:
+    * Fixed issue on GBuffer pass over HD PBR template
+    * Fixed alpha clip issues on Legacy HD PBR template
+
+v1.5.9 rev 02:
+* New Nodes:
+    * Vertex Id
+    * Primitive ID
+
+* New Shader Functions:
+    * Perturb Normal HQ
+    * Prepare Perturb Normal HQ
+
+* Improvements:
+    * Matrix type nodes can now be GPU instanced
+
+* Fixes:
+    * Fixed issue with 'Fresnel' node with Tangent Normal vectors on Surface shaders
+    * Fixed issues on Motion Vector pass on both 3.x.x. and 4.x.x templates
+    * Fixed issue with world pos generation on HD 4.x.x
+
+v1.5.9 rev 01:
+* Improvements:
+    * Added Auto Gamma to Linear option into 'Color' nodes when set to Constant
+    * Added access to all 8 uv channels on 'Texture Coordinates' and 'Vertex TexCoord' nodes
+        * Only for 2018.2 and above
+
+* Fixes:
+    * Fixed 'Gamma To Linear' and 'Linear To Gamma' compiler errors on SRP v.4.x.x
+
+v1.5.9 rev 00:
+* Fixes:
+    * 'Grab Screen Color' node now also working on Lightweight SRP v3.x.x
+    * Fixed possible issue with Shader Function creation callback not being inside AmplifyShaderEditor namespace 
+
+v1.5.8 rev 03:
+* Fixes:
+    * Fixed multiple issues in both PBR and Unlit templates for HD SRP v4.x.x
+    * Fixed issue over clip space transforms on HD SRP
+    * Fixed issue on sampling depth buffer on HD SRP
+
+v1.5.8 rev 02:
+* Improvements:
+    * Multiple improvements over 'Global Array' node
+        * Added support for jagged arrays
+        * Added Auto-Register toggle
+        * Can reference other nodes through new Mode dropdown ( similar to 'Grab Screen Color' node )
+
+* Fixes:
+    * Fixed memory leak over 'Template Local Var' node
+    * Fixed HD templates issues over new HD 4.1.0
+
+v1.5.8 rev 01:
+* Fixes:
+    * Fixed issue on Live Mode writing on non ase shaders when loaded into canvas
+    * Fixed issue on MacOS with scroll bar over Texture Array Creator tool
+    * Fixed issue on MacOS with 'Function Input' node generated default Sampler 2D value
+
+* New Shader Function:
+    * Substance Blend Metallic
+
+* Improvements:
+    * 'Grab Screen Color' node is now supported on LW SRP
+        * Uses the new _CameraOpaqueTexture which must be requested on the pipeline asset
+            * Must toggle on the Opaque Texture option over its General foldout
+    * Added Clip and Tangent spaces into 'Transform Direction' node
+    * Added Tangent space into 'Transform Position' node
+
+v1.5.8 rev 00:
+* New Sample:
+    * Substance 2018
+
+* Fixes:
+    * Fixed canvas crash when loading shaders with missing templates
+    * Fixed issue on UV Coords creation over 'Substance Sample' Node
+    * Fixed issue with loosing Substance reference on 'Substance Sample' node when applying new changes on it
+        * Only happened on Unity 2018 with Substance in Unity plugin
+    * Fixed issue on nested instanced properties over shader functions not being taken into account
+
+* Improvements:
+    * Upgraded Lightweight and HD templates to v5.0.0
+        * Maintained templates for v.3.x.x under the packages HDSRPTemplates (Legacy) and LWSRPTemplates (Legacy)
+
+v1.5.7 rev 02:
+* Fixes:
+    * Fixed issues on 'Static Switch' node
+        * Property Name wasn't available in all options
+        * Keys on Keyword Enum over Fetch Mode were being automatically upper cased
+    * Fixed issue on 'Get Local Var' node  not propagating node data correctly after being loaded
+
+v1.5.7 rev 01:
+* New Templates:
+    * Custom RT Init
+        * Packed inside AmplifyShaderEditor > Plugins > EditorResources > Templates > CustomRTTemplates
+    * Custom RT Update
+        * Packed inside AmplifyShaderEditor > Plugins > EditorResources > Templates > CustomRTTemplates
+
+* New Sample:
+    * Custom Render Texture Rain
+        * Packed inside AmplifyShaderEditor > Examples > Custom RT Samples
+        * Needs both Custom RT Init and Custom RT Update templates to be imported into project
+
+* Fixes:
+    * Fixed issue on Queue Offset incorrect writing over templates
+    * Fixed issue on templates not recognizing uint
+    * Fixed minor issue over Directives UI
+    * Fixed Shadow Coord macro registry differences between Unity 5.5 and above
+
+* Improvements:
+    * Added Substance Plugin integration over ASE for Unity 2018 and above
+    * Added Mirror option into 'Depth Fade' node
+        * Enabled by default, which was older behavior
+        * If toggled on, sets an abs operation over the final value
+    * Custom Render Textures can now be used/dragged over ASE
+    * Can Pan and Zoom ASE canvas camera through keyboard directional keys
+        * Up/Down/Left/Right Arrow keys pan camera
+        * Alt+Up/Alt+Down/Alt+Left/Alt+Right Arrow keys zoom camera
+
+v1.5.7 rev 00:
+* Fixes:
+    * Fixed issue with using FACE type nodes over both Lightweight and HD Unlit templates
+    * Fixed issue regarding 'Lerp' node's Alpha input port always loading as a Float type
+    * Fixed minor issue on 'Function Subtitle' node tooltip
+    * Fixed minor issue on 'Posterize' node
+        *  Power variable should not be shown on property window if its input port is connected
+    * Fixed minor issue with auto-spacing over shader function names
+
+v1.5.6 rev 08:
+* Fixes:
+    * Fixed Queue Offset not being correctly set when loading certain template based shaders
+    * Fixed HSV nodes previews
+    * Fixed multiple issues with Directives over shaders functions
+    * Fixed issue on nodes not being correctly set up over template's invisible passes with linked ports
+
+* Improvements:
+    * Directives in Include mode now fully support cgincs and hlsl files to be dragged into them
+        * Similar behavior of inline properties, click on button right next to Include textfield to activate object drop UI
+    * Adding GPU Instancing support to Unlit template
+    * Adding new Vertex Position port into 'Depth Fade' node
+    * Adding new Saturate option into 'Depth Fade' node
+    * Can now set precision to each 'Custom Expression' node items individually
+
+v1.5.6 rev 07:
+* Fixes:
+    * Fixed duplicated events registry when loading graphs
+    * Fixed incorrect instanced variables reset over shader functions
+
+v1.5.6 rev 06:
+* Fixes:
+    * Out variables on 'Custom Expression' node no longer appears as inputs
+    * Fixed issue on not updating output port names correctly over 'Custom Expression' node
+    * Fixed issue on properties with Header(...) not being written on shader
+    * Fixed incorrect read/write on MRT Blend Mode and Op over template based shaders
+    * Fixed possible infinite loops caused by 'Register/Get Local Var' nodes
+    * Fixed Shader Type dropdown items not updating names correctly according to changes on template
+    * Fixed issue on adding multiple ASE tabs on Unity 2018.3
+    * Fixed WebGL error over 2018.3b
+    * Fixed 'Parallax Offset' node issues when used on Lightweight and HD SRP templates
+    * Fixed dynamically created outputs over shader function not being correctly set after hot code reload
+
+* Improvements:
+    * Property Name and Values get its label clamped when too big
+        * Full original name and value is shown over its node tooltip
+    * Hidden tag on template shader names no longer created a category called Hidden
+    * Adding new ase_funcs tag functionality to determine where function code should be injected 
+        * If not specified, functions are grouped with global variables as before
+    * Improved template reloading after being manually edited
+
+v1.5.6 rev 05:
+* Fixes:
+    * Fixed 'Smoothstep' node code generation issue
+    * Fixed ASE item grouping issue on Create menu over Unity 2017 and above
+
+v1.5.6 rev 04:
+* Fixes:
+    * Fixed shortcut manager to take 2018.3 new event behavior into account
+
+v1.5.6 rev 03:
+* Fixes:
+    * Fixed several shader functions issues
+        * Fixed Undo issue when using directives textfields
+        * Fixed issue of null references being set on directives list when loaded
+        * Fixed directives not being correctly written on shader
+        * Fixed incorrect Refraction port activation issue on Standard Surface Custom Lighting
+        * Fixed issue on Property nodes with Auto-Register toggled on not being registered
+    * Fixed cascaded shadows issue on HD PBR template
+
+* Improvements:
+    * Minor update on 'Smoothstep' node ports behavior
+    * Added preview to 'Swizzle' node
+
+v1.5.6 rev 02
+* Fixes:
+    * Fixed issue on multi-pass templates not getting correct interpolator count from subshader info
+    * Fixed issue on Depth Offset template option auto enabling after hot code reload
+
+* Improvements:
+    * Using current world position and world view direction when getting indirect specular light values on templates
+
+v1.5.6 rev 01
+* Fixes:
+    * Fixed issue with global variables on Property type nodes being ignored by Auto-Register toggle
+    * Fixed Native Directives capture issue over templates
+        * Fixed issues on adding duplicate directives if they are already natively on the template
+    * Fixed compilation errors from Gamma/Linear nodes on SRP templates
+    * Fixed ArgumentOutOfRangeException over file path on new shader creation
+    * Fixed issues over Motion Vector pass on HD PBR template
+    * Fixed issue on 'Light Color' node with HD templates
+    * Fixed issue on 'World Space Light Dir' node with HD templates
+    * Fixed issue on 'Object Space Light Dir' node with HD templates
+
+* Improvements:
+    * Added support for Variable Mode over Texture Objects type nodes
+    * Adding UI Widget helper for setting Render Type and Queue for templates
+        * On SubShader Tags group, Value UI changes as soon as user writes RenderType or Queue on the Name textfield
+
+v1.5.6 rev 00
+* New Samples:
+    * SRP Lightweight Terrain
+    * Multi Pass Distortion
+
+* New Node:
+    * Switch by Pipeline
+        * Shader function specific node to choose different paths according to current pipeline
+
+* New Shader Function:
+    * Fetch HD Color Pyramid
+
+* Fixes:
+    * Fixed world position issues over HD PBR Template
+    * Fixed transparent issues over HD PBR template
+    * Prevented WorldNormalVector macro to confuse lerp operations
+    * Fixed issue on created shaders being placed in incorrect folders when on two column node
+    * Fixed issue on property registering over multi-pass shaders
+
+* Improvements:
+    * Custom Options can now be added directly over templates
+    * Adding Final Color x Alpha custom option into LW PBR
+        * If toggled on multiples fragment final color by its alpha
+    * Apply Fog on LW PBR takes Add Pass directive into account
+    * Adding SRP support to Four Splats First Pass Terrain shader function
+    * Material Global lIllumination flags for emission can now be modified over Surface Rendering Options
+    * Activated Variable mode into 'Texture Sample' nodes
+
+v1.5.5 rev 01
+* Fixes:
+    * Fixed issue over incorrect name registration over 'Register Local Var' on pasting into another shader
+    * Fixed issue on reading shaders using old shader functions with deprecated nodes
+    * Fixed 'World Pos' node issue on HD SRP template
+    * Fixed issue on 'World Normal' node when used in 'Lerp' node
+
+* Improvements:
+    * 'Register/Get Local Var' nodes maintain connections even if copied to another shader
+
+v1.5.5 rev 00
+* New Node:
+    * Diffuse And Specular From Metallic
+
+* Fixes:
+    * Fixed issues on graph not being updated with material changes on inspector if tab is opened but not selected
+    * Preventing Culture difference issues on material copy-paste
+    * Fixed issue on all modules template tag conflict with existing shader model definition
+    * Fixed HD issue on 'World Position' node
+    * Fixed issue on losing name when copy-pasting property nodes between shaders
+    * Fixed issue on resetting custom inspector to ASE default when loading or hot code reloading shader with its textfield empty
+    * Fixed issue on not setting importer correctly on 'Texture Sample' node when setting a normal map type texture from inspector
+
+* Improvements:
+    * Properties on invisible passes can now be synced with main pass over templates
+
+v1.5.4 dev 10:
+* New Sample:
+    * SRP HD Material Types
+        * Please notice that for SSS to work properly, a Diffusion profile must be attached to the HD pipeline asset
+            * We already supply one over the sample folder ( Diffusion Profile Settings )
+
+* Fixes:
+    * Fixed UX issue with Auto-Register/Set Unique flags on 'Custom Expression' node
+    * Fixed issue with cascade shadows over Lightweight template
+
+* Improvements:
+    * Added Material Types selector into HD template
+        * Subsurface Scattering
+        * Standard (Metallic)
+        * Specular
+        * Anisotropy
+        * Iridescence
+        * Translucent
+
+v1.5.4 dev 09:
+* Fixes:
+    * Fixed Grab Pass issue with 'Outline' node
+    * Fixed PreviewRenderUtility leak over shader and material inspector on 2018.2
+    * Fixed issue with 'PI' node over HD SRP
+
+* Improvements:
+    * Minor improvement over shader save time
+
+v1.5.4 dev 08:
+* Fixes:
+    * Fixed issue on 'Component Mask' node generating compilation errors inside shader functions with auto-cast inputs
+    * Fixed issue on loop unroll error over 'Parallax Occlusion Mapping' node
+    * Fixed issue on crashing ASE when loading a shader or shader function with a missing shader function reference
+        * Adding error message when loading a shader or shader function with missing shader functions
+
+* Improvements:
+    * Added support to Vertex Normal modification on both Unlit and PBR HD templates
+    * Adding 'Global Array' variable name info directly on node
+
+v1.5.4 dev 07:
+* New Templates:
+    * HD PBR
+    * HD Unlit
+
+* Fixes:
+    * Fixed issue on incorrectly capturing module tags
+    * Fixed issues with 'Flipbook UV Animation' node
+    * Fixed multiple issues with Directives usage under shader functions with templates
+    * Fixed issue on 'Custom Expression' node loading on Call mode
+    * Fixed issue on unpacking normals with scale on templates over multiple nodes
+    * Changing tessellation on Procedural Wall sample shader from edge to distanced based to prevent metal issues on Mac
+
+v1.5.4 dev 06:
+* Fixes:
+    * Fixed issue on 'Toggle Switch' node not taking Custom Attributes into account
+    * Fixed out of bounds exception over 'Static Switch' node
+    * Fixed issue on templates port linking behavior
+    * Fixed issues on 'Texture Array', 'Triplanar Sample' and 'Unpack Scale Normal' nodes on Lightweight SRP
+    * Fixed issue on shader function directives not being written on template based shaders
+    * Fixed serialization issue on saving/loading shader function directives
+    * Fixed issue with using 'Texture Array' node inside shader functions
+    * Fixed shader compilation errors on'Parallax Occlusion Mapping' 
+        * Now it does not generate code if no 'Texture Object' node is connected to it
+    * Fixed issue on 'Grab Screen Color' node not updating reference list correctly when copy/pasted
+    * Fixed issue with Undo'ing a 'Grab Screen Color' node on reference mode
+
+* Improvements:
+    * Min and Max Samples options on 'Parallax Occlusion Mapping' node are now inline options
+
+v1.5.4 dev 05:
+* Fixes:
+    * Fixed issue with Vector and Matrix UI spacing on 'Custom Expression' node
+    * Fixed issue on functions being generated twice over a 'Custom Expression' node when auto register and connection are both on
+    * Fixed Blend Op issues with OFF state
+
+* Improvements:
+    * Can now use a custom screen position into 'Dither' node
+    * Added Normalize option into 'Compute Screen Pos' node
+
+v1.5.4 dev 04:
+* Fixes:
+    * Fixed issue on resetting material's Render Queue setting when compiling the shader in Material mode
+    * Fixed issue on Blend Op menu not showing when loading a template based shader
+
+* Improvements:
+    * Re-adding DX11 specific Blend Ops into its respective dropdowns
+    * 'Custom Expression' node items are now reorderable
+    * 'Custom Expression' node can now register dependencies to other ones
+         * Can now better control function register order on final shader
+
+v1.5.4 dev 02/dev 03:
+* New Shader Function:
+    * Color Mask
+
+* Fixes:
+    * Fixed issue on template Unlit SRP generating an error when creating a Color or MainTex named property
+    * Fixed issue on both 'Surface Depth' and 'Camera Depth Fade' nodes when inputting a custom vertex position
+    * Stencil module on Pass now uses SubShader Cull mode if it's not specified on it
+        * Important since Cull determines if separate stencil ops are show for each face
+    * Fixed issue with Fallback shader selector not updating if its textfield is focused
+    * Fixed issue on Grab Pass only being registered on first pass when on multi-pass templates
+
+* Improvements:
+    * Added auto register option into 'Grab Screen Color' node
+    * Adding UsePass support
+        * New Additional Use Passes section on both Surface and Template output nodes
+        * Can add UsePass before or after Surface code via a Location dropdown
+        * On Templates the Below location is still under development and its not available
+
+v1.5.4 dev 01:
+* New Shader Function:
+    * Fetch Lightmap Value
+
+* Improvements:
+    * Simple Terrain sample now support more than four splats
+
+* Fixes:
+    * Fixed issue on Node Palette reading incorrect maximized value when opening ASE window
+
+v1.5.3 dev 12:
+* Fixes:
+    * Fixed null pointer exception with texture arrays over shader functions
+    * Fixed memory leak on shader functions destruction
+
+* Improvements:
+    * Improved templates loading behavior after hot code reload
+    * Replaced individual lists for pragmas, defines and includes by a single reorderable list
+        * Now user select what each line represents via a dropdown
+    * Additional surface options can now be added via the Additional Surface Options tab on the Output node
+    * Added custom type for 'Custom Expression' node data type specification
+
+v1.5.3 dev 11:
+* Fixes:
+    * Fixed issue on not correctly cleaning Undo stack when changing master node
+    * Fixed multiple issues with safe normalize operation over world light dir and view dir 
+    * Fixed world light dir issues over Lightweight SRP
+    * Fixed GPU instancing compile issues on Lightweight SRP
+    * Fixed issue on Includes/Pragmas/Defines UI not showing when no other modules over a template
+
+* Improvements:
+    * Optimizing property block allocation for instanced variables to have less internal padding involved
+    * Added custom attributes to 'Toggle Switch' node
+    * Added toggle to 'Matrix from Vector' node use each input as column
+
+v1.5.3 dev 10:
+* Fixes:
+    * Fixed issue with being able to duplicate output nodes on templates
+    * Fixed issue on foldout flag values being shared between multiple ASE tabs
+
+* Improvements:
+    * 'Get Local Var' port is locked until a valid reference is set to prevent incorrect connections
+    * Updated About image and added Manual link on Amplify Shader Editor menu group
+    * Adding unique id duplicate prevention over shader load
+    * Added support for stencil operations on Lightweight templates
+
+v1.5.3 dev 09:
+* New Shader Functions:
+    * Lerp White To
+    * Detail Albedo
+
+* Fixes:
+    * Fixed API library excluding tool for custom nodes
+
+* Improvements:
+    * Template creators can now register all modules
+        * Simply add the /*ase_all_modules*/ either on the Pass or SubShader body
+    * Templates now support Fallback definition on shader
+    * Templates now support Dependencies definition on shader
+
+v1.5.3 dev 08:
+* Fixes:
+    * Fixed Instance ID issue over Lightweight SRP template
+ 
+* Improvements:
+    * Added API option to remove includes on data collector
+    * Stencil can now be toggled off on templates which have it
+
+v1.5.3 dev 07:
+* New Sample:
+    * Projectors
+        * Exemplify Unity Projectors usage under ASE
+
+* Improvements:
+    * Improved Texture Array Tool
+        * Now also creates Texture3D by hitting the Texture 3D toggle
+        * Can drag and drop multiple textures into tool
+        * Can drag and drop a folder and it will include all its nested textures
+        * Added Clear button to remove all textures from Texture List ( UI still work in progress )
+    * 'Parallax Occlusion Mapping' node now also supports Texture 3D
+        * Replaced the Texture Array toggle by a Texture Type dropdown
+        * User must explicitly set the current 3D texture slice via the Tex3D Slice input port
+    * Removed Fixed precision type since it's no longer available on Unity 2018
+    * Updated Lightweight PBR template to v1.1.8
+    * Re-factored Templates location and names
+        * New and more flexible templates will be gradually added to replace legacy ones
+                * A cleaner Unlit template shader was already added on this build
+
+* Fixes:
+    * Fixed issue on using depth operations on particle template
+    * Fixed sometimes light attenuation not showing up correctly
+    * Fixed allowing to open unity built-in shaders on ASE 
+    * Fixed issue on using incorrect port value on 'Refract' node 
+    * Fixed issue on Texture Object type nodes loosing texture type after load
+
+v1.5.3 dev 06:
+* New Sample:
+    * XRay
+        * Object has different drawing behavior in front and behind a wall
+        * Wall pattern is procedurally generated
+
+* Improvements:
+    * Template internal properties can be used as inline properties on modules
+    * Modules can now read inline properties from the template original source
+        * Unreadable data message is no longer shown on node properties
+    * Added more options to 'Fresnel' node
+        * Now supports custom view vector
+    * Preventing cast warning  with object to clip internal function usage when building shader code for Lightweight SRP
+    * Added new icons for inline properties to the Unity personal skin to make them easier to spot
+    * Updated Lightweight SRP templates
+        * Cull Mode now shared across base, shadow and depth pass
+        * Added new Normal input port
+
+* Fixes:
+    * Fixed issue over templates on not assuming inline properties when loading/saving Cull Mode module
+    * Fixed incorrect cast and type assignment on connections between 'Texture Object' and 'Texture Sample' nodes
+    * Fixed issue on deleting outputs on shader functions and later opening the shaders that use it
+    * Fixed issues on Vertex Offset port on Lightweight PBR template 
+    * Fixed issue on not correctly loading 'Rotate About Axis' node from old shaders
+    * Fixed issue on header not showing with texture properties with the NoScaleOffset attribute
+
+v1.5.3 dev 05:
+* Fixes:
+    * Fixed world normal issues over 'Outline' node
+    * Fixed issues on reading/writing cull mode on templates meta
+    * Fixed issue on capturing includes over templates
+    * Fixed issue on Specular workflow over Lightweight PBR template
+
+* Improvements:
+    * Cull Mode can now be modified over outline node 
+
+v1.5.3 dev 04:
+* New nodes:
+    * Transform Position
+    * Transform Direction
+
+* Improvements:
+    * Added inline property support over templates modules
+        * Also added inline property support over Depth Offset values in both template and standard surface
+    * Minor tweak over 'Clamp' node
+        * Internal max value defaulted to 1
+    * Adding additional modules into Lightweight templates
+    * Enabling ZTest over Particles Alpha Blended template
+
+* Fixes:
+    * Fixed issue on Lightweight PBR template over tangents on objects with non-uniform scales
+    * Fixed issue on Lightweight PBR not receiving real time shadows
+    * Fixed issue on Lightweight Unlit template available interpolators
+    * Fixed issue on Lightweight Unlit template not showing correctly on dropdown menu
+    * Fixed issue on tab titles not being correctly written on shader mode over templates
+    * Fixed issue on property names incorrectly appearing over inline properties
+    * Fixed issue with copy/pasting 'Append' nodes
+    * Fixed issue on 'Global Array' node loading from older shaders
+
+v1.5.3 dev 03:
+* New Template:
+    * Lightweight Unlit
+        * Renamed already existing SRP Template to Lightweight PBR
+
+* New Sample:
+    * SRP Lightweight 2D Fractal
+
+* Fixes:
+    * Fixed issue with 'Parallax Occlusion Mapping' node over Lightweight templates
+    * Fixed Safe Normalize issues with 'View Dir' node on templates
+
+* Improvements:
+    * Added Auto-Register option into 'Static Switch' node
+    * Minor improvement over 'Parallax Occlusion Mapping' node generated code to avoid duplicate calculations
+
+v1.5.3 dev 02:
+* Fixes:
+    * Fixed infinite loop via context menu issue
+
+* Improvements:
+    * Added support for Specular workflow into Lightweight SRP template
+        * Use either the new Specular port or the already existing Metallic port to choose which workflow to use
+    * Added extra ASE null pointer exception prevention test on attempting loading shader with missing shader functions
+
 v1.5.3 dev 01:
 * Improvements:
     * Conditional 'If' node also support Int as compare values
@@ -1554,7 +2401,7 @@ v0.7.2 dev 01:
         * 'Posterize'
         * 'Heightmap Texture Blend'
         * 'Unpack Scale Normal'
-    * Fixed issue with incorrect data read from 'Texture Coordinates' nodes on versions bellow 0.5.0 dev 003
+    * Fixed issue with incorrect data read from 'Texture Coordinates' nodes on versions below 0.5.0 dev 003
     * Fixed issue on inverted Receive Shadows toggle
 
 * Improvements:
