@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class DestructibleOBJ : MonoBehaviour
 {
@@ -65,16 +66,20 @@ public class DestructibleOBJ : MonoBehaviour
             time += Time.deltaTime;
             if (time >= 1) change = false;
         }
-        
+
         mat.SetFloat("_Opacity", time);
     }
 
     public void SetSpawn()
     {
-        Collider[] destructiblesInRange = Physics.OverlapSphere(principalMesh.transform.position, range, lm);
-        //print(destructiblesInRange.Length);
-        int random = Random.Range(0, destructiblesInRange.Length - 1);
-        for (int i = 0; i < destructiblesInRange.Length; i++)
+        Collider[] colliders = Physics.OverlapSphere(transform.position, range, lm);
+        List<Collider> destructiblesInRange = new List<Collider>();
+        foreach (var i in colliders)
+            if(i.GetComponent<DestructibleOBJ>())
+                destructiblesInRange.Add(i);
+
+        int random = Random.Range(0, destructiblesInRange.Count - 1);
+        for (int i = 0; i < destructiblesInRange.Count; i++)
         {
             DestructibleOBJ comp = destructiblesInRange[i].GetComponent<DestructibleOBJ>();
             if (!comp.alreadySelected)
@@ -96,7 +101,7 @@ public class DestructibleOBJ : MonoBehaviour
         if (spawnItem)
         {
             GameObject item = Instantiate(itemPrefabs[Random.Range(0, itemPrefabs.Count)]);
-            item.transform.position = principalMesh.transform.position;
+            item.transform.position = transform.position;
         }
     }
 }
