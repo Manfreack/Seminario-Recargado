@@ -193,7 +193,6 @@ public class ModelE_Melee : EnemyEntity
 
         persuit.OnFixedUpdate += () =>
         {
-            Debug.Log("persuit");
             if (!onDamage) CombatWalkEvent();
 
             isAnswerCall = false;
@@ -250,13 +249,12 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnUpdate += () =>
         {
-            Debug.Log("Wait");
             var dir = (target.transform.position - transform.position).normalized;
             var angle = Vector3.Angle(dir, target.transform.forward);
 
-            if (timeToAttack && angle > 80) delayToAttack -= Time.deltaTime;
+            if (timeToAttack && angle > 80 && cm.times >0) delayToAttack -= Time.deltaTime;
 
-            if (timeToAttack && angle < 80) delayToAttack -= Time.deltaTime / 2;
+            if (timeToAttack && angle < 80 && cm.times > 0) delayToAttack -= Time.deltaTime / 2;
 
             angleToAttack = 110;
 
@@ -277,7 +275,6 @@ public class ModelE_Melee : EnemyEntity
 
         attack.OnFixedUpdate += () =>
         {
-            Debug.Log("attack");
             currentAction = new A_AttackMeleeWarrior(this);
 
             isAnswerCall = false;
@@ -294,14 +291,14 @@ public class ModelE_Melee : EnemyEntity
 
             if (onRetreat) SendInputToFSM(EnemyInputs.RETREAT);
 
-            if (isDead) SendInputToFSM(EnemyInputs.DIE);
+            if (isDead ) SendInputToFSM(EnemyInputs.DIE);
 
 
         };
 
         retreat.OnEnter += x =>
         {
-            startRetreat = 0.5f;
+            startRetreat = 0.3f;
             timeToRetreat = 0.7f;         
             vectoToNodeRetreat = (FindNearCombatNode().transform.position - transform.position).normalized;
             vectoToNodeRetreat.y = 0;
@@ -309,7 +306,6 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnFixedUpdate += () =>
         {
-            Debug.Log("retreat");
             currentAction = new A_WarriorRetreat(this, vectoToNodeRetreat);
 
             if (!isDead && !isAttack && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
@@ -383,6 +379,7 @@ public class ModelE_Melee : EnemyEntity
             }
 
             ca.myEntities--;
+            cm.times++;
         };
 
         _myFsm = new EventFSM<EnemyInputs>(patrol);     
@@ -597,7 +594,7 @@ public class ModelE_Melee : EnemyEntity
         impulseEnd = timeEndImpulse;
         timeToRetreat = startRetreat;
         timeOnDamage = 0.5f;
-        delayToAttack -= 0.25f;
+        delayToAttack -= 0.5f;
         if (!onDamage) onDamage = true;
         if (delayToAttack >= maxDelayToAttack) delayToAttack = maxDelayToAttack;
         TakeDamageEvent();      
@@ -635,6 +632,7 @@ public class ModelE_Melee : EnemyEntity
         if (player != null)
         {
             timeToRetreat += 0.25f;
+            _view.WalckBackAnim();
             _view.BackFromAttack();
             var dir = (target.transform.position - transform.position).normalized;
             var angle = Vector3.Angle(dir, target.transform.forward);
@@ -667,23 +665,19 @@ public class ModelE_Melee : EnemyEntity
 
     public void StopRetreat()
     {
-        if (cm.times < 2)
-        {
-            cm.times++;
-            if (flank)
-            {
-                flank = false;
-                cm.flanTicket = false;
-            }
-        }
+       
+       cm.times++;
+       if (flank)
+       {
+         flank = false;
+         cm.flanTicket = false;
+       }
+        
 
         firstAttack = false;
         onRetreat = false;
         timeToAttack = false;
-
-        if (myWarriorFriends.Count > 2)
-        {
-            if (!checkTurn) StartCoroutine(DelayTurn());
-        }
+        checkTurn = false;
+        
     }
 }

@@ -55,10 +55,14 @@ public class CombatArea : MonoBehaviour
 
     public void OnTriggerEnter(Collider c)
     {
-        foreach (var item in myNPCs) item.target = player;
-        foreach (var item in walls)
+        if (c.GetComponent<Model>())
         {
-          if(myEntities>0 && !aux) item.SetActive(true);
+
+            foreach (var item in myNPCs) item.target = player;
+            foreach (var item in walls)
+            {
+                if (myEntities > 0 && !aux) item.SetActive(true);
+            }
         }
     }
 }

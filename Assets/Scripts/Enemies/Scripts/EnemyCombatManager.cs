@@ -12,7 +12,11 @@ public class EnemyCombatManager : MonoBehaviour {
 
         times = 2;
      
-	}    
+	}
+    public void Update()
+    {
+        if (times > 2) times = 2;
+    }
 
-    
+
 }

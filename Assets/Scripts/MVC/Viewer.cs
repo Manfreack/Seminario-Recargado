@@ -244,7 +244,7 @@ public class Viewer : MonoBehaviour
 
     public void UpdateArmorBar(float val)
     {
-        StartCoroutine(BarSmooth(val, armor));
+        //StartCoroutine(BarSmooth(val, armor));
     }
 
     public IEnumerator BarSmooth(float target, Image barToAffect)
