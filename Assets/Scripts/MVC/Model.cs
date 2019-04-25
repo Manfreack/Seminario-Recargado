@@ -145,7 +145,7 @@ public class Model : MonoBehaviour
 
     float timeImpulse;
     float timeEndImpulse;
-    float internCdPower2;
+    public float internCdPower2;
     string animClipName;
 
     bool preAttack1;
@@ -257,9 +257,11 @@ public class Model : MonoBehaviour
             timeCdPower2 -= Time.deltaTime;
             if (timeCdPower2 <= 0)
             {
-                cdPower2 = false;
+                cdPower2 = false;      
             }
         }
+
+        if (timeCdPower2 <= 0) timeCdPower2 = internCdPower2;
 
         timeToRotateAttack -= Time.deltaTime;
 
@@ -357,11 +359,10 @@ public class Model : MonoBehaviour
     {
         if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll)
         {
+            RollEvent();
             RollCameraEvent();
             stamina -= rollStamina;
-            view.UpdateStaminaBar(stamina / maxStamina);
-      
-            RollEvent();
+            view.UpdateStaminaBar(stamina / maxStamina);           
             onRoll = true;
             dirToDahs = dir;
             dirToDahs.y = 0;
@@ -471,6 +472,7 @@ public class Model : MonoBehaviour
     {
         if (!cdPower2 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0 && isInCombat)
         {
+            timeCdPower2 = internCdPower2;
             stamina -= powerStamina;
             view.UpdateStaminaBar(stamina / maxStamina);
             StreakEvent();
@@ -478,8 +480,7 @@ public class Model : MonoBehaviour
             timeImpulse = 0.05f;
             timeEndImpulse = 0.2f;
             StartCoroutine(PowerDelayImpulse(0.05f, 0.2f, 0.1f, 0.2f));
-            StartCoroutine(PowerColdown(timeCdPower2, 2));
-            Power1Damage();
+            StartCoroutine(PowerColdown(timeCdPower2, 2));            
         }
     }
 
@@ -699,6 +700,7 @@ public class Model : MonoBehaviour
                     view.UpdateStaminaBar(stamina / maxStamina);
                     timeToRotateAttack = 0.3f;
                     attackDamage = attack1Damage;
+                    CombatState();
                 }
             }
 
@@ -877,7 +879,7 @@ public class Model : MonoBehaviour
                 rb.velocity = Vector3.zero;
                 onDamage = true;
             }
-            if (life > 0) OnDamage();
+            if (life > 0 && !onPowerState) OnDamage();
             else
             {
                 if (!dieOnce)

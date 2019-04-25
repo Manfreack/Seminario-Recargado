@@ -24,6 +24,8 @@ public class Arrow : Munition {
 
         if (player.onRoll) GetComponent<BoxCollider>().isTrigger = true;
         else GetComponent<BoxCollider>().isTrigger = false;
+
+        transform.position += transform.forward * 13 * Time.deltaTime;
     }
 
     public void Initialize()

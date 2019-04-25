@@ -344,12 +344,13 @@ public class ModelE_Sniper : EnemyEntity
     
     public void Shoot()
     {
+       
         Arrow newArrow = munition.arrowsPool.GetObjectFromPool();
         newArrow.ammoAmount = munition;
         newArrow.transform.position = attackPivot.position;
-        newArrow.transform.forward = transform.forward;
-        Rigidbody arrowRb = newArrow.GetComponent<Rigidbody>();
-        arrowRb.AddForce(new Vector3(transform.forward.x, attackPivot.forward.y + 0.2f, transform.forward.z) * 950 * Time.deltaTime, ForceMode.Impulse);
+        var dir = (target.transform.position - newArrow.transform.position).normalized;
+        dir.y = 0;
+        newArrow.transform.forward = dir;
     }
 
     public override Vector3 EntitiesAvoidance()
@@ -370,7 +371,8 @@ public class ModelE_Sniper : EnemyEntity
         TakeDamageEvent();
         life -= damage;
 		_view.LifeBar(life / maxLife);
-        
+        _view.CreatePopText(damage);
+
     }
 
     public override Node GetMyNode()

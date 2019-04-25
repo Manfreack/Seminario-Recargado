@@ -16,7 +16,6 @@ public class A_WarriorRetreat : i_EnemyActions
 
         if (_e.onRetreat && !_e._view._anim.GetBool("Attack") && _e.timeToRetreat > 0 && _e.startRetreat<=0 && d<2.5f)
         {
-
             _e.timeToAttack = false;
             _e.WalkBackEvent();
             _e.transform.forward = (_e.target.transform.position - _e.transform.position).normalized;
@@ -30,12 +29,14 @@ public class A_WarriorRetreat : i_EnemyActions
             _e.transform.forward = (_e.target.transform.position - _e.transform.position).normalized;
         }
 
-        if (!_e.onRetreat && !_e.flank) _e.CombatIdleEvent();
+       // if (!_e.onRetreat && !_e.flank) _e.CombatIdleEvent();
 
         if (_e.timeToRetreat <= 0)
         {
             _e.StopRetreat();
         }
+
+      //  if(_e.rb.velocity != Vector3.zero && !_e._view._anim.GetBool("Attack")) _e.WalkBackEvent();
     }
 
     public A_WarriorRetreat( ModelE_Melee e , Vector3 dir)

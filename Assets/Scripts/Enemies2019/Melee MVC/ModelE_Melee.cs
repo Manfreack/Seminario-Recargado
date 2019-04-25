@@ -320,9 +320,12 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
+           // var d = Vector3.Distance(transform.position, target.transform.position);
+
             if ( startRetreat <= 0) timeToRetreat -= Time.deltaTime;
 
             if(_view._anim.GetBool("Attack") == false) startRetreat -= Time.deltaTime;
+
         };
 
         follow.OnEnter += x =>
@@ -347,7 +350,6 @@ public class ModelE_Melee : EnemyEntity
 
         follow.OnUpdate += () =>
         {
-            Debug.Log("follow");
             currentAction = new A_FollowTarget(this);
 
             if (!onDamage) CombatWalkEvent();
