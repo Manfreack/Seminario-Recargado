@@ -41,10 +41,12 @@ public class Model : MonoBehaviour
     public float timeToRoll;   
     bool makingDamage;
 
-    [Header("Player Combat:")]
+    [Header("Player Powers")]
 
     public float timeCdPower2;
-    public float damagePower1;
+    public float damagePower2;
+    public float reduceTimePerHit;
+
 
     [Header("Player StaminaStats:")]
 
@@ -68,6 +70,10 @@ public class Model : MonoBehaviour
 
     public float timeAnimCombat;
     public float attackDamage;
+    public float attack1Damage;
+    public float attack2Damage;
+    public float attack3Damage;
+    public float attack4Damage;
 
     public int[] potions = new int[5];
     public IPotionEffect currentPotionEffect;
@@ -139,7 +145,7 @@ public class Model : MonoBehaviour
 
     float timeImpulse;
     float timeEndImpulse;
-
+    float internCdPower2;
     string animClipName;
 
     bool preAttack1;
@@ -213,20 +219,6 @@ public class Model : MonoBehaviour
         }
     }
 
-
-    public IEnumerator PowerInternCD(float time, int power)
-    {
-        if (power == 1) cdPower1 = true;
-        if (power == 2) cdPower2 = true;
-        if (power == 3) cdPower3 = true;
-        if (power == 4) cdPower4 = true;
-        yield return new WaitForSeconds(time);
-        if (power == 1) cdPower1 = false;
-        if (power == 2) cdPower2 = false;
-        if (power == 3) cdPower3 = false;
-        if (power == 4) cdPower4 = false;
-    }
-
     public IEnumerator OnDamageDelay()
     {
         yield return new WaitForSeconds(0.5f);
@@ -255,10 +247,20 @@ public class Model : MonoBehaviour
         currentPotionEffect = null;
         checking = false;
         fadeTimer = 0;
+        internCdPower2 = timeCdPower2;
     }
 
     void Update()
     {
+        if (cdPower2)
+        {
+            timeCdPower2 -= Time.deltaTime;
+            if (timeCdPower2 <= 0)
+            {
+                cdPower2 = false;
+            }
+        }
+
         timeToRotateAttack -= Time.deltaTime;
 
         if(timeToRotateAttack>0)
@@ -477,7 +479,6 @@ public class Model : MonoBehaviour
             timeEndImpulse = 0.2f;
             StartCoroutine(PowerDelayImpulse(0.05f, 0.2f, 0.1f, 0.2f));
             StartCoroutine(PowerColdown(timeCdPower2, 2));
-            StartCoroutine(PowerInternCD(timeCdPower2, 2));
             Power1Damage();
         }
     }
@@ -642,6 +643,7 @@ public class Model : MonoBehaviour
                view.UpdateStaminaBar(stamina / maxStamina);
                CombatState();
                timeToRotateAttack = 0.3f;
+               attackDamage = attack4Damage;
             }
 
 
@@ -659,6 +661,7 @@ public class Model : MonoBehaviour
                 view.UpdateStaminaBar(stamina / maxStamina);
                 CombatState();
                 timeToRotateAttack = 0.3f;
+                attackDamage = attack3Damage;
             }
 
             if (animClipName == "Attack1N-FINISH" && !preAttack2)
@@ -675,6 +678,7 @@ public class Model : MonoBehaviour
                 view.UpdateStaminaBar(stamina / maxStamina);
                 CombatState();
                 timeToRotateAttack = 0.3f;
+                attackDamage = attack2Damage;
             }
 
             if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
@@ -694,6 +698,7 @@ public class Model : MonoBehaviour
                     stamina -= attackStamina;
                     view.UpdateStaminaBar(stamina / maxStamina);
                     timeToRotateAttack = 0.3f;
+                    attackDamage = attack1Damage;
                 }
             }
 
@@ -721,8 +726,7 @@ public class Model : MonoBehaviour
 
         foreach (var item in col)
         {
-            if(countAnimAttack>=3) item.GetDamage(attackDamage * 2);
-            else item.GetDamage(attackDamage);
+            item.GetDamage(attackDamage);
             item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
             makingDamage = false;
         }
@@ -747,7 +751,7 @@ public class Model : MonoBehaviour
 
         foreach (var item in col)
         {
-            item.GetDamage(damagePower1);
+            item.GetDamage(damagePower2);
             if (item.GetComponent<ViewerE_Melee>())
             {
                 item.GetComponent<ViewerE_Melee>().BackFromAttack();
@@ -824,6 +828,7 @@ public class Model : MonoBehaviour
 
     public void GetDamage(float damage, Transform enemy, bool isProyectile)
     {
+        timeCdPower2 -= reduceTimePerHit;
         impulse = false;
         onRoll = false;
         view.anim.SetBool("Roll", false);

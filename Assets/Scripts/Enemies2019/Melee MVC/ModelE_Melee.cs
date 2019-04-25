@@ -252,9 +252,9 @@ public class ModelE_Melee : EnemyEntity
             var dir = (target.transform.position - transform.position).normalized;
             var angle = Vector3.Angle(dir, target.transform.forward);
 
-            if (timeToAttack && angle > 80 && cm.times >0) delayToAttack -= Time.deltaTime;
+            if (timeToAttack && angle > 80) delayToAttack -= Time.deltaTime;
 
-            if (timeToAttack && angle < 80 && cm.times > 0) delayToAttack -= Time.deltaTime / 2;
+            if (timeToAttack && angle < 80) delayToAttack -= Time.deltaTime / 2;
 
             angleToAttack = 110;
 
