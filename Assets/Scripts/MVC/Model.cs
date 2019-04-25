@@ -275,13 +275,7 @@ public class Model : MonoBehaviour
 
         CombatParameters();
 
-        WraperAction();
-
-        if (life <= 0)
-        {
-            Dead();
-            isDead = true;
-        }
+        WraperAction();      
 
         if (!isRuning && !onPowerState && !onDamage && !isDead && !onRoll && !onDefence)
         {
@@ -357,7 +351,7 @@ public class Model : MonoBehaviour
 
     public void Roll(Vector3 dir)
     {
-        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll)
+        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && !onDefence)
         {
             RollEvent();
             RollCameraEvent();
@@ -880,7 +874,8 @@ public class Model : MonoBehaviour
                 onDamage = true;
             }
             if (life > 0 && !onPowerState) OnDamage();
-            else
+            
+            if(life<=0)
             {
                 if (!dieOnce)
                 {
