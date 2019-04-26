@@ -5,7 +5,7 @@ using System;
 
 public class Potion : MonoBehaviour {
 
-    public enum Type { Health, Extra_Health, Stamina, Costless_Hit, Mana};
+    public enum Type { Health, Stamina, Extra_Health, Costless_Hit, Mana};
     public Type type;
 
     private void OnTriggerEnter(Collider c)

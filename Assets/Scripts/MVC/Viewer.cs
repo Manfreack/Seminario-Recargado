@@ -33,7 +33,7 @@ public class Viewer : MonoBehaviour
     public Image manaBar;
     public Image armor;
 
-    public Text[] potions;
+    public Image[] potions;
     public Text potionTimer;
 
     public List<GameObject> particlesSowrd;
@@ -269,11 +269,14 @@ public class Viewer : MonoBehaviour
 
     public void UpdatePotions(int i)
     {
+        potions[i].fillAmount = (float)model.potions[i] / 3;
+        /*
         potions[i].text = "x" + model.potions[i];
         if (model.potions[i] == 0)
             potions[i].transform.parent.gameObject.SetActive(false);
         else
             potions[i].transform.parent.gameObject.SetActive(true);
+        */
     }
 
     public void UpdateTimer(string val = "")

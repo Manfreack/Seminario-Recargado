@@ -231,7 +231,7 @@ public class Model : MonoBehaviour
         CombatState();
     }
 
-    public enum PotionName { Health, Extra_Health, Stamina, Costless_Hit, Mana };
+    public enum PotionName { Health, Stamina, Extra_Health, Costless_Hit, Mana };
 
     void Start()
     {
@@ -241,7 +241,7 @@ public class Model : MonoBehaviour
         powerPool = new Pool<Powers>(10, PowersFactory, Powers.InitializePower, Powers.DisposePower, true);
         mySkills = new Skills();
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 2; i++)
             view.UpdatePotions(i);
         potionEffects[1] = new ExtraHealth(this, 60);
         currentPotionEffect = null;
@@ -446,13 +446,7 @@ public class Model : MonoBehaviour
                 if (!isFull)
                     potionEffects[i] = new Stamina(this, stamina, maxStamina);
             }
-            else
-                if (i == (int)PotionName.Mana)
-                {
-                    isFull = mana == maxMana;
-                    if (!isFull)
-                        potionEffects[i] = new Mana(this, mana, maxMana);
-                }
+
 
         if (!isFull)
         {
