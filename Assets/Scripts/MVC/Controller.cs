@@ -213,9 +213,10 @@ public class Controller : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Alpha1)) model.DrinkPotion(1);
             if (Input.GetKeyDown(KeyCode.Alpha2)) model.DrinkPotion(2);
-
-            if (Input.GetKeyDown(KeyCode.Escape)) view.TogglePause();
         }
+
+        if(!view.startFade.enabled)
+            if (Input.GetKeyDown(KeyCode.Escape)) view.TogglePause();
     }
 
     private void FixedUpdate()

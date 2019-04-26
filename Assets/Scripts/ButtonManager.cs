@@ -11,7 +11,7 @@ public class ButtonManager : MonoBehaviour
 
     public void Awake()
     {
-        if (SceneManager.GetActiveScene().buildIndex != 1)
+        if (SceneManager.GetActiveScene().buildIndex == 9)
         {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;

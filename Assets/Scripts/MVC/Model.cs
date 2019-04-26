@@ -908,7 +908,8 @@ public class Model : MonoBehaviour
 
     void OnTriggerEnter(Collider c)
     {
-      
+        if (c.gameObject.layer == 14)
+            StartCoroutine(view.YouWin());
     }
 
 
