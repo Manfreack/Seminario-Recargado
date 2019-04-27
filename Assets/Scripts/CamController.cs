@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CamController : MonoBehaviour {
 
@@ -26,6 +27,7 @@ public class CamController : MonoBehaviour {
     public Camera mainCam;
     bool rollEvent;
     public float zoomVelocity;
+    bool onCol;
 
     IEnumerator CameraStatic()
     {
@@ -94,6 +96,7 @@ public class CamController : MonoBehaviour {
             {
                 if (!rollEvent)
                 {
+
                     distance -= zoomVelocity * Time.deltaTime;
                     if (distance <= idleDistance) distance = idleDistance;
                 }
@@ -107,8 +110,9 @@ public class CamController : MonoBehaviour {
         if(rollEvent)
         {
             distance += zoomVelocity * Time.deltaTime;
+            if (distance >= combatDistance) distance = combatDistance;
         }
-      
+        
     }
    
     public void RollEvent()

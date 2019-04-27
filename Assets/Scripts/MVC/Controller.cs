@@ -176,7 +176,7 @@ public class Controller : MonoBehaviour
 
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && model.animClipName != "GetDamage1" && model.animClipName != "GetDamage2" && model.animClipName != "GetDamage3")
             {
                 if (!pushW && !pushA && !pushS && !pushD) model.Roll(model.transform.forward);
                 if (pushW && !pushA && !firstPushS && !pushD) model.Roll(model.mainCamera.forward);

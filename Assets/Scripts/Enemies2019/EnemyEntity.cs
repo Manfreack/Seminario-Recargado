@@ -48,4 +48,5 @@ public abstract class EnemyEntity: MonoBehaviour
     public List<CombatNode> playerNodes = new List<CombatNode>();
     public abstract CombatNode FindNearCombatNode();
     public CombatNode myCombatNode;
+    public CombatRing actualRing;
 }

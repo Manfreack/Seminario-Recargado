@@ -193,6 +193,8 @@ public class ModelE_Melee : EnemyEntity
 
         persuit.OnFixedUpdate += () =>
         {
+            Debug.Log("persuit");
+
             if (!onDamage) CombatWalkEvent();
 
             isAnswerCall = false;
@@ -205,7 +207,18 @@ public class ModelE_Melee : EnemyEntity
 
             currentAction = new A_Persuit(this);
 
-            if (!isDead && isAttack) SendInputToFSM(EnemyInputs.WAIT);
+            if (actualRing != null)
+            {
+                if (actualRing.nextRing != null)
+                {
+                    if (!isDead && actualRing.nextRing.actualEntities >= actualRing.nextRing.entityMaxAmount) SendInputToFSM(EnemyInputs.WAIT);
+                }
+
+                else
+                {
+                    SendInputToFSM(EnemyInputs.WAIT);
+                }
+            }
 
             if (!isDead && !isAttack && !isPersuit) SendInputToFSM(EnemyInputs.FOLLOW);
 
@@ -215,27 +228,11 @@ public class ModelE_Melee : EnemyEntity
         wait.OnEnter += x =>
         {
             
-
-            bool right = false;
-            bool left = false;
-
             viewDistanceAttack += 1;
-          
-            foreach (var item in myWarriorFriends)
-            {
-                var relativePoint = transform.InverseTransformPoint(item.transform.position);
 
-                if (relativePoint.x < 0.0) left = true;
-    
-                else if (relativePoint.x > 0.0)  right = true;
+            int r = UnityEngine.Random.Range(0, 2);
 
-            }
-
-            if (right && !left) flankDir = 1;
-
-            if (!right && left) flankDir = 2;
-
-            if (!right && !left) flankDir = 0;
+            flankDir = r;
 
             if(!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
 
@@ -249,6 +246,8 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnUpdate += () =>
         {
+            Debug.Log("wait");
+
             var dir = (target.transform.position - transform.position).normalized;
             var angle = Vector3.Angle(dir, target.transform.forward);
 
@@ -266,11 +265,12 @@ public class ModelE_Melee : EnemyEntity
 
             currentAction = new A_WarriorWait(this);
 
-            if (!isDead && !isAttack && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && actualRing == null && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && delayToAttack <= 0) SendInputToFSM(EnemyInputs.ATTACK);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
+            
         };
 
         attack.OnFixedUpdate += () =>
@@ -283,9 +283,9 @@ public class ModelE_Melee : EnemyEntity
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
-            if (!isDead && !isAttack && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && actualRing == null && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && !isAttack && !isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && actualRing == null && !isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && delayToAttack > 0 && !onRetreat) SendInputToFSM(EnemyInputs.WAIT);
 
@@ -363,6 +363,7 @@ public class ModelE_Melee : EnemyEntity
         {
             DeadEvent();
             currentAction = null;
+            timeToAttack = false;
 
             if (myWarriorFriends.Count > 0)
             {
@@ -681,5 +682,11 @@ public class ModelE_Melee : EnemyEntity
         timeToAttack = false;
         checkTurn = false;
         
+    }
+
+    public void OnTriggerStay(Collider c)
+    {
+        if (c.GetComponent<Ring>()) actualRing = c.GetComponent<Ring>().parent;
+        else actualRing = null;
     }
 }

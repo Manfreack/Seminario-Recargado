@@ -146,7 +146,7 @@ public class Model : MonoBehaviour
     float timeImpulse;
     float timeEndImpulse;
     public float internCdPower2;
-    string animClipName;
+    public string animClipName;
 
     bool preAttack1;
     bool preAttack2;
@@ -351,7 +351,7 @@ public class Model : MonoBehaviour
 
     public void Roll(Vector3 dir)
     {
-        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && !onDefence)
+        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll)
         {
             RollEvent();
             RollCameraEvent();
@@ -416,12 +416,7 @@ public class Model : MonoBehaviour
                 dir.y = 0;
                 transform.forward = dir;
                 onRoll = false;
-            }
-
-            if (onDamage)
-            {
-                onRoll = false;
-            }
+            }            
         }
     }
 
@@ -458,7 +453,7 @@ public class Model : MonoBehaviour
 
     public void CastPower2()
     {
-        if (!cdPower2 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0 && isInCombat)
+        if (!cdPower2 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0 && isInCombat && !onDefence)
         {
             timeCdPower2 = internCdPower2;
             stamina -= powerStamina;
@@ -558,7 +553,9 @@ public class Model : MonoBehaviour
         acceleration += 3f * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
-        if (!InAction && !onDamage && countAnimAttack == 0 && !onRoll)
+        if (!InAction && !onDamage && countAnimAttack == 0 && !onRoll && animClipName != "GetDamage1" 
+                                                                      && animClipName != "GetDamage2" 
+                                                                      && animClipName != "GetDamage3")
         {
             Quaternion targetRotation;
 
@@ -681,8 +678,6 @@ public class Model : MonoBehaviour
                     view.AwakeTrail();
                     Attack();
                     makingDamage = true;
-                   // timeImpulse = 0.02f;
-                   // timeEndImpulse = 0.1f;
                     preAttack1 = true;
                     stamina -= attackStamina;
                     view.UpdateStaminaBar(stamina / maxStamina);
@@ -820,9 +815,7 @@ public class Model : MonoBehaviour
     {
         timeCdPower2 -= reduceTimePerHit;
         impulse = false;
-        onRoll = false;
-        view.anim.SetBool("Roll", false);
-        rb.velocity = Vector3.zero;
+        if (onRoll) view.ShakeCameraDamage(2);
         bool isBehind = false;
         StartCoroutine(OnDamageDelay());
         timeEndImpulse = 0;
@@ -856,18 +849,13 @@ public class Model : MonoBehaviour
                 timeToHeal = maxTimeToHeal;
                 view.UpdateLifeBar(life / maxLife);
                 impulse = false;
-                onRoll = false;
-                rb.velocity = Vector3.zero;
-
             }
 
             if (!onPowerState)
             {
-
-                rb.velocity = Vector3.zero;
                 onDamage = true;
             }
-            if (life > 0 && !onPowerState) OnDamage();
+            if (life > 0 && !onPowerState && !onRoll) OnDamage();
             
             if(life<=0)
             {
@@ -878,13 +866,8 @@ public class Model : MonoBehaviour
                     StartCoroutine(view.YouDied());
                     dieOnce = true;
                 }
-            }
-
-            onRoll = false;
-         
+            }       
         }
-
-        onRoll = false;
     }
 
 
