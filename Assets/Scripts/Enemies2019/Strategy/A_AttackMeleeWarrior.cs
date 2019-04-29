@@ -17,7 +17,6 @@ public class A_AttackMeleeWarrior : i_EnemyActions
         {
             if (!_e.onAttackArea && !_e.onAttack && !_e.firstAttack && !_e.onDamage)
             {
-                _e.viewDistanceAttack = 3.79f;
                 Quaternion targetRotation;
                 var dir = (_e.target.transform.position - _e.transform.position).normalized;
                 dir.y = 0;

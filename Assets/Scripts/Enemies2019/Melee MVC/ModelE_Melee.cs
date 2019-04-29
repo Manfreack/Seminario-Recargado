@@ -211,7 +211,11 @@ public class ModelE_Melee : EnemyEntity
             {
                 if (actualRing.nextRing != null)
                 {
-                    if (!isDead && actualRing.nextRing.actualEntities >= actualRing.nextRing.entityMaxAmount) SendInputToFSM(EnemyInputs.WAIT);
+
+                    if (!isDead && actualRing.nextRing.myEnemies.Count > actualRing.nextRing.entityMaxAmount)
+                    {
+                        SendInputToFSM(EnemyInputs.WAIT);
+                    }
                 }
 
                 else
@@ -227,8 +231,10 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnEnter += x =>
         {
-            
-            viewDistanceAttack += 1;
+
+            if (actualRing.name == "Ring1") viewDistanceAttack = 4.52f;
+            if (actualRing.name == "Ring2") viewDistanceAttack = 6;
+            if (actualRing.name == "Ring3") viewDistanceAttack = 8;
 
             int r = UnityEngine.Random.Range(0, 2);
 
@@ -238,15 +244,12 @@ public class ModelE_Melee : EnemyEntity
 
         };
 
-        wait.OnExit += x =>
-        {
-
-            viewDistanceAttack = maxViewDistanceToAttack;
-        };
-
+     
         wait.OnUpdate += () =>
         {
-            Debug.Log("wait");
+
+            if (warriorVectAvoidance != Vector3.zero && flankDir == 0) flankDir = 1;
+            if (warriorVectAvoidance != Vector3.zero && flankDir == 1) flankDir = 0;
 
             var dir = (target.transform.position - transform.position).normalized;
             var angle = Vector3.Angle(dir, target.transform.forward);
@@ -263,9 +266,9 @@ public class ModelE_Melee : EnemyEntity
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
-            currentAction = new A_WarriorWait(this);
+            currentAction = new A_WarriorWait(this , flankDir);
 
-            if (!isDead && actualRing == null && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isAttack && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && delayToAttack <= 0) SendInputToFSM(EnemyInputs.ATTACK);
 
@@ -283,9 +286,9 @@ public class ModelE_Melee : EnemyEntity
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
-            if (!isDead && actualRing == null && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isAttack && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && actualRing == null && !isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isAttack && !isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && delayToAttack > 0 && !onRetreat) SendInputToFSM(EnemyInputs.WAIT);
 
@@ -299,9 +302,12 @@ public class ModelE_Melee : EnemyEntity
         retreat.OnEnter += x =>
         {
             startRetreat = 0.3f;
-            timeToRetreat = 0.7f;         
+            if(actualRing.name == "Ring1") timeToRetreat = 0.7f;         
+            if(actualRing.name == "Ring2") timeToRetreat = 1f;         
+            if(actualRing.name == "Ring3") timeToRetreat = 1.3f;         
             vectoToNodeRetreat = (FindNearCombatNode().transform.position - transform.position).normalized;
             vectoToNodeRetreat.y = 0;
+            viewDistanceAttack = 1;
         };
 
         retreat.OnFixedUpdate += () =>
@@ -320,8 +326,6 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
-           // var d = Vector3.Distance(transform.position, target.transform.position);
-
             if ( startRetreat <= 0) timeToRetreat -= Time.deltaTime;
 
             if(_view._anim.GetBool("Attack") == false) startRetreat -= Time.deltaTime;
@@ -383,6 +387,7 @@ public class ModelE_Melee : EnemyEntity
 
             ca.myEntities--;
             cm.times++;
+            if (actualRing != null) actualRing.EnemyExit(this);
         };
 
         _myFsm = new EventFSM<EnemyInputs>(patrol);     
@@ -687,6 +692,10 @@ public class ModelE_Melee : EnemyEntity
     public void OnTriggerStay(Collider c)
     {
         if (c.GetComponent<Ring>()) actualRing = c.GetComponent<Ring>().parent;
-        else actualRing = null;
+    }
+
+    public void OnTriggerEnter(Collider c)
+    {
+        if (c.GetComponent<Ring>()) actualRing = c.GetComponent<Ring>().parent;
     }
 }

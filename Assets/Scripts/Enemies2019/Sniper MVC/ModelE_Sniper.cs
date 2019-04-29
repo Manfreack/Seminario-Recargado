@@ -289,7 +289,7 @@ public class ModelE_Sniper : EnemyEntity
                 {
                     RemoveNearEntity(item);
                 }
-            }       
+            }
 
             ca.myEntities--;
         };
@@ -470,7 +470,7 @@ public class ModelE_Sniper : EnemyEntity
 
     public override void RemoveNearEntity(EnemyEntity e)
     {
-        nearEntities.Remove(e);
+        e.nearEntities.Remove(this);
     }
 
  

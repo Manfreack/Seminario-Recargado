@@ -4,36 +4,38 @@ using UnityEngine;
 
 public class CombatRing : MonoBehaviour
 {
+    public List<EnemyEntity> myEnemies = new List<EnemyEntity>();
     public CombatRing nextRing;
     public float entityMaxAmount;
-    public float actualEntities;
     public bool fullRing;
 
     public void Update()
     {
-        if (actualEntities >= entityMaxAmount) fullRing = true;
+        if (myEnemies.Count >= entityMaxAmount) fullRing = true;
         else fullRing = false;
+
+        foreach (var item in myEnemies)
+        {
+            if (item.isDead) myEnemies.Remove(item);
+        }
     }
 
-    public void EnemyEnter()
+    public void EnemyEnter(EnemyEntity e)
     {
-        actualEntities++;
-        if (actualEntities > entityMaxAmount) actualEntities = entityMaxAmount;
+        if(myEnemies.Count < entityMaxAmount)
+        {
+            bool aux = false;
+
+            foreach (var item in myEnemies) if (item == e) aux = true;
+
+            if (!aux) myEnemies.Add(e);            
+        }
     }
 
-    public void EnemyExit()
+    public void EnemyExit(EnemyEntity e)
     {
-        actualEntities--;
-        if (actualEntities <= 0) actualEntities = 0;
+        myEnemies.Remove(e);
     }
 
-    public void OnTriggerEnter(Collider c)
-    {
-        if (c.GetComponent<EnemyEntity>()) EnemyEnter();
-    }
-
-    public void OnTriggerExit(Collider c)
-    {
-        if (c.GetComponent<EnemyEntity>()) EnemyExit();
-    }
+  
 }
