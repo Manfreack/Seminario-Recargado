@@ -33,7 +33,6 @@ public class CombatArea : MonoBehaviour
         {
             foreach (var item in walls) item.SetActive(false);
             cm.times = 2;
-            cm.flanTicket = false;         
             aux = true;
         }
 
@@ -48,7 +47,6 @@ public class CombatArea : MonoBehaviour
         {
             foreach (var item in walls) item.SetActive(false);
             cm.times = 2;
-            cm.flanTicket = false;
             aux = true;
         } 
     }

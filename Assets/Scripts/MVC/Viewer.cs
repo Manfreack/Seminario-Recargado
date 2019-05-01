@@ -100,6 +100,28 @@ public class Viewer : MonoBehaviour
         anim.SetFloat("VelZ", velocityZ);
     }
 
+    public void RollAttackAnim()
+    {
+        anim.SetBool("RollAttack", true);
+    }
+
+    public void RollAttackAnimFalse()
+    {
+        anim.SetBool("RollAttack", false);
+    }
+
+    public void ParryAnim()
+    {
+        anim.SetBool("Parry", true);
+        currentAttackAnimation = 0;
+        model.countAnimAttack = 0;
+    }
+
+    public void ParryAnimFalse()
+    {
+        anim.SetBool("Parry", false);
+    }
+
     public void Streak()
     {
         anim.SetBool("Streak", true);

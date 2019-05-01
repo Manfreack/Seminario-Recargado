@@ -6,9 +6,8 @@ using System.Linq;
 public class EnemyCombatManager : MonoBehaviour {
 
     public int times;
-    public bool flanTicket;
     public List<ModelE_Melee> enemiesList = new List<ModelE_Melee>();
-	// Use this for initialization
+
 	void Start () {
 
         times = 2;
@@ -33,6 +32,5 @@ public class EnemyCombatManager : MonoBehaviour {
             if (count > 2) item.timeToAttack = false;
         }
     }
-
 
 }

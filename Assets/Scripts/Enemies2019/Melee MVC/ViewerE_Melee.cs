@@ -65,6 +65,28 @@ public class ViewerE_Melee : MonoBehaviour
         if(_model.isDead) foreach (var item in myMats) item.SetFloat("_Intensity", 0);
     }
 
+    public void DefenceAnim()
+    {
+        _anim.SetBool("Defence", true);
+    }
+
+    public void DefenceAnimFalse()
+    {
+        _anim.SetBool("Defence", false);
+    }
+
+    public void HitDefenceAnim()
+    {
+        sparks.gameObject.SetActive(true);
+        sparks.Play();
+        _anim.SetBool("HitDefence", true);
+    }
+
+    public void HitDefenceAnimFalse()
+    {
+        _anim.SetBool("HitDefence", false);
+    }
+
     public void CombatWalkAnim()
     {
         _anim.SetBool("WalkCombat", true);

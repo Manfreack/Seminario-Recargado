@@ -21,16 +21,17 @@ public class A_WarriorWait : i_EnemyActions
             _e.timeToAttack = true;
 
             var dir = (_e.target.transform.position - _e.transform.position).normalized;
-            var angle = Vector3.Angle(dir, _e.target.transform.forward);
-
-            if (!_e.cm.flanTicket && !_e.testEnemy && angle > 90)
-            {
-                _e.flank = true;
-                _e.cm.flanTicket = true;
-            }
+            var angle = Vector3.Angle(dir, _e.target.transform.forward); 
         }
 
-        if (_e.actualRing.myEnemies.Count >= _e.actualRing.entityMaxAmount)
+        bool aux = false;
+
+        foreach (var item in _e.actualRing.myEnemies)
+        {
+            if (item == _e) aux = true;
+        }
+
+        if (_e.actualRing.myEnemies.Count >= _e.actualRing.entityMaxAmount && !aux)
         {
             goBack = true;
             Quaternion targetRotation;
@@ -49,13 +50,13 @@ public class A_WarriorWait : i_EnemyActions
         
            var rotateSpeed = 0;
 
-            if (_dirRotate == 1)
+            if (_e.flankDir == 1)
             {
                 rotateSpeed = 35;
                 _e.WalkRightEvent();
             }
 
-            else if (_dirRotate == 0)
+            else if (_e.flankDir == 0)
             {
                 rotateSpeed = -35;
                 _e.WalkLeftEvent();
@@ -73,8 +74,27 @@ public class A_WarriorWait : i_EnemyActions
 
                 if (_e.avoidVectObstacles != Vector3.zero && d > 3) _e.transform.position += _e.transform.forward * 4 * Time.deltaTime;
             }
-        }      
-       
+        }
+
+        var obs = Physics.OverlapSphere(_e.transform.position, 1, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>());
+        if(obs.Count()>0)
+        {
+            if(_e.changeRotateWarrior)
+            {
+                if(_e.flankDir == 0)
+                {
+                    _e.flankDir = 1;
+                    obs.First().flankDir = 0;
+                }
+
+                else
+                {
+                    _e.flankDir = 0;
+                    obs.First().flankDir = 1;
+                }
+            }
+        }
+
     }
 
     public A_WarriorWait(ModelE_Melee e , int dir)

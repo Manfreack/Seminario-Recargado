@@ -346,10 +346,12 @@ public class ModelE_Sniper : EnemyEntity
     {
        
         Arrow newArrow = munition.arrowsPool.GetObjectFromPool();
+        newArrow.GetComponent<GameObject>().SetActive(false);
         newArrow.ammoAmount = munition;
         newArrow.transform.position = attackPivot.position;
         var dir = (target.transform.position - newArrow.transform.position).normalized;
         dir.y = 0;
+        newArrow.GetComponent<GameObject>().SetActive(true);
         newArrow.transform.forward = dir;
     }
 

@@ -8,6 +8,7 @@ public class CombatRing : MonoBehaviour
     public CombatRing nextRing;
     public float entityMaxAmount;
     public bool fullRing;
+    public int changeRotateDir;
 
     public void Update()
     {
@@ -28,13 +29,25 @@ public class CombatRing : MonoBehaviour
 
             foreach (var item in myEnemies) if (item == e) aux = true;
 
-            if (!aux) myEnemies.Add(e);            
+            if (!aux) myEnemies.Add(e);
+            
+            if(changeRotateDir > 0 && e.GetComponent<ModelE_Melee>())
+            {
+                e.GetComponent<ModelE_Melee>().changeRotateWarrior = true;
+                changeRotateDir--;
+            }
         }
     }
 
     public void EnemyExit(EnemyEntity e)
     {
         myEnemies.Remove(e);
+
+        if (e.GetComponent<ModelE_Melee>().changeRotateWarrior)
+        {
+            e.GetComponent<ModelE_Melee>().changeRotateWarrior = false;
+            changeRotateDir++;
+        }
     }
 
   

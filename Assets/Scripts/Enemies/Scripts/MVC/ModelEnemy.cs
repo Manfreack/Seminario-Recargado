@@ -292,10 +292,9 @@ public class ModelEnemy : EnemyClass
                 cm.times--;
 
 
-                if (cm.times <= 0 && !aux && !cm.flanTicket)
+                if (cm.times <= 0 && !aux)
                 {
                     flankTarget = true;
-                    cm.flanTicket = true;
                 }
             }
 
@@ -324,7 +323,6 @@ public class ModelEnemy : EnemyClass
                 maxDileyToAttack = dileyToAttack;
                 if (flankTarget)
                 {
-                    cm.flanTicket = false;
                     flankTarget = false;
                 }
                 AttackEvent();
@@ -459,7 +457,6 @@ public class ModelEnemy : EnemyClass
         isDead = true;
         if(flankTarget)
         {
-            cm.flanTicket = false;
             flankTarget = false;
             
         }

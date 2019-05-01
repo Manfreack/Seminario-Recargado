@@ -51,6 +51,7 @@ public class Controller : MonoBehaviour
         model.RollEvent += view.RollAnim;
         model.RollCameraEvent += model.mainCamera.GetComponent<CamController>().RollEvent;
         model.StreakEvent += view.Streak;
+        model.RollAttackEvent += view.RollAttackAnim;
     }
 
     // Update is called once per frame

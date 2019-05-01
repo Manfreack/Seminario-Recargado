@@ -74,6 +74,7 @@ public class Model : MonoBehaviour
     public float attack2Damage;
     public float attack3Damage;
     public float attack4Damage;
+    public float attackRollDamage;
 
     public int[] potions = new int[5];
     public IPotionEffect currentPotionEffect;
@@ -134,6 +135,7 @@ public class Model : MonoBehaviour
     public Action RollEvent;
     public Action RollCameraEvent;
     public Action StreakEvent;
+    public Action RollAttackEvent;
 
     public Transform closestEnemy;
     public LayerMask enemyLM;
@@ -313,6 +315,15 @@ public class Model : MonoBehaviour
         ImpulseAttackAnimation();
         RollImpulse();
 
+        if (onDefence)
+        {
+            var defenceDir = mainCamera.transform.forward;
+            defenceDir.y = 0;
+            Quaternion targetRotation;
+            targetRotation = Quaternion.LookRotation(defenceDir, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+        }
+
         if(stamina<5)
         {
             StopDefence();
@@ -329,6 +340,7 @@ public class Model : MonoBehaviour
         if (makingDamage && animClipName == "Attack3N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack2N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack1N-DAMAGE") MakeDamage();
+        if (makingDamage && animClipName == "RollAttack-DAMAGE") MakeDamage();
     }
 
     public void ImpulseAttackAnimation()
@@ -609,6 +621,16 @@ public class Model : MonoBehaviour
     {
         dirToRotateAttack = d;
 
+        if(onRoll)
+        {
+            makingDamage = true;
+            attackDamage = attackRollDamage;
+            RollAttackEvent();
+            EndCombo();
+            onRoll = false;
+            view.BackRollAnim();
+        }
+
         if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onDefence && !view.anim.GetBool("SaveSword2"))
         {
 
@@ -668,12 +690,10 @@ public class Model : MonoBehaviour
             }
 
             if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
-                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2") && !preAttack1 && countAnimAttack==0)
+                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "RunWhitSword") && !preAttack1 && countAnimAttack==0)
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
-                {
-
-                    
+                {                   
                     countAnimAttack++;
                     view.AwakeTrail();
                     Attack();
