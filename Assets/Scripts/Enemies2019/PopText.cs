@@ -9,10 +9,10 @@ public class PopText : MonoBehaviour
     public Text myText;
     public float damageText;
     
-    public IEnumerator Destroy()
+    public IEnumerator DestroyText()
     {
         yield return new WaitForSeconds(2.5f);
-        Destroy();
+        Destroy(gameObject);
     }
 
     void Start()
@@ -21,7 +21,7 @@ public class PopText : MonoBehaviour
         myText = GetComponent<Text>();
         int damage = (int)damageText;
         myText.text = damage.ToString();
-        StartCoroutine(Destroy());
+        StartCoroutine(DestroyText());
     }
 
   

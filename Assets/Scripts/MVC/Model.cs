@@ -472,9 +472,9 @@ public class Model : MonoBehaviour
             view.UpdateStaminaBar(stamina / maxStamina);
             StreakEvent();
             CombatState();
-            timeImpulse = 0.05f;
+            timeImpulse = 0.4f;
             timeEndImpulse = 0.2f;
-            StartCoroutine(PowerDelayImpulse(0.05f, 0.2f, 0.1f, 0.2f));
+            StartCoroutine(PowerDelayImpulse(0.4f, 0.2f, 0.1f, 0.2f));
             StartCoroutine(PowerColdown(timeCdPower2, 2));            
         }
     }
@@ -565,7 +565,7 @@ public class Model : MonoBehaviour
         acceleration += 3f * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
-        if (!InAction && !onDamage && countAnimAttack == 0 && !onRoll && animClipName != "GetDamage1" 
+        if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" 
                                                                       && animClipName != "GetDamage2" 
                                                                       && animClipName != "GetDamage3")
         {
@@ -629,6 +629,9 @@ public class Model : MonoBehaviour
             EndCombo();
             onRoll = false;
             view.BackRollAnim();
+            var dir = mainCamera.transform.forward;
+            dir.y = 0;
+            transform.forward = dir;
         }
 
         if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onDefence && !view.anim.GetBool("SaveSword2"))
@@ -690,7 +693,7 @@ public class Model : MonoBehaviour
             }
 
             if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
-                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "RunWhitSword") && !preAttack1 && countAnimAttack==0)
+                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2") && !preAttack1 && countAnimAttack==0)
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
                 {                   
