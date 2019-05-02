@@ -8,11 +8,11 @@ public class Ring : MonoBehaviour
 
     public void OnTriggerEnter(Collider c)
     {
-        if (c.GetComponent<EnemyEntity>()) parent.EnemyEnter(c.GetComponent<EnemyEntity>());
+        if (c.GetComponent<ModelE_Melee>()) parent.EnemyEnter(c.GetComponent<ModelE_Melee>());
     }
 
     public void OnTriggerExit(Collider c)
     {
-        if (c.GetComponent<EnemyEntity>()) parent.EnemyExit(c.GetComponent<EnemyEntity>());
+        if (c.GetComponent<ModelE_Melee>()) parent.EnemyExit(c.GetComponent<ModelE_Melee>());
     }
 }
