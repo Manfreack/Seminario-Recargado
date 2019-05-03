@@ -1,33 +1,56 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿//(Created CSharp Version) 10/2010: Daniel P. Rossi (DR9885) 
+
 using UnityEngine;
+using System.Collections;
 
 public class CamCollision : MonoBehaviour
 {
-    public Transform player;
-    public float minDistance = 1.0f;
-    public float maxDistance = 4.0f;
-    public float smooth = 10.0f;
-    Vector3 dollyDir;
-    float distance;
+    Model model;
+    CamController camCon;
+    public Transform target;
+    float distFromTarget;
+    public LayerMask collisionMask;
+
+    [Header("Distances")]
+    public float idleDistance = 2.83f;
+    public float combatDistance = 5.14f;
+    public float evenCloserDistanceToPlayer = 1;
+
+    [Header("Speeds")]
+    public float moveSpeed = 5;
+    public float returnSpeed = 9;
+    public float wallPush = 0.7f;
+
+    Vector3 push = Vector3.up * 0.1f;
+
     void Awake()
     {
-      //player = FindObjectOfType<Model>().transform;
-        dollyDir = transform.localPosition.normalized;
-        distance = transform.localPosition.magnitude;
+        model = FindObjectOfType<Model>();
+        camCon = transform.parent.parent.GetComponent<CamController>();
     }
-    void Update()
+
+    void LateUpdate()
     {
-        Vector3 desiredCameraPos = player.TransformPoint(dollyDir * maxDistance);
+        if (model.isInCombat)
+            distFromTarget = combatDistance;
+        else
+            distFromTarget = idleDistance;
+
+        CollisionCheck(target.position - transform.forward * distFromTarget);
+    }
+
+    private void CollisionCheck(Vector3 retPoint)
+    {
         RaycastHit hit;
-        if (Physics.Linecast(player.position, desiredCameraPos, out hit))
+
+        if (Physics.Linecast(target.position, retPoint, out hit, collisionMask))
         {
-            distance = Mathf.Clamp(hit.distance, minDistance, maxDistance);
+            if (Vector3.Distance(Vector3.Lerp(transform.position, hit.point, moveSpeed * Time.deltaTime), target.position) > evenCloserDistanceToPlayer)
+                transform.position = Vector3.Lerp(transform.position, hit.point, moveSpeed * Time.deltaTime * 1.2f);
         }
         else
         {
-            distance = maxDistance;
+            transform.position = Vector3.Lerp(transform.position, retPoint, returnSpeed * Time.deltaTime);
         }
-        transform.localPosition = Vector3.Lerp(transform.localPosition, dollyDir * distance, Time.deltaTime * smooth);
     }
 }

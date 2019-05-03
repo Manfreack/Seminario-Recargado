@@ -5,29 +5,19 @@ using System.Linq;
 
 public class CamController : MonoBehaviour {
 
+    public float speed = 120.0f;
     public Transform player;
-    public Model model;
-    public ProtectCameraFromWallClip wallCam;
-    public float distance;
-    public float combatDistance;
-    public float idleDistance;
-    float currentX = 0;
-    float currentY = 0;
-    public float sensitivityX;
-    public float sensitivityY;
-    public float viewUp;
-    public float viewDown;
-    public float smooth;
+    public float clampAngleMax = 30.0f;
+    public float clampAngleMin = -18.0f;
+    public float sensitivityX = 150.0f;
+    public float sensitivityY = 70.0f;
     public bool invertY;
-    public bool cameraActivate;
+    [HideInInspector]
     public bool blockMouse;
-    public float rayDistance;
-    public LayerMask layerObst;
-    Vector3 startPositionPivot;
-    public Camera mainCam;
+    float rotX = 0.0f;
+    float rotY = 0.0f;
+    Model model;
     bool rollEvent;
-    public float zoomVelocity;
-    bool onCol;
 
     IEnumerator CameraStatic()
     {
@@ -36,88 +26,47 @@ public class CamController : MonoBehaviour {
         rollEvent = false;
     }
 
-
-
-    void Start () {
-        if (invertY)
-            sensitivityY = -sensitivityY;
+    void Start()
+    {
         model = FindObjectOfType<Model>();
-        transform.position = player.position;
-        transform.forward = player.transform.forward;
-        mainCam.transform.forward = model.transform.forward;
-        currentX = -90;
+
+        Vector3 rot = transform.localRotation.eulerAngles;
+        rotY = rot.y;
+        rotX = rot.x;
+
+        if (invertY) sensitivityY = -sensitivityY;
     }
 
-    void Update () {
-
+    void Update()
+    {
         if (blockMouse)
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
-
         else
         {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
 
-         if (!cameraActivate && model.fadeTimer >= 2)
-         {
-              currentX += Input.GetAxis("Mouse X") * sensitivityX;
-              currentY += Input.GetAxis("Mouse Y") * sensitivityY;
-              currentY = Mathf.Clamp(currentY, viewDown, viewUp);
-         }
-         
-     
-    }
-	
-	void FixedUpdate () {
-
-        if (!cameraActivate)
+        if (model.fadeTimer >= 2)
         {
-            if (model.isInCombat)
-            {
-                if (!rollEvent)
-                {
-                    if (distance < combatDistance)
-                    {
-                        distance += zoomVelocity * Time.deltaTime;
-                    }
-
-                    if (distance> combatDistance + 0.2f)
-                    {
-                        distance -= zoomVelocity * Time.deltaTime;
-                    }
-                }
-            }     
-
-            else
-            {
-                if (!rollEvent)
-                {
-
-                    distance -= zoomVelocity * Time.deltaTime;
-                    if (distance <= idleDistance) distance = idleDistance;
-                }
-            }
-            Vector3 direction = new Vector3(0, 0, distance);
-            Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
-            transform.position = Vector3.Lerp(player.position, player.position + rotation * direction,Time.deltaTime * smooth);
-            transform.LookAt(player.position);
+            rotY += Input.GetAxis("Mouse X") * sensitivityX * Time.deltaTime;
+            rotX += Input.GetAxis("Mouse Y") * sensitivityY * Time.deltaTime;
+            rotX = Mathf.Clamp(rotX, clampAngleMin, clampAngleMax);
+            transform.rotation = Quaternion.Euler(rotX, rotY, 0.0f);
         }
-
-        if(rollEvent)
-        {
-            distance += zoomVelocity * Time.deltaTime;
-            if (distance >= combatDistance) distance = combatDistance;
-        }
-        
     }
-   
+
+    void LateUpdate()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+        Camera.main.transform.LookAt(player);
+    }
+
     public void RollEvent()
     {
         StartCoroutine(CameraStatic());
     }
-    
 }

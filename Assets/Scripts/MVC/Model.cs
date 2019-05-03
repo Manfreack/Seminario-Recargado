@@ -242,6 +242,7 @@ public class Model : MonoBehaviour
         powerManager = FindObjectOfType<PowerManager>();
         powerPool = new Pool<Powers>(10, PowersFactory, Powers.InitializePower, Powers.DisposePower, true);
         mySkills = new Skills();
+        mainCamera = Camera.main.transform;
 
         for (int i = 0; i < 2; i++)
             view.UpdatePotions(i);
