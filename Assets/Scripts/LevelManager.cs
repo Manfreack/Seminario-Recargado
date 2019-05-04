@@ -25,8 +25,8 @@ public class LevelManager : MonoBehaviour
 
     public void Awake()
     {
-        textsDictionary.Add(TextImputs.DOOR_CLOSE, "Its closed");
-        textsDictionary.Add(TextImputs.GET_KEY, "Key colected");
+        textsDictionary.Add(TextImputs.DOOR_CLOSE, "It's closed.");
+        textsDictionary.Add(TextImputs.GET_KEY, "Key collected.");
         fade.enabled = false;
         textFade.enabled = false;
     }

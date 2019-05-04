@@ -6,8 +6,8 @@ using System.Collections;
 public class CamCollision : MonoBehaviour
 {
     Model model;
-    CamController camCon;
     public Transform target;
+    public Transform pivot;
     float distFromTarget;
     public LayerMask collisionMask;
 
@@ -21,12 +21,9 @@ public class CamCollision : MonoBehaviour
     public float returnSpeed = 9;
     public float wallPush = 0.7f;
 
-    Vector3 push = Vector3.up * 0.1f;
-
     void Awake()
     {
         model = FindObjectOfType<Model>();
-        camCon = transform.parent.parent.GetComponent<CamController>();
     }
 
     void LateUpdate()
@@ -50,7 +47,9 @@ public class CamCollision : MonoBehaviour
         }
         else
         {
-            transform.position = Vector3.Lerp(transform.position, retPoint, returnSpeed * Time.deltaTime);
+            Vector3 fixedRetPoint = retPoint;
+            fixedRetPoint.y = pivot.position.y;
+            transform.position = Vector3.Lerp(transform.position, fixedRetPoint, returnSpeed * Time.deltaTime);
         }
     }
 }
