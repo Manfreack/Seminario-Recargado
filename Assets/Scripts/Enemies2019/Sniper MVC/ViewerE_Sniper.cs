@@ -17,6 +17,7 @@ public class ViewerE_Sniper : MonoBehaviour
     public SkinnedMeshRenderer fireHandsRenderer;
     public float timeFireHands;
     public GameObject prefabTextDamage;
+    public Camera cam;
 
     public IEnumerator DeadCorrutine()
     {
@@ -134,10 +135,10 @@ public class ViewerE_Sniper : MonoBehaviour
         if (!_model.isDead)
         {
             var damageText = Instantiate(prefabTextDamage);
-            Vector2 screenPos = Camera.main.WorldToScreenPoint(transform.position);
+            Vector2 screenPos =cam.WorldToScreenPoint(transform.position);
             damageText.transform.position = screenPos;
             damageText.GetComponent<PopText>().damageText = damage;
-            float distance = Vector3.Distance(transform.position, Camera.main.transform.position);
+            float distance = Vector3.Distance(transform.position, cam.transform.position);
             var depthUI = damageText.GetComponent<DepthUI>();
             depthUI.depth = -distance;
         }

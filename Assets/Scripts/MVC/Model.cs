@@ -133,7 +133,7 @@ public class Model : MonoBehaviour
     public Action Dead;
     public Action BlockEvent;
     public Action RollEvent;
-    public Action RollCameraEvent;
+  //  public Action RollCameraEvent;
     public Action StreakEvent;
     public Action RollAttackEvent;
 
@@ -242,7 +242,7 @@ public class Model : MonoBehaviour
         powerManager = FindObjectOfType<PowerManager>();
         powerPool = new Pool<Powers>(10, PowersFactory, Powers.InitializePower, Powers.DisposePower, true);
         mySkills = new Skills();
-        mainCamera = Camera.main.transform;
+       // mainCamera = Camera.main.transform;
 
         for (int i = 0; i < 2; i++)
             view.UpdatePotions(i);
@@ -367,7 +367,7 @@ public class Model : MonoBehaviour
         if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll)
         {
             RollEvent();
-            RollCameraEvent();
+           // RollCameraEvent();
             stamina -= rollStamina;
             view.UpdateStaminaBar(stamina / maxStamina);           
             onRoll = true;

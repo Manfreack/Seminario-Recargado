@@ -140,8 +140,8 @@ public class Viewer : MonoBehaviour
     {
         trail.SetActive(false);
         anim.SetLayerWeight(1, 0);
-        camShake = GameObject.Find("FreeLookCameraRig").GetComponentInChildren<CamShake>();
-        cam = GameObject.Find("FreeLookCameraRig").GetComponent<CamController>();
+        camShake = GameObject.Find("Main Camera").GetComponent<CamShake>();
+        cam = GameObject.Find("Main Camera").GetComponent<CamController>();
         headBaseRot = head.transform.rotation;
 
         startFade.enabled = true;

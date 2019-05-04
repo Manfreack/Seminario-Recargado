@@ -18,7 +18,7 @@ public class ButtonManager : MonoBehaviour
         }
         else
         {
-            cam = GameObject.Find("FreeLookCameraRig").GetComponent<CamController>();
+            cam = FindObjectOfType<CamController>();
         }
     }
 

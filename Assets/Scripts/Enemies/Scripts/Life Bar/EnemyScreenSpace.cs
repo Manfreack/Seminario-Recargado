@@ -14,7 +14,7 @@ public class EnemyScreenSpace : MonoBehaviour
 
     GameObject healthBar;
     Image healthFill;
-
+    public Camera cam;
     DepthUI depthUI;
 
     public float timer;
@@ -37,13 +37,13 @@ public class EnemyScreenSpace : MonoBehaviour
         timer -= Time.deltaTime;
 
         Vector3 worldPos = transform.position + (Vector3.up * 2);
-        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+        Vector3 screenPos = cam.WorldToScreenPoint(worldPos);
         healthBar.transform.position = screenPos;
 
-        float distance = Vector3.Distance(worldPos, Camera.main.transform.position);
+        float distance = Vector3.Distance(worldPos, cam.transform.position);
         depthUI.depth = -distance;
 
-        Vector3 vp = Camera.main.WorldToViewportPoint(worldPos);
+        Vector3 vp = cam.WorldToViewportPoint(worldPos);
 
         if (timer > 0)
         {

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Cinemachine;
 
 public class CamController : MonoBehaviour {
 
@@ -18,6 +19,7 @@ public class CamController : MonoBehaviour {
     float rotY = 0.0f;
     Model model;
     bool rollEvent;
+    public CinemachineFreeLook cinemaCam;
 
     IEnumerator CameraStatic()
     {
@@ -29,12 +31,7 @@ public class CamController : MonoBehaviour {
     void Start()
     {
         model = FindObjectOfType<Model>();
-
-        Vector3 rot = transform.localRotation.eulerAngles;
-        rotY = rot.y;
-        rotX = rot.x;
-
-        if (invertY) sensitivityY = -sensitivityY;
+        blockMouse = true;
     }
 
     void Update()
@@ -50,23 +47,29 @@ public class CamController : MonoBehaviour {
             Cursor.lockState = CursorLockMode.None;
         }
 
-        if (model.fadeTimer >= 2)
+        if(model.isInCombat)
         {
-            rotY += Input.GetAxis("Mouse X") * sensitivityX * Time.deltaTime;
-            rotX += Input.GetAxis("Mouse Y") * sensitivityY * Time.deltaTime;
-            rotX = Mathf.Clamp(rotX, clampAngleMin, clampAngleMax);
-            transform.rotation = Quaternion.Euler(rotX, rotY, 0.0f);
+             cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
+             { 
+            
+                new CinemachineFreeLook.Orbit(4.5f, 2.15f),
+                new CinemachineFreeLook.Orbit(2.5f, 6f),
+                new CinemachineFreeLook.Orbit(0.4f, 1.3f)
+             };
+
+        }
+
+        else
+        {
+            cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
+            {
+
+                new CinemachineFreeLook.Orbit(4.5f, 2.15f),
+                new CinemachineFreeLook.Orbit(2.5f, 3.37f),
+                new CinemachineFreeLook.Orbit(0.4f, 1.3f)
+            };
         }
     }
 
-    void LateUpdate()
-    {
-        transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
-        Camera.main.transform.LookAt(player);
-    }
-
-    public void RollEvent()
-    {
-        StartCoroutine(CameraStatic());
-    }
+  
 }

@@ -49,7 +49,7 @@ public class Controller : MonoBehaviour
         model.Run += view.RunAnim;
         model.BlockEvent += view.Blocked;
         model.RollEvent += view.RollAnim;
-        model.RollCameraEvent += model.mainCamera.GetComponent<CamController>().RollEvent;
+       // model.RollCameraEvent += model.mainCamera.GetComponent<CamController>().RollEvent;
         model.StreakEvent += view.Streak;
         model.RollAttackEvent += view.RollAttackAnim;
     }
