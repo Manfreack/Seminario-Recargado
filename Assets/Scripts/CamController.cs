@@ -53,7 +53,7 @@ public class CamController : MonoBehaviour {
              { 
             
                 new CinemachineFreeLook.Orbit(4.5f, 2.15f),
-                new CinemachineFreeLook.Orbit(2.5f, 6f),
+                new CinemachineFreeLook.Orbit(2.5f, 4.8f),
                 new CinemachineFreeLook.Orbit(0.4f, 1.3f)
              };
 
@@ -65,7 +65,7 @@ public class CamController : MonoBehaviour {
             {
 
                 new CinemachineFreeLook.Orbit(4.5f, 2.15f),
-                new CinemachineFreeLook.Orbit(2.5f, 3.37f),
+                new CinemachineFreeLook.Orbit(2.5f, 1.8f),
                 new CinemachineFreeLook.Orbit(0.4f, 1.3f)
             };
         }
