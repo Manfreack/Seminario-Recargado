@@ -14,7 +14,7 @@ public class Viewer : MonoBehaviour
     bool melleCombo1;
     bool melleCombo2;
     bool melleCombo3;
-    CamShake camShake;
+    public CamShake camShake;
     public Transform head;
     Quaternion headBaseRot;
 
@@ -140,7 +140,6 @@ public class Viewer : MonoBehaviour
     {
         trail.SetActive(false);
         anim.SetLayerWeight(1, 0);
-        camShake = GameObject.Find("Main Camera").GetComponent<CamShake>();
         cam = GameObject.Find("Main Camera").GetComponent<CamController>();
         headBaseRot = head.transform.rotation;
 
@@ -385,7 +384,8 @@ public class Viewer : MonoBehaviour
     {
         if (!model.onPowerState)
         {
-            camShake.ShakeCamera(3.5f, 1);
+            //camShake.ShakeCamera(3.5f, 1);
+            cam.CamShake(2, 3.5f, 1);
             var random = Random.Range(1, 4);
             anim.SetInteger("TakeDamage", random);
         }
@@ -393,7 +393,8 @@ public class Viewer : MonoBehaviour
 
     public void ShakeCameraDamage(float f)
     {
-        camShake.ShakeCamera(f, 1);
+        // camShake.ShakeCamera(f, 1);
+        cam.CamShake(2, f, 1);
     }
 
     public void NoReciveDamage()

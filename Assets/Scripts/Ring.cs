@@ -6,6 +6,11 @@ public class Ring : MonoBehaviour
 {
     public CombatRing parent;
 
+    public void OnTriggerStay(Collider c)
+    {
+        if (c.GetComponent<ModelE_Melee>()) parent.EnemyEnter(c.GetComponent<ModelE_Melee>());
+    }
+
     public void OnTriggerEnter(Collider c)
     {
         if (c.GetComponent<ModelE_Melee>()) parent.EnemyEnter(c.GetComponent<ModelE_Melee>());

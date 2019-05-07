@@ -16,6 +16,7 @@ public class EnemyCombatManager : MonoBehaviour {
 	}
     public void Update()
     {
+
         enemiesList.Clear();
 
         enemiesList.AddRange(FindObjectsOfType<ModelE_Melee>());
@@ -33,4 +34,27 @@ public class EnemyCombatManager : MonoBehaviour {
         }
     }
 
+
+    public void ChangeOrderAttack(ModelE_Melee e)
+    {
+        foreach (var item in enemiesList)
+        {
+            
+
+            if (item != e && item.timeToAttack)
+            {
+                int r = Random.Range(0, 3);
+
+                if (r >0)
+                {
+                    item.delayToAttack += 2;
+                }
+
+                if (r == 0)
+                {
+                    item.delayToAttack = e.delayToAttack;
+                }
+            }
+        }
+    }
 }

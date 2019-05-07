@@ -109,6 +109,7 @@ public class Model : MonoBehaviour
     public bool InActionAttack;
     bool WraperInAction;
     bool dieOnce;
+    public bool stuned;
 
     public bool onDamage;
 
@@ -165,6 +166,13 @@ public class Model : MonoBehaviour
         yield return new WaitForSeconds(timeStart + timeEnd);
         timeImpulse = time1;
         timeEndImpulse = time2;
+    }
+
+    public IEnumerator GetHeavyDamage()
+    {
+        stuned = true;
+        yield return new WaitForSeconds(2);
+        stuned = false;
     }
 
     public IEnumerator PowerColdown(float cdTime, int n)
@@ -773,7 +781,7 @@ public class Model : MonoBehaviour
 
     public void Defence()
     {
-        if (stamina >= 0)
+        if (stamina >= 0 && !stuned)
         {
             InAction = true;
             InActionAttack = true;
@@ -835,7 +843,7 @@ public class Model : MonoBehaviour
         view.SaveSwordAnim2();
     }
 
-    public void GetDamage(float damage, Transform enemy, bool isProyectile)
+    public void GetDamage(float damage, Transform enemy, bool isProyectile, bool heavyDamage)
     {
         timeCdPower2 -= reduceTimePerHit;
         impulse = false;
@@ -848,11 +856,20 @@ public class Model : MonoBehaviour
         Vector3 dir = transform.position - enemy.position;
         float angle = Vector3.Angle(dir, transform.forward);
         if (angle < 90) isBehind = true;
-        if (!isBehind && !isProyectile && onDefence)
+        if (!isBehind && !isProyectile && onDefence && !heavyDamage)
         {
             stamina -= blockStamina;
             view.UpdateStaminaBar(stamina / maxStamina);
             BlockEvent();
+        }
+
+        if(heavyDamage)
+        {
+            float dmg = damage - armor;
+            life -= dmg;
+            timeToHeal = maxTimeToHeal;
+            view.UpdateLifeBar(life / maxLife);
+            impulse = false;
         }
 
         if (!onDefence || (onDefence && isBehind) || isProyectile)
@@ -860,7 +877,6 @@ public class Model : MonoBehaviour
 
             if (armor >= damage)
             {
-
                 armor -= damage;
                 view.UpdateArmorBar(armor / maxArmor);
             }

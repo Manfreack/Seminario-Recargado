@@ -19,7 +19,9 @@ public class CombatRing : MonoBehaviour
         {
             if (item.isDead) myEnemies.Remove(item);
         }
+
     }
+
 
     public void EnemyEnter(EnemyEntity e)
     {
@@ -29,25 +31,14 @@ public class CombatRing : MonoBehaviour
 
             foreach (var item in myEnemies) if (item == e) aux = true;
 
-            if (!aux) myEnemies.Add(e);
-            
-            if(changeRotateDir > 0 && e.GetComponent<ModelE_Melee>())
-            {
-                e.GetComponent<ModelE_Melee>().changeRotateWarrior = true;
-                changeRotateDir--;
-            }
+            if (!aux) myEnemies.Add(e);         
         }
     }
 
     public void EnemyExit(EnemyEntity e)
     {
         myEnemies.Remove(e);
-
-        if (e.GetComponent<ModelE_Melee>().changeRotateWarrior)
-        {
-            e.GetComponent<ModelE_Melee>().changeRotateWarrior = false;
-            changeRotateDir++;
-        }
+        e.GetComponent<ModelE_Melee>().actualRing = null;
     }
 
   

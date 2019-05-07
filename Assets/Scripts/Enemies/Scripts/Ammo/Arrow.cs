@@ -51,7 +51,7 @@ public class Arrow : Munition {
 
     public void OnCollisionEnter(Collision c)
     {
-        if (c.gameObject.GetComponent<Model>()) player.GetDamage(damage,transform,true);
+        if (c.gameObject.GetComponent<Model>()) player.GetDamage(damage,transform,true,false);
         Destroy(gameObject);
     }
 }

@@ -17,6 +17,8 @@ public class A_WarriorWait : i_EnemyActions
      
         if (!_e.timeToAttack && _e.cm.times > 0 && !_e.checkTurn)
         {
+            if (_e.cm.times <= 1) _e.cm.ChangeOrderAttack(_e);
+
             _e.cm.times--;
             _e.timeToAttack = true;
 
@@ -26,23 +28,25 @@ public class A_WarriorWait : i_EnemyActions
 
         bool aux = false;
 
-        foreach (var item in _e.actualRing.myEnemies)
+        if (_e.actualRing != null)
         {
-            if (item == _e) aux = true;
-        }
+            foreach (var item in _e.actualRing.myEnemies)
+            {
+                if (item == _e) aux = true;
+            }
 
-        if (_e.actualRing.myEnemies.Count >= _e.actualRing.entityMaxAmount && !aux)
-        {
-            goBack = true;
-            Quaternion targetRotation;
-            var _dir = (_e.target.transform.position - _e.transform.position).normalized;
-            _dir.y = 0;
-            targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
-            _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-            _e.rb.MovePosition(_e.transform.position - _e.transform.forward * _e.speed * Time.deltaTime);
-            _e.WalkBackEvent();
+            if (_e.actualRing.myEnemies.Count >= _e.actualRing.entityMaxAmount && !aux)
+            {
+                goBack = true;
+                Quaternion targetRotation;
+                var _dir = (_e.target.transform.position - _e.transform.position).normalized;
+                _dir.y = 0;
+                targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
+                _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
+                _e.rb.MovePosition(_e.transform.position - _e.transform.forward * _e.speed * Time.deltaTime);
+                _e.WalkBackEvent();
+            }
         }
-
       
 
         if (!_e.onDamage && !goBack && !goBack)
@@ -92,6 +96,8 @@ public class A_WarriorWait : i_EnemyActions
                     _e.flankDir = 0;
                     obs.First().flankDir = 1;
                 }
+
+                _e.StartCoroutine(_e.DelayChangeDir());
             }
         }
 

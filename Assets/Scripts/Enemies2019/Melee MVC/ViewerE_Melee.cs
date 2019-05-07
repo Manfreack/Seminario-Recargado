@@ -17,6 +17,8 @@ public class ViewerE_Melee : MonoBehaviour
     bool auxTakeDamage;
     public GameObject prefabTextDamage;
     public Camera cam;
+    bool heavyAttackTrue;
+    float timeToEndAttack = 1.2f;
 
     public IEnumerator DeadCorrutine()
     {
@@ -64,6 +66,16 @@ public class ViewerE_Melee : MonoBehaviour
         }
 
         if(_model.isDead) foreach (var item in myMats) item.SetFloat("_Intensity", 0);
+
+        if (heavyAttackTrue)
+        {
+            timeToEndAttack -= Time.deltaTime;
+            if (timeToEndAttack<=0)
+            {
+                _anim.SetBool("HeavyAttack", false);
+                heavyAttackTrue = false;
+            }
+        }
     }
 
     public void DefenceAnim()
@@ -74,6 +86,12 @@ public class ViewerE_Melee : MonoBehaviour
     public void DefenceAnimFalse()
     {
         _anim.SetBool("Defence", false);
+    }
+
+    public void HeavyAttackAnim()
+    {
+        _anim.SetBool("HeavyAttack", true);
+        heavyAttackTrue = true;
     }
 
     public void HitDefenceAnim()
@@ -179,6 +197,7 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void TakeDamageAnim()
     {
+        timeToEndAttack = 1.2f;
         _anim.SetBool("TakeDamage", true);
         damaged = true;
         timeShaderDamage = 1;

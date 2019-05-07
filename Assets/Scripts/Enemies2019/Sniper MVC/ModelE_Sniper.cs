@@ -456,7 +456,7 @@ public class ModelE_Sniper : EnemyEntity
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
         if (player != null)
         {          
-            player.GetDamage(attackDamage, transform, false);
+            player.GetDamage(attackDamage, transform, false, false);
         }
     }
 

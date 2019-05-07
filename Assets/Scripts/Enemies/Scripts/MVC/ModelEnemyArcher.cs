@@ -245,7 +245,7 @@ public class ModelEnemyArcher : EnemyClass {
                 var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
                 if (player != null)
                 {
-                    player.GetDamage(attackDamage, transform, false);
+                    player.GetDamage(attackDamage, transform, false, false);
                     rb.AddForce(-transform.forward * knockbackForce * 1.5f, ForceMode.Impulse);
                     OnAttack = false;
                 }

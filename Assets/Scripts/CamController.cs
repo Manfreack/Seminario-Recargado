@@ -1,41 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using Cinemachine;
+using UnityEngine.Events;
 
 public class CamController : MonoBehaviour {
 
-    public float speed = 120.0f;
-    public Transform player;
-    public float clampAngleMax = 30.0f;
-    public float clampAngleMin = -18.0f;
-    public float sensitivityX = 150.0f;
-    public float sensitivityY = 70.0f;
-    public bool invertY;
     [HideInInspector]
     public bool blockMouse;
-    float rotX = 0.0f;
-    float rotY = 0.0f;
-    Model model;
-    bool rollEvent;
-    public CinemachineFreeLook cinemaCam;
 
-    IEnumerator CameraStatic()
-    {
-        rollEvent = true;
-        yield return new WaitForSeconds(0.5f);
-        rollEvent = false;
-    }
+    Model model;
+    public CinemachineFreeLook cinemaCam;
+    public float distanceIdle;
+    public float distanceCombat;
+    public float actualCamDistance;
+    public float smooth;
+    public bool onShake;
+
+    public float ShakeDuration = 0.3f;
+    public float ShakeAmplitude = 1.2f;
+    public float ShakeFrequency = 2.0f;
+
+    private float ShakeElapsedTime = 0f;
+
+    public CinemachineBasicMultiChannelPerlin cameraNoise;
 
     void Start()
     {
         model = FindObjectOfType<Model>();
         blockMouse = true;
+        actualCamDistance = distanceIdle;
+        cameraNoise = cinemaCam.GetRig(1).GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
 
     void Update()
     {
+       
+
         if (blockMouse)
         {
             Cursor.visible = false;
@@ -49,27 +50,57 @@ public class CamController : MonoBehaviour {
 
         if(model.isInCombat)
         {
-             cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
-             { 
-            
-                new CinemachineFreeLook.Orbit(4.5f, 2.15f),
-                new CinemachineFreeLook.Orbit(2.5f, 4.8f),
-                new CinemachineFreeLook.Orbit(0.4f, 1.3f)
-             };
+            if (actualCamDistance < distanceCombat)
+            {
 
+                actualCamDistance += Time.deltaTime * smooth;
+
+                cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
+                {
+                    new CinemachineFreeLook.Orbit(4.5f, 2.15f),
+                    new CinemachineFreeLook.Orbit(2.5f, actualCamDistance),
+                    new CinemachineFreeLook.Orbit(0.4f, 1.3f)
+                };
+            }
         }
 
         else
         {
-            cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
-            {
+            if(actualCamDistance > distanceIdle )
+            { 
 
-                new CinemachineFreeLook.Orbit(4.5f, 2.15f),
-                new CinemachineFreeLook.Orbit(2.5f, 1.8f),
-                new CinemachineFreeLook.Orbit(0.4f, 1.3f)
-            };
+            actualCamDistance -= Time.deltaTime * smooth;
+
+                cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
+                {
+                    new CinemachineFreeLook.Orbit(4.5f, 2.15f),
+                    new CinemachineFreeLook.Orbit(2.5f, actualCamDistance),
+                    new CinemachineFreeLook.Orbit(0.4f, 1.3f)
+                };
+            }
         }
+
+        if (ShakeElapsedTime > 0)
+        {
+            cameraNoise.m_AmplitudeGain = ShakeAmplitude;
+            cameraNoise.m_FrequencyGain = ShakeFrequency;
+
+            ShakeElapsedTime -= Time.deltaTime;
+        }
+        else
+        {
+            cameraNoise.m_AmplitudeGain = 0f;
+            ShakeElapsedTime = 0f;
+        }
+
     }
 
+    public void CamShake(float frequency, float amplitude, float timeShake)
+    {
+        ShakeAmplitude = amplitude;
+        ShakeFrequency = frequency;
+
+        ShakeElapsedTime = timeShake;
+    }
   
 }

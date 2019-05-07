@@ -38,6 +38,7 @@ public class ModelE_Melee : EnemyEntity
     public Action TakeDamageEvent;
     public Action DeadEvent;
     public Action AttackEvent;
+    public Action HeavyAttackEvent;
     public Action MoveEvent;
     public Action IdleEvent;
     public Action BlockedEvent;
@@ -83,6 +84,13 @@ public class ModelE_Melee : EnemyEntity
 
     }
 
+    public IEnumerator DelayChangeDir()
+    {
+        changeRotateWarrior = false;
+        yield return new WaitForSeconds(1);
+        changeRotateWarrior = true;
+    }
+
     public void Awake()
     {
         playerNodes.AddRange(FindObjectsOfType<CombatNode>());
@@ -97,6 +105,7 @@ public class ModelE_Melee : EnemyEntity
         TakeDamageEvent += _view.TakeDamageAnim;
         DeadEvent += _view.DeadAnim;
         AttackEvent += _view.AttackAnim;
+        HeavyAttackEvent += _view.HeavyAttackAnim;
         IdleEvent += _view.IdleAnim;
         MoveEvent += _view.BackFromIdle;
         BlockedEvent += _view.BlockedAnim;
@@ -199,12 +208,6 @@ public class ModelE_Melee : EnemyEntity
             timeToPatrol -= Time.deltaTime;
         };
 
-        patrol.OnExit += x =>
-        {
-            angleToPersuit = 180;
-            angleToAttack = 180;
-        };
-
         answerCall.OnFixedUpdate += () =>
         {
 
@@ -220,6 +223,7 @@ public class ModelE_Melee : EnemyEntity
 
         persuit.OnFixedUpdate += () =>
         {
+            Debug.Log("persuit");
 
             if (!onDamage) CombatWalkEvent();
 
@@ -292,10 +296,12 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnEnter += x =>
         {
-
-            if (actualRing.name == "Ring1") viewDistanceAttack = 4.52f;
-            if (actualRing.name == "Ring2") viewDistanceAttack = 6;
-            if (actualRing.name == "Ring3") viewDistanceAttack = 8;
+            if (actualRing != null)
+            {
+                if (actualRing.name == "Ring1") viewDistanceAttack = 4.52f;
+                if (actualRing.name == "Ring2") viewDistanceAttack = 6;
+                if (actualRing.name == "Ring3") viewDistanceAttack = 8;
+            }
 
             int r = UnityEngine.Random.Range(0, 2);
 
@@ -376,11 +382,11 @@ public class ModelE_Melee : EnemyEntity
         {
             currentAction = new A_WarriorRetreat(this, vectoToNodeRetreat);
 
-            if (!isDead && !isAttack && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && !isAttack && !isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && !onRetreat) SendInputToFSM(EnemyInputs.WAIT);
+          //  if (!isDead && !onRetreat) SendInputToFSM(EnemyInputs.WAIT);
 
             if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
 
@@ -392,7 +398,7 @@ public class ModelE_Melee : EnemyEntity
         {
             if ( startRetreat <= 0) timeToRetreat -= Time.deltaTime;
 
-            if(_view._anim.GetBool("Attack") == false) startRetreat -= Time.deltaTime;
+            if(_view._anim.GetBool("Attack") == false && _view._anim.GetBool("HeavyAttack") == false) startRetreat -= Time.deltaTime;
 
         };
 
@@ -408,16 +414,12 @@ public class ModelE_Melee : EnemyEntity
             pathToTarget.AddRange(originalPathToTarget);
             currentIndex = pathToTarget.Count;
 
-            angleToPersuit = 180;
-        };
-
-        follow.OnExit += x =>
-        {
-            angleToPersuit = 90;
         };
 
         follow.OnUpdate += () =>
         {
+            Debug.Log("follow");
+
             currentAction = new A_FollowTarget(this);
 
             if (!onDamage) CombatWalkEvent();
@@ -451,7 +453,6 @@ public class ModelE_Melee : EnemyEntity
 
             ca.myEntities--;
             cm.times++;
-            if (actualRing != null) actualRing.EnemyExit(this);
         };
 
         _myFsm = new EventFSM<EnemyInputs>(patrol);     
@@ -719,7 +720,22 @@ public class ModelE_Melee : EnemyEntity
             var angle = Vector3.Angle(dir, target.transform.forward);
 
             if (player.onDefence && angle >= 90) BlockedEvent();
-            player.GetDamage(attackDamage, transform, false);
+            player.GetDamage(attackDamage, transform, false, false);
+        }
+    }
+
+    public void MakeHeavyDamage()
+    {
+        var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
+        if (player != null)
+        {
+            timeToRetreat += 0.25f;
+            _view.WalckBackAnim();
+            _view.BackFromAttack();
+            var dir = (target.transform.position - transform.position).normalized;
+            var angle = Vector3.Angle(dir, target.transform.forward);
+            player.onDefence = false;
+            player.GetDamage(attackDamage + 5, transform, false, true);
         }
     }
 
@@ -745,24 +761,23 @@ public class ModelE_Melee : EnemyEntity
     }
 
     public void StopRetreat()
-    {
-       
+    {     
        cm.times++;
-   
-        firstAttack = false;
-        onRetreat = false;
-        timeToAttack = false;
-        checkTurn = false;
-        
+       firstAttack = false;
+       onRetreat = false;
+       timeToAttack = false;
+       StartCoroutine(DelayTurn());      
     }
 
     public void OnTriggerStay(Collider c)
     {
         if (c.GetComponent<Ring>()) actualRing = c.GetComponent<Ring>().parent;
+        else actualRing = null;
     }
 
     public void OnTriggerEnter(Collider c)
     {
         if (c.GetComponent<Ring>()) actualRing = c.GetComponent<Ring>().parent;
+        else actualRing = null;
     }
 }

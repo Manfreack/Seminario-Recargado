@@ -40,11 +40,25 @@ public class A_AttackMeleeWarrior : i_EnemyActions
 
                 if (player != null && !_e.firstAttack)
                 {
-                    _e.AttackEvent();
-                    _e.onRetreat = true;
-                    _e.firstAttack = true;
-                    _e.impulseStart = _e.timeStartImpulse;
-                    _e.impulseEnd = _e.timeEndImpulse;
+                    int r = Random.Range(0, 2);
+
+                    if (r > 0)
+                    {
+                        _e.AttackEvent();
+                        _e.onRetreat = true;
+                        _e.firstAttack = true;
+                        _e.impulseStart = _e.timeStartImpulse;
+                        _e.impulseEnd = _e.timeEndImpulse;
+                    }
+
+                    if (r == 0)
+                    {
+                        _e.HeavyAttackEvent();
+                        _e.onRetreat = true;
+                        _e.firstAttack = true;
+                    }
+
+                    
                 }
 
             }      
