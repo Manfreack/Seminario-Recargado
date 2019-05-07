@@ -43,10 +43,11 @@ public class EnemyCombatManager : MonoBehaviour {
 
             if (item != e && item.timeToAttack)
             {
-                int r = Random.Range(0, 3);
+                int r = Random.Range(0, 2);
 
-                if (r >0)
+                if (r != 0)
                 {
+                    print("dupla");
                     item.delayToAttack += 2;
                 }
 

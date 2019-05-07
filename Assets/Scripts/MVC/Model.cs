@@ -349,7 +349,7 @@ public class Model : MonoBehaviour
         if (makingDamage && animClipName == "Attack3N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack2N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack1N-DAMAGE") MakeDamage();
-        if (makingDamage && animClipName == "RollAttack-DAMAGE") MakeDamage();
+        if (makingDamage && animClipName == "RollAttack-DMG") MakeDamage();
     }
 
     public void ImpulseAttackAnimation()
@@ -375,7 +375,6 @@ public class Model : MonoBehaviour
         if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll)
         {
             RollEvent();
-           // RollCameraEvent();
             stamina -= rollStamina;
             view.UpdateStaminaBar(stamina / maxStamina);           
             onRoll = true;
@@ -390,7 +389,7 @@ public class Model : MonoBehaviour
 
     public void CombatParameters()
     {
-        if (countAnimAttack == 0 && !onPowerState) view.SleepTrail();
+        if (countAnimAttack == 0 && !onPowerState && animClipName != "RollAttack-DMG") view.SleepTrail();
 
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
@@ -635,12 +634,15 @@ public class Model : MonoBehaviour
             makingDamage = true;
             attackDamage = attackRollDamage;
             RollAttackEvent();
+            view.AwakeTrail();
             EndCombo();
             onRoll = false;
             view.BackRollAnim();
             var dir = mainCamera.transform.forward;
             dir.y = 0;
             transform.forward = dir;
+            timeImpulse = 0.4f;
+            timeEndImpulse = 0.1f;
         }
 
         if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onDefence && !view.anim.GetBool("SaveSword2"))

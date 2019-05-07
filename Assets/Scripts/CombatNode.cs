@@ -14,8 +14,7 @@ public class CombatNode : MonoBehaviour
     {
         var obs = Physics.OverlapSphere(transform.position, 1).Where(x=> {
 
-            if (x.GetComponent<EnemyEntity>()) return true;
-            else if (x.gameObject.layer == LayerMask.NameToLayer("Obstacles")) return true;
+            if (x.GetComponent<EnemyEntity>() || x.gameObject.layer == LayerMask.NameToLayer("Obstacles")) return true;
             else return false;
 
         });

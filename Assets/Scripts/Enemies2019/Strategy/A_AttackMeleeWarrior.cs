@@ -31,8 +31,9 @@ public class A_AttackMeleeWarrior : i_EnemyActions
             else if(_e.onAttackArea && _e.delayToAttack<0 && !_e.onRetreat && !_e.firstAttack)
             {
 
+                var d = Vector3.Distance(_e.transform.position, _e.target.transform.position);
 
-                if (!_e.isPersuit && !_e.isAttack) _e.FollowState();
+                if (d > _e.viewDistancePersuit) _e.FollowState();
 
                 _e.transform.LookAt(_e.target.transform.position);
                
@@ -42,8 +43,9 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                 {
                     int r = Random.Range(0, 2);
 
-                    if (r > 0)
+                    if (r != 0)
                     {
+                        Debug.Log("low");
                         _e.AttackEvent();
                         _e.onRetreat = true;
                         _e.firstAttack = true;
@@ -53,6 +55,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
 
                     if (r == 0)
                     {
+                        Debug.Log("heavy");
                         _e.HeavyAttackEvent();
                         _e.onRetreat = true;
                         _e.firstAttack = true;

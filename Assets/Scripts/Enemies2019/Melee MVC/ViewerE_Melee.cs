@@ -74,6 +74,7 @@ public class ViewerE_Melee : MonoBehaviour
             {
                 _anim.SetBool("HeavyAttack", false);
                 heavyAttackTrue = false;
+                timeToEndAttack = 1.2f;
             }
         }
     }

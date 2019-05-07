@@ -88,13 +88,11 @@ public class A_WarriorWait : i_EnemyActions
                 if(_e.flankDir == 0)
                 {
                     _e.flankDir = 1;
-                    obs.First().flankDir = 0;
                 }
 
                 else
                 {
                     _e.flankDir = 0;
-                    obs.First().flankDir = 1;
                 }
 
                 _e.StartCoroutine(_e.DelayChangeDir());
