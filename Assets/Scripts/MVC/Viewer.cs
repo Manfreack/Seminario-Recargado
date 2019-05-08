@@ -22,6 +22,7 @@ public class Viewer : MonoBehaviour
     public Image power2;
     public Image power3;
     public Image power4;
+    public Image defenceImage;
 
     public GameObject youDied;
     public GameObject youWin;
@@ -368,15 +369,22 @@ public class Viewer : MonoBehaviour
         anim.SetBool("TakeSword", false);
     }
 
+    public void BrokenDefence(float time)
+    {
+        defenceImage.enabled = true;
+        defenceImage.fillAmount = time;
+    }
 
     public void Defence()
     {
         anim.SetBool("Defence", true);
+        defenceImage.enabled = false;
     }
 
     public void NoDefence()
     {
         anim.SetBool("Defence", false);
+        defenceImage.enabled = true;
     }
 
 

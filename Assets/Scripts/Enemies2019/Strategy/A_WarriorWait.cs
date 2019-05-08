@@ -28,28 +28,32 @@ public class A_WarriorWait : i_EnemyActions
 
         bool aux = false;
 
-        if (_e.actualRing != null)
+        var dRing1 = Vector3.Distance(_e.transform.position, _e.rings[0].transform.position);
+
+        if(dRing1 < 3)
         {
-            foreach (var item in _e.actualRing.myEnemies)
+            foreach (var item in _e.rings[0].myEnemies)
             {
                 if (item == _e) aux = true;
             }
 
-            if (_e.actualRing.myEnemies.Count >= _e.actualRing.entityMaxAmount && !aux)
-            {
-                goBack = true;
-                Quaternion targetRotation;
-                var _dir = (_e.target.transform.position - _e.transform.position).normalized;
-                _dir.y = 0;
-                targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
-                _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                _e.rb.MovePosition(_e.transform.position - _e.transform.forward * _e.speed * Time.deltaTime);
-                _e.WalkBackEvent();
-            }
+            if(!aux && _e.changeRing == 0 && _e.rings[0].myEnemies.Count >= _e.rings[0].entityMaxAmount)  _e.changeRing = 1;
+           
         }
-      
 
-        if (!_e.onDamage && !goBack && !goBack)
+        if (_e.changeRing != 0)
+        {
+            goBack = true;
+            Quaternion targetRotation;
+            var _dir = (_e.target.transform.position - _e.transform.position).normalized;
+            _dir.y = 0;
+            targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
+            _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
+            _e.rb.MovePosition(_e.transform.position - _e.transform.forward * _e.speed * Time.deltaTime);
+            _e.WalkBackEvent();
+        }
+
+        if (!_e.onDamage && !goBack)
         {
         
            var rotateSpeed = 0;
@@ -80,8 +84,8 @@ public class A_WarriorWait : i_EnemyActions
             }
         }
 
-        var obs = Physics.OverlapSphere(_e.transform.position, 1, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>());
-        if(obs.Count()>0)
+        var obs = Physics.OverlapSphere(_e.transform.position, 1).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>());
+        if(obs.Count()>1)
         {
             if(_e.changeRotateWarrior)
             {
@@ -94,9 +98,9 @@ public class A_WarriorWait : i_EnemyActions
                 {
                     _e.flankDir = 0;
                 }
-
-                _e.StartCoroutine(_e.DelayChangeDir());
             }
+
+            _e.StartCoroutine(_e.DelayChangeDirWarrior());
         }
 
     }

@@ -134,7 +134,8 @@ public class Model : MonoBehaviour
     public Action Dead;
     public Action BlockEvent;
     public Action RollEvent;
-  //  public Action RollCameraEvent;
+    public Action DefenceEvent;
+    public Action StopDefenceEvent;
     public Action StreakEvent;
     public Action RollAttackEvent;
 
@@ -155,8 +156,10 @@ public class Model : MonoBehaviour
     bool preAttack2;
     bool preAttack3;
     bool preAttack4;
-
-    public Transform test;
+    public bool defenceBroken;
+    public float maxTimeToRecoverDefence;
+    public float timeToRecoverDefence;
+    float tdefence;
 
     [HideInInspector]
     public float fadeTimer;
@@ -173,7 +176,7 @@ public class Model : MonoBehaviour
         stuned = true;
         yield return new WaitForSeconds(2);
         stuned = false;
-    }
+    } 
 
     public IEnumerator PowerColdown(float cdTime, int n)
     {
@@ -250,7 +253,7 @@ public class Model : MonoBehaviour
         powerManager = FindObjectOfType<PowerManager>();
         powerPool = new Pool<Powers>(10, PowersFactory, Powers.InitializePower, Powers.DisposePower, true);
         mySkills = new Skills();
-       // mainCamera = Camera.main.transform;
+        timeToRecoverDefence = maxTimeToRecoverDefence;
 
         for (int i = 0; i < 2; i++)
             view.UpdatePotions(i);
@@ -263,6 +266,22 @@ public class Model : MonoBehaviour
 
     void Update()
     {
+        if(defenceBroken)
+        {
+            timeToRecoverDefence -= Time.deltaTime;
+
+            tdefence += Time.deltaTime;
+
+            view.BrokenDefence(tdefence / maxTimeToRecoverDefence);
+
+            if(timeToRecoverDefence<=0)
+            {
+                tdefence = 0;
+                timeToRecoverDefence = maxTimeToRecoverDefence;
+                defenceBroken = false;
+            }
+        }
+
         if (cdPower2)
         {
             timeCdPower2 -= Time.deltaTime;
@@ -372,7 +391,7 @@ public class Model : MonoBehaviour
 
     public void Roll(Vector3 dir)
     {
-        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll)
+        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && timeToRoll<=0)
         {
             RollEvent();
             stamina -= rollStamina;
@@ -422,7 +441,7 @@ public class Model : MonoBehaviour
 
     public void RollImpulse()
     {
-        if (onRoll)
+        if (onRoll && animClipName == "RollAttack")
         {
             timeToRoll -= Time.deltaTime;
 
@@ -783,8 +802,11 @@ public class Model : MonoBehaviour
 
     public void Defence()
     {
-        if (stamina >= 0 && !stuned)
+        if (onRoll) StopDefence();
+
+        if (stamina >= 0 && !stuned && !onRoll && !defenceBroken)
         {
+            DefenceEvent();
             InAction = true;
             InActionAttack = true;
             onDefence = true;
@@ -793,6 +815,7 @@ public class Model : MonoBehaviour
 
     public void StopDefence()
     {
+        StopDefenceEvent();
         InActionAttack = false;
         InAction = false;
         onDefence = false;
@@ -865,12 +888,26 @@ public class Model : MonoBehaviour
             BlockEvent();
         }
 
-        if(heavyDamage)
+        if(heavyDamage && !onDefence)
         {
             float dmg = damage - armor;
             life -= dmg;
             timeToHeal = maxTimeToHeal;
             view.UpdateLifeBar(life / maxLife);
+            OnDamage();
+            impulse = false;
+        }
+
+        if (heavyDamage && onDefence)
+        {
+            float dmg = damage - armor;
+            life -= dmg;
+            timeToHeal = maxTimeToHeal;
+            view.UpdateLifeBar(life / maxLife);
+            OnDamage();
+            StopDefence();
+            defenceBroken = true;
+            view.defenceImage.fillAmount = 0;
             impulse = false;
         }
 
@@ -933,7 +970,8 @@ public class Model : MonoBehaviour
 
     void OnTriggerEnter(Collider c)
     {
-        if (c.gameObject.layer == 14)
+
+        if (c.gameObject.layer == LayerMask.NameToLayer("WIN"))
             StartCoroutine(view.YouWin());
     }
 

@@ -40,19 +40,18 @@ public class EnemyCombatManager : MonoBehaviour {
         foreach (var item in enemiesList)
         {
             
-
             if (item != e && item.timeToAttack)
             {
                 int r = Random.Range(0, 2);
 
                 if (r != 0)
                 {
-                    print("dupla");
                     item.delayToAttack += 2;
                 }
 
                 if (r == 0)
                 {
+                    Debug.Log("dupla");
                     item.delayToAttack = e.delayToAttack;
                 }
             }

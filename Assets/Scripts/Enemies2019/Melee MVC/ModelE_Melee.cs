@@ -9,6 +9,7 @@ public class ModelE_Melee : EnemyEntity
 
     public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE }
     public EventFSM<EnemyInputs> _myFsm;
+    public List<CombatRing> rings = new List<CombatRing>();
     public float timeToPatrol;
     public LayerMask layerPlayer;
     public LayerMask layerObst;
@@ -27,11 +28,13 @@ public class ModelE_Melee : EnemyEntity
     public bool firstAttack;
     public bool checkTurn;
     public bool changeRotateWarrior;
+    public bool alreadyChangeDir;
     public bool onDefence;
     public int flankDir;
     public bool testEnemy;
     bool firstHit;
     bool impulse;
+    public int changeRing;
     Vector3 lastPosition;
     
 
@@ -49,6 +52,7 @@ public class ModelE_Melee : EnemyEntity
     public Action WalkRightEvent;
     public Action DefenceEvent;
     public Action HitDefenceEvent;
+    public Action AttackRunEvent;
 
     float maxLife;
     public float timeToRetreat;
@@ -60,10 +64,6 @@ public class ModelE_Melee : EnemyEntity
 
     public float timeMinAttack;
     public float timeMaxAttack;
-    public float timeStartImpulse;
-    public float timeEndImpulse;
-    public float impulseStart;
-    public float impulseEnd;
     public float timeToHoldDefence;
     public float maxTimeToDefence;
     public float hitsToStartDefenceMAX;
@@ -84,18 +84,19 @@ public class ModelE_Melee : EnemyEntity
 
     }
 
-    public IEnumerator DelayChangeDir()
+    public IEnumerator DelayChangeDirWarrior()
     {
+        alreadyChangeDir = true;
         changeRotateWarrior = false;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
         changeRotateWarrior = true;
+        alreadyChangeDir = false;
     }
 
     public void Awake()
     {
         playerNodes.AddRange(FindObjectsOfType<CombatNode>());
         delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
-        maxDelayToAttack = delayToAttack;
         rb = gameObject.GetComponent<Rigidbody>();
         _view = GetComponent<ViewerE_Melee>();
         maxLife = life;
@@ -106,6 +107,7 @@ public class ModelE_Melee : EnemyEntity
         DeadEvent += _view.DeadAnim;
         AttackEvent += _view.AttackAnim;
         HeavyAttackEvent += _view.HeavyAttackAnim;
+        AttackRunEvent += _view.RunAttackAnim;
         IdleEvent += _view.IdleAnim;
         MoveEvent += _view.BackFromIdle;
         BlockedEvent += _view.BlockedAnim;
@@ -223,7 +225,6 @@ public class ModelE_Melee : EnemyEntity
 
         persuit.OnFixedUpdate += () =>
         {
-            Debug.Log("persuit");
 
             if (!onDamage) CombatWalkEvent();
 
@@ -231,7 +232,9 @@ public class ModelE_Melee : EnemyEntity
 
             firstSaw = true;
 
-            if(timeToAttack) delayToAttack -= Time.deltaTime;
+            if(timeToAttack && !onDamage) delayToAttack -= Time.deltaTime; 
+
+            if(timeToAttack && onDamage) delayToAttack -= Time.deltaTime * 2; 
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
@@ -318,11 +321,12 @@ public class ModelE_Melee : EnemyEntity
      
         wait.OnUpdate += () =>
         {
-            Debug.Log("wait");
 
             var dir = (target.transform.position - transform.position).normalized;
 
             if (timeToAttack) delayToAttack -= Time.deltaTime;
+
+            if (timeToAttack && onDamage) delayToAttack -= Time.deltaTime * 2;
 
             angleToAttack = 110;
 
@@ -425,7 +429,6 @@ public class ModelE_Melee : EnemyEntity
 
         follow.OnUpdate += () =>
         {
-            Debug.Log("follow");
 
             var d = Vector3.Distance(transform.position, target.transform.position);
 
@@ -517,23 +520,13 @@ public class ModelE_Melee : EnemyEntity
             SendInputToFSM(EnemyInputs.DIE);
         }
 
-        if (_view._anim.GetBool("Attack") && !isDead)
+        if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("HeavyAttack")) && !isDead)
         {
             transform.LookAt(target.transform.position);
         }
-
-
-        impulseStart -= Time.deltaTime;
    
-        if (impulseStart < 0)
-        {
-            impulseEnd -= Time.deltaTime;
-            if (impulseEnd > 0)
-            {
-                transform.position += transform.forward * 2 * Time.deltaTime;
-            }
-        }
-
+        if (impulse) transform.position += transform.forward * 2 * Time.deltaTime;
+                   
     }
 
     private void FixedUpdate()
@@ -674,6 +667,7 @@ public class ModelE_Melee : EnemyEntity
     {
         Vector3 dir = transform.position - target.transform.position;
         float angle = Vector3.Angle(dir, transform.forward);
+        impulse = false;
 
         if (onDefence && angle > 90)
         {
@@ -686,14 +680,10 @@ public class ModelE_Melee : EnemyEntity
         {
             _view.DefenceAnimFalse();
             _view.HitDefenceAnimFalse();
-            impulseStart = 0.6f;
             actualHits--;
-            impulseEnd = timeEndImpulse;
             timeToRetreat = startRetreat;
             timeOnDamage = 0.5f;
-            delayToAttack -= 0.5f;
-            if (!onDamage) onDamage = true;
-            if (delayToAttack >= maxDelayToAttack) delayToAttack = maxDelayToAttack;
+            if (!onDamage) onDamage = true;     
             TakeDamageEvent();
             life -= damage;
             _view.LifeBar(life / maxLife);
@@ -728,7 +718,6 @@ public class ModelE_Melee : EnemyEntity
             _view.BackFromAttack();
             var dir = (target.transform.position - transform.position).normalized;
             var angle = Vector3.Angle(dir, target.transform.forward);
-
             if (player.onDefence && angle >= 90) BlockedEvent();
             player.GetDamage(attackDamage, transform, false, false);
         }
@@ -742,8 +731,7 @@ public class ModelE_Melee : EnemyEntity
             timeToRetreat += 0.25f;
             _view.WalckBackAnim();
             var dir = (target.transform.position - transform.position).normalized;
-            var angle = Vector3.Angle(dir, target.transform.forward);
-            player.onDefence = false;
+            var angle = Vector3.Angle(dir, target.transform.forward); 
             player.GetDamage(attackDamage + 5, transform, false, true);
         }
     }
@@ -780,11 +768,21 @@ public class ModelE_Melee : EnemyEntity
 
     public void OnTriggerStay(Collider c)
     {
-        if (c.GetComponent<Ring>()) actualRing = c.GetComponent<Ring>().parent;
+        if (c.GetComponent<Ring>())
+        {
+            actualRing = c.GetComponent<Ring>().parent;
+            if (c.GetComponent<Ring>().parent == rings[1] && changeRing == 1) changeRing = 0;
+            if (c.GetComponent<Ring>().parent == rings[2] && changeRing == 2) changeRing = 0;
+        }
     }
 
     public void OnTriggerEnter(Collider c)
     {
-        if (c.GetComponent<Ring>()) actualRing = c.GetComponent<Ring>().parent;
+        if (c.GetComponent<Ring>())
+        {
+            actualRing = c.GetComponent<Ring>().parent;
+            if (c.GetComponent<Ring>().parent == rings[1] && changeRing == 1) changeRing = 0;
+            if (c.GetComponent<Ring>().parent == rings[2] && changeRing == 2) changeRing = 0;
+        }
     }
 }

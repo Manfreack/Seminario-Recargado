@@ -79,6 +79,11 @@ public class ViewerE_Melee : MonoBehaviour
         }
     }
 
+    public void RunAttackAnim()
+    {
+        _anim.SetBool("RunAttack", true);
+    }
+
     public void DefenceAnim()
     {
         _anim.SetBool("Defence", true);
@@ -92,6 +97,7 @@ public class ViewerE_Melee : MonoBehaviour
     public void HeavyAttackAnim()
     {
         _anim.SetBool("HeavyAttack", true);
+        _anim.SetBool("RunAttack", false);
         heavyAttackTrue = true;
     }
 
@@ -172,6 +178,7 @@ public class ViewerE_Melee : MonoBehaviour
     public void AttackAnim()
     {
         _anim.SetBool("Attack", true);
+        _anim.SetBool("RunAttack", false);
     }
 
     public void BackFromAttack()

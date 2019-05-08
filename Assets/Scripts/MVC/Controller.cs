@@ -49,7 +49,8 @@ public class Controller : MonoBehaviour
         model.Run += view.RunAnim;
         model.BlockEvent += view.Blocked;
         model.RollEvent += view.RollAnim;
-       // model.RollCameraEvent += model.mainCamera.GetComponent<CamController>().RollEvent;
+        model.DefenceEvent += view.Defence;
+        model.StopDefenceEvent += view.NoDefence;
         model.StreakEvent += view.Streak;
         model.RollAttackEvent += view.RollAttackAnim;
     }
@@ -68,11 +69,9 @@ public class Controller : MonoBehaviour
             if (Input.GetKey(KeyCode.Mouse1) && model.isInCombat && model.stamina>5)
             {
                 model.Defence();
-                view.Defence();
             }
             if (!Input.GetKey(KeyCode.Mouse1))
             {
-                view.NoDefence();
                 model.StopDefence();
             }        
             

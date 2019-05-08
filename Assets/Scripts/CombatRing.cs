@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CombatRing : MonoBehaviour
 {
-    public List<EnemyEntity> myEnemies = new List<EnemyEntity>();
+    public List<ModelE_Melee> myEnemies = new List<ModelE_Melee>();
     public CombatRing nextRing;
     public float entityMaxAmount;
     public bool fullRing;
@@ -20,10 +20,14 @@ public class CombatRing : MonoBehaviour
             if (item.isDead) myEnemies.Remove(item);
         }
 
+        if (myEnemies.Count > 0)
+        {
+          if (!myEnemies[0].alreadyChangeDir)  myEnemies[0].changeRotateWarrior = true;
+        }
     }
 
 
-    public void EnemyEnter(EnemyEntity e)
+    public void EnemyEnter(ModelE_Melee e)
     {
         if(myEnemies.Count < entityMaxAmount)
         {
@@ -35,10 +39,11 @@ public class CombatRing : MonoBehaviour
         }
     }
 
-    public void EnemyExit(EnemyEntity e)
+    public void EnemyExit(ModelE_Melee e)
     {
         myEnemies.Remove(e);
-        e.GetComponent<ModelE_Melee>().actualRing = null;
+        e.actualRing = null;
+        e.changeRotateWarrior = false;
     }
 
   
