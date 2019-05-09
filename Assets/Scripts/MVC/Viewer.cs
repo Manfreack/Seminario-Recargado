@@ -22,7 +22,8 @@ public class Viewer : MonoBehaviour
     public Image power2;
     public Image power3;
     public Image power4;
-    public Image defenceImage;
+    public Image defenceActive;
+    public Image defenceColdwon;
 
     public GameObject youDied;
     public GameObject youWin;
@@ -74,9 +75,12 @@ public class Viewer : MonoBehaviour
     {
         smashParticle.SetActive(false);
         yield return new WaitForSeconds(0.25f);
-        smashParticle.SetActive(true);
-        trail.SetActive(false);
-        ShakeCameraDamage(1);
+        if (!anim.GetBool("Parry"))
+        {
+            smashParticle.SetActive(true);
+            trail.SetActive(false);
+            ShakeCameraDamage(1);
+        }
     }
 
     public void Update()
@@ -371,20 +375,21 @@ public class Viewer : MonoBehaviour
 
     public void BrokenDefence(float time)
     {
-        defenceImage.enabled = true;
-        defenceImage.fillAmount = time;
+        defenceColdwon.gameObject.SetActive(true);
+        defenceColdwon.fillAmount = time;
     }
 
     public void Defence()
     {
+        Debug.Log("asd");
         anim.SetBool("Defence", true);
-        defenceImage.enabled = false;
+        defenceActive.gameObject.SetActive(true);
     }
 
     public void NoDefence()
     {
         anim.SetBool("Defence", false);
-        defenceImage.enabled = true;
+        defenceActive.gameObject.SetActive(false);
     }
 
 
@@ -392,7 +397,6 @@ public class Viewer : MonoBehaviour
     {
         if (!model.onPowerState)
         {
-            //camShake.ShakeCamera(3.5f, 1);
             cam.CamShake(2, 3.5f, 1);
             var random = Random.Range(1, 4);
             anim.SetInteger("TakeDamage", random);

@@ -524,7 +524,9 @@ public class ModelE_Melee : EnemyEntity
         {
             transform.LookAt(target.transform.position);
         }
-   
+
+        if (!_view._anim.GetBool("Attack")) impulse = false;
+
         if (impulse) transform.position += transform.forward * 2 * Time.deltaTime;
                    
     }
@@ -710,6 +712,7 @@ public class ModelE_Melee : EnemyEntity
 
     public override void MakeDamage()
     {
+        _view.BackFromAttack();
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
         if (player != null)
         {
@@ -725,13 +728,12 @@ public class ModelE_Melee : EnemyEntity
 
     public void MakeHeavyDamage()
     {
+        _view.HeavyAttackFalse();
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
         if (player != null)
         {
             timeToRetreat += 0.25f;
             _view.WalckBackAnim();
-            var dir = (target.transform.position - transform.position).normalized;
-            var angle = Vector3.Angle(dir, target.transform.forward); 
             player.GetDamage(attackDamage + 5, transform, false, true);
         }
     }

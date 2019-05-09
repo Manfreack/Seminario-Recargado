@@ -17,8 +17,6 @@ public class ViewerE_Melee : MonoBehaviour
     bool auxTakeDamage;
     public GameObject prefabTextDamage;
     public Camera cam;
-    bool heavyAttackTrue;
-    float timeToEndAttack = 1.2f;
 
     public IEnumerator DeadCorrutine()
     {
@@ -67,16 +65,8 @@ public class ViewerE_Melee : MonoBehaviour
 
         if(_model.isDead) foreach (var item in myMats) item.SetFloat("_Intensity", 0);
 
-        if (heavyAttackTrue)
-        {
-            timeToEndAttack -= Time.deltaTime;
-            if (timeToEndAttack<=0)
-            {
-                _anim.SetBool("HeavyAttack", false);
-                heavyAttackTrue = false;
-                timeToEndAttack = 1.2f;
-            }
-        }
+
+        
     }
 
     public void RunAttackAnim()
@@ -98,7 +88,11 @@ public class ViewerE_Melee : MonoBehaviour
     {
         _anim.SetBool("HeavyAttack", true);
         _anim.SetBool("RunAttack", false);
-        heavyAttackTrue = true;
+    }
+
+    public void HeavyAttackFalse()
+    {
+        _anim.SetBool("HeavyAttack", false);
     }
 
     public void HitDefenceAnim()
@@ -117,7 +111,7 @@ public class ViewerE_Melee : MonoBehaviour
     {
         _anim.SetBool("WalkCombat", true);
         _anim.SetBool("IdleCombat", false);
-        _anim.SetBool("WalkBack", false);
+         _anim.SetBool("WalkBack", false);
         _anim.SetBool("WalkL", false);
         _anim.SetBool("WalkR", false);
         _anim.SetBool("Idle", false);
@@ -154,6 +148,7 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void WalckBackAnim()
     {
+        Debug.Log("back");
         _anim.SetBool("WalkBack", true);
         _anim.SetBool("WalkCombat", false);
         _anim.SetBool("IdleCombat", false);
@@ -205,7 +200,6 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void TakeDamageAnim()
     {
-        timeToEndAttack = 1.2f;
         _anim.SetBool("TakeDamage", true);
         damaged = true;
         timeShaderDamage = 1;

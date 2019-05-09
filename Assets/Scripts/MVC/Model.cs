@@ -254,7 +254,6 @@ public class Model : MonoBehaviour
         powerPool = new Pool<Powers>(10, PowersFactory, Powers.InitializePower, Powers.DisposePower, true);
         mySkills = new Skills();
         timeToRecoverDefence = maxTimeToRecoverDefence;
-
         for (int i = 0; i < 2; i++)
             view.UpdatePotions(i);
         potionEffects[1] = new ExtraHealth(this, 60);
@@ -272,7 +271,7 @@ public class Model : MonoBehaviour
 
             tdefence += Time.deltaTime;
 
-            view.BrokenDefence(tdefence / maxTimeToRecoverDefence);
+            view.BrokenDefence(1 - (tdefence / maxTimeToRecoverDefence));
 
             if(timeToRecoverDefence<=0)
             {
@@ -368,7 +367,6 @@ public class Model : MonoBehaviour
         if (makingDamage && animClipName == "Attack3N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack2N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack1N-DAMAGE") MakeDamage();
-        if (makingDamage && animClipName == "RollAttack-DMG") MakeDamage();
     }
 
     public void ImpulseAttackAnimation()
@@ -391,7 +389,7 @@ public class Model : MonoBehaviour
 
     public void Roll(Vector3 dir)
     {
-        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && timeToRoll<=0)
+        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll)
         {
             RollEvent();
             stamina -= rollStamina;
@@ -441,8 +439,10 @@ public class Model : MonoBehaviour
 
     public void RollImpulse()
     {
-        if (onRoll && animClipName == "RollAttack")
+        if (onRoll && (animClipName == "RollAttack" || animClipName == "Roll"))
         {
+            view.NoReciveDamage();
+
             timeToRoll -= Time.deltaTime;
 
             transform.forward = dirToDahs;
@@ -499,9 +499,9 @@ public class Model : MonoBehaviour
             view.UpdateStaminaBar(stamina / maxStamina);
             StreakEvent();
             CombatState();
-            timeImpulse = 0.4f;
+            timeImpulse = 0.6f;
             timeEndImpulse = 0.2f;
-            StartCoroutine(PowerDelayImpulse(0.4f, 0.2f, 0.1f, 0.2f));
+            StartCoroutine(PowerDelayImpulse(0.6f, 0.2f, 0.1f, 0.2f));
             StartCoroutine(PowerColdown(timeCdPower2, 2));            
         }
     }
@@ -660,8 +660,6 @@ public class Model : MonoBehaviour
             var dir = mainCamera.transform.forward;
             dir.y = 0;
             transform.forward = dir;
-            timeImpulse = 0.4f;
-            timeEndImpulse = 0.1f;
         }
 
         if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onDefence && !view.anim.GetBool("SaveSword2"))
@@ -804,7 +802,7 @@ public class Model : MonoBehaviour
     {
         if (onRoll) StopDefence();
 
-        if (stamina >= 0 && !stuned && !onRoll && !defenceBroken)
+        if (stamina >= 0 && !stuned && !onRoll && !defenceBroken && !onDamage)
         {
             DefenceEvent();
             InAction = true;
@@ -900,18 +898,14 @@ public class Model : MonoBehaviour
 
         if (heavyDamage && onDefence)
         {
-            float dmg = damage - armor;
-            life -= dmg;
-            timeToHeal = maxTimeToHeal;
-            view.UpdateLifeBar(life / maxLife);
-            OnDamage();
+            BlockEvent();
             StopDefence();
             defenceBroken = true;
-            view.defenceImage.fillAmount = 0;
+            view.defenceColdwon.fillAmount = 1;
             impulse = false;
         }
 
-        if (!onDefence || (onDefence && isBehind) || isProyectile)
+        if ((!onDefence || (onDefence && isBehind) || isProyectile) && !heavyDamage)
         {
 
             if (armor >= damage)
