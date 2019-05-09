@@ -169,6 +169,7 @@ public class Model : MonoBehaviour
         yield return new WaitForSeconds(timeStart + timeEnd);
         timeImpulse = time1;
         timeEndImpulse = time2;
+        view.StreakFalse();
     }
 
     public IEnumerator GetHeavyDamage()
@@ -418,7 +419,8 @@ public class Model : MonoBehaviour
 
         if (timeOnCombat <= 0 && isInCombat)
         {
-            view.SaveSwordAnim2();        
+            view.SaveSwordAnim2();
+            view.anim.SetBool("IdleCombat", false);
             isInCombat = false;
             saveSword = false;
         }
@@ -593,8 +595,8 @@ public class Model : MonoBehaviour
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
         if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" 
-                                                                      && animClipName != "GetDamage2" 
-                                                                      && animClipName != "GetDamage3")
+                                                                      && animClipName != "GetDamage2" && animClipName != "P_Warrior_Sreak_Pre"
+                                                                      && animClipName != "GetDamage3" && animClipName != "P_Warrior_Sreak_Damage" && animClipName != "P_Warrior_Sreak_End")
         {
             Quaternion targetRotation;
 

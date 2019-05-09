@@ -86,6 +86,16 @@ public class Viewer : MonoBehaviour
     public void Update()
     {
        
+        if(anim.GetBool("TakeSword2") && anim.GetBool("SaveSword2"))
+        {
+            anim.SetBool("TakeSword2", false);
+            anim.SetBool("SaveSword2", false);
+            anim.SetLayerWeight(1, 0);
+            anim.SetLayerWeight(0, 1);
+        }
+
+        if (anim.GetBool("RollAttack")) anim.SetInteger("TakeDamage", 0);
+
         var velocityX = Input.GetAxis("Vertical");
         var velocityZ = Input.GetAxis("Horizontal");
 
@@ -156,6 +166,7 @@ public class Viewer : MonoBehaviour
     {
         anim.SetLayerWeight(1, 1);
         anim.SetBool("SaveSword2", true);
+        anim.SetBool("Defence", false);
     }
 
     public void BackSaveSword()
@@ -164,13 +175,14 @@ public class Viewer : MonoBehaviour
         anim.SetBool("IdleCombat", false);
         anim.SetBool("Idle", true);
         anim.SetBool("SaveSword2", false);
+        anim.SetBool("Defence", false);
     }
 
     public void TakeSword2()
     {
         anim.SetLayerWeight(1, 1);
         anim.SetBool("TakeSword2", true);
-        
+        anim.SetBool("Defence", false);
     }
 
     public void BackTakeSword2()
@@ -179,6 +191,7 @@ public class Viewer : MonoBehaviour
         anim.SetBool("IdleCombat", true);
         anim.SetBool("Idle", false);
         anim.SetBool("TakeSword2", false);
+        anim.SetBool("Defence", false);
     }
 
     public void RollAnim()
@@ -381,7 +394,6 @@ public class Viewer : MonoBehaviour
 
     public void Defence()
     {
-        Debug.Log("asd");
         anim.SetBool("Defence", true);
         defenceActive.gameObject.SetActive(true);
     }
@@ -405,7 +417,6 @@ public class Viewer : MonoBehaviour
 
     public void ShakeCameraDamage(float f)
     {
-        // camShake.ShakeCamera(f, 1);
         cam.CamShake(2, f, 1);
     }
 

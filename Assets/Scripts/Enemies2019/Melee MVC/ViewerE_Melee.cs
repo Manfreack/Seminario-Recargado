@@ -111,7 +111,7 @@ public class ViewerE_Melee : MonoBehaviour
     {
         _anim.SetBool("WalkCombat", true);
         _anim.SetBool("IdleCombat", false);
-         _anim.SetBool("WalkBack", false);
+        if (!_anim.GetBool("Attack") && !_anim.GetBool("HeavyAttack")) _anim.SetBool("WalkBack", false);
         _anim.SetBool("WalkL", false);
         _anim.SetBool("WalkR", false);
         _anim.SetBool("Idle", false);
@@ -148,11 +148,14 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void WalckBackAnim()
     {
-        Debug.Log("back");
         _anim.SetBool("WalkBack", true);
         _anim.SetBool("WalkCombat", false);
+        _anim.SetBool("HeavyAttack", false);
+        _anim.SetBool("Attack", false);
         _anim.SetBool("IdleCombat", false);
         _anim.SetBool("Idle", false);
+        _anim.SetBool("WalkL", false);
+        _anim.SetBool("WalkR", false);
     }
 
     public void BackFromBlocked()

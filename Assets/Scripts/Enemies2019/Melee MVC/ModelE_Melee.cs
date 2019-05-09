@@ -377,10 +377,13 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnEnter += x =>
         {
-            startRetreat = 0.3f;
+            if (_view._anim.GetBool("Attack")) startRetreat = 0.3f;
+            else startRetreat = 0.7f;
+
             if(actualRing.name == "Ring1") timeToRetreat = 0.5f;         
             if(actualRing.name == "Ring2") timeToRetreat = 1f;         
-            if(actualRing.name == "Ring3") timeToRetreat = 1.3f;         
+            if(actualRing.name == "Ring3") timeToRetreat = 1.3f;      
+            
             vectoToNodeRetreat = (FindNearCombatNode().transform.position - transform.position).normalized;
             vectoToNodeRetreat.y = 0;
             viewDistanceAttack = 1;
@@ -520,7 +523,7 @@ public class ModelE_Melee : EnemyEntity
             SendInputToFSM(EnemyInputs.DIE);
         }
 
-        if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("HeavyAttack")) && !isDead)
+        if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("HeavyAttack")) && !isDead && !onDefence)
         {
             transform.LookAt(target.transform.position);
         }
@@ -712,7 +715,6 @@ public class ModelE_Melee : EnemyEntity
 
     public override void MakeDamage()
     {
-        _view.BackFromAttack();
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
         if (player != null)
         {
@@ -728,7 +730,6 @@ public class ModelE_Melee : EnemyEntity
 
     public void MakeHeavyDamage()
     {
-        _view.HeavyAttackFalse();
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
         if (player != null)
         {
@@ -765,7 +766,8 @@ public class ModelE_Melee : EnemyEntity
        firstAttack = false;
        onRetreat = false;
        timeToAttack = false;
-       StartCoroutine(DelayTurn());      
+       _view._anim.SetBool("WalkBack", false); 
+       if(myWarriorFriends.Count>0)StartCoroutine(DelayTurn());      
     }
 
     public void OnTriggerStay(Collider c)
