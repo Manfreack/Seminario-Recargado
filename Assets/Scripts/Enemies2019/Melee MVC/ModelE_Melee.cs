@@ -36,7 +36,7 @@ public class ModelE_Melee : EnemyEntity
     bool impulse;
     public int changeRing;
     Vector3 lastPosition;
-    
+    public string animClipName;
 
     public Action TakeDamageEvent;
     public Action DeadEvent;
@@ -316,6 +316,7 @@ public class ModelE_Melee : EnemyEntity
 
             if(!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
 
+            _view._anim.SetBool("WalkBack", false);
         };
 
      
@@ -391,6 +392,11 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnFixedUpdate += () =>
         {
+            if (startRetreat <= 0)
+            {
+                _view._anim.SetBool("HeavyAttack", false);
+                _view._anim.SetBool("Attack", false);
+            }
 
             currentAction = new A_WarriorRetreat(this, vectoToNodeRetreat);
 
@@ -485,6 +491,8 @@ public class ModelE_Melee : EnemyEntity
 
     private void Update()
     {
+        animClipName = _view._anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+
         _myFsm.Update();
 
         FillFriends();
@@ -528,9 +536,10 @@ public class ModelE_Melee : EnemyEntity
             transform.LookAt(target.transform.position);
         }
 
-        if (!_view._anim.GetBool("Attack")) impulse = false;
+        
+        if (animClipName != "Attack_EM2") impulse = false;
 
-        if (impulse) transform.position += transform.forward * 2 * Time.deltaTime;
+        if (impulse && animClipName == "Attack_EM2") transform.position += transform.forward * 2 * Time.deltaTime;
                    
     }
 

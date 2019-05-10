@@ -151,6 +151,7 @@ public class Model : MonoBehaviour
     float timeEndImpulse;
     public float internCdPower2;
     public string animClipName;
+    public string animClipName2;
 
     bool preAttack1;
     bool preAttack2;
@@ -338,6 +339,7 @@ public class Model : MonoBehaviour
             currentPotionEffect.PotionEffect();
 
         animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+        animClipName2 = view.anim.GetCurrentAnimatorClipInfo(1)[0].clip.name;
       
         TimeToDoDamage();
         ImpulseAttackAnimation();
@@ -390,7 +392,7 @@ public class Model : MonoBehaviour
 
     public void Roll(Vector3 dir)
     {
-        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll)
+        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") && animClipName != "Roll" && animClipName != "RollAttack" && animClipName != "P_Warrior_Rol+Attack")
         {
             RollEvent();
             stamina -= rollStamina;
@@ -407,7 +409,7 @@ public class Model : MonoBehaviour
 
     public void CombatParameters()
     {
-        if (countAnimAttack == 0 && !onPowerState && animClipName != "RollAttack-DMG") view.SleepTrail();
+        if (countAnimAttack == 0 && !onPowerState && animClipName != "P_Warrior_Rol+Attack") view.SleepTrail();
 
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
@@ -417,10 +419,12 @@ public class Model : MonoBehaviour
 
         if (timeOnCombat <= 0) timeOnCombat = 0;
 
-        if (timeOnCombat <= 0 && isInCombat)
+        if (timeOnCombat <= 0 && isInCombat && (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkA" || animClipName == "WalkD"))
         {
             view.SaveSwordAnim2();
             view.anim.SetBool("IdleCombat", false);
+            view.anim.SetBool("Roll", false);
+            onRoll = false;
             isInCombat = false;
             saveSword = false;
         }
@@ -441,7 +445,7 @@ public class Model : MonoBehaviour
 
     public void RollImpulse()
     {
-        if (onRoll && (animClipName == "RollAttack" || animClipName == "Roll"))
+        if (onRoll && (animClipName == "RollAttack" || animClipName == "P_Warrior_Rol+Attack" || animClipName == "Roll"))
         {
             view.NoReciveDamage();
 
@@ -496,6 +500,9 @@ public class Model : MonoBehaviour
     {
         if (!cdPower2 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0 && isInCombat && !onDefence)
         {
+            onRoll = false;
+            view.BackRollAnim();
+            view.RollAttackAnimFalse();
             timeCdPower2 = internCdPower2;
             stamina -= powerStamina;
             view.UpdateStaminaBar(stamina / maxStamina);
@@ -650,7 +657,7 @@ public class Model : MonoBehaviour
     {
         dirToRotateAttack = d;
 
-        if(onRoll)
+        if(onRoll )
         {
             makingDamage = true;
             attackDamage = attackRollDamage;
@@ -723,7 +730,7 @@ public class Model : MonoBehaviour
             }
 
             if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
-                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "Run Whit Sword V3.2") && !preAttack1 && countAnimAttack==0)
+                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "P_Warrior_RunWhitSword") && !preAttack1 && countAnimAttack==0)
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
                 {                   

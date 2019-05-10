@@ -115,14 +115,21 @@ public class Viewer : MonoBehaviour
         anim.SetFloat("VelZ", velocityZ);
     }
 
+    public void  CanRollAttack()
+    {
+        anim.SetBool("CanRollAttack", true);
+    }
+
     public void RollAttackAnim()
     {
         anim.SetBool("RollAttack", true);
+        anim.SetBool("CanRollAttack", false);
     }
 
     public void RollAttackAnimFalse()
     {
         anim.SetBool("RollAttack", false);
+        anim.SetBool("CanRollAttack", false);
     }
 
     public void ParryAnim()
@@ -202,6 +209,7 @@ public class Viewer : MonoBehaviour
     public void BackRollAnim()
     {
         anim.SetBool("Roll", false);
+        anim.SetBool("CanRollAttack", false);
         model.onRoll = false;
     }
 
