@@ -218,6 +218,11 @@ public class Viewer : MonoBehaviour
         anim.Play("Blocked");
     }
 
+    public void BlockedFail()
+    {
+        anim.Play("P_Warrior_FailDefence");
+    }
+
     public void AwakeTrail()
     {
         trail.SetActive(true);
@@ -463,7 +468,6 @@ public class Viewer : MonoBehaviour
             youDied.GetComponent<Image>().color = tempColor;
             if (alpha >= 1)
             {
-                //SceneManager.LoadScene(2);
                 for (int i = 0; i < youDied.transform.childCount; i++)
                     youDied.transform.GetChild(i).gameObject.SetActive(true);
                 Time.timeScale = 0;
@@ -481,11 +485,11 @@ public class Viewer : MonoBehaviour
         while (alpha <= 1)
         {
             alpha += 0.75f * Time.deltaTime;
+            if (alpha > 1) alpha = 1;
             tempColor.a = alpha;
             youWin.GetComponent<Image>().color = tempColor;
             if (alpha >= 1)
             {
-                //SceneManager.LoadScene(3);
                 for (int i = 0; i < youDied.transform.childCount; i++)
                     youWin.transform.GetChild(i).gameObject.SetActive(true);
                 Time.timeScale = 0;

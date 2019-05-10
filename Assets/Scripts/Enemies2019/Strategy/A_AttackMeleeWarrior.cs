@@ -28,7 +28,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                 _e.AttackRunEvent();
             }
 
-            else if(_e.onAttackArea && _e.delayToAttack<0 && !_e.onRetreat && !_e.firstAttack)
+            else if(_e.onAttackArea && _e.delayToAttack<=0 && !_e.onRetreat && !_e.firstAttack)
             {
 
                 var d = Vector3.Distance(_e.transform.position, _e.target.transform.position);

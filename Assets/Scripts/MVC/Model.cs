@@ -602,7 +602,7 @@ public class Model : MonoBehaviour
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
         if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" 
-                                                                      && animClipName != "GetDamage2" && animClipName != "P_Warrior_Sreak_Pre"
+                                                                      && animClipName != "GetDamage2" && animClipName != "P_Warrior_Sreak_Pre" && animClipName != "P_Warrior_FailDefence"
                                                                       && animClipName != "GetDamage3" && animClipName != "P_Warrior_Sreak_Damage" && animClipName != "P_Warrior_Sreak_End")
         {
             Quaternion targetRotation;
@@ -907,7 +907,7 @@ public class Model : MonoBehaviour
 
         if (heavyDamage && onDefence)
         {
-            BlockEvent();
+            view.BlockedFail();
             StopDefence();
             defenceBroken = true;
             view.defenceColdwon.fillAmount = 1;

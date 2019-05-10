@@ -79,7 +79,7 @@ public class ModelE_Melee : EnemyEntity
     public IEnumerator DelayTurn()
     {
         checkTurn = true;
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         checkTurn = false;
 
     }
@@ -347,6 +347,13 @@ public class ModelE_Melee : EnemyEntity
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
             
+        };
+
+        attack.OnEnter += x =>
+        {
+            delayToAttack = 0;
+            onRetreat = false;
+            firstAttack = false;
         };
 
         attack.OnFixedUpdate += () =>
@@ -686,8 +693,9 @@ public class ModelE_Melee : EnemyEntity
         if (onDefence && angle > 90)
         {
             timeToHoldDefence = 0;
-            if (timeToAttack) delayToAttack = 0;
+            delayToAttack = 0;
             HitDefenceEvent();
+            SendInputToFSM(EnemyInputs.ATTACK);           
         }
 
         if (!onDefence)
@@ -744,7 +752,12 @@ public class ModelE_Melee : EnemyEntity
         {
             timeToRetreat += 0.25f;
             _view.WalckBackAnim();
-            player.GetDamage(attackDamage + 5, transform, false, true);
+            if (player.onDefence)
+            {
+                _view.sparks.gameObject.SetActive(true);
+                _view.sparks.Play();
+            }
+            player.GetDamage(attackDamage + 5, transform, false, true);          
         }
     }
 
