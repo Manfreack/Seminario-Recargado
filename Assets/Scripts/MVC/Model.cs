@@ -764,11 +764,6 @@ public class Model : MonoBehaviour
         var col = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>());
         var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>());
 
-        if (col.Count() > 0)
-        {
-            if(countAnimAttack<=3) view.ShakeCameraDamage(0.5f);
-        }
-
         foreach (var item in col)
         {
             item.GetDamage(attackDamage);
@@ -879,7 +874,6 @@ public class Model : MonoBehaviour
     {
         timeCdPower2 -= reduceTimePerHit;
         impulse = false;
-        if (onRoll) view.ShakeCameraDamage(2);
         bool isBehind = false;
         StartCoroutine(OnDamageDelay());
         timeEndImpulse = 0;
@@ -891,8 +885,9 @@ public class Model : MonoBehaviour
         if (!isBehind && !isProyectile && onDefence && !heavyDamage)
         {
             stamina -= blockStamina;
-            view.UpdateStaminaBar(stamina / maxStamina);
+            view.UpdateStaminaBar(stamina / maxStamina);          
             BlockEvent();
+            view.ShakeCameraDamage(0.5f,0.5f,0.5f);
         }
 
         if(heavyDamage && !onDefence)
@@ -912,6 +907,7 @@ public class Model : MonoBehaviour
             defenceBroken = true;
             view.defenceColdwon.fillAmount = 1;
             impulse = false;
+            view.ShakeCameraDamage(1,1,0.5f);
         }
 
         if ((!onDefence || (onDefence && isBehind) || isProyectile) && !heavyDamage)

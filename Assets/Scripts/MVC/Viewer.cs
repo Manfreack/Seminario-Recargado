@@ -79,7 +79,7 @@ public class Viewer : MonoBehaviour
         {
             smashParticle.SetActive(true);
             trail.SetActive(false);
-            ShakeCameraDamage(1);
+            ShakeCameraDamage(1,1,0.3f);
         }
     }
 
@@ -422,15 +422,15 @@ public class Viewer : MonoBehaviour
     {
         if (!model.onPowerState)
         {
-            cam.CamShake(2, 3.5f, 1);
+            ShakeCameraDamage(1, 1.5f, 0.5f);
             var random = Random.Range(1, 4);
             anim.SetInteger("TakeDamage", random);
         }
     }
 
-    public void ShakeCameraDamage(float f)
+    public void ShakeCameraDamage(float frequency, float amplitude, float time )
     {
-        cam.CamShake(2, f, 1);
+        cam.CamShake(frequency, amplitude, time);
     }
 
     public void NoReciveDamage()
@@ -439,7 +439,9 @@ public class Viewer : MonoBehaviour
     }
 
     public void BasicAttack()
-    {    
+    {
+        cam.AttackCameraEffect();
+
         if (currentAttackAnimation == 3)
         {
             preAttacktime = 0.001f;
@@ -448,8 +450,7 @@ public class Viewer : MonoBehaviour
         currentAttackAnimation++;
         anim.SetInteger("AttackAnim", currentAttackAnimation);
     }
-  
-
+ 
     public void Dead()
     {
         anim.SetBool("IsDead", true);

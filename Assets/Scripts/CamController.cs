@@ -14,8 +14,12 @@ public class CamController : MonoBehaviour {
     public float distanceIdle;
     public float distanceCombat;
     public float actualCamDistance;
-    public float smooth;
-    public bool onShake;
+    public float positionIdleCamOnX;
+    public float positionCombatCamOnX;
+    public float smoothDistance;
+    public float smoothPosition;
+    public float smoothAttacks;
+    bool onAttack;
 
     public float ShakeDuration = 0.3f;
     public float ShakeAmplitude = 1.2f;
@@ -23,7 +27,19 @@ public class CamController : MonoBehaviour {
 
     private float ShakeElapsedTime = 0f;
 
-    public CinemachineBasicMultiChannelPerlin cameraNoise;
+    CinemachineBasicMultiChannelPerlin cameraNoise;
+
+    CinemachineComposer middleRig;
+    CinemachineComposer topRig;
+    CinemachineComposer bottonRig;
+
+    public IEnumerator AttackTiltCamera()
+    {
+        onAttack = true;
+        yield return new WaitForSeconds(0.2f);
+        onAttack = false;
+        
+    }
 
     void Start()
     {
@@ -31,11 +47,43 @@ public class CamController : MonoBehaviour {
         blockMouse = true;
         actualCamDistance = distanceIdle;
         cameraNoise = cinemaCam.GetRig(1).GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+        middleRig = cinemaCam.GetRig(1).GetCinemachineComponent<CinemachineComposer>();
+        topRig = cinemaCam.GetRig(0).GetCinemachineComponent<CinemachineComposer>();
+        bottonRig = cinemaCam.GetRig(2).GetCinemachineComponent<CinemachineComposer>();
     }
 
     void Update()
     {
-       
+
+        if (onAttack)
+        {
+            middleRig.m_TrackedObjectOffset.y -= Time.deltaTime * smoothAttacks;
+            topRig.m_TrackedObjectOffset.y -= Time.deltaTime * smoothAttacks;
+            bottonRig.m_TrackedObjectOffset.y -= Time.deltaTime * smoothAttacks;
+
+            if (middleRig.m_TrackedObjectOffset.y <= 1.15f)
+            {
+                middleRig.m_TrackedObjectOffset.y = 1.15f;
+                topRig.m_TrackedObjectOffset.y = 1.15f;
+                bottonRig.m_TrackedObjectOffset.y = 1.15f;
+                onAttack = false;
+            }
+        }
+
+        if (!onAttack)
+        {
+            middleRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothAttacks;
+            topRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothAttacks;
+            bottonRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothAttacks;
+
+            if (middleRig.m_TrackedObjectOffset.y >= 1.28f)
+            {
+                middleRig.m_TrackedObjectOffset.y = 1.28f;
+                topRig.m_TrackedObjectOffset.y = 1.28f;
+                bottonRig.m_TrackedObjectOffset.y = 1.28f;
+            }
+        }
+        
 
         if (blockMouse)
         {
@@ -53,7 +101,7 @@ public class CamController : MonoBehaviour {
             if (actualCamDistance < distanceCombat)
             {
 
-                actualCamDistance += Time.deltaTime * smooth;
+                actualCamDistance += Time.deltaTime * smoothDistance;
 
                 cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
                 {
@@ -62,14 +110,26 @@ public class CamController : MonoBehaviour {
                     new CinemachineFreeLook.Orbit(0.4f, 1.3f)
                 };
             }
+
+            if (middleRig.m_ScreenX < positionCombatCamOnX)
+            {
+                middleRig.m_ScreenX += Time.deltaTime * smoothPosition;
+                topRig.m_ScreenX += Time.deltaTime * smoothPosition;
+                bottonRig.m_ScreenX += Time.deltaTime * smoothPosition;
+
+                if (middleRig.m_ScreenX > positionCombatCamOnX) middleRig.m_ScreenX = positionCombatCamOnX;
+                if (topRig.m_ScreenX > positionCombatCamOnX) topRig.m_ScreenX = positionCombatCamOnX;
+                if (bottonRig.m_ScreenX > positionCombatCamOnX) bottonRig.m_ScreenX = positionCombatCamOnX;
+            }
+
         }
 
         else
         {
             if(actualCamDistance > distanceIdle )
             { 
-
-            actualCamDistance -= Time.deltaTime * smooth;
+          
+            actualCamDistance -= Time.deltaTime * smoothDistance;
 
                 cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
                 {
@@ -78,6 +138,19 @@ public class CamController : MonoBehaviour {
                     new CinemachineFreeLook.Orbit(0.4f, 1.3f)
                 };
             }
+
+            if (middleRig.m_ScreenX > positionIdleCamOnX)
+            {
+                middleRig.m_ScreenX -= Time.deltaTime * smoothPosition;
+                topRig.m_ScreenX -= Time.deltaTime * smoothPosition;
+                bottonRig.m_ScreenX -= Time.deltaTime * smoothPosition;
+
+                if (middleRig.m_ScreenX < positionIdleCamOnX) middleRig.m_ScreenX = positionIdleCamOnX;
+                if (topRig.m_ScreenX < positionIdleCamOnX) topRig.m_ScreenX = positionIdleCamOnX;
+                if (bottonRig.m_ScreenX < positionIdleCamOnX) bottonRig.m_ScreenX = positionIdleCamOnX;
+            }
+
+
         }
 
         if (ShakeElapsedTime > 0)
@@ -93,6 +166,13 @@ public class CamController : MonoBehaviour {
             ShakeElapsedTime = 0f;
         }
 
+
+       
+    }
+
+    public void AttackCameraEffect()
+    {
+        StartCoroutine(AttackTiltCamera());
     }
 
     public void CamShake(float frequency, float amplitude, float timeShake)
