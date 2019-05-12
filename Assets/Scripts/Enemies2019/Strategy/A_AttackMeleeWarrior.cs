@@ -15,7 +15,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
 
         if (!_e.onDamage)
         {
-            if (!_e.onAttackArea && !_e.onAttack && !_e.firstAttack && !_e.onDamage)
+            if (!_e.onAttackArea && !_e.firstAttack && !_e.onDamage)
             {
                 Quaternion targetRotation;
                 var dir = (_e.target.transform.position - _e.transform.position).normalized;
@@ -28,7 +28,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                 _e.AttackRunEvent();
             }
 
-            else if(_e.onAttackArea && _e.delayToAttack<=0 && !_e.onRetreat && !_e.firstAttack)
+            else if(_e.onAttackArea && !_e.onRetreat && !_e.firstAttack)
             {
 
                 var d = Vector3.Distance(_e.transform.position, _e.target.transform.position);
@@ -46,14 +46,14 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                     if (r != 0)
                     {
                         _e.AttackEvent();
-                        _e.onRetreat = true;
+                        _e.StartCoroutine(_e.RetreatCorrutine(0.28f));
                         _e.firstAttack = true;
                     }
 
                     if (r == 0)
                     {
                         _e.HeavyAttackEvent();
-                        _e.onRetreat = true;
+                        _e.StartCoroutine(_e.RetreatCorrutine(1.23f));
                         _e.firstAttack = true;
                     }
 

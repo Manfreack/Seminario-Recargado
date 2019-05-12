@@ -56,7 +56,7 @@ public class ModelE_Melee : EnemyEntity
 
     float maxLife;
     public float timeToRetreat;
-    public float startRetreat;
+    float distanceRetreat;
     float maxViewDistanceToAttack;
     Vector3 vectoToNodeRetreat;
 
@@ -70,9 +70,9 @@ public class ModelE_Melee : EnemyEntity
     public float hitsToStartDefenceMIN;
     public float actualHits;
 
-    public IEnumerator RetreatCorrutine()
+    public IEnumerator RetreatCorrutine(float t)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(t);
         onRetreat = true;
     }
 
@@ -212,7 +212,6 @@ public class ModelE_Melee : EnemyEntity
 
         answerCall.OnFixedUpdate += () =>
         {
-
             currentAction = new A_FollowTarget(this);
             CombatWalkEvent();
             if (!isDead && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
@@ -317,6 +316,9 @@ public class ModelE_Melee : EnemyEntity
             if(!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
 
             _view._anim.SetBool("WalkBack", false);
+            firstAttack = false;
+            onRetreat = false;
+            timeToAttack = false;
         };
 
      
@@ -354,10 +356,15 @@ public class ModelE_Melee : EnemyEntity
             delayToAttack = 0;
             onRetreat = false;
             firstAttack = false;
+
+            if (NearRing().name == "Ring1") timeToRetreat = 0.5f;
+            if (NearRing().name == "Ring2") timeToRetreat = 1f;
+            if (NearRing().name == "Ring3") timeToRetreat = 1.3f;
         };
 
         attack.OnFixedUpdate += () =>
         {
+
             currentAction = new A_AttackMeleeWarrior(this);
 
             isAnswerCall = false;
@@ -372,7 +379,6 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && d > viewDistancePersuit && !onRetreat && !onDefence) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && delayToAttack > 0 && !onRetreat && !onDefence) SendInputToFSM(EnemyInputs.WAIT);
 
             if (onRetreat && !onDefence) SendInputToFSM(EnemyInputs.RETREAT);
 
@@ -385,25 +391,15 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnEnter += x =>
         {
-            if (_view._anim.GetBool("Attack")) startRetreat = 0.3f;
-            else startRetreat = 0.7f;
-
-            if(actualRing.name == "Ring1") timeToRetreat = 0.5f;         
-            if(actualRing.name == "Ring2") timeToRetreat = 1f;         
-            if(actualRing.name == "Ring3") timeToRetreat = 1.3f;      
-            
             vectoToNodeRetreat = (FindNearCombatNode().transform.position - transform.position).normalized;
             vectoToNodeRetreat.y = 0;
             viewDistanceAttack = 1;
+
+            distanceRetreat = Vector3.Distance(transform.position, target.transform.position);
         };
 
         retreat.OnFixedUpdate += () =>
         {
-            if (startRetreat <= 0)
-            {
-                _view._anim.SetBool("HeavyAttack", false);
-                _view._anim.SetBool("Attack", false);
-            }
 
             currentAction = new A_WarriorRetreat(this, vectoToNodeRetreat);
 
@@ -423,14 +419,14 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
-            if ( startRetreat <= 0) timeToRetreat -= Time.deltaTime;
 
-            if(_view._anim.GetBool("Attack") == false && _view._anim.GetBool("HeavyAttack") == false) startRetreat -= Time.deltaTime;
+            if (animClipName != "Attack_EM2" && animClipName != "Heavy Attack_EM" && animClipName != "Run_EM" && animClipName != "HitDefence") timeToRetreat -= Time.deltaTime;
 
         };
 
         follow.OnEnter += x =>
         {
+
             pathToTarget.Clear();
             
             Node start = GetMyNode();
@@ -703,7 +699,6 @@ public class ModelE_Melee : EnemyEntity
             _view.DefenceAnimFalse();
             _view.HitDefenceAnimFalse();
             actualHits--;
-            timeToRetreat = startRetreat;
             timeOnDamage = 0.5f;
             if (!onDamage) onDamage = true;     
             TakeDamageEvent();
@@ -759,6 +754,19 @@ public class ModelE_Melee : EnemyEntity
             }
             player.GetDamage(attackDamage + 5, transform, false, true);          
         }
+    }
+
+    CombatRing NearRing()
+    {
+        var ringChilds = FindObjectsOfType<Ring>();
+
+        var ring = ringChilds.OrderBy(x =>
+        {
+            var d = Vector3.Distance(x.transform.position, transform.position);
+            return d;
+        }).First().parent;
+
+        return ring;
     }
 
     public override void RemoveNearEntity(EnemyEntity e)

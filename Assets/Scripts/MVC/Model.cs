@@ -408,8 +408,7 @@ public class Model : MonoBehaviour
     } 
 
     public void CombatParameters()
-    {
-        if (countAnimAttack == 0 && !onPowerState && animClipName != "P_Warrior_Rol+Attack") view.SleepTrail();
+    {       
 
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
@@ -857,6 +856,7 @@ public class Model : MonoBehaviour
         countAnimAttack = 0;
         view.currentAttackAnimation = 0;
         view.anim.SetInteger("AttackAnim", 0);
+        view.SleepTrail();
         preAttack1 = false;
         preAttack2 = false;
         preAttack3 = false;

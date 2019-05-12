@@ -147,7 +147,6 @@ public class Viewer : MonoBehaviour
     public void Streak()
     {
         anim.SetBool("Streak", true);
-        trail.SetActive(true);
         model.onPowerState = true;
     }
 
@@ -155,7 +154,6 @@ public class Viewer : MonoBehaviour
     {
         anim.SetBool("Streak", false);
         model.onPowerState = false;
-        trail.SetActive(false);
     }
 
     public void Awake()
