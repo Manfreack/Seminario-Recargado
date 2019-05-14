@@ -30,11 +30,6 @@ public class A_WarriorRetreat : i_EnemyActions
             _e.transform.forward = (_e.target.transform.position - _e.transform.position).normalized;
         }
 
-        if (_e.timeToRetreat <= 0)
-        {
-            _e.StopRetreat();
-        }
-
     }
 
     public A_WarriorRetreat( ModelE_Melee e , Vector3 dir)

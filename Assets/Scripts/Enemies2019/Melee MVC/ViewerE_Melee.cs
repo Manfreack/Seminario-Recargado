@@ -148,8 +148,8 @@ public class ViewerE_Melee : MonoBehaviour
     {
         _anim.SetBool("WalkBack", true);
         _anim.SetBool("WalkCombat", false);
-        _anim.SetBool("HeavyAttack", false);
-        _anim.SetBool("Attack", false);
+       // _anim.SetBool("HeavyAttack", false);
+        //_anim.SetBool("Attack", false);
         _anim.SetBool("IdleCombat", false);
         _anim.SetBool("Idle", false);
         _anim.SetBool("WalkL", false);

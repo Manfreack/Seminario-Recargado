@@ -17,11 +17,11 @@ public class A_Persuit : i_EnemyActions
 
             if (_e.GetComponent<ModelE_Melee>())
             {
-                if (_e.GetComponent<ModelE_Melee>().animClipName != "Heavy Attack_EM")
+                if (_e.GetComponent<ModelE_Melee>().animClipName != "Heavy Attack_EM" && _e.GetComponent<ModelE_Melee>().animClipName != "Attack_EM")
                 {
                     _e.target.CombatState();
                     Quaternion targetRotation;
-                    var dir = (_e.FindNearCombatNode().transform.position - _e.transform.position).normalized;
+                    var dir = (_e.FindNearCombatNode() - _e.transform.position).normalized;
                     dir.y = 0;
                     var avoid = _e.avoidVectObstacles.normalized;
                     avoid.y = 0;
@@ -36,7 +36,7 @@ public class A_Persuit : i_EnemyActions
                 
                _e.target.CombatState();
                Quaternion targetRotation;
-               var dir = (_e.FindNearCombatNode().transform.position - _e.transform.position).normalized;
+               var dir = (_e.FindNearCombatNode() - _e.transform.position).normalized;
                dir.y = 0;
                var avoid = _e.avoidVectObstacles.normalized;
                avoid.y = 0;

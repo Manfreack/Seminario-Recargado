@@ -6,8 +6,8 @@ using System.Linq;
 public class A_WarriorWait : i_EnemyActions
 {
     ModelE_Melee _e;
-    bool goBack;
     int _dirRotate;
+    bool returnToMyRing;
 
     public void Actions()
     {
@@ -18,45 +18,26 @@ public class A_WarriorWait : i_EnemyActions
         if (!_e.timeToAttack && _e.cm.times > 0 && !_e.checkTurn)
         {
             if (_e.cm.times <= 1) _e.cm.ChangeOrderAttack(_e);
-
+            _e.checkTurn = true;
             _e.cm.times--;
-            _e.timeToAttack = true;
+            _e.timeToAttack = true;          
+        }
 
+        if(_e.currentRing != _e.actualRing || _e.currentRing==null)
+        {
+            returnToMyRing = true;
             var dir = (_e.target.transform.position - _e.transform.position).normalized;
-            var angle = Vector3.Angle(dir, _e.target.transform.forward); 
-        }
-
-        bool aux = false;
-
-        var dRing1 = Vector3.Distance(_e.transform.position, _e.rings[0].transform.position);
-
-        if(dRing1 < 3)
-        {
-            foreach (var item in _e.rings[0].myEnemies)
-            {
-                if (item == _e) aux = true;
-            }
-
-            if(!aux && _e.changeRing == 0 && _e.rings[0].myEnemies.Count >= _e.rings[0].entityMaxAmount)  _e.changeRing = 1;
-           
-        }
-
-        if (_e.changeRing != 0)
-        {
-            goBack = true;
-            Quaternion targetRotation;
-            var _dir = (_e.target.transform.position - _e.transform.position).normalized;
-            _dir.y = 0;
-            targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
+            dir.y = 0;
+            Quaternion targetRotation;      
+            targetRotation = Quaternion.LookRotation(dir , Vector3.up);
             _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-            _e.rb.MovePosition(_e.transform.position - _e.transform.forward * _e.speed * Time.deltaTime);
+            _e.rb.MovePosition(_e.rb.position - _e.transform.forward * _e.speed  * Time.deltaTime);
             _e.WalkBackEvent();
         }
 
-        if (!_e.onDamage && !goBack)
+        if (!_e.onDamage && !returnToMyRing)
         {
-        
-           var rotateSpeed = 0;
+            var rotateSpeed = 0;
 
             if (_e.flankDir == 1)
             {
@@ -75,12 +56,7 @@ public class A_WarriorWait : i_EnemyActions
 
             if (!_e.onDamage)
             {
-
-                var d = Vector3.Distance(_e.transform.position, _e.target.transform.position);
-
                 _e.transform.RotateAround(_e.target.transform.position, Vector3.up, rotateSpeed * Time.deltaTime);
-
-                if (_e.avoidVectObstacles != Vector3.zero && d > 3) _e.transform.position += _e.transform.forward * 4 * Time.deltaTime;
             }
         }
 

@@ -46,7 +46,7 @@ public abstract class EnemyEntity: MonoBehaviour
     public CombatArea ca;
     public abstract void RemoveNearEntity(EnemyEntity e);
     public List<CombatNode> playerNodes = new List<CombatNode>();
-    public abstract CombatNode FindNearCombatNode();
+    public abstract Vector3 FindNearCombatNode();
     public CombatNode myCombatNode;
     public CombatRing actualRing;
 }

@@ -232,7 +232,7 @@ public class ModelE_Sniper : EnemyEntity
         {
             timeToStopBack = UnityEngine.Random.Range(5, 6);
 
-            positionToBack = FindNearCombatNode().transform.position;
+            positionToBack = FindNearCombatNode();
             
         };
 
@@ -476,14 +476,18 @@ public class ModelE_Sniper : EnemyEntity
     }
 
  
-    public override CombatNode FindNearCombatNode()
+    public override Vector3 FindNearCombatNode()
     {
         var node = playerNodes.Where(x => !x.isBusy && x.rangeNode).OrderBy(x =>
         {
             var d = Vector3.Distance(x.transform.position, transform.position);
             return d;
-        }).First();
+        }).FirstOrDefault();
 
-        return node;
+        var pos = node.transform.position;
+
+        if (pos != Vector3.zero) return pos;
+
+        else return target.transform.position;
     }
 }
