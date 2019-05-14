@@ -23,17 +23,22 @@ public class A_WarriorWait : i_EnemyActions
             _e.timeToAttack = true;          
         }
 
-        if(_e.currentRing != _e.actualRing || _e.currentRing==null)
+       /* var d = Vector3.Distance(_e.transform.position, _e.target.transform.position);
+
+        if(_e.actualRing == _e.rings[1])
         {
-            returnToMyRing = true;
-            var dir = (_e.target.transform.position - _e.transform.position).normalized;
-            dir.y = 0;
-            Quaternion targetRotation;      
-            targetRotation = Quaternion.LookRotation(dir , Vector3.up);
-            _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-            _e.rb.MovePosition(_e.rb.position - _e.transform.forward * _e.speed  * Time.deltaTime);
-            _e.WalkBackEvent();
-        }
+            if (d < 4.62f)
+            {
+                returnToMyRing = true;
+                var dir = (_e.target.transform.position - _e.transform.position).normalized;
+                dir.y = 0;
+                Quaternion targetRotation;
+                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
+                _e.rb.MovePosition(_e.rb.position - _e.transform.forward * _e.speed * Time.deltaTime);
+                _e.WalkBackEvent();
+            }
+        }*/
 
         if (!_e.onDamage && !returnToMyRing)
         {

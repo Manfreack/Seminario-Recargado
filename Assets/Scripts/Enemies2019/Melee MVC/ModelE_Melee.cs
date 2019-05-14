@@ -7,7 +7,7 @@ using System;
 public class ModelE_Melee : EnemyEntity
 {
 
-    public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE }
+    public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE, REPOSITION }
     public EventFSM<EnemyInputs> _myFsm;
     public List<CombatRing> rings = new List<CombatRing>();
     public float timeToPatrol;
@@ -36,6 +36,7 @@ public class ModelE_Melee : EnemyEntity
     bool impulse;
     public int changeRing;
     Vector3 lastPosition;
+    Vector3 nearRingPosition;
     public string animClipName;
 
     public Action TakeDamageEvent;
@@ -153,6 +154,7 @@ public class ModelE_Melee : EnemyEntity
         var die = new FSM_State<EnemyInputs>("DIE");
         var follow = new FSM_State<EnemyInputs>("FOLLOW");
         var answerCall = new FSM_State<EnemyInputs>("ANSWER");
+        var reposition = new FSM_State<EnemyInputs>("REPOSITION");
 
         StateConfigurer.Create(patrol)
            .SetTransition(EnemyInputs.PERSUIT, persuit)
@@ -178,8 +180,14 @@ public class ModelE_Melee : EnemyEntity
        .SetTransition(EnemyInputs.PERSUIT, persuit)
        .SetTransition(EnemyInputs.FOLLOW, follow)
        .SetTransition(EnemyInputs.WAIT, wait)
+       .SetTransition(EnemyInputs.REPOSITION, reposition)
        .SetTransition(EnemyInputs.DEFENCE, defence)
        .SetTransition(EnemyInputs.DIE, die)
+       .Done();
+
+
+        StateConfigurer.Create(reposition)
+       .SetTransition(EnemyInputs.WAIT, wait)
        .Done();
 
         StateConfigurer.Create(attack)
@@ -268,7 +276,7 @@ public class ModelE_Melee : EnemyEntity
 
             var d = Vector3.Distance(transform.position, target.transform.position);
 
-            if (currentRing == actualRing) SendInputToFSM(EnemyInputs.WAIT);
+            if (currentRing == actualRing || d<1) SendInputToFSM(EnemyInputs.WAIT);
 
             if (!isDead && d > viewDistancePersuit) SendInputToFSM(EnemyInputs.FOLLOW);
 
@@ -334,13 +342,13 @@ public class ModelE_Melee : EnemyEntity
      
         wait.OnUpdate += () =>
         {
+            _view._anim.SetBool("WalkBack", false);
+
             if (actualRing == rings[0]) viewDistanceAttack = 4.5f;
             if (actualRing == rings[1]) viewDistanceAttack = 6;
             if (actualRing == rings[2]) viewDistanceAttack = 8;
 
             WaitState = true;
-
-            var dir = (target.transform.position - transform.position).normalized;
 
             if (timeToAttack) delayToAttack -= Time.deltaTime;
 
@@ -417,6 +425,19 @@ public class ModelE_Melee : EnemyEntity
             AttackState = false;
         };
 
+        reposition.OnEnter += x =>
+        {
+            nearRingPosition = NearRing();
+        };
+
+        reposition.OnUpdate += () =>
+        {
+
+            currentAction = new A_Reposition(this, nearRingPosition);
+
+            if (currentRing == actualRing) SendInputToFSM(EnemyInputs.WAIT);
+        };
+
         retreat.OnEnter += x =>
         {
             vectoToNodeRetreat = (FindNearCombatNode() - transform.position).normalized;
@@ -432,13 +453,15 @@ public class ModelE_Melee : EnemyEntity
 
             var d = Vector3.Distance(transform.position, target.transform.position);
 
-            if (!isDead && isPersuit && actualRing != currentRing && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
+           // if (!isDead && isPersuit && actualRing != currentRing && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && d > viewDistancePersuit && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
 
             if (!isDead && actualRing == currentRing && timeToRetreat <=0) SendInputToFSM(EnemyInputs.WAIT);
+
+            if (!isDead && currentRing != actualRing && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.REPOSITION);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -801,8 +824,24 @@ public class ModelE_Melee : EnemyEntity
 
         return ring;
     }
-
   
+    Vector3 NearRing()
+    {
+        int n = 1;
+
+        if (actualRing == rings[1]) n = 2;
+
+        if (actualRing == rings[2]) n = 3;
+
+        var ring = playerNodes.Where(x=> x.NodeRingNumber == n).OrderBy(x =>
+        {
+            var d = Vector3.Distance(x.transform.position, transform.position);
+            return d;
+        }).First();
+
+        return ring.transform.position;
+    }
+
     public override void RemoveNearEntity(EnemyEntity e)
     {
         e.nearEntities.Remove(this);

@@ -1,16 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CombatArea : MonoBehaviour
 {
     public List<EnemyEntity> myNPCs = new List<EnemyEntity>();
     public List<GameObject> walls = new List<GameObject>();
+    public List<CombatRing> rings = new List<CombatRing>();
     Model player;
     public int myEntities;
     bool aux;
     public bool startArea;
+    bool firstPass;
     EnemyCombatManager cm;
+    Vector3 targetPos;
 
     private void Awake()
     {
@@ -29,6 +33,8 @@ public class CombatArea : MonoBehaviour
 
     void Update()
     {
+        targetPos = FindObjectOfType<Model>().transform.position;
+
         if (myEntities <= 0 && !aux)
         {
             foreach (var item in walls) item.SetActive(false);
@@ -53,14 +59,35 @@ public class CombatArea : MonoBehaviour
 
     public void OnTriggerEnter(Collider c)
     {
-        if (c.GetComponent<Model>())
+        if (c.GetComponent<Model>() && !firstPass)
         {
+            var orderEnemies = myNPCs.OrderBy(X =>
+            {
+                var d = Vector3.Distance(X.transform.position, targetPos);
+                return d;
+            }).ToList();
+
+            for (int i = 0; i < orderEnemies.Count; i++)
+            {
+                if (i <= 1) orderEnemies[i].actualRing = rings[0];
+
+                if (i > 1 && i <= 5) orderEnemies[i].actualRing = rings[1];
+
+                if (i > 5) orderEnemies[i].actualRing = rings[2];
+            }
+            
 
             foreach (var item in myNPCs) item.target = player;
             foreach (var item in walls)
             {
-                if (myEntities > 0 && !aux) item.SetActive(true);
+                if (myEntities > 0 && !aux )
+                {                  
+                    item.SetActive(true);
+                }
+              
             }
+
+            firstPass = true;
         }
     }
 }

@@ -9,6 +9,7 @@ public class CombatNode : MonoBehaviour
     public bool isBusy;
     public bool meleeNode;
     public bool rangeNode;
+    public int NodeRingNumber;
 
     public void Update()
     {

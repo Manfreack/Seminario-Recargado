@@ -53,7 +53,6 @@ public class CombatRing : MonoBehaviour
     public void EnemyExit(ModelE_Melee e)
     {
         myEnemies.Remove(e);
-        e.actualRing = null;
         e.changeRotateWarrior = false;
     }
 

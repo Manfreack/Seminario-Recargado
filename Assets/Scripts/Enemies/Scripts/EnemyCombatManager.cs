@@ -36,7 +36,7 @@ public class EnemyCombatManager : MonoBehaviour {
             if (count > 2) item.timeToAttack = false;
         }
 
-        var orderEnemies = enemiesList.OrderBy(X =>
+       /* var orderEnemies = enemiesList.OrderBy(X =>
         {
             var d = Vector3.Distance(X.transform.position, targetPos);
             return d;
@@ -49,7 +49,7 @@ public class EnemyCombatManager : MonoBehaviour {
             if (i > 1 && i <= 5) orderEnemies[i].actualRing = rings[1];
 
             if (i > 5) orderEnemies[i].actualRing = rings[2];
-        }
+        }*/
     }
 
 
