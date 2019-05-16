@@ -318,7 +318,7 @@ ModelImporter:
     - serializedVersion: 16
       name: P_Warrior_RolAttack_V2
       takeName: Take 001
-      firstFrame: 2090
+      firstFrame: 2111
       lastFrame: 2170
       wrapMode: 0
       orientationOffsetY: 0
@@ -338,7 +338,21 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 1
+        functionName: RollAttackAnimFalse
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.35507348
+        functionName: MakeDamage
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

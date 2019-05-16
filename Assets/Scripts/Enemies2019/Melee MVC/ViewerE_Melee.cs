@@ -94,6 +94,7 @@ public class ViewerE_Melee : MonoBehaviour
 
         if(_model.isDead) foreach (var item in myMats) item.SetFloat("_Intensity", 0);
 
+        if (!_anim.GetBool("HeavyAttack")) HeavyAttackShaderFalse();
 
         
     }
@@ -167,6 +168,7 @@ public class ViewerE_Melee : MonoBehaviour
     {
         _anim.SetBool("WalkL", false);
         _anim.SetBool("WalkR", true);
+
     }
 
     public void BlockedAnim()
