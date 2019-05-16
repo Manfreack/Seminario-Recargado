@@ -60,15 +60,15 @@ Shader "MyShaders/Snowy Nature"
 }
 /*ASEBEGIN
 Version=16400
-1151;73;480;653;345.3344;363.764;1;False;False
+1151;73;480;653;558.3344;271.764;1;False;False
 Node;AmplifyShaderEditor.PosVertexDataNode;5;-672,192;Float;False;0;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.ObjectToWorldTransfNode;6;-480,176;Float;False;1;0;FLOAT4;0,0,0,1;False;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.RangedFloatNode;7;-542,334;Float;False;Property;_SnowGradient;Snow Gradient;4;0;Create;True;0;0;False;0;0.52;0.4;0;5;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;7;-542,334;Float;False;Property;_SnowGradient;Snow Gradient;4;0;Create;True;0;0;False;0;0.52;3.98;0;5;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;8;-245.4521,189.1216;Float;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;10;-320,400;Float;False;Property;_SnowPosition;Snow Position;5;0;Create;True;0;0;False;0;0;0.17;-2;2;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;10;-320,400;Float;False;Property;_SnowPosition;Snow Position;5;0;Create;True;0;0;False;0;0;0.52;-2;2;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;9;-32,192;Float;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SamplerNode;2;-480,-17;Float;True;Property;_RegularImage;Regular Image;2;0;Create;True;0;0;False;0;16d1f834cd0d9d4418e5808e654719be;c3ccc4e97f946234bb9dfe5432f80adc;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SamplerNode;1;-480,-192;Float;True;Property;_SnowyImage;Snowy Image;1;0;Create;True;0;0;False;0;2ac1eec7ef095d64a88c429a19d77f19;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SamplerNode;2;-480,-17;Float;True;Property;_RegularImage;Regular Image;2;0;Create;True;0;0;False;0;16d1f834cd0d9d4418e5808e654719be;375df5d06b2fb7948abd22e7aa22801c;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SamplerNode;1;-480,-192;Float;True;Property;_SnowyImage;Snowy Image;1;0;Create;True;0;0;False;0;2ac1eec7ef095d64a88c429a19d77f19;d9f7b81c864dbcf4186f9b602a79c369;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.SaturateNode;11;173.5381,193.6637;Float;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.LerpOp;4;-96,0;Float;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SamplerNode;3;-336,496;Float;True;Property;_NormalMap;Normal Map;3;0;Create;True;0;0;False;0;56c8f6f7deb891648a2452a8ab530196;ac3812f221ef6c949a000ed8fb85a2c6;True;0;True;bump;Auto;True;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
@@ -86,4 +86,4 @@ WireConnection;0;0;4;0
 WireConnection;0;1;3;0
 WireConnection;0;10;2;4
 ASEEND*/
-//CHKSM=4AD11BA5AC48CD071CBED32CD850BF05E320CDCB
+//CHKSM=FBE5CEE1836520B8A6B3F4EF50F43DB6F810C40B
