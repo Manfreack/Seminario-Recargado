@@ -53,7 +53,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                     if (r == 0)
                     {
                         _e.HeavyAttackEvent();
-                        _e.StartCoroutine(_e.RetreatCorrutine(1.23f));
+                        _e.StartCoroutine(_e.RetreatCorrutine(1.12f));
                         _e.firstAttack = true;
                     }
 

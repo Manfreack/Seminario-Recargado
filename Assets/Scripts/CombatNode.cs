@@ -13,7 +13,7 @@ public class CombatNode : MonoBehaviour
 
     public void Update()
     {
-        var obs = Physics.OverlapSphere(transform.position, 1).Where(x=> {
+        var obs = Physics.OverlapSphere(transform.position, 0.5f).Where(x=> {
 
             if (x.GetComponent<EnemyEntity>() || x.gameObject.layer == LayerMask.NameToLayer("Obstacles")) return true;
             else return false;

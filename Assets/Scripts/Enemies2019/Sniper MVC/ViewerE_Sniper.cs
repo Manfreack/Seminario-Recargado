@@ -18,6 +18,31 @@ public class ViewerE_Sniper : MonoBehaviour
     public float timeFireHands;
     public GameObject prefabTextDamage;
     public Camera cam;
+    float _timeShaderMeleeAttack;
+    bool _shaderMeleeAttackTrigger;
+
+    public IEnumerator ShaderMA_True()
+    {
+        _shaderMeleeAttackTrigger = true;
+
+        while (_shaderMeleeAttackTrigger)
+        {
+            MeleettackShader();
+            yield return new WaitForEndOfFrame();
+        }
+
+    }
+
+    public IEnumerator ShaderMA_False()
+    {
+        while (_timeShaderMeleeAttack > 0)
+        {
+            MeleeAttackShaderFalse();
+            yield return new WaitForEndOfFrame();
+        }
+
+
+    }
 
     public IEnumerator DeadCorrutine()
     {
@@ -55,9 +80,28 @@ public class ViewerE_Sniper : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         DamageShader();
         FireHands();
+    }
+
+    public void MeleettackShader()
+    {
+        fireHandsMat.SetFloat("_RangedFireOpacity", 0);
+
+        _timeShaderMeleeAttack += Time.deltaTime * 2f;
+
+        if (_timeShaderMeleeAttack >= 1) _timeShaderMeleeAttack = 1;
+
+        fireHandsMat.SetFloat("_MeleeFireOpacity", _timeShaderMeleeAttack);
+    }
+
+    public void MeleeAttackShaderFalse()
+    {
+        _timeShaderMeleeAttack -= Time.deltaTime * 2f;
+
+        if (_timeShaderMeleeAttack <= 0) _timeShaderMeleeAttack = 0;
+
+        fireHandsMat.SetFloat("_MeleeFireOpacity", _timeShaderMeleeAttack);
     }
 
     public void DeadAnim()
@@ -82,11 +126,14 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void AttackMeleeAnim()
     {
+        StartCoroutine(ShaderMA_True());
         _anim.SetBool("AttackMelee", true);
     }
 
     public void BackFromAttackMelee()
     {
+        _shaderMeleeAttackTrigger = false;
+        StartCoroutine(ShaderMA_False());
         _anim.SetBool("AttackMelee", false);
     }
 
@@ -152,7 +199,7 @@ public class ViewerE_Sniper : MonoBehaviour
             timeFireHands += Time.deltaTime * 2;
             if (timeFireHands > 1) timeFireHands = 1;
 
-            fireHandsMat.SetFloat("_GlobalOpacity", timeFireHands);
+            fireHandsMat.SetFloat("_RangedFireOpacity", timeFireHands);
         }
 
         if (_model.timeToShoot > 1)
@@ -160,7 +207,7 @@ public class ViewerE_Sniper : MonoBehaviour
             timeFireHands -= Time.deltaTime * 2;
             if (timeFireHands < 0) timeFireHands = 0;
 
-            fireHandsMat.SetFloat("_GlobalOpacity", timeFireHands);
+            fireHandsMat.SetFloat("_RangedFireOpacity", timeFireHands);
         }
     }
 

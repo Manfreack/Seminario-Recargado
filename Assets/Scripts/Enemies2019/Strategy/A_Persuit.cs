@@ -17,7 +17,9 @@ public class A_Persuit : i_EnemyActions
 
             if (_e.GetComponent<ModelE_Melee>())
             {
-                if (_e.GetComponent<ModelE_Melee>().animClipName != "Heavy Attack_EM" && _e.GetComponent<ModelE_Melee>().animClipName != "Attack_EM")
+                if (_e.GetComponent<ModelE_Melee>().animClipName != "Heavy Attack_EM" && _e.GetComponent<ModelE_Melee>().animClipName != "E_Warrior_Attack1"
+                                                                                      && _e.GetComponent<ModelE_Melee>().animClipName != "E_Warrior_Attack2"
+                                                                                      && _e.GetComponent<ModelE_Melee>().animClipName != "E_Warrior_Attack3")
                 {
                     _e.target.CombatState();
                     Quaternion targetRotation;

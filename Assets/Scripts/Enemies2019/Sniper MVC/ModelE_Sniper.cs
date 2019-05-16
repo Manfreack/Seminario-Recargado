@@ -20,6 +20,10 @@ public class ModelE_Sniper : EnemyEntity
     public bool onMeleeAttack;
     public float timeToMeleeAttack;
     public bool cooldwonToGoBack;
+    public float timeToRetreat;
+    public float maxTimeToRetreat;
+    public float maxTimeDelayMeleeAttack;
+    public float minTimeDelayMeleeAttack;
 
     public Action TakeDamageEvent;
     public Action DeadEvent;
@@ -29,22 +33,6 @@ public class ModelE_Sniper : EnemyEntity
     public Action IdleEvent;
 	
 	public float maxLife;
-
-    public IEnumerator RotateToTarget()
-    {
-         yield return new WaitForSeconds(1);
-         timeToStopBack = UnityEngine.Random.Range(3, 4);
-         onRetreat = false;
-         StartCoroutine(Cooldwon());
-    }
-
-    public IEnumerator Cooldwon()
-    {
-        cooldwonToGoBack = true;
-        yield return new WaitForSeconds(15);
-        cooldwonToGoBack = false;
-    }
-
     public void Awake()
     {
         playerNodes.AddRange(FindObjectsOfType<CombatNode>());
@@ -52,7 +40,7 @@ public class ModelE_Sniper : EnemyEntity
         _view = GetComponent<ViewerE_Sniper>();
         munition = FindObjectOfType<EnemyAmmo>();
         timeToShoot = UnityEngine.Random.Range(3, 5);
-        timeToMeleeAttack = UnityEngine.Random.Range(1, 3);
+        timeToMeleeAttack = UnityEngine.Random.Range(minTimeDelayMeleeAttack, maxTimeDelayMeleeAttack);
         timeToStopBack = UnityEngine.Random.Range(3, 4);
 		maxLife = life;
 
@@ -162,6 +150,7 @@ public class ModelE_Sniper : EnemyEntity
 
         persuit.OnFixedUpdate += () =>
         {
+            Debug.Log("asdas");
 
             isAnswerCall = false;
 
@@ -214,26 +203,30 @@ public class ModelE_Sniper : EnemyEntity
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
             timeToMeleeAttack -= Time.deltaTime;
+
+            timeToRetreat -= Time.deltaTime;
            
             currentAction = new A_SniperMeleeAttack(this);
 
             if (!isDead && isAttack && !onRetreat) SendInputToFSM(EnemyInputs.ATTACK);
 
-            if (!isDead && !isAttack && isPersuit && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isAttack && isPersuit && !onRetreat && timeToRetreat < 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && !isAttack && !isPersuit && !onRetreat && timeToStopBack<=0) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isAttack && !isPersuit && !onRetreat && timeToStopBack<=0 && timeToRetreat < 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && onRetreat) SendInputToFSM(EnemyInputs.RETREAT);
+            if (!isDead && onRetreat && timeToRetreat<0) SendInputToFSM(EnemyInputs.RETREAT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
 
         retreat.OnEnter += x =>
         {
+            
             timeToStopBack = UnityEngine.Random.Range(5, 6);
 
             positionToBack = FindNearCombatNode();
-            
+
+            timeToRetreat = maxTimeToRetreat;
         };
 
         retreat.OnUpdate += () =>
@@ -268,6 +261,7 @@ public class ModelE_Sniper : EnemyEntity
 
         follow.OnUpdate += () =>
         {
+            Debug.Log(1);
 
             currentAction = new A_FollowTarget(this);
 
@@ -460,11 +454,6 @@ public class ModelE_Sniper : EnemyEntity
         }
     }
 
-    public void RetreatTrue()
-    {
-        if (!cooldwonToGoBack) onRetreat = true;
-    }
-
     public void OnDamageFalse()
     {
         onDamage = false;
@@ -488,6 +477,6 @@ public class ModelE_Sniper : EnemyEntity
 
         if (pos != Vector3.zero) return pos;
 
-        else return target.transform.position;
+        else return playerNodes.First().transform.position;
     }
 }

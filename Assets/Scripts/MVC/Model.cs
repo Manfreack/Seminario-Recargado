@@ -554,11 +554,6 @@ public class Model : MonoBehaviour
 
     public void Movement(Vector3 dir)
     {
-        if (isRuning)
-        {
-            stamina -= runStamina * Time.deltaTime;
-            view.UpdateStaminaBar(stamina / maxStamina);
-        }
 
         acceleration += 3f * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
@@ -882,6 +877,9 @@ public class Model : MonoBehaviour
         Vector3 dir = transform.position - enemy.position;
         float angle = Vector3.Angle(dir, transform.forward);
         if (angle < 90) isBehind = true;
+
+        if(onRoll) view.ShakeCameraDamage(0.5f, 0.5f, 0.5f);
+
         if (!isBehind && !isProyectile && onDefence && !heavyDamage)
         {
             stamina -= blockStamina;

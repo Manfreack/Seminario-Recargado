@@ -9,11 +9,12 @@ public class A_Reposition : i_EnemyActions
 
     public void Actions()
     {
+
         var dir = _posToRepos - _e.transform.position;
 
         var isBehind = Vector3.Dot(dir, _e.transform.forward);
 
-        if (_e.actualRing== _e.rings[1] || _e.actualRing == _e.rings[2])
+        if (_e.actualRing == _e.rings[1] || _e.actualRing == _e.rings[2])
         {
            
             _e.WalkBackEvent();

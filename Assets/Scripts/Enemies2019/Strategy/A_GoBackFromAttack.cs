@@ -11,32 +11,23 @@ public class A_GoBackFromAttack : i_EnemyActions
         _e.target.CombatState();
         _e.target.saveSword = true;
 
-            if (_e.timeToStopBack > 0 && !_e.onDamage)
+        var d = Vector3.Distance(_e.positionToBack, _e.transform.position);
+
+            if (_e.timeToStopBack > 0 && !_e.onDamage && d>1)
             {
                 _e.MoveEvent();
                 Quaternion targetRotation;
-
-                if (_e.avoidVectObstacles == Vector3.zero)
-                {
-                    var _dir = (_e.positionToBack - _e.transform.position).normalized;
-                    _dir.y = 0;
-                    targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
-                    _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                    _e.rb.MovePosition(_e.rb.position + _dir * _e.speed * Time.deltaTime);
-                }
-
-                else
-                {
-                    var _dir = (_e.avoidVectObstacles - _e.transform.position).normalized;
-                    _dir.y = 0;
-                    targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
-                    _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                    _e.rb.MovePosition(_e.rb.position + _dir * _e.speed * Time.deltaTime);
-                 }   
-
+                 var _dir = (_e.positionToBack - _e.transform.position).normalized;
+                 _dir.y = 0;
+                 var _avoidVect = (_e.avoidVectObstacles).normalized;
+                 _avoidVect.y = 0;
+                 targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
+                 _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
+                 _e.rb.MovePosition(_e.rb.position + (_avoidVect +_dir) * _e.speed * Time.deltaTime);
+                           
             }
 
-            if(_e.timeToStopBack <= 0)
+            if(_e.timeToStopBack <= 0 || d<1)
             {
                 _e.IdleEvent();
                 Quaternion targetRotation;
@@ -44,7 +35,7 @@ public class A_GoBackFromAttack : i_EnemyActions
                 _dir.y = 0;
                 targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
                 _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 10 * Time.deltaTime);
-                _e.StartCoroutine(_e.RotateToTarget());
+                _e.onRetreat = false;
             }
         
     }

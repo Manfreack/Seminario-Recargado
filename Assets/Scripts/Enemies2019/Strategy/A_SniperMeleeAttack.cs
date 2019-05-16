@@ -10,6 +10,12 @@ public class A_SniperMeleeAttack : i_EnemyActions
     {
         _e.target.CombatState();
         _e.target.saveSword = true;
+
+        if (_e.timeToRetreat <= 0)
+        {
+            _e.onRetreat = true;
+        }
+
         Quaternion targetRotation;
         var _dir = (_e.target.transform.position - _e.transform.position).normalized;
         _dir.y = 0;
@@ -19,11 +25,11 @@ public class A_SniperMeleeAttack : i_EnemyActions
         if (_e.timeToMeleeAttack <= 0)
         {
             _e.AttackMeleeEvent();
-            _e.timeToMeleeAttack = Random.Range(1,3);
+            _e.timeToMeleeAttack = Random.Range(_e.minTimeDelayMeleeAttack, _e.maxTimeDelayMeleeAttack);
         }
 
-    }
 
+    }
     public A_SniperMeleeAttack( ModelE_Sniper e)
     {
         _e = e;

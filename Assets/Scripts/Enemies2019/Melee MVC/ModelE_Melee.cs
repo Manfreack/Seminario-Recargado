@@ -31,7 +31,7 @@ public class ModelE_Melee : EnemyEntity
     public bool alreadyChangeDir;
     public bool onDefence;
     public int flankDir;
-    public bool testEnemy;
+    public bool damageDone;
     bool firstHit;
     bool impulse;
     public int changeRing;
@@ -96,6 +96,24 @@ public class ModelE_Melee : EnemyEntity
     }
 
     public IEnumerator RetreatCorrutine(float t)
+    {
+        yield return new WaitForSeconds(t);
+
+        if (!damageDone) StartCoroutine(RetreatCorrutine2(1.12f));
+
+        else onRetreat = true;
+    }
+
+    public IEnumerator RetreatCorrutine2(float t)
+    {
+        yield return new WaitForSeconds(t);
+
+        if (!damageDone) StartCoroutine(RetreatCorrutine3(0.23f));
+
+        else onRetreat = true;
+    }
+
+    public IEnumerator RetreatCorrutine3(float t)
     {
         yield return new WaitForSeconds(t);
         onRetreat = true;
@@ -276,7 +294,7 @@ public class ModelE_Melee : EnemyEntity
 
             var d = Vector3.Distance(transform.position, target.transform.position);
 
-            if (currentRing == actualRing || d<1) SendInputToFSM(EnemyInputs.WAIT);
+            if (currentRing == actualRing || d<2) SendInputToFSM(EnemyInputs.WAIT);
 
             if (!isDead && d > viewDistancePersuit) SendInputToFSM(EnemyInputs.FOLLOW);
 
@@ -390,6 +408,8 @@ public class ModelE_Melee : EnemyEntity
             if (NearCombatRing().name == "Ring1") timeToRetreat = 0.5f;
             if (NearCombatRing().name == "Ring2") timeToRetreat = 1f;
             if (NearCombatRing().name == "Ring3") timeToRetreat = 1.3f;
+
+            damageDone = false;
         };
 
         attack.OnFixedUpdate += () =>
@@ -469,7 +489,7 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
-            if (animClipName != "Attack_EM2" && animClipName != "Heavy Attack_EM" && animClipName != "Run_EM" && animClipName != "HitDefence") timeToRetreat -= Time.deltaTime;
+            if (animClipName != "E_Warrior_Attack1" && animClipName != "E_Warrior_Attack2" && animClipName != "E_Warrior_Attack3" && animClipName != "Heavy Attack_EM" && animClipName != "Run_EM" && animClipName != "HitDefence") timeToRetreat -= Time.deltaTime;
 
         };
 
@@ -597,9 +617,9 @@ public class ModelE_Melee : EnemyEntity
         }
 
         
-        if (animClipName != "Attack_EM2") impulse = false;
+        if (animClipName != "E_Warrior_Attack1" && animClipName != "E_Warrior_Attack2" && animClipName != "E_Warrior_Attack3") impulse = false;
 
-        if (impulse && animClipName == "Attack_EM2") transform.position += transform.forward * 2 * Time.deltaTime;
+        if (impulse && (animClipName == "E_Warrior_Attack1" || animClipName == "E_Warrior_Attack2" || animClipName == "E_Warrior_Attack3")) transform.position += transform.forward * 2 * Time.deltaTime;
                    
     }
 
@@ -787,6 +807,7 @@ public class ModelE_Melee : EnemyEntity
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
         if (player != null)
         {
+            damageDone = true;
             timeToRetreat += 0.25f;
             _view.WalckBackAnim();
             _view.BackFromAttack();
@@ -861,7 +882,7 @@ public class ModelE_Melee : EnemyEntity
 
         }).FirstOrDefault();
 
-        if (node.transform.position != Vector3.zero) return node.transform.position;
+        if (node && node.transform.position != Vector3.zero) return node.transform.position;
 
         else return target.transform.position;
     }

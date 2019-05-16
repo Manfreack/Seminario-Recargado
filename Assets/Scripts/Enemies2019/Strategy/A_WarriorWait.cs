@@ -11,6 +11,7 @@ public class A_WarriorWait : i_EnemyActions
 
     public void Actions()
     {
+        
 
         _e.target.CombatState();
         _e.target.saveSword = true;
@@ -22,23 +23,6 @@ public class A_WarriorWait : i_EnemyActions
             _e.cm.times--;
             _e.timeToAttack = true;          
         }
-
-       /* var d = Vector3.Distance(_e.transform.position, _e.target.transform.position);
-
-        if(_e.actualRing == _e.rings[1])
-        {
-            if (d < 4.62f)
-            {
-                returnToMyRing = true;
-                var dir = (_e.target.transform.position - _e.transform.position).normalized;
-                dir.y = 0;
-                Quaternion targetRotation;
-                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
-                _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                _e.rb.MovePosition(_e.rb.position - _e.transform.forward * _e.speed * Time.deltaTime);
-                _e.WalkBackEvent();
-            }
-        }*/
 
         if (!_e.onDamage && !returnToMyRing)
         {
@@ -61,7 +45,7 @@ public class A_WarriorWait : i_EnemyActions
 
             if (!_e.onDamage)
             {
-                _e.transform.RotateAround(_e.target.transform.position, Vector3.up, rotateSpeed * Time.deltaTime);
+                _e.transform.RotateAround(_e.target.transform.position, _e.target.transform.up, rotateSpeed * Time.deltaTime);
             }
         }
 

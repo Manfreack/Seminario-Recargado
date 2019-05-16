@@ -17,6 +17,34 @@ public class ViewerE_Melee : MonoBehaviour
     bool auxTakeDamage;
     public GameObject prefabTextDamage;
     public Camera cam;
+    int attacksCounter;
+    public GameObject sword;
+    public Material heavyMat;
+    public float timeShaderHeavyAttack;
+    bool heavyAttackShaderTrigger;
+
+    public IEnumerator ShaderHA_True()
+    {
+        heavyAttackShaderTrigger = true;
+
+        while (heavyAttackShaderTrigger)
+        {
+            HeavyAttackShader();
+            yield return new WaitForEndOfFrame();
+        }
+       
+    }
+
+    public IEnumerator ShaderHA_False()
+    {
+        while (timeShaderHeavyAttack > 0)
+        {
+            HeavyAttackShaderFalse();
+            yield return new WaitForEndOfFrame();
+        }
+
+        
+    }
 
     public IEnumerator DeadCorrutine()
     {
@@ -35,6 +63,7 @@ public class ViewerE_Melee : MonoBehaviour
 
     void Awake()
     {
+        heavyMat = sword.GetComponent<SkinnedMeshRenderer>().materials[1];
         _anim = GetComponent<Animator>();
         _model = GetComponent<ModelE_Melee>();
         myMeshes.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
@@ -86,12 +115,15 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void HeavyAttackAnim()
     {
+        StartCoroutine(ShaderHA_True());
         _anim.SetBool("HeavyAttack", true);
         _anim.SetBool("RunAttack", false);
     }
 
     public void HeavyAttackFalse()
     {
+        heavyAttackShaderTrigger = false;
+        StartCoroutine(ShaderHA_False());
         _anim.SetBool("HeavyAttack", false);
     }
 
@@ -148,8 +180,6 @@ public class ViewerE_Melee : MonoBehaviour
     {
         _anim.SetBool("WalkBack", true);
         _anim.SetBool("WalkCombat", false);
-       // _anim.SetBool("HeavyAttack", false);
-        //_anim.SetBool("Attack", false);
         _anim.SetBool("IdleCombat", false);
         _anim.SetBool("Idle", false);
         _anim.SetBool("WalkL", false);
@@ -173,13 +203,29 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void AttackAnim()
     {
+        attacksCounter = 0;
         _anim.SetBool("Attack", true);
+        _anim.SetBool("Attack2", true);
+        _anim.SetBool("Attack3", true);
         _anim.SetBool("RunAttack", false);
     }
 
     public void BackFromAttack()
     {
         _anim.SetBool("Attack", false);
+
+        if(_model.damageDone && attacksCounter==1) _anim.SetBool("Attack2", false);
+
+        if(_model.damageDone && attacksCounter==2) _anim.SetBool("Attack3", false);
+
+        attacksCounter++;
+    }
+
+    public void EndChainAttack()
+    {
+        _anim.SetBool("Attack", false);
+        _anim.SetBool("Attack2", false);
+        _anim.SetBool("Attack3", false);
     }
 
     public void IdleAnim()
@@ -240,6 +286,24 @@ public class ViewerE_Melee : MonoBehaviour
             if (timeShaderDamage <= 0) damaged = false;
 
         }
+    }
+
+    public void HeavyAttackShader()
+    {
+        timeShaderHeavyAttack += Time.deltaTime * 1.5f;
+
+        if (timeShaderHeavyAttack >= 1) timeShaderHeavyAttack = 1;
+
+        heavyMat.SetFloat("_Opacity", timeShaderHeavyAttack);
+    }
+
+    public void HeavyAttackShaderFalse()
+    {
+        timeShaderHeavyAttack -= Time.deltaTime * 1.5f;
+
+        if (timeShaderHeavyAttack <= 0) timeShaderHeavyAttack = 0;
+
+        heavyMat.SetFloat("_Opacity", timeShaderHeavyAttack);
     }
 
     public void LifeBar(float val)
