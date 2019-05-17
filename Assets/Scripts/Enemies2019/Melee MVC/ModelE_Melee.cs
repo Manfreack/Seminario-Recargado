@@ -611,7 +611,7 @@ public class ModelE_Melee : EnemyEntity
             SendInputToFSM(EnemyInputs.DIE);
         }
 
-        if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("HeavyAttack")) && !isDead && !onDefence)
+        if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("Attack2") || _view._anim.GetBool("Attack3") || _view._anim.GetBool("HeavyAttack")) && !isDead && !onDefence)
         {
             transform.LookAt(target.transform.position);
         }

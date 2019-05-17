@@ -586,7 +586,7 @@ public class Model : MonoBehaviour
 
     public void CombatMovement(Vector3 dir, bool key, bool rotate)
     {
-        if (isRuning)
+        if (isRuning && !onDefence)
         {
             stamina -= runStamina * Time.deltaTime;
             view.UpdateStaminaBar(stamina / maxStamina);
