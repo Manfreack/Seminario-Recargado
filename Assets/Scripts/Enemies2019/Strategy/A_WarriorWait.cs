@@ -47,10 +47,18 @@ public class A_WarriorWait : i_EnemyActions
             {
                 rotateSpeed = 50 / distance;
                 _e.WalkRightEvent();
+
+                if (_e.entitiesAvoidVect != Vector3.zero)
+                {
+                    Debug.Log(_e.name + " right");
+                    _e.flankDir = 0;
+                }
+
                 _e.transform.RotateAround(_e.target.transform.position, _e.target.transform.up, rotateSpeed * Time.deltaTime);
+
                 if (_e.avoidVectObstacles != Vector3.zero)
                 {
-                    _e.rb.MovePosition(_e.rb.position + _e.transform.forward * _e.speed * Time.deltaTime);
+                    _e.rb.MovePosition(_e.rb.position  + _e.transform.forward * _e.speed * Time.deltaTime);
                 }
             }
 
@@ -58,11 +66,21 @@ public class A_WarriorWait : i_EnemyActions
             {
                 rotateSpeed = -50 / distance;
                 _e.WalkLeftEvent();
+
+                if(_e.entitiesAvoidVect != Vector3.zero)
+                {
+                    Debug.Log(_e.name + "left");
+                    _e.flankDir = 1;
+                }
+
                 _e.transform.RotateAround(_e.target.transform.position, _e.target.transform.up, rotateSpeed * Time.deltaTime);
+
                 if (_e.avoidVectObstacles != Vector3.zero)
                 {
                     _e.rb.MovePosition(_e.rb.position + _e.transform.forward * _e.speed * Time.deltaTime);
                 }
+
+                
             }
 
             if (_e.flankDir == 2)
@@ -72,51 +90,7 @@ public class A_WarriorWait : i_EnemyActions
 
            
         }
-        /*
-         if (!_e.onDamage && !returnToMyRing)
-         {
-             var rotateSpeed = 0;
-
-             if (_e.flankDir == 1)
-             {
-                 rotateSpeed = 35;
-                 _e.WalkRightEvent();
-             }
-
-             else if (_e.flankDir == 0)
-             {
-                 rotateSpeed = -35;
-                 _e.WalkLeftEvent();
-             }
-
-             var dir = (_e.target.transform.position - _e.transform.position).normalized;
-             _e.transform.forward = dir;
-
-             if (!_e.onDamage)
-             {
-                 _e.transform.RotateAround(_e.target.transform.position, _e.target.transform.up, rotateSpeed * Time.deltaTime);
-             }
-         }
-
-         var obs = Physics.OverlapSphere(_e.transform.position, 1).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>());
-         if(obs.Count()>1)
-         {
-             if(_e.changeRotateWarrior)
-             {
-                 if(_e.flankDir == 0)
-                 {
-                     _e.flankDir = 1;
-                 }
-
-                 else
-                 {
-                     _e.flankDir = 0;
-                 }
-             }
-
-             _e.StartCoroutine(_e.DelayChangeDirWarrior());
-         }
-         */
+        
     }
 
     public A_WarriorWait(ModelE_Melee e , int dir)

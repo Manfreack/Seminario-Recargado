@@ -292,9 +292,9 @@ public class ModelE_Melee : EnemyEntity
 
             firstSaw = true;
 
-            if(timeToAttack && !onDamage) delayToAttack -= Time.deltaTime; 
+            if (timeToAttack && aggressiveLevel == 1) delayToAttack -= Time.deltaTime;
 
-            if(timeToAttack && onDamage) delayToAttack -= Time.deltaTime * 2; 
+            if (timeToAttack && aggressiveLevel == 2) delayToAttack -= Time.deltaTime / 2;
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
@@ -361,30 +361,11 @@ public class ModelE_Melee : EnemyEntity
 
             if (aggressiveLevel == 1) viewDistanceAttack = 4.5f;
 
+            if (aggressiveLevel == 2) viewDistanceAttack = 6.5f;
+
             timeToChangeRotation = UnityEngine.Random.Range(1.5f, 3);
 
-            /* var restOfNodes = new List<CombatNode>();
-
-             restOfNodes.AddRange(playerNodes);
-
-             restOfNodes.RemoveAll(y => NearNodes.Contains(y));
-
-             foreach (var item in restOfNodes)
-             {
-                 if (item.myOwner == this) item.myOwner = null;
-             }
-
-             /* int r = UnityEngine.Random.Range(0, 2);
-
-              flankDir = r;
-
-              if(!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
-
-              _view._anim.SetBool("WalkBack", false);
-              firstAttack = false;
-              onRetreat = false;
-              //timeToAttack = false;
-              */
+          
         };
 
      
@@ -451,9 +432,9 @@ public class ModelE_Melee : EnemyEntity
 
             WaitState = true;
 
-            if (timeToAttack) delayToAttack -= Time.deltaTime;
+            if (timeToAttack && aggressiveLevel==1) delayToAttack -= Time.deltaTime;
 
-            if (timeToAttack && onDamage) delayToAttack -= Time.deltaTime * 2;
+            if (timeToAttack && aggressiveLevel==2) delayToAttack -= Time.deltaTime /2;
 
             angleToAttack = 110;
 
@@ -530,6 +511,7 @@ public class ModelE_Melee : EnemyEntity
         {
             //distanceRetreat = Vector3.Distance(transform.position, target.transform.position);
             if (aggressiveLevel == 1) timeToRetreat = 1.5f;
+            if (aggressiveLevel == 2) timeToRetreat = 3.5f;
         };
 
         retreat.OnFixedUpdate += () =>
@@ -779,7 +761,7 @@ public class ModelE_Melee : EnemyEntity
 
     public override Vector3 EntitiesAvoidance()
     {
-        var obs = Physics.OverlapSphere(transform.position, 2, layerEntites);
+        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites);
         if (obs.Count() > 0)
         {
             var dir = transform.position - obs.First().transform.position;
@@ -985,6 +967,29 @@ public class ModelE_Melee : EnemyEntity
         {
             lastCombatNode.myOwner = null;
             lastCombatNode = myCombatNode;
+        }
+
+        var NearNodes = Physics.OverlapSphere(myCombatNode.transform.position, distanceToHit).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
+
+        foreach (var item in NearNodes)
+        {
+            item.myOwner = this;
+        }
+
+        if (NearNodes.Count() > 0)
+        {
+
+            var restOfNodes = new List<CombatNode>();
+
+            restOfNodes.AddRange(playerNodes);
+
+            restOfNodes.RemoveAll(y => NearNodes.Contains(y));
+
+            foreach (var item in restOfNodes)
+            {
+                if (item.myOwner == this) item.myOwner = null;
+            }
+
         }
 
         return node;
