@@ -7,7 +7,6 @@ public class CombatArea : MonoBehaviour
 {
     public List<EnemyEntity> myNPCs = new List<EnemyEntity>();
     public List<GameObject> walls = new List<GameObject>();
-    public List<CombatRing> rings = new List<CombatRing>();
     Model player;
     public int myEntities;
     bool aux;
@@ -67,16 +66,7 @@ public class CombatArea : MonoBehaviour
                 return d;
             }).ToList();
 
-            for (int i = 0; i < orderEnemies.Count; i++)
-            {
-                if (i <= 1) orderEnemies[i].actualRing = rings[0];
-
-                if (i > 1 && i <= 5) orderEnemies[i].actualRing = rings[1];
-
-                if (i > 5) orderEnemies[i].actualRing = rings[2];
-            }
-            
-
+ 
             foreach (var item in myNPCs) item.target = player;
             foreach (var item in walls)
             {

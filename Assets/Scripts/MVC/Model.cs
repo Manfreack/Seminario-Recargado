@@ -9,6 +9,11 @@ public class Model : MonoBehaviour
     public Transform attackPivot;
     public Viewer view;
 
+    public float distanceAggressiveNodes;
+    public float distanceNon_AggressiveNodes;
+    public CombatNodesManager nodesManager;
+    public List<CombatNode> combatNodesArea = new List<CombatNode>();
+
     public PowerManager powerManager;
     public Powers prefabPower;
     public Pool<Powers> powerPool;
@@ -248,8 +253,14 @@ public class Model : MonoBehaviour
 
     public enum PotionName { Health, Stamina, Extra_Health, Costless_Hit, Mana };
 
+    private void Awake()
+    {
+        ModifyNodes();
+    }
+
     void Start()
     {
+        
         timeOnCombat = -1;
         rb = GetComponent<Rigidbody>();
         powerManager = FindObjectOfType<PowerManager>();
@@ -267,7 +278,9 @@ public class Model : MonoBehaviour
 
     void Update()
     {
-        if(defenceBroken)
+        
+
+        if (defenceBroken)
         {
             timeToRecoverDefence -= Time.deltaTime;
 
@@ -362,6 +375,31 @@ public class Model : MonoBehaviour
 
         if (fadeTimer < view.fadeTime) fadeTimer += Time.deltaTime;
         else view.startFade.enabled = false;
+    }
+
+    public void ModifyNodes()
+    {
+       
+        var aggresisveNodes = Physics.OverlapSphere(transform.position, distanceAggressiveNodes).Where(x => x.GetComponent<CombatNode>()).Select(x => x.GetComponent<CombatNode>());
+
+        if (aggresisveNodes.Count() > 0)
+        {
+            foreach (var item in aggresisveNodes)
+            {
+                item.aggressive = true;
+            }
+        }
+
+        var non_AggresisveNodes = Physics.OverlapSphere(transform.position, distanceNon_AggressiveNodes).Where(x => x.GetComponent<CombatNode>()).Select(x => x.GetComponent<CombatNode>());
+
+        if (non_AggresisveNodes.Count() > 0)
+        {
+            foreach (var item in non_AggresisveNodes)
+            {
+                if (!item.aggressive) item.Non_Aggressive = true;
+            }
+        }
+     
     }
 
     public void TimeToDoDamage()
@@ -989,6 +1027,12 @@ public class Model : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPivot.position, radiusAttack);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position + new Vector3(0 ,0.3f, 0), distanceAggressiveNodes);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position + new Vector3(0, 0.3f, 0), distanceNon_AggressiveNodes);
     }
 
     public void WraperAction()

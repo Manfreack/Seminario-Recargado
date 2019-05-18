@@ -7,7 +7,6 @@ public class EnemyCombatManager : MonoBehaviour {
 
     public int times;
     public List<ModelE_Melee> enemiesList = new List<ModelE_Melee>();
-    public List<CombatRing> rings = new List<CombatRing>();
     Vector3 targetPos;
 
 	void Start () {
@@ -35,21 +34,6 @@ public class EnemyCombatManager : MonoBehaviour {
 
             if (count > 2) item.timeToAttack = false;
         }
-
-       /* var orderEnemies = enemiesList.OrderBy(X =>
-        {
-            var d = Vector3.Distance(X.transform.position, targetPos);
-            return d;
-        }).ToList();
-
-        for (int i = 0; i < orderEnemies.Count; i++)
-        {
-            if (i <= 1) orderEnemies[i].actualRing = rings[0];
-
-            if (i > 1 && i <= 5) orderEnemies[i].actualRing = rings[1];
-
-            if (i > 5) orderEnemies[i].actualRing = rings[2];
-        }*/
     }
 
 

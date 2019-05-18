@@ -9,7 +9,7 @@ public class ModelE_Melee : EnemyEntity
 
     public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE, REPOSITION }
     public EventFSM<EnemyInputs> _myFsm;
-    public List<CombatRing> rings = new List<CombatRing>();
+    public List<CombatNode> restOfNodes = new List<CombatNode>();
     public float timeToPatrol;
     public LayerMask layerPlayer;
     public LayerMask layerObst;
@@ -24,6 +24,7 @@ public class ModelE_Melee : EnemyEntity
     public ViewerE_Melee _view;
     public float distanceToHit;
     public float angleToHit;
+    public float timeToChangeRotation;
     public bool onAttackArea;
     public bool firstAttack;
     public bool checkTurn;
@@ -70,7 +71,6 @@ public class ModelE_Melee : EnemyEntity
     public float hitsToStartDefenceMAX;
     public float hitsToStartDefenceMIN;
     public float actualHits;
-    public CombatRing currentRing;
 
     [Header("Enemy States:")]
 
@@ -79,7 +79,6 @@ public class ModelE_Melee : EnemyEntity
     public bool PersuitState;
     public bool WaitState;
     public bool RetreatState;
-    List<Ring> ringChilds = new List<Ring>();
 
     public IEnumerator FollowCorrutine ()
     {
@@ -93,6 +92,13 @@ public class ModelE_Melee : EnemyEntity
         pathToTarget.AddRange(originalPathToTarget);
         currentIndex = pathToTarget.Count;
         yield return new WaitForSeconds(2);
+    }
+
+    public IEnumerator RetreatCorrutineHeavy(float t)
+    {
+        yield return new WaitForSeconds(t);     
+
+        onRetreat = true;
     }
 
     public IEnumerator RetreatCorrutine(float t)
@@ -138,7 +144,7 @@ public class ModelE_Melee : EnemyEntity
     public void Awake()
     {
         
-        playerNodes.AddRange(FindObjectsOfType<CombatNode>());
+       
         delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
         rb = gameObject.GetComponent<Rigidbody>();
         _view = GetComponent<ViewerE_Melee>();
@@ -245,11 +251,11 @@ public class ModelE_Melee : EnemyEntity
             timeToPatrol -= Time.deltaTime;
             currentAction = new A_Patrol(this);
 
-            if ((!isDead && isPersuit && !isAttack && !target.view.startFade.enabled) || onDamage) SendInputToFSM(EnemyInputs.PERSUIT);
+            if ((!isDead && isPersuit && !isWaitArea && !target.view.startFade.enabled) || onDamage) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && isAnswerCall) SendInputToFSM(EnemyInputs.ANSWER);
 
-            if (!isDead && isAttack) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -266,10 +272,12 @@ public class ModelE_Melee : EnemyEntity
             CombatWalkEvent();
             if (!isDead && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isAttack) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
+
+
 
 
         persuit.OnFixedUpdate += () =>
@@ -294,7 +302,7 @@ public class ModelE_Melee : EnemyEntity
 
             var d = Vector3.Distance(transform.position, target.transform.position);
 
-            if (currentRing == actualRing || d<2) SendInputToFSM(EnemyInputs.WAIT);
+            if (isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
 
             if (!isDead && d > viewDistancePersuit) SendInputToFSM(EnemyInputs.FOLLOW);
 
@@ -325,11 +333,11 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && d > viewDistancePersuit && !onRetreat && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && !isAttack && isPersuit && timeToHoldDefence<=0) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isWaitArea && isPersuit && timeToHoldDefence<=0) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && delayToAttack <= 0 && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.ATTACK);
 
-            if (!isDead && isAttack && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.WAIT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
@@ -345,26 +353,101 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnEnter += x =>
         {
-            int r = UnityEngine.Random.Range(0, 2);
-
-            flankDir = r;
-
-            if(!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
+            if (!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
 
             _view._anim.SetBool("WalkBack", false);
             firstAttack = false;
             onRetreat = false;
-            //timeToAttack = false;
+
+            if (aggressiveLevel == 1) viewDistanceAttack = 4.5f;
+
+            timeToChangeRotation = UnityEngine.Random.Range(1.5f, 3);
+
+            /* var restOfNodes = new List<CombatNode>();
+
+             restOfNodes.AddRange(playerNodes);
+
+             restOfNodes.RemoveAll(y => NearNodes.Contains(y));
+
+             foreach (var item in restOfNodes)
+             {
+                 if (item.myOwner == this) item.myOwner = null;
+             }
+
+             /* int r = UnityEngine.Random.Range(0, 2);
+
+              flankDir = r;
+
+              if(!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
+
+              _view._anim.SetBool("WalkBack", false);
+              firstAttack = false;
+              onRetreat = false;
+              //timeToAttack = false;
+              */
         };
 
      
         wait.OnUpdate += () =>
         {
-            _view._anim.SetBool("WalkBack", false);
+            WaitState = true;
 
-            if (actualRing == rings[0]) viewDistanceAttack = 4.5f;
-            if (actualRing == rings[1]) viewDistanceAttack = 6;
-            if (actualRing == rings[2]) viewDistanceAttack = 8;
+            timeToChangeRotation -= Time.deltaTime;
+
+            if(timeToChangeRotation <=0 && changeRotateWarrior)
+            {
+                timeToChangeRotation = UnityEngine.Random.Range(0.5f, 1.5f);
+                changeRotateWarrior = false;
+            }
+
+            if (timeToChangeRotation <= 0 && !changeRotateWarrior)
+            {
+                bool left = false;
+                bool right = false;
+
+                foreach (var item in myWarriorFriends)
+                {
+                    var relativePoint = transform.InverseTransformPoint(item.transform.position);
+
+                    if (relativePoint.x < 0.0) left = true;
+ 
+                    if (relativePoint.x > 0.0) right = true;                  
+                }
+
+                if (left && !right) flankDir = 0; 
+
+                if (!left && right) flankDir = 1; 
+
+                if (!left && !right) flankDir = 2; 
+           
+                timeToChangeRotation = UnityEngine.Random.Range(2, 3);
+                changeRotateWarrior = true;
+            }
+
+            var NearNodes = Physics.OverlapSphere(transform.position, distanceToHit).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
+
+            foreach (var item in NearNodes)
+            {
+                item.myOwner = this;
+            }
+
+            if (NearNodes.Count() > 0)
+            {
+
+                restOfNodes = new List<CombatNode>();
+
+                restOfNodes.AddRange(playerNodes);
+
+                restOfNodes.RemoveAll(y => NearNodes.Contains(y));
+
+                foreach (var item in restOfNodes)
+                {
+                    if (item.myOwner == this) item.myOwner = null;
+                }
+
+            }
+
+            currentAction = new A_WarriorWait(this, flankDir);
 
             WaitState = true;
 
@@ -380,18 +463,16 @@ public class ModelE_Melee : EnemyEntity
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
-            currentAction = new A_WarriorWait(this , flankDir);
+            if (!isDead && !isWaitArea && isPersuit && !onDefence) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && !isAttack && isPersuit && !onDefence) SendInputToFSM(EnemyInputs.PERSUIT);
-
-            if (!isDead && !isAttack && !isPersuit && !onDefence) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isWaitArea && !isPersuit && !onDefence) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && delayToAttack <= 0 && !onDefence) SendInputToFSM(EnemyInputs.ATTACK);
 
-            if (!isDead && actualHits<=0) SendInputToFSM(EnemyInputs.DEFENCE);
+            if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
-            
+
         };
 
         wait.OnExit += x =>
@@ -405,10 +486,10 @@ public class ModelE_Melee : EnemyEntity
             onRetreat = false;
             firstAttack = false;
 
-            if (NearCombatRing().name == "Ring1") timeToRetreat = 0.5f;
+          /*  if (NearCombatRing().name == "Ring1") timeToRetreat = 0.5f;
             if (NearCombatRing().name == "Ring2") timeToRetreat = 1f;
             if (NearCombatRing().name == "Ring3") timeToRetreat = 1.3f;
-
+            */
             damageDone = false;
         };
 
@@ -426,10 +507,9 @@ public class ModelE_Melee : EnemyEntity
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
-            if (!isDead && !isAttack && isPersuit && !onRetreat && !onDefence) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isWaitArea && isPersuit && !onRetreat && !onDefence) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && d > viewDistancePersuit && !onRetreat && !onDefence) SendInputToFSM(EnemyInputs.FOLLOW);
-
 
             if (onRetreat && !onDefence) SendInputToFSM(EnemyInputs.RETREAT);
 
@@ -445,43 +525,28 @@ public class ModelE_Melee : EnemyEntity
             AttackState = false;
         };
 
-        reposition.OnEnter += x =>
-        {
-            nearRingPosition = NearRing();
-        };
-
-        reposition.OnUpdate += () =>
-        {
-
-            currentAction = new A_Reposition(this, nearRingPosition);
-
-            if (currentRing == actualRing) SendInputToFSM(EnemyInputs.WAIT);
-        };
 
         retreat.OnEnter += x =>
         {
-            vectoToNodeRetreat = (FindNearCombatNode() - transform.position).normalized;
-            vectoToNodeRetreat.y = 0;
-            distanceRetreat = Vector3.Distance(transform.position, target.transform.position);
+            //distanceRetreat = Vector3.Distance(transform.position, target.transform.position);
+            if (aggressiveLevel == 1) timeToRetreat = 1.5f;
         };
 
         retreat.OnFixedUpdate += () =>
         {
             RetreatState = true;
 
-            currentAction = new A_WarriorRetreat(this, vectoToNodeRetreat);
+            currentAction = new A_WarriorRetreat(this);
 
             var d = Vector3.Distance(transform.position, target.transform.position);
 
-           // if (!isDead && isPersuit && actualRing != currentRing && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && isPersuit && !isWaitArea && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && d > viewDistancePersuit && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
 
-            if (!isDead && actualRing == currentRing && timeToRetreat <=0) SendInputToFSM(EnemyInputs.WAIT);
-
-            if (!isDead && currentRing != actualRing && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.REPOSITION);
+            if (!isDead && isWaitArea && timeToRetreat <=0) SendInputToFSM(EnemyInputs.WAIT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -566,7 +631,7 @@ public class ModelE_Melee : EnemyEntity
 
     private void Start()
     {
-        ringChilds.AddRange(FindObjectsOfType<Ring>());
+        playerNodes.AddRange(FindObjectsOfType<CombatNode>());
     }
 
     private void Update()
@@ -588,8 +653,8 @@ public class ModelE_Melee : EnemyEntity
             if (!onAttackArea && SearchForTarget.SearchTarget(target.transform, viewDistancePersuit, angleToPersuit, transform, true, layerObst)) isPersuit = true;
             else isPersuit = false;
 
-            if (!onAttackArea && SearchForTarget.SearchTarget(target.transform, viewDistanceAttack, angleToAttack, transform, true, layerObst)) isAttack = true;
-            else isAttack = false;
+            if (!onAttackArea && SearchForTarget.SearchTarget(target.transform, viewDistanceAttack, angleToAttack, transform, true, layerObst)) isWaitArea = true;
+            else isWaitArea = false;
 
             if (SearchForTarget.SearchTarget(target.transform, distanceToHit, angleToHit, transform, true, layerObst)) onAttackArea = true;
             else onAttackArea = false;
@@ -662,7 +727,7 @@ public class ModelE_Melee : EnemyEntity
 
     public override Vector3 ObstacleAvoidance()
     {     
-       var obs = Physics.OverlapSphere(transform.position, 2, layerObst).Where(x=> !x.GetComponent<Model>());
+       var obs = Physics.OverlapSphere(transform.position, 1, layerObst).Where(x=> !x.GetComponent<Model>());
        if (obs.Count() > 0)
        {
            var dir = transform.position - obs.First().transform.position;
@@ -835,33 +900,6 @@ public class ModelE_Melee : EnemyEntity
         }
     }
 
-    CombatRing NearCombatRing()
-    {
-        var ring = ringChilds.OrderBy(x =>
-        {
-            var d = Vector3.Distance(x.transform.position, transform.position);
-            return d;
-        }).First().parent;
-
-        return ring;
-    }
-  
-    Vector3 NearRing()
-    {
-        int n = 1;
-
-        if (actualRing == rings[1]) n = 2;
-
-        if (actualRing == rings[2]) n = 3;
-
-        var ring = playerNodes.Where(x=> x.NodeRingNumber == n).OrderBy(x =>
-        {
-            var d = Vector3.Distance(x.transform.position, transform.position);
-            return d;
-        }).First();
-
-        return ring.transform.position;
-    }
 
     public override void RemoveNearEntity(EnemyEntity e)
     {
@@ -873,18 +911,83 @@ public class ModelE_Melee : EnemyEntity
         e.myWarriorFriends.Remove(this);
     }
 
-    public override Vector3 FindNearCombatNode()
+    public override CombatNode FindNearAggressiveNode()
     {
-        var node = playerNodes.Where(x => x.meleeNode).OrderBy(x =>
+        var node = playerNodes.Where(x => x.aggressive && !x.isBusy && (x.myOwner == null || x.myOwner == this)).OrderBy(x =>
         {
              var d = Vector3.Distance(x.transform.position, transform.position);
              return d;
 
         }).FirstOrDefault();
 
-        if (node && node.transform.position != Vector3.zero) return node.transform.position;
+        myCombatNode = node;
 
-        else return target.transform.position;
+        myCombatNode.myOwner = this;
+
+        if (lastCombatNode == null)
+        {
+            lastCombatNode = node;
+            lastCombatNode.myOwner = this;
+        }
+
+        if(myCombatNode != lastCombatNode)
+        {
+            lastCombatNode.myOwner = null;
+            lastCombatNode = myCombatNode;
+        }
+
+        var NearNodes = Physics.OverlapSphere(myCombatNode.transform.position, distanceToHit).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
+
+        foreach (var item in NearNodes)
+        {
+            item.myOwner = this;
+        }
+
+        if (NearNodes.Count() > 0)
+        {
+
+            var restOfNodes = new List<CombatNode>();
+
+            restOfNodes.AddRange(playerNodes);
+
+            restOfNodes.RemoveAll(y => NearNodes.Contains(y));
+
+            foreach (var item in restOfNodes)
+            {
+                if (item.myOwner == this) item.myOwner = null;
+            }
+
+        }
+
+        return node;
+    }
+
+    public override CombatNode FindNearNon_AggressiveNode()
+    {
+        var node = playerNodes.Where(x => x.Non_Aggressive && !x.isBusy && (x.myOwner == null || x.myOwner == this)).OrderBy(x =>
+        {
+            var d = Vector3.Distance(x.transform.position, transform.position);
+            return d;
+
+        }).FirstOrDefault();
+
+        myCombatNode = node;
+
+        myCombatNode.myOwner = this;
+
+        if (lastCombatNode == null)
+        {
+            lastCombatNode = node;
+            lastCombatNode.myOwner = this;
+        }
+
+        if (myCombatNode != lastCombatNode)
+        {
+            lastCombatNode.myOwner = null;
+            lastCombatNode = myCombatNode;
+        }
+
+        return node;
     }
 
     public void StopRetreat()
@@ -898,20 +1001,18 @@ public class ModelE_Melee : EnemyEntity
         else checkTurn = false;
     }
 
-    public void OnTriggerStay(Collider c)
-    {
-        if (c.GetComponent<Ring>()) currentRing = c.GetComponent<Ring>().parent;
-
-    }
-
     public void OnTriggerEnter(Collider c)
     {
-        if (c.GetComponent<Ring>()) currentRing = c.GetComponent<Ring>().parent;
+        if (c.GetComponent<CombatNode>() && isWaitArea) c.GetComponent<CombatNode>().myOwner = this;
+    }
+
+    public void OnTriggerStay(Collider c)
+    {
+        if (c.GetComponent<CombatNode>() && isWaitArea) c.GetComponent<CombatNode>().myOwner = this;
     }
 
     public void OnTriggerExit(Collider c)
     {
-        if (c.GetComponent<Ring>()) currentRing = null;
-
+        if (c.GetComponent<CombatNode>() && isWaitArea) c.GetComponent<CombatNode>().myOwner = null;
     }
 }

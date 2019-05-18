@@ -14,7 +14,7 @@ public class A_Reposition : i_EnemyActions
 
         var isBehind = Vector3.Dot(dir, _e.transform.forward);
 
-        if (_e.actualRing == _e.rings[1] || _e.actualRing == _e.rings[2])
+      /*  if (_e.actualRing == _e.rings[1] || _e.actualRing == _e.rings[2])
         {
            
             _e.WalkBackEvent();
@@ -28,6 +28,7 @@ public class A_Reposition : i_EnemyActions
             _e.transform.forward = (_e.target.transform.position - _e.transform.position).normalized;
             _e.rb.MovePosition(_e.rb.position + _e.transform.forward * _e.speed * Time.deltaTime);
         }
+        */
     }
 
     public A_Reposition (ModelE_Melee e, Vector3 posToRepos)

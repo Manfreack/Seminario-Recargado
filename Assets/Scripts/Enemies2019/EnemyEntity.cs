@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class EnemyEntity: MonoBehaviour
 {
+    public int aggressiveLevel;
     public float life;
     public float totalLife;
     public abstract Vector3 ObstacleAvoidance();
@@ -11,7 +12,7 @@ public abstract class EnemyEntity: MonoBehaviour
     public Vector3 avoidVectObstacles;
     public Vector3 entitiesAvoidVect;
     public bool isPersuit;
-    public bool isAttack;
+    public bool isWaitArea;
     public bool onAttack;
     public bool isAnswerCall;
     public bool isDead;
@@ -46,7 +47,8 @@ public abstract class EnemyEntity: MonoBehaviour
     public CombatArea ca;
     public abstract void RemoveNearEntity(EnemyEntity e);
     public List<CombatNode> playerNodes = new List<CombatNode>();
-    public abstract Vector3 FindNearCombatNode();
+    public abstract CombatNode FindNearAggressiveNode();
+    public abstract CombatNode FindNearNon_AggressiveNode();
     public CombatNode myCombatNode;
-    public CombatRing actualRing;
+    public CombatNode lastCombatNode;
 }

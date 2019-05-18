@@ -118,15 +118,15 @@ public class ModelE_Sniper : EnemyEntity
 
             currentAction = new A_SniperPatrol(this);
 
-            if (!isDead && isPersuit && !isAttack) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.PERSUIT);
 
             if (!isDead && isAnswerCall) SendInputToFSM(EnemyInputs.ANSWER);
 
-            if (!isDead && isAttack) SendInputToFSM(EnemyInputs.ATTACK);
+            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.ATTACK);
 
             if (!isDead && onMeleeAttack && onDamage) SendInputToFSM(EnemyInputs.MELEE_ATTACK);
 
-            if (!isDead && !isAttack && !isPersuit && !onMeleeAttack && onDamage) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isWaitArea && !isPersuit && !onMeleeAttack && onDamage) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -145,7 +145,7 @@ public class ModelE_Sniper : EnemyEntity
             if (!onDamage) MoveEvent();
             if (!isDead && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isAttack) SendInputToFSM(EnemyInputs.ATTACK);
+            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.ATTACK);
         };
 
         persuit.OnFixedUpdate += () =>
@@ -164,9 +164,9 @@ public class ModelE_Sniper : EnemyEntity
 
             if (!isDead && onMeleeAttack) SendInputToFSM(EnemyInputs.MELEE_ATTACK);
 
-            if (!isDead && isAttack) SendInputToFSM(EnemyInputs.ATTACK);
+            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.ATTACK);
 
-            if (!isDead && !isAttack && !isPersuit) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isWaitArea && !isPersuit) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
@@ -186,9 +186,9 @@ public class ModelE_Sniper : EnemyEntity
 
             if (!isDead && onMeleeAttack) SendInputToFSM(EnemyInputs.MELEE_ATTACK);
 
-            if (!isDead && !isAttack && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isWaitArea && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && !isAttack && !isPersuit) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isWaitArea && !isPersuit) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
@@ -208,11 +208,11 @@ public class ModelE_Sniper : EnemyEntity
            
             currentAction = new A_SniperMeleeAttack(this);
 
-            if (!isDead && isAttack && !onRetreat) SendInputToFSM(EnemyInputs.ATTACK);
+            if (!isDead && isWaitArea && !onRetreat) SendInputToFSM(EnemyInputs.ATTACK);
 
-            if (!isDead && !isAttack && isPersuit && !onRetreat && timeToRetreat < 0) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isWaitArea && isPersuit && !onRetreat && timeToRetreat < 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && !isAttack && !isPersuit && !onRetreat && timeToStopBack<=0 && timeToRetreat < 0) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isWaitArea && !isPersuit && !onRetreat && timeToStopBack<=0 && timeToRetreat < 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && onRetreat && timeToRetreat<0) SendInputToFSM(EnemyInputs.RETREAT);
 
@@ -224,7 +224,7 @@ public class ModelE_Sniper : EnemyEntity
             
             timeToStopBack = UnityEngine.Random.Range(5, 6);
 
-            positionToBack = FindNearCombatNode();
+         //   positionToBack = FindNearCombatNode();
 
             timeToRetreat = maxTimeToRetreat;
         };
@@ -236,13 +236,13 @@ public class ModelE_Sniper : EnemyEntity
 
             currentAction = new A_GoBackFromAttack(this);
 
-            if (!isDead && isPersuit && !isAttack && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && isPersuit && !isWaitArea && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isAttack && !onRetreat) SendInputToFSM(EnemyInputs.ATTACK);
+            if (!isDead && isWaitArea && !onRetreat) SendInputToFSM(EnemyInputs.ATTACK);
 
             if (!isDead && onMeleeAttack && !onRetreat) SendInputToFSM(EnemyInputs.MELEE_ATTACK);
 
-            if (!isDead && !isAttack && !isPersuit && !onMeleeAttack && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isWaitArea && !isPersuit && !onMeleeAttack && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
@@ -267,9 +267,9 @@ public class ModelE_Sniper : EnemyEntity
 
             if (!onDamage) MoveEvent();
 
-            if (!isDead && !isAttack && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isWaitArea && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isAttack) SendInputToFSM(EnemyInputs.ATTACK);
+            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.ATTACK);
         };
 
         die.OnEnter += x =>
@@ -305,11 +305,11 @@ public class ModelE_Sniper : EnemyEntity
         avoidVectObstacles = ObstacleAvoidance();
         entitiesAvoidVect = EntitiesAvoidance();
 
-        if (target != null && !onMeleeAttack && !isAttack && SearchForTarget.SearchTarget(target.transform, viewDistancePersuit, angleToPersuit, transform, true, layerObst)) isPersuit = true;
+        if (target != null && !onMeleeAttack && !isWaitArea && SearchForTarget.SearchTarget(target.transform, viewDistancePersuit, angleToPersuit, transform, true, layerObst)) isPersuit = true;
         else isPersuit = false;
 
-        if (target != null && !onMeleeAttack && SearchForTarget.SearchTarget(target.transform, viewDistanceAttack, angleToAttack, transform, true, layerObst)) isAttack = true;
-        else isAttack = false;
+        if (target != null && !onMeleeAttack && SearchForTarget.SearchTarget(target.transform, viewDistanceAttack, angleToAttack, transform, true, layerObst)) isWaitArea = true;
+        else isWaitArea = false;
 
         if (target != null && SearchForTarget.SearchTarget(target.transform, distanceToMeleeAttack, angleToMeleeAttack, transform, true, layerObst)) onMeleeAttack = true;
         else onMeleeAttack = false;
@@ -464,19 +464,13 @@ public class ModelE_Sniper : EnemyEntity
         e.nearEntities.Remove(this);
     }
 
- 
-    public override Vector3 FindNearCombatNode()
+    public override CombatNode FindNearAggressiveNode()
     {
-        var node = playerNodes.Where(x => !x.isBusy && x.rangeNode).OrderBy(x =>
-        {
-            var d = Vector3.Distance(x.transform.position, transform.position);
-            return d;
-        }).FirstOrDefault();
+        throw new NotImplementedException();
+    }
 
-        var pos = node.transform.position;
-
-        if (pos != Vector3.zero) return pos;
-
-        else return playerNodes.First().transform.position;
+    public override CombatNode FindNearNon_AggressiveNode()
+    {
+        throw new NotImplementedException();
     }
 }
