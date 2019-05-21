@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class A_WarriorRetreat : i_EnemyActions
 {
@@ -27,19 +28,74 @@ public class A_WarriorRetreat : i_EnemyActions
         targetRotation = Quaternion.LookRotation(dir, Vector3.up);
         _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
 
-        if (_e.onRetreat && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "E_Warrior_Attack3"  && _e.animClipName != "Run_EM" && _e.animClipName != "HitDefence" && _e.timeToRetreat > 0 && d<maxD)
+        if (_e.onRetreat && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "Heavy Attack_EM" && _e.animClipName != "E_Warrior_Attack3"  && _e.animClipName != "Run_EM" && _e.animClipName != "HitDefence" && _e.timeToRetreat > 0 && d<maxD && _e.animClipName == "WalkBack_EM")
         {
             _e.timeToAttack = false;
             _e.WalkBackEvent();
             _e.rb.MovePosition(_e.rb.position - _e.transform.forward * _e.speed * Time.deltaTime);
+
+            RaycastHit hit;
+
+            if (Physics.Raycast(_e.transform.position, -_e.transform.forward, out hit, 0.5f, _e.layerObst))
+            {
+                _e.timeToRetreat = 0;
+            }
         }
 
-        if(d>maxD)
+        if (_e.onRetreat && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "Heavy Attack_EM" && _e.animClipName != "E_Warrior_Attack3" && _e.animClipName != "Run_EM" && _e.animClipName != "HitDefence" && _e.timeToRetreat > 0 && d > maxD)
         {
-            _e._view._anim.SetBool("WalkBack", false);
-            _e.CombatIdleEvent();
-            _e.timeToAttack = false;
-         
+
+
+            var obs = Physics.OverlapSphere(_e.transform.position, 0.5f, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).ToList();
+            obs.Remove(_e);          
+
+            if (obs.Count>0)
+            {
+                
+                if (obs[0].name != _e.name)
+                {
+                    _e._view._anim.SetBool("WalkBack", false);
+                    var dirAvoid = (_e.transform.position - obs[0].transform.position).normalized;
+                    dirAvoid.y = 0;
+                    _e.rb.MovePosition(_e.rb.position + dirAvoid * _e.speed * Time.deltaTime);
+
+                    bool left = false;
+                    bool right = false;
+
+                    var relativePoint = _e.transform.InverseTransformPoint(obs[0].transform.position);
+
+                    if (relativePoint.x < 0.0) left = true;
+
+                    if (relativePoint.x > 0.0) right = true;
+
+
+                    if (left && !right) _e.WalkLeftEvent();
+
+                    if (!left && right) _e.WalkRightEvent();
+                }
+
+                else
+                {
+                    _e._view._anim.SetBool("WalkBack", false);
+                    _e.CombatIdleEvent();
+                    _e.timeToAttack = false;
+                }
+            }
+
+            if(obs.Count<=0)
+            {
+                _e._view._anim.SetBool("WalkBack", false);
+                _e.CombatIdleEvent();
+                _e.timeToAttack = false;
+            }
+
+            RaycastHit hit;
+
+            if (Physics.Raycast(_e.transform.position, -_e.transform.forward, out hit, 0.5f, _e.layerObst))
+            {
+                _e.timeToRetreat = 0;
+            }
+
         }
 
     }

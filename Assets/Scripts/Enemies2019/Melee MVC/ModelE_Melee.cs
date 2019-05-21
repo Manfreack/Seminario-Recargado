@@ -7,7 +7,7 @@ using System;
 public class ModelE_Melee : EnemyEntity
 {
 
-    public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE, REPOSITION }
+    public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE }
     public EventFSM<EnemyInputs> _myFsm;
     public List<CombatNode> restOfNodes = new List<CombatNode>();
     public float timeToPatrol;
@@ -19,7 +19,7 @@ public class ModelE_Melee : EnemyEntity
     public EnemyCombatManager cm;
     public List<ModelE_Melee> myWarriorFriends = new List<ModelE_Melee>();
     public Transform attackPivot;
-    public Vector3 warriorVectAvoidance;
+    public Vector3 nearWarriorVect;
     public Vector3 warriorVectAvoidanceFlank;
     public ViewerE_Melee _view;
     public float distanceToHit;
@@ -33,12 +33,15 @@ public class ModelE_Melee : EnemyEntity
     public bool onDefence;
     public int flankDir;
     public bool damageDone;
+    public float speedRotation;
     bool firstHit;
     bool impulse;
     public int changeRing;
     Vector3 lastPosition;
     Vector3 nearRingPosition;
     public string animClipName;
+    public float timeReposition;
+    public float timeReposition2;
 
     public Action TakeDamageEvent;
     public Action DeadEvent;
@@ -79,6 +82,104 @@ public class ModelE_Melee : EnemyEntity
     public bool PersuitState;
     public bool WaitState;
     public bool RetreatState;
+    public bool reposition;
+    public bool cooldwonReposition;
+
+    public IEnumerator DontAvoid()
+    {
+        cooldwonReposition = true;
+
+        yield return new WaitForSeconds(1);
+
+        cooldwonReposition = true;
+    }
+
+    public void RepositionMoveRight()
+    {
+        timeReposition -= Time.deltaTime;
+        if (timeReposition <= 0) timeReposition = 0;      
+
+        if(timeReposition>0) rb.MovePosition(rb.position + (transform.forward + transform.right) * speedRotation * Time.deltaTime);
+
+
+        if (timeReposition <= 0 && timeReposition2>0)
+        {
+            timeReposition2 -= Time.deltaTime;
+            if (timeReposition2 <= 0) timeReposition2 = 0;
+            rb.MovePosition(rb.position + (-transform.forward + transform.right) * speedRotation * Time.deltaTime);
+        }
+
+    }
+
+    public IEnumerator AvoidWarriorRight()
+    {
+        timeReposition = 0.7f;
+        timeReposition2 = 0.7f;
+        reposition = true;
+        while(timeReposition>0)
+        {
+            RepositionMoveRight();
+            yield return new WaitForEndOfFrame();
+        }
+
+        while (timeReposition2>0)
+        {
+            RepositionMoveRight();
+            yield return new WaitForEndOfFrame();
+        }
+
+        cooldwonReposition = true;
+
+        reposition = false;
+
+        yield return new WaitForSeconds(1);
+
+        cooldwonReposition = false;
+    }
+
+    public void RepositionMoveLeft()
+    {
+        timeReposition -= Time.deltaTime;
+        if (timeReposition <= 0) timeReposition = 0;
+
+        if (timeReposition > 0) rb.MovePosition(rb.position + (transform.forward - transform.right) * speedRotation * Time.deltaTime);
+
+
+        if (timeReposition <= 0 && timeReposition2 > 0)
+        {
+            timeReposition2 -= Time.deltaTime;
+            if (timeReposition2 <= 0) timeReposition2 = 0;
+            rb.MovePosition(rb.position + (-transform.forward - transform.right) * speedRotation * Time.deltaTime);
+        }
+
+    }
+
+    public IEnumerator AvoidWarriorLeft()
+    {
+        timeReposition = 0.7f;
+        timeReposition2 = 0.7f;
+        reposition = true;
+        while (timeReposition > 0)
+        {
+            RepositionMoveLeft();
+            yield return new WaitForEndOfFrame();
+        }
+
+        while (timeReposition2 > 0)
+        {
+            RepositionMoveLeft();
+            yield return new WaitForEndOfFrame();
+        }
+
+        cooldwonReposition = true;
+
+        reposition = false;
+       
+        yield return new WaitForSeconds(1);
+
+        cooldwonReposition = false;
+    }
+
 
     public IEnumerator FollowCorrutine ()
     {
@@ -178,7 +279,6 @@ public class ModelE_Melee : EnemyEntity
         var die = new FSM_State<EnemyInputs>("DIE");
         var follow = new FSM_State<EnemyInputs>("FOLLOW");
         var answerCall = new FSM_State<EnemyInputs>("ANSWER");
-        var reposition = new FSM_State<EnemyInputs>("REPOSITION");
 
         StateConfigurer.Create(patrol)
            .SetTransition(EnemyInputs.PERSUIT, persuit)
@@ -204,15 +304,10 @@ public class ModelE_Melee : EnemyEntity
        .SetTransition(EnemyInputs.PERSUIT, persuit)
        .SetTransition(EnemyInputs.FOLLOW, follow)
        .SetTransition(EnemyInputs.WAIT, wait)
-       .SetTransition(EnemyInputs.REPOSITION, reposition)
        .SetTransition(EnemyInputs.DEFENCE, defence)
        .SetTransition(EnemyInputs.DIE, die)
        .Done();
 
-
-        StateConfigurer.Create(reposition)
-       .SetTransition(EnemyInputs.WAIT, wait)
-       .Done();
 
         StateConfigurer.Create(attack)
         .SetTransition(EnemyInputs.PERSUIT, persuit)
@@ -278,10 +373,12 @@ public class ModelE_Melee : EnemyEntity
         };
 
 
-
-
         persuit.OnFixedUpdate += () =>
         {
+            if (aggressiveLevel == 1) viewDistanceAttack = 3.5f;
+
+            if (aggressiveLevel == 2) viewDistanceAttack = 7f;
+
             PersuitState = true;
 
             _view._anim.SetBool("WalkBack", false);
@@ -304,7 +401,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
 
-            if (!isDead && d > viewDistancePersuit) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
@@ -329,9 +426,7 @@ public class ModelE_Melee : EnemyEntity
 
             currentAction = null;
 
-            var d = Vector3.Distance(transform.position, target.transform.position);
-
-            if (!isDead && d > viewDistancePersuit && !onRetreat && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isWaitArea && !onRetreat && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && !isWaitArea && isPersuit && timeToHoldDefence<=0) SendInputToFSM(EnemyInputs.PERSUIT);
 
@@ -359,13 +454,12 @@ public class ModelE_Melee : EnemyEntity
             firstAttack = false;
             onRetreat = false;
 
-            if (aggressiveLevel == 1) viewDistanceAttack = 4.5f;
+            if (aggressiveLevel == 1) viewDistanceAttack = 5f;
 
-            if (aggressiveLevel == 2) viewDistanceAttack = 6.5f;
+            if (aggressiveLevel == 2) viewDistanceAttack = 8f;
 
-            timeToChangeRotation = UnityEngine.Random.Range(1.5f, 3);
-
-          
+            if(timeToChangeRotation<=0) timeToChangeRotation = UnityEngine.Random.Range(1.5f, 3);
+         
         };
 
      
@@ -373,34 +467,18 @@ public class ModelE_Melee : EnemyEntity
         {
             WaitState = true;
 
-            timeToChangeRotation -= Time.deltaTime;
+            if(!reposition) timeToChangeRotation -= Time.deltaTime;
 
             if(timeToChangeRotation <=0 && changeRotateWarrior)
             {
                 timeToChangeRotation = UnityEngine.Random.Range(0.5f, 1.5f);
+                flankDir = 2;
                 changeRotateWarrior = false;
             }
 
             if (timeToChangeRotation <= 0 && !changeRotateWarrior)
             {
-                bool left = false;
-                bool right = false;
-
-                foreach (var item in myWarriorFriends)
-                {
-                    var relativePoint = transform.InverseTransformPoint(item.transform.position);
-
-                    if (relativePoint.x < 0.0) left = true;
- 
-                    if (relativePoint.x > 0.0) right = true;                  
-                }
-
-                if (left && !right) flankDir = 0; 
-
-                if (!left && right) flankDir = 1; 
-
-                if (!left && !right) flankDir = 2; 
-           
+                flankDir = UnityEngine.Random.Range(0, 2);
                 timeToChangeRotation = UnityEngine.Random.Range(2, 3);
                 changeRotateWarrior = true;
             }
@@ -459,6 +537,10 @@ public class ModelE_Melee : EnemyEntity
         wait.OnExit += x =>
         {
             WaitState = false;
+
+            if (aggressiveLevel == 1) viewDistanceAttack = 3.5f;
+
+            if (aggressiveLevel == 2) viewDistanceAttack = 7f;
         };
 
         attack.OnEnter += x =>
@@ -467,10 +549,6 @@ public class ModelE_Melee : EnemyEntity
             onRetreat = false;
             firstAttack = false;
 
-          /*  if (NearCombatRing().name == "Ring1") timeToRetreat = 0.5f;
-            if (NearCombatRing().name == "Ring2") timeToRetreat = 1f;
-            if (NearCombatRing().name == "Ring3") timeToRetreat = 1.3f;
-            */
             damageDone = false;
         };
 
@@ -484,13 +562,11 @@ public class ModelE_Melee : EnemyEntity
 
             firstSaw = true;
 
-            var d = Vector3.Distance(transform.position, target.transform.position);
-
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
             if (!isDead && !isWaitArea && isPersuit && !onRetreat && !onDefence) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && d > viewDistancePersuit && !onRetreat && !onDefence) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isWaitArea && !onRetreat && !onDefence) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (onRetreat && !onDefence) SendInputToFSM(EnemyInputs.RETREAT);
 
@@ -509,7 +585,6 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnEnter += x =>
         {
-            //distanceRetreat = Vector3.Distance(transform.position, target.transform.position);
             if (aggressiveLevel == 1) timeToRetreat = 1.5f;
             if (aggressiveLevel == 2) timeToRetreat = 3.5f;
         };
@@ -524,7 +599,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && isPersuit && !isWaitArea && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && d > viewDistancePersuit && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isWaitArea && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
 
@@ -624,7 +699,7 @@ public class ModelE_Melee : EnemyEntity
 
         FillFriends();
 
-        warriorVectAvoidance = WarriorAvoidance();
+        nearWarriorVect = WarriorAvoidance();
         warriorVectAvoidanceFlank = WarriorAvoidanceFlank();
         avoidVectObstacles = ObstacleAvoidance();
         entitiesAvoidVect = EntitiesAvoidance();
@@ -761,7 +836,8 @@ public class ModelE_Melee : EnemyEntity
 
     public override Vector3 EntitiesAvoidance()
     {
-        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites);
+        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).ToList();
+        obs.Remove(this);
         if (obs.Count() > 0)
         {
             var dir = transform.position - obs.First().transform.position;
@@ -772,7 +848,8 @@ public class ModelE_Melee : EnemyEntity
 
     public  Vector3 WarriorAvoidanceFlank()
     {
-        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>());
+        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).ToList();
+        obs.Remove(this);
         if (obs.Count() > 0)
         {
             var dir = transform.position - obs.First().transform.position;
@@ -783,12 +860,12 @@ public class ModelE_Melee : EnemyEntity
 
     public Vector3 WarriorAvoidance()
     {
-        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>());
-        if (obs.Count() > 0)
+        var obs = Physics.OverlapSphere(transform.position, 0.5f, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>());
+        if (obs.Count()>0)
         {
-            var dir = transform.position - obs.First().transform.position;
-            return dir.normalized;
+            return obs.First().transform.position.normalized;
         }
+
         else return Vector3.zero;
     }
 
@@ -806,6 +883,7 @@ public class ModelE_Melee : EnemyEntity
 
     public override void GetDamage(float damage)
     {
+
         Vector3 dir = transform.position - target.transform.position;
         float angle = Vector3.Angle(dir, transform.forward);
         impulse = false;
@@ -855,7 +933,6 @@ public class ModelE_Melee : EnemyEntity
         if (player != null)
         {
             damageDone = true;
-            timeToRetreat += 0.25f;
             _view.WalckBackAnim();
             _view.BackFromAttack();
             var dir = (target.transform.position - transform.position).normalized;
@@ -869,10 +946,7 @@ public class ModelE_Melee : EnemyEntity
     {
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
         if (player != null)
-        {
-            timeToRetreat += 0.25f;
-            _view.WalckBackAnim();
-            _view.HeavyAttackFalse();
+        {          
             if (player.onDefence)
             {
                 _view.sparks.gameObject.SetActive(true);

@@ -34,7 +34,37 @@ public class EnemyCombatManager : MonoBehaviour {
 
             if (count > 2) item.timeToAttack = false;
         }
+
+
+
     }
+
+
+    public void UpdateEnemyAggressive()
+    {
+        if (enemiesList.Count > 0)
+        {
+            int count = 0;
+
+            var nearEntites = enemiesList.OrderBy(x =>
+            {
+
+                var d = Vector3.Distance(x.transform.position, targetPos);
+                return d;
+            });
+
+
+            foreach (var item in nearEntites)
+            {
+                if (count <= 1) item.aggressiveLevel = 1;
+
+                if (count <= 5 && count > 1) item.aggressiveLevel = 2;
+
+                count++;
+            }
+        }
+    }
+
 
 
     public void ChangeOrderAttack(ModelE_Melee e)

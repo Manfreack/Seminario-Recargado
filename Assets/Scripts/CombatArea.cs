@@ -77,24 +77,6 @@ public class CombatArea : MonoBehaviour
               
             }
 
-            int count = 0;
-
-            var nearEntites = myNPCs.OrderBy(x=> {
-
-                var d = Vector3.Distance(x.transform.position, targetPos);
-                return d;
-            });
-
-
-            foreach (var item in myNPCs)
-            {
-                if (count <= 1) item.aggressiveLevel = 1;
-
-                if (count <= 5 && count > 1) item.aggressiveLevel = 2;
-
-                count++;
-            }
-
             firstPass = true;
         }
     }

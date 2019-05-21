@@ -232,6 +232,7 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void IdleAnim()
     {
+
         _anim.SetBool("Idle", true);
         _anim.SetBool("IdleCombat", false);
     }

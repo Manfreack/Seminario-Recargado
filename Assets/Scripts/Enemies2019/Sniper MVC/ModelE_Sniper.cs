@@ -261,7 +261,6 @@ public class ModelE_Sniper : EnemyEntity
 
         follow.OnUpdate += () =>
         {
-            Debug.Log(1);
 
             currentAction = new A_FollowTarget(this);
 

@@ -8,6 +8,7 @@ public class Model : MonoBehaviour
 {
     public Transform attackPivot;
     public Viewer view;
+    EnemyCombatManager ECM;
 
     public float distanceAggressiveNodes;
     public float distanceNon_AggressiveNodes;
@@ -260,7 +261,7 @@ public class Model : MonoBehaviour
 
     void Start()
     {
-        
+        ECM = FindObjectOfType<EnemyCombatManager>();
         timeOnCombat = -1;
         rb = GetComponent<Rigidbody>();
         powerManager = FindObjectOfType<PowerManager>();
@@ -624,6 +625,8 @@ public class Model : MonoBehaviour
 
     public void CombatMovement(Vector3 dir, bool key, bool rotate)
     {
+        ECM.UpdateEnemyAggressive();
+
         if (isRuning && !onDefence)
         {
             stamina -= runStamina * Time.deltaTime;
@@ -792,8 +795,8 @@ public class Model : MonoBehaviour
     
 
     public void MakeDamage()
-    {      
-        var col = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>());
+    {
+        var col = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Distinct();
         var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>());
 
         foreach (var item in col)
@@ -812,7 +815,7 @@ public class Model : MonoBehaviour
 
     public void Power1Damage()
     {
-        var col = Physics.OverlapSphere(transform.position, 2).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>());
+        var col = Physics.OverlapSphere(transform.position, 2).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Distinct();
         var desMesh = Physics.OverlapSphere(transform.position,2).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>());
 
         foreach (var item in desMesh)

@@ -36,48 +36,48 @@ public class A_WarriorWait : i_EnemyActions
             _e.CombatIdleEvent();
         }
 
+       
 
         if(_e.changeRotateWarrior && !_e.onDamage)
         {
             float distance = Vector3.Distance(_e.transform.position, _e.target.transform.position);
-
-            float rotateSpeed = 0;
-
-            if (_e.flankDir == 1)
+         
+            if (_e.flankDir == 1 && !_e.reposition)
             {
-                rotateSpeed = 50 / distance;
-                _e.WalkRightEvent();
-
-                if (_e.entitiesAvoidVect != Vector3.zero)
+                if (_e.nearWarriorVect != Vector3.zero && !_e.reposition && !_e.cooldwonReposition)
                 {
-                    Debug.Log(_e.name + " right");
-                    _e.flankDir = 0;
-                }
+                    var obs = Physics.OverlapSphere(_e.transform.position, 0.5f, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).First();
 
-                _e.transform.RotateAround(_e.target.transform.position, _e.target.transform.up, rotateSpeed * Time.deltaTime);
+                    if (obs.flankDir !=1) _e.StartCoroutine(_e.AvoidWarriorRight());
+
+                }
+                _e.WalkRightEvent();
+            
+                _e.rb.MovePosition(_e.rb.position + _e.transform.right * _e.speedRotation * Time.deltaTime);
 
                 if (_e.avoidVectObstacles != Vector3.zero)
                 {
-                    _e.rb.MovePosition(_e.rb.position  + _e.transform.forward * _e.speed * Time.deltaTime);
+                    _e.rb.MovePosition(_e.rb.position  + _e.transform.forward * _e.speedRotation * Time.deltaTime);
                 }
             }
 
             if (_e.flankDir == 0)
             {
-                rotateSpeed = -50 / distance;
                 _e.WalkLeftEvent();
 
-                if(_e.entitiesAvoidVect != Vector3.zero)
-                {
-                    Debug.Log(_e.name + "left");
-                    _e.flankDir = 1;
-                }
+                 if (_e.nearWarriorVect != Vector3.zero && !_e.reposition && !_e.cooldwonReposition)
+                 {
+                    var obs = Physics.OverlapSphere(_e.transform.position, 0.5f, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).First();
 
-                _e.transform.RotateAround(_e.target.transform.position, _e.target.transform.up, rotateSpeed * Time.deltaTime);
+                    if(obs.flankDir==2) _e.StartCoroutine(_e.AvoidWarriorLeft());               
+
+                 }
+            
+                _e.rb.MovePosition(_e.rb.position - _e.transform.right * _e.speedRotation * Time.deltaTime);
 
                 if (_e.avoidVectObstacles != Vector3.zero)
                 {
-                    _e.rb.MovePosition(_e.rb.position + _e.transform.forward * _e.speed * Time.deltaTime);
+                    _e.rb.MovePosition(_e.rb.position + _e.transform.forward * _e.speedRotation * Time.deltaTime);
                 }
 
                 
