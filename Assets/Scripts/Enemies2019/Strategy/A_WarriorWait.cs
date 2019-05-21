@@ -44,11 +44,18 @@ public class A_WarriorWait : i_EnemyActions
          
             if (_e.flankDir == 1 && !_e.reposition)
             {
-                if (_e.nearWarriorVect != Vector3.zero && !_e.reposition && !_e.cooldwonReposition)
-                {
-                    var obs = Physics.OverlapSphere(_e.transform.position, 0.5f, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).First();
+                var obs = Physics.OverlapSphere(_e.transform.position, 1f, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x => x != _e);
 
-                    if (obs.flankDir !=1) _e.StartCoroutine(_e.AvoidWarriorRight());
+                if (obs.Any() && !_e.cooldwonReposition)
+                {
+                    if (obs.First().flankDir != 1) _e.StartCoroutine(_e.AvoidWarriorRight());
+
+                    if (obs.First().flankDir == 1)
+                    {
+                        _e.flankDir = 0;
+                        _e.StartCoroutine(_e.ChangeDirRotation());
+                        obs.First().StartCoroutine(obs.First().ChangeDirRotation());
+                    }             
 
                 }
                 _e.WalkRightEvent();
@@ -65,13 +72,20 @@ public class A_WarriorWait : i_EnemyActions
             {
                 _e.WalkLeftEvent();
 
-                 if (_e.nearWarriorVect != Vector3.zero && !_e.reposition && !_e.cooldwonReposition)
-                 {
-                    var obs = Physics.OverlapSphere(_e.transform.position, 0.5f, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).First();
+                var obs = Physics.OverlapSphere(_e.transform.position, 1f, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x => x != _e);
 
-                    if(obs.flankDir==2) _e.StartCoroutine(_e.AvoidWarriorLeft());               
+                if (obs.Any() && !_e.reposition && !_e.cooldwonReposition)
+                {
+                    if (obs.First().flankDir == 2) _e.StartCoroutine(_e.AvoidWarriorLeft());
 
-                 }
+                    if (obs.First().flankDir == 0)
+                    {
+                        _e.flankDir = 1;
+                        _e.StartCoroutine(_e.ChangeDirRotation());
+                        obs.First().StartCoroutine(obs.First().ChangeDirRotation());
+                    }
+
+                }
             
                 _e.rb.MovePosition(_e.rb.position - _e.transform.right * _e.speedRotation * Time.deltaTime);
 

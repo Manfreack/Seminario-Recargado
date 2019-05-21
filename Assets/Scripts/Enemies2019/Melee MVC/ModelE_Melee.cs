@@ -85,14 +85,17 @@ public class ModelE_Melee : EnemyEntity
     public bool reposition;
     public bool cooldwonReposition;
 
-    public IEnumerator DontAvoid()
+    public IEnumerator ChangeDirRotation()
     {
+
         cooldwonReposition = true;
-
+        reposition = true;
         yield return new WaitForSeconds(1);
-
+        reposition = false;
         cooldwonReposition = true;
     }
+
+
 
     public void RepositionMoveRight()
     {
@@ -836,7 +839,7 @@ public class ModelE_Melee : EnemyEntity
 
     public override Vector3 EntitiesAvoidance()
     {
-        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).ToList();
+        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x => x != this).ToList();
         obs.Remove(this);
         if (obs.Count() > 0)
         {
@@ -860,7 +863,7 @@ public class ModelE_Melee : EnemyEntity
 
     public Vector3 WarriorAvoidance()
     {
-        var obs = Physics.OverlapSphere(transform.position, 0.5f, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>());
+        var obs = Physics.OverlapSphere(transform.position, 1f, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x=> x != this);
         if (obs.Count()>0)
         {
             return obs.First().transform.position.normalized;

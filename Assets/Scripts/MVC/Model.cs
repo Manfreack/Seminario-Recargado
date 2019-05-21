@@ -336,6 +336,12 @@ public class Model : MonoBehaviour
                 view.UpdateStaminaBar(stamina / maxStamina);
         }
 
+        if(isRuning && !isInCombat)
+        {
+            stamina += recoveryStamina * Time.deltaTime;
+            view.UpdateStaminaBar(stamina / maxStamina);
+        }
+
         float prevM = mana;
         mana += recoveryMana * Time.deltaTime;
         if (mana > maxMana)
