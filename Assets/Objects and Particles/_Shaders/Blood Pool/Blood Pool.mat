@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Blood Pool
+  m_Shader: {fileID: 4800000, guid: e5cf564dac0785642bd160502c32fc89, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BLOOD_ALB:
+        m_Texture: {fileID: 2800000, guid: aafac60e3f8b8d14e8b4c2fd22f4d486, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BLOOD_DISP:
+        m_Texture: {fileID: 2800000, guid: 3b29471e3fa17e14b931c51ab2b62eb9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BLOOD_NORM:
+        m_Texture: {fileID: 2800000, guid: 1b158e9df7465544391f7baab0a3b5c6, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BloodPool02:
+        m_Texture: {fileID: 2800000, guid: faeec6e22ab5f3f46b64c0a0d2606f92, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlowMap:
+        m_Texture: {fileID: 2800000, guid: 1207a4adcc48386458eb4425a0a3ecba, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Cutoff: 0.5
+    - _FillAmount: 1
+    - _Metallic: 1
+    - _Smoothness: 0.5
+    - _UVDistortion: 0.3
+    - _Vanish: 0
+    - _VertexOffsetIntensity: 0.5
+    - __dirty: 0
+    m_Colors:
+    - _SplatColor: {r: 0.3490566, g: 0.008261695, b: 0, a: 0}
