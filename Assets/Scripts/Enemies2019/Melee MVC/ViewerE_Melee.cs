@@ -130,7 +130,7 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void HitDefenceAnim()
     {
-        sparks.gameObject.SetActive(true);
+       // sparks.gameObject.SetActive(true);
         sparks.Play();
         _anim.SetBool("HitDefence", true);
     }
@@ -173,7 +173,7 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void BlockedAnim()
     {
-        sparks.gameObject.SetActive(true);
+       // sparks.gameObject.SetActive(true);
         sparks.Play();
         _anim.SetBool("Blocked", true);
     }
@@ -253,7 +253,7 @@ public class ViewerE_Melee : MonoBehaviour
         _anim.SetBool("TakeDamage", true);
         damaged = true;
         timeShaderDamage = 1;
-        blood.gameObject.SetActive(true);
+       // blood.gameObject.SetActive(true);
         blood.Stop();
         blood.Play();
         timeOnDamage = 0.5f;

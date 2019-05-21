@@ -68,7 +68,7 @@ public class A_WarriorWait : i_EnemyActions
                 }
             }
 
-            if (_e.flankDir == 0)
+            if (_e.flankDir == 0 && !_e.reposition)
             {
                 _e.WalkLeftEvent();
 

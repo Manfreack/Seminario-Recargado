@@ -61,11 +61,11 @@ public class CamController : MonoBehaviour {
             topRig.m_TrackedObjectOffset.y -= Time.deltaTime * smoothAttacks;
             bottonRig.m_TrackedObjectOffset.y -= Time.deltaTime * smoothAttacks;
 
-            if (middleRig.m_TrackedObjectOffset.y <= 1.2f)
+            if (middleRig.m_TrackedObjectOffset.y <= 1.15f)
             {
-                middleRig.m_TrackedObjectOffset.y = 1.2f;
-                topRig.m_TrackedObjectOffset.y = 1.2f;
-                bottonRig.m_TrackedObjectOffset.y = 1.2f;
+                middleRig.m_TrackedObjectOffset.y = 1.15f;
+                topRig.m_TrackedObjectOffset.y = 1.15f;
+                bottonRig.m_TrackedObjectOffset.y = 1.15f;
                 onAttack = false;
             }
         }

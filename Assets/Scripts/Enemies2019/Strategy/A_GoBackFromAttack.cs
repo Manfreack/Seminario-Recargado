@@ -15,15 +15,13 @@ public class A_GoBackFromAttack : i_EnemyActions
 
             if (_e.timeToStopBack > 0 && !_e.onDamage && d>1)
             {
-                _e.MoveEvent();
-                Quaternion targetRotation;
+                 _e.MoveEvent();
+                 Quaternion targetRotation;
                  var _dir = (_e.positionToBack - _e.transform.position).normalized;
                  _dir.y = 0;
-                 var _avoidVect = (_e.avoidVectObstacles).normalized;
-                 _avoidVect.y = 0;
                  targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
                  _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                 _e.rb.MovePosition(_e.rb.position + (_avoidVect +_dir) * _e.speed * Time.deltaTime);
+                 _e.rb.MovePosition(_e.rb.position + _dir * _e.speed * Time.deltaTime);
                            
             }
 
@@ -36,6 +34,7 @@ public class A_GoBackFromAttack : i_EnemyActions
                 targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
                 _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 10 * Time.deltaTime);
                 _e.onRetreat = false;
+               _e.timeToStopBack = 0;
             }
         
     }

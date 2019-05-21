@@ -19,8 +19,6 @@ public class ModelE_Melee : EnemyEntity
     public EnemyCombatManager cm;
     public List<ModelE_Melee> myWarriorFriends = new List<ModelE_Melee>();
     public Transform attackPivot;
-    public Vector3 nearWarriorVect;
-    public Vector3 warriorVectAvoidanceFlank;
     public ViewerE_Melee _view;
     public float distanceToHit;
     public float angleToHit;
@@ -89,9 +87,7 @@ public class ModelE_Melee : EnemyEntity
     {
 
         cooldwonReposition = true;
-        reposition = true;
         yield return new WaitForSeconds(1);
-        reposition = false;
         cooldwonReposition = true;
     }
 
@@ -702,22 +698,17 @@ public class ModelE_Melee : EnemyEntity
 
         FillFriends();
 
-        nearWarriorVect = WarriorAvoidance();
-        warriorVectAvoidanceFlank = WarriorAvoidanceFlank();
         avoidVectObstacles = ObstacleAvoidance();
-        entitiesAvoidVect = EntitiesAvoidance();
 
         if (target != null)
         {
-           
-            if (!onAttackArea && SearchForTarget.SearchTarget(target.transform, viewDistancePersuit, angleToPersuit, transform, true, layerObst)) isPersuit = true;
-            else isPersuit = false;
 
-            if (!onAttackArea && SearchForTarget.SearchTarget(target.transform, viewDistanceAttack, angleToAttack, transform, true, layerObst)) isWaitArea = true;
-            else isWaitArea = false;
+            isPersuit = SearchForTarget.SearchTarget(target.transform, viewDistancePersuit, angleToPersuit, transform, true, layerObst);
 
-            if (SearchForTarget.SearchTarget(target.transform, distanceToHit, angleToHit, transform, true, layerObst)) onAttackArea = true;
-            else onAttackArea = false;
+            isWaitArea = SearchForTarget.SearchTarget(target.transform, viewDistanceAttack, angleToAttack, transform, true, layerObst);
+
+            onAttackArea = SearchForTarget.SearchTarget(target.transform, distanceToHit, angleToHit, transform, true, layerObst);
+
 
         }
 
@@ -801,8 +792,7 @@ public class ModelE_Melee : EnemyEntity
         myWarriorFriends.Clear();
         myWarriorFriends.AddRange(Physics.OverlapSphere(transform.position, viewDistancePersuit * 2)
                                         .Where(x => x.GetComponent<ModelE_Melee>())
-                                        .Select(x => x.GetComponent<ModelE_Melee>()));
-        myWarriorFriends.Remove(this);
+                                        .Select(x => x.GetComponent<ModelE_Melee>()).Where(x=> x!= this));
     } 
 
     void OnDrawGizmos()
@@ -846,29 +836,6 @@ public class ModelE_Melee : EnemyEntity
             var dir = transform.position - obs.First().transform.position;
             return dir.normalized;
         }
-        else return Vector3.zero;
-    }
-
-    public  Vector3 WarriorAvoidanceFlank()
-    {
-        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).ToList();
-        obs.Remove(this);
-        if (obs.Count() > 0)
-        {
-            var dir = transform.position - obs.First().transform.position;
-            return dir.normalized;
-        }
-        else return Vector3.zero;
-    }
-
-    public Vector3 WarriorAvoidance()
-    {
-        var obs = Physics.OverlapSphere(transform.position, 1f, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x=> x != this);
-        if (obs.Count()>0)
-        {
-            return obs.First().transform.position.normalized;
-        }
-
         else return Vector3.zero;
     }
 

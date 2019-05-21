@@ -24,6 +24,7 @@ public class ModelE_Sniper : EnemyEntity
     public float maxTimeToRetreat;
     public float maxTimeDelayMeleeAttack;
     public float minTimeDelayMeleeAttack;
+    public Transform scapeNodesParent;
 
     public Action TakeDamageEvent;
     public Action DeadEvent;
@@ -150,7 +151,7 @@ public class ModelE_Sniper : EnemyEntity
 
         persuit.OnFixedUpdate += () =>
         {
-            Debug.Log("asdas");
+
 
             isAnswerCall = false;
 
@@ -224,7 +225,7 @@ public class ModelE_Sniper : EnemyEntity
             
             timeToStopBack = UnityEngine.Random.Range(5, 6);
 
-         //   positionToBack = FindNearCombatNode();
+            positionToBack = FindNearScapeNode();
 
             timeToRetreat = maxTimeToRetreat;
         };
@@ -370,6 +371,21 @@ public class ModelE_Sniper : EnemyEntity
 
     }
 
+    public Vector3 FindNearScapeNode()
+    {
+        var nodes = scapeNodesParent.GetComponentsInChildren<Transform>().Where(x => x != scapeNodesParent).Where(x=>
+        {
+            var d = Vector3.Distance(x.transform.position, transform.position);
+            if (d < 1) return false;
+            else return true;
+
+        }).ToList();
+
+        var r = UnityEngine.Random.Range(0, nodes.Count - 1);
+
+        return nodes[r].transform.position;
+    }
+
     public override Node GetMyNode()
     {
         var myNode = myNodes.OrderBy(x =>
@@ -465,11 +481,103 @@ public class ModelE_Sniper : EnemyEntity
 
     public override CombatNode FindNearAggressiveNode()
     {
-        throw new NotImplementedException();
+        var node = playerNodes.Where(x => x.aggressive && !x.isBusy && (x.myOwner == null || x.myOwner == this)).OrderBy(x =>
+        {
+            var d = Vector3.Distance(x.transform.position, transform.position);
+            return d;
+
+        }).FirstOrDefault();
+
+        myCombatNode = node;
+
+        myCombatNode.myOwner = this;
+
+        if (lastCombatNode == null)
+        {
+            lastCombatNode = node;
+            lastCombatNode.myOwner = this;
+        }
+
+        if (myCombatNode != lastCombatNode)
+        {
+            lastCombatNode.myOwner = null;
+            lastCombatNode = myCombatNode;
+        }
+
+        var NearNodes = Physics.OverlapSphere(myCombatNode.transform.position, 1).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
+
+        foreach (var item in NearNodes)
+        {
+            item.myOwner = this;
+        }
+
+        if (NearNodes.Count() > 0)
+        {
+
+            var restOfNodes = new List<CombatNode>();
+
+            restOfNodes.AddRange(playerNodes);
+
+            restOfNodes.RemoveAll(y => NearNodes.Contains(y));
+
+            foreach (var item in restOfNodes)
+            {
+                if (item.myOwner == this) item.myOwner = null;
+            }
+
+        }
+
+        return node;
     }
 
     public override CombatNode FindNearNon_AggressiveNode()
     {
-        throw new NotImplementedException();
+        var node = playerNodes.Where(x => x.Non_Aggressive && !x.isBusy && (x.myOwner == null || x.myOwner == this)).OrderBy(x =>
+        {
+            var d = Vector3.Distance(x.transform.position, transform.position);
+            return d;
+
+        }).FirstOrDefault();
+
+        myCombatNode = node;
+
+        myCombatNode.myOwner = this;
+
+        if (lastCombatNode == null)
+        {
+            lastCombatNode = node;
+            lastCombatNode.myOwner = this;
+        }
+
+        if (myCombatNode != lastCombatNode)
+        {
+            lastCombatNode.myOwner = null;
+            lastCombatNode = myCombatNode;
+        }
+
+        var NearNodes = Physics.OverlapSphere(myCombatNode.transform.position, 1).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
+
+        foreach (var item in NearNodes)
+        {
+            item.myOwner = this;
+        }
+
+        if (NearNodes.Count() > 0)
+        {
+
+            var restOfNodes = new List<CombatNode>();
+
+            restOfNodes.AddRange(playerNodes);
+
+            restOfNodes.RemoveAll(y => NearNodes.Contains(y));
+
+            foreach (var item in restOfNodes)
+            {
+                if (item.myOwner == this) item.myOwner = null;
+            }
+
+        }
+
+        return node;
     }
 }

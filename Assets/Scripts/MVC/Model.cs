@@ -489,7 +489,9 @@ public class Model : MonoBehaviour
 
     public void RollImpulse()
     {
-        if (onRoll && (animClipName == "RollAttack" || animClipName == "P_Warrior_Rol+Attack" || animClipName == "Roll"))
+        if (animClipName != "RollAttack" && animClipName != "P_Warrior_Rol+Attack_V2" && animClipName != "Roll") view.RollAttackAnimFalse();
+
+        if (onRoll && (animClipName == "RollAttack" || animClipName == "P_Warrior_Rol+Attack_V2" || animClipName == "Roll"))
         {
             view.NoReciveDamage();
 
@@ -505,6 +507,7 @@ public class Model : MonoBehaviour
                 dir.y = 0;
                 transform.forward = dir;
                 onRoll = false;
+               
             }            
         }
     }
@@ -642,9 +645,9 @@ public class Model : MonoBehaviour
         acceleration += 3f * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
-        if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" 
-                                                                      && animClipName != "GetDamage2" && animClipName != "P_Warrior_TurnAttack_PRE" && animClipName != "P_Warrior_FailDefence"
-                                                                      && animClipName != "GetDamage3" && animClipName != "P_Warrior_TurnAttack_DAMAGE" && animClipName != "P_Warrior_TurnAttack_END")
+        if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" && animClipName != "P_Warrior_RolAttack_V2"
+                                                                      && animClipName != "GetDamage2" && animClipName != "P_Warrior_RolAttack_Pre" && animClipName != "P_Warrior_FailDefence"
+                                                                      && animClipName != "GetDamage3" && animClipName != "P_Warrior_RolAttack_Damage" && animClipName != "P_Warrior_RolAttack_End")
         {
             Quaternion targetRotation;
 
@@ -698,15 +701,15 @@ public class Model : MonoBehaviour
     {
         dirToRotateAttack = d;
 
-        if(onRoll )
+        if(onRoll)
         {
             makingDamage = true;
             attackDamage = attackRollDamage;
             RollAttackEvent();
             view.AwakeTrail();
             EndCombo();
-            onRoll = false;
-            view.BackRollAnim();
+            view.anim.SetBool("Roll", false);
+            view.anim.SetBool("CanRollAttack", false);
             var dir = mainCamera.transform.forward;
             dir.y = 0;
             transform.forward = dir;
