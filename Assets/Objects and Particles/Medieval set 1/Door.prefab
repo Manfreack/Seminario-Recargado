@@ -76,12 +76,12 @@ GameObject:
   - component: {fileID: 4443360837223266042}
   - component: {fileID: 8857529245953127435}
   - component: {fileID: 8546074355247029655}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &4443360837223266042
 Transform:
@@ -154,6 +154,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Door Arc
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
@@ -202,11 +226,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7ef63f7c8e557bd41a74ed98e4614d91, type: 2}
-    - target: {fileID: 2300002, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
+    - target: {fileID: 2300004, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7ef63f7c8e557bd41a74ed98e4614d91, type: 2}
-    - target: {fileID: 2300004, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
+    - target: {fileID: 2300002, guid: 58f3bb8232b1ee14596066e77ad1eed2, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7ef63f7c8e557bd41a74ed98e4614d91, type: 2}
