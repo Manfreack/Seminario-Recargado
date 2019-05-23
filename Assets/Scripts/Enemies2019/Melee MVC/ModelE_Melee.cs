@@ -182,16 +182,19 @@ public class ModelE_Melee : EnemyEntity
 
     public IEnumerator FollowCorrutine ()
     {
-        pathToTarget.Clear();
+        while (FollowsState)
+        {
+            pathToTarget.Clear();
 
-        Node start = GetMyNode();
-        Node end = GetMyTargetNode();
+            Node start = GetMyNode();
+            Node end = GetMyTargetNode();
 
-        var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
-        originalPathToTarget.Remove(start);
-        pathToTarget.AddRange(originalPathToTarget);
-        currentIndex = pathToTarget.Count;
-        yield return new WaitForSeconds(2);
+            var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
+            originalPathToTarget.Remove(start);
+            pathToTarget.AddRange(originalPathToTarget);
+            currentIndex = pathToTarget.Count;
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     public IEnumerator RetreatCorrutineHeavy(float t)
@@ -440,13 +443,15 @@ public class ModelE_Melee : EnemyEntity
         {
             actualHits = UnityEngine.Random.Range(hitsToStartDefenceMIN, hitsToStartDefenceMAX);
 
-            onDefence = false;
+            //onDefence = false;
 
             _view.DefenceAnimFalse();
         };
 
         wait.OnEnter += x =>
         {
+            onDefence = false;
+
             if (!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
 
             _view._anim.SetBool("WalkBack", false);
@@ -544,6 +549,8 @@ public class ModelE_Melee : EnemyEntity
 
         attack.OnEnter += x =>
         {
+            onDefence = false;
+
             delayToAttack = 0;
             onRetreat = false;
             firstAttack = false;
@@ -584,6 +591,7 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnEnter += x =>
         {
+            onDefence = false;
             if (aggressiveLevel == 1) timeToRetreat = 1.5f;
             if (aggressiveLevel == 2) timeToRetreat = 3.5f;
         };
@@ -853,18 +861,9 @@ public class ModelE_Melee : EnemyEntity
 
     public override void GetDamage(float damage)
     {
-
         Vector3 dir = transform.position - target.transform.position;
         float angle = Vector3.Angle(dir, transform.forward);
-        impulse = false;
-
-        if (onDefence && angle > 90)
-        {
-            timeToHoldDefence = 0;
-            delayToAttack = 0;
-            HitDefenceEvent();
-            if (!_view._anim.GetBool("HeavyAttack") && !_view._anim.GetBool("Attack")) SendInputToFSM(EnemyInputs.ATTACK);           
-        }
+        impulse = false;    
 
         if (!onDefence)
         {
@@ -888,12 +887,23 @@ public class ModelE_Melee : EnemyEntity
 
             }
 
+
             if (!firstHit)
             {
                 firstHit = true;
                 SendInputToFSM(EnemyInputs.PERSUIT);
                 CombatIdleEvent();
             }
+        }
+
+
+        if (onDefence && angle > 90)
+        {
+            timeToHoldDefence = 0;
+            delayToAttack = 0;
+            HitDefenceEvent();
+            if (!_view._anim.GetBool("HeavyAttack") && !_view._anim.GetBool("Attack")) SendInputToFSM(EnemyInputs.ATTACK);
+            onDefence = false;
         }
     }
 

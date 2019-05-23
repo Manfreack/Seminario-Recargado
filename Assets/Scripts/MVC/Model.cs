@@ -360,7 +360,14 @@ public class Model : MonoBehaviour
 
         animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
         animClipName2 = view.anim.GetCurrentAnimatorClipInfo(1)[0].clip.name;
-      
+
+        if (animClipName == "GetDamage1" || animClipName == "GetDamage2" || animClipName == "GetDamage3") 
+        {
+            onRoll = false;
+            view.anim.SetBool("Roll", false);
+            view.anim.SetBool("RollAttack", false);
+        }
+
         TimeToDoDamage();
         ImpulseAttackAnimation();
         RollImpulse();
@@ -430,14 +437,15 @@ public class Model : MonoBehaviour
                 if (countAnimAttack == 2) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
                 if (countAnimAttack == 1) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce / 2) * Time.deltaTime, 2);
                 if (countAnimAttack == 3 || countAnimAttack == 4) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
-                if (countAnimAttack == 0) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
+                if (countAnimAttack == 0 && animClipName != "P_RollEstocada_Damage") transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
+                if (animClipName == "P_RollEstocada_Damage") transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce/2f) * Time.deltaTime, 2);
             }
         }
     }
 
     public void Roll(Vector3 dir)
     {
-        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") && animClipName != "Roll" && animClipName != "RollAttack" && animClipName != "P_Warrior_Rol+Attack")
+        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") && animClipName != "Roll" && animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage")
         {
             RollEvent();
             stamina -= rollStamina;
@@ -489,9 +497,12 @@ public class Model : MonoBehaviour
 
     public void RollImpulse()
     {
-        if (animClipName != "RollAttack" && animClipName != "P_Warrior_Rol+Attack_V2" && animClipName != "Roll") view.RollAttackAnimFalse();
-
-        if (onRoll && (animClipName == "RollAttack" || animClipName == "P_Warrior_Rol+Attack_V2" || animClipName == "Roll"))
+        if (animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage" && animClipName != "P_RollEstocada_End" && animClipName != "Roll")
+        {
+          
+            view.RollAttackAnimFalse();
+        }
+        if (onRoll && (animClipName == "RollAttack" || animClipName == "P_RollEstocada_Damage" || animClipName == "P_RollEstocada_End" || animClipName == "Roll"))
         {
             view.NoReciveDamage();
 
@@ -645,7 +656,7 @@ public class Model : MonoBehaviour
         acceleration += 3f * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
-        if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" && animClipName != "P_Warrior_RolAttack_V2"
+        if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" && animClipName != "P_RollEstocada_Damage" && animClipName != "P_RollEstocada_End"
                                                                       && animClipName != "GetDamage2" && animClipName != "P_Warrior_RolAttack_Pre" && animClipName != "P_Warrior_FailDefence"
                                                                       && animClipName != "GetDamage3" && animClipName != "P_Warrior_RolAttack_Damage" && animClipName != "P_Warrior_RolAttack_End")
         {
@@ -708,6 +719,9 @@ public class Model : MonoBehaviour
             RollAttackEvent();
             view.AwakeTrail();
             EndCombo();
+            CombatState();
+            timeImpulse = 0.8f;
+            timeEndImpulse = 0.4f;
             view.anim.SetBool("Roll", false);
             view.anim.SetBool("CanRollAttack", false);
             var dir = mainCamera.transform.forward;

@@ -12,16 +12,22 @@ public class ViewerE_Melee : MonoBehaviour
     float timeShaderDamage;
     public ParticleSystem sparks;
     public ParticleSystem blood;
+    public GameObject bloodPool;
+    public Material matPool;
     EnemyScreenSpace ess;
     float timeOnDamage;
     bool auxTakeDamage;
     public GameObject prefabTextDamage;
+    public Transform pechera;
     public Camera cam;
     int attacksCounter;
     public GameObject sword;
     public Material heavyMat;
     public float timeShaderHeavyAttack;
     bool heavyAttackShaderTrigger;
+    public string animClipName;
+    float timerExpandPool;
+    float timerVanishPool;
 
     public IEnumerator ShaderHA_True()
     {
@@ -41,9 +47,38 @@ public class ViewerE_Melee : MonoBehaviour
         {
             HeavyAttackShaderFalse();
             yield return new WaitForEndOfFrame();
+        }       
+    }
+
+    public IEnumerator BloodPoolAnim()
+    {
+        while(timerExpandPool<1)
+        {
+            MatPoolExpand();
+            yield return new WaitForEndOfFrame();
         }
 
-        
+        yield return new WaitForSeconds(2.5f);
+
+        while (timerVanishPool< 1)
+        {
+            MatPoolVanish();
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public void MatPoolExpand()
+    {
+        timerExpandPool += Time.deltaTime * 0.5f;
+        if (timerExpandPool >= 1) timerExpandPool = 1;
+        matPool.SetFloat("_FillAmount", timerExpandPool);
+    }
+
+    public void MatPoolVanish()
+    {
+        timerVanishPool += Time.deltaTime / 2.2f;
+        if (timerVanishPool >= 1) timerVanishPool = 1;
+        matPool.SetFloat("_Vanish", timerVanishPool);
     }
 
     public IEnumerator DeadCorrutine()
@@ -96,7 +131,8 @@ public class ViewerE_Melee : MonoBehaviour
 
         if (!_anim.GetBool("HeavyAttack")) HeavyAttackShaderFalse();
 
-        
+        animClipName = _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+
     }
 
     public void RunAttackAnim()
@@ -196,6 +232,10 @@ public class ViewerE_Melee : MonoBehaviour
     public void DeadAnim()
     {
         _anim.SetBool("Dead", true);
+        var pool = Instantiate(bloodPool);
+        matPool = pool.GetComponent<MeshRenderer>().material;
+        pool.transform.position = pechera.position;
+        StartCoroutine(BloodPoolAnim());
     }
 
     public void DeadBody()

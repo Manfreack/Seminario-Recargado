@@ -12,6 +12,7 @@ public class ViewerE_Sniper : MonoBehaviour
     bool damaged;
     float timeShaderDamage;
     public ParticleSystem blood;
+    public List<ParticleSystem> fireHands = new List<ParticleSystem>();
 	EnemyScreenSpace ess;
     Material fireHandsMat;
     public SkinnedMeshRenderer fireHandsRenderer;
@@ -21,9 +22,15 @@ public class ViewerE_Sniper : MonoBehaviour
     float _timeShaderMeleeAttack;
     bool _shaderMeleeAttackTrigger;
 
+
     public IEnumerator ShaderMA_True()
     {
         _shaderMeleeAttackTrigger = true;
+
+        foreach (var item in fireHands)
+        {
+            item.Play();
+        }
 
         while (_shaderMeleeAttackTrigger)
         {
@@ -41,7 +48,10 @@ public class ViewerE_Sniper : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-
+        foreach (var item in fireHands)
+        {
+            item.Stop();
+        }
     }
 
     public IEnumerator DeadCorrutine()
