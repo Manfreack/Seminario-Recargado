@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Grass Mat 01
-  m_Shader: {fileID: 4800000, guid: 8333d64eeb9f10840b923fc655e1827d, type: 3}
+  m_Shader: {fileID: 4800000, guid: e1a07561e1a3c5342b98e63e76dc34ca, type: 3}
   m_ShaderKeywords: GEOM_TYPE_LEAF _WINDQUALITY_NONE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -87,6 +87,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _TextureSample0:
+        m_Texture: {fileID: 2800000, guid: 0d374700ed2ed0a43a132998a211b3e0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _texcoord:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -96,13 +100,15 @@ Material:
     - _BillboardShadowFade: 0.5
     - _BumpScale: 1
     - _Cull: 0
-    - _Cutoff: 1
+    - _Cutoff: 0.8
     - _Cutout: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EdgeLength: 10
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _Gradient: 50
     - _HueVariationKwToggle: 0
     - _Intenityv3: 0
     - _Intensity: 0
@@ -112,6 +118,7 @@ Material:
     - _NormalMapKwToggle: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Position: 2
     - _SmoothnessTextureChannel: 0
     - _SnowGradient: 0.52
     - _SnowPosition: 0
@@ -121,6 +128,7 @@ Material:
     - _SubsurfaceKwToggle: 0
     - _TwoSided: 2
     - _UVSec: 0
+    - _WindIntensity: 0.05
     - _WindQuality: 0
     - _X: 0.25
     - _Y: 0.1

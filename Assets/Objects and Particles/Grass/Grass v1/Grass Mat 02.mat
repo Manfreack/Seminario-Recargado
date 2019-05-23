@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Grass Mat 02
-  m_Shader: {fileID: 4800000, guid: 6931cdba6ca0002429762fa5c71c430d, type: 3}
+  m_Shader: {fileID: 4800000, guid: e1a07561e1a3c5342b98e63e76dc34ca, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -63,6 +63,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 4b1eb4bac697b9441ae88ac9086762c4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _TextureSample0:
+        m_Texture: {fileID: 2800000, guid: 0d374700ed2ed0a43a132998a211b3e0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _texcoord:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -73,9 +77,11 @@ Material:
     - _Cutout: 0.415
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EdgeLength: 11.3
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _Gradient: 0
     - _Intenityv3: 0
     - _Intensity: 0
     - _IntensityCosarara: 0
@@ -83,10 +89,12 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Position: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _WindIntensity: 0.0005
     - _X: 0.25
     - _Y: 0.1
     - _ZWrite: 1
