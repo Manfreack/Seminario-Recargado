@@ -176,6 +176,7 @@ public class Model : MonoBehaviour
         yield return new WaitForSeconds(timeStart + timeEnd);
         timeImpulse = time1;
         timeEndImpulse = time2;
+        StartCoroutine(ImpulseAttackAnimation());
         view.StreakFalse();
     }
 
@@ -185,6 +186,81 @@ public class Model : MonoBehaviour
         yield return new WaitForSeconds(2);
         stuned = false;
     } 
+
+    public IEnumerator RollImpulseCorrutine()
+    {
+        while(onRoll)
+        {
+            RollImpulse();
+            yield return new WaitForEndOfFrame();
+        }
+
+        while (animClipName == "RollAttack" || animClipName == "P_RollEstocada_Damage" || animClipName == "P_RollEstocada_End" || animClipName == "Roll")
+        {
+            
+            yield return new WaitForEndOfFrame();
+        }
+
+        view.RollAttackAnimFalse();
+    }
+
+    public IEnumerator OnDefenceCorrutine()
+    {
+        while (onDefence)
+        {
+            var defenceDir = mainCamera.transform.forward;
+            defenceDir.y = 0;
+            Quaternion targetRotation;
+            targetRotation = Quaternion.LookRotation(defenceDir, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public IEnumerator OnDamageCorrutine()
+    {
+        while (animClipName == "GetDamage1" || animClipName == "GetDamage2" || animClipName == "GetDamage3")
+        {
+            onRoll = false;
+            view.anim.SetBool("Roll", false);
+            view.anim.SetBool("RollAttack", false);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public IEnumerator ImpulseAttackAnimation()
+    {
+        while (timeEndImpulse>0)
+        {
+            timeImpulse -= Time.deltaTime;
+
+            if (timeImpulse < 0)
+            {
+                timeEndImpulse -= Time.deltaTime;
+                if (timeEndImpulse > 0)
+                {
+                    if (onDamage) timeEndImpulse = 0;
+                    if (countAnimAttack == 2) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
+                    if (countAnimAttack == 1) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce / 2) * Time.deltaTime, 2);
+                    if (countAnimAttack == 3 || countAnimAttack == 4) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
+                    if (countAnimAttack == 0 && animClipName != "P_RollEstocada_Damage") transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
+                    if (animClipName == "P_RollEstocada_Damage") transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce / 2f) * Time.deltaTime, 2);
+                }
+            }
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public IEnumerator TimeToDoDamage()
+    {
+        makingDamage = true;
+
+        while (makingDamage)
+        {
+            if (animClipName == "Attack4N-DAMAGE" || animClipName == "Attack3N-DAMAGE" || animClipName == "Attack2N-DAMAGE" || animClipName == "Attack1N-DAMAGE") MakeDamage();
+            yield return new WaitForEndOfFrame();
+        }
+    }
 
     public IEnumerator PowerColdown(float cdTime, int n)
     {
@@ -361,27 +437,29 @@ public class Model : MonoBehaviour
         animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
         animClipName2 = view.anim.GetCurrentAnimatorClipInfo(1)[0].clip.name;
 
-        if (animClipName == "GetDamage1" || animClipName == "GetDamage2" || animClipName == "GetDamage3") 
-        {
-            onRoll = false;
-            view.anim.SetBool("Roll", false);
-            view.anim.SetBool("RollAttack", false);
-        }
+        //TimeToDoDamage();
+       // ImpulseAttackAnimation();
 
-        TimeToDoDamage();
-        ImpulseAttackAnimation();
-        RollImpulse();
+        /* if (animClipName == "GetDamage1" || animClipName == "GetDamage2" || animClipName == "GetDamage3") 
+         {
+             onRoll = false;
+             view.anim.SetBool("Roll", false);
+             view.anim.SetBool("RollAttack", false);
+         }
 
-        if (onDefence)
-        {
-            var defenceDir = mainCamera.transform.forward;
-            defenceDir.y = 0;
-            Quaternion targetRotation;
-            targetRotation = Quaternion.LookRotation(defenceDir, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-        }
 
-        if(stamina<5)
+         //RollImpulse();
+
+        /* if (onDefence)
+         {
+             var defenceDir = mainCamera.transform.forward;
+             defenceDir.y = 0;
+             Quaternion targetRotation;
+             targetRotation = Quaternion.LookRotation(defenceDir, Vector3.up);
+             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+         }
+         */
+        if (stamina<5)
         {
             StopDefence();
             view.NoDefence();
@@ -416,33 +494,14 @@ public class Model : MonoBehaviour
      
     }
 
-    public void TimeToDoDamage()
+    /*public void TimeToDoDamage()
     {
         if (makingDamage && animClipName == "Attack4N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack3N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack2N-DAMAGE") MakeDamage();
         if (makingDamage && animClipName == "Attack1N-DAMAGE") MakeDamage();
     }
-
-    public void ImpulseAttackAnimation()
-    {
-        timeImpulse -= Time.deltaTime;
-
-        if (timeImpulse < 0)
-        {
-            timeEndImpulse -= Time.deltaTime;
-            if (timeEndImpulse > 0)
-            {
-                if (onDamage) timeEndImpulse = 0;
-                if (countAnimAttack == 2) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
-                if (countAnimAttack == 1) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce / 2) * Time.deltaTime, 2);
-                if (countAnimAttack == 3 || countAnimAttack == 4) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
-                if (countAnimAttack == 0 && animClipName != "P_RollEstocada_Damage") transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
-                if (animClipName == "P_RollEstocada_Damage") transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce/2f) * Time.deltaTime, 2);
-            }
-        }
-    }
-
+    */
     public void Roll(Vector3 dir)
     {
         if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") && animClipName != "Roll" && animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage")
@@ -457,6 +516,7 @@ public class Model : MonoBehaviour
             impulse = false;
             timeToRoll = 0.45f;
             lastPosition = transform.position;
+            StartCoroutine(RollImpulseCorrutine());
         }
     } 
 
@@ -568,6 +628,7 @@ public class Model : MonoBehaviour
             CombatState();
             timeImpulse = 0.6f;
             timeEndImpulse = 0.2f;
+            StartCoroutine(ImpulseAttackAnimation());
             StartCoroutine(PowerDelayImpulse(0.6f, 0.2f, 0.1f, 0.2f));
             StartCoroutine(PowerColdown(timeCdPower2, 2));            
         }
@@ -713,15 +774,16 @@ public class Model : MonoBehaviour
         dirToRotateAttack = d;
 
         if(onRoll)
-        {
-            makingDamage = true;
+        {          
             attackDamage = attackRollDamage;
             RollAttackEvent();
             view.AwakeTrail();
+            if (!makingDamage) StartCoroutine(TimeToDoDamage());
             EndCombo();
             CombatState();
             timeImpulse = 0.8f;
             timeEndImpulse = 0.4f;
+            StartCoroutine(ImpulseAttackAnimation());
             view.anim.SetBool("Roll", false);
             view.anim.SetBool("CanRollAttack", false);
             var dir = mainCamera.transform.forward;
@@ -741,9 +803,10 @@ public class Model : MonoBehaviour
                view.AwakeTrail();
                countAnimAttack++;
                Attack();
-               makingDamage = true;
+               if (!makingDamage) StartCoroutine(TimeToDoDamage());
                timeImpulse = 0.04f;
                timeEndImpulse = 0.2f;
+               StartCoroutine(ImpulseAttackAnimation());
                preAttack4 = true;
                stamina -= attackStamina + 3;
                view.UpdateStaminaBar(stamina / maxStamina);
@@ -759,9 +822,10 @@ public class Model : MonoBehaviour
                 view.AwakeTrail();
                 if (countAnimAttack > 3) countAnimAttack = 3;
                 Attack();
-                makingDamage = true;
+                if (!makingDamage) StartCoroutine(TimeToDoDamage());
                 timeImpulse = 0.1f;
                 timeEndImpulse = 0.2f;
+                StartCoroutine(ImpulseAttackAnimation());
                 preAttack3 = true;
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
@@ -776,9 +840,10 @@ public class Model : MonoBehaviour
                 view.AwakeTrail();
                 if (countAnimAttack > 2) countAnimAttack = 2;
                 Attack();
-                makingDamage = true;
+                if (!makingDamage) StartCoroutine(TimeToDoDamage());
                 timeImpulse = 0.01f;
                 timeEndImpulse = 0.3f;
+                StartCoroutine(ImpulseAttackAnimation());
                 preAttack2 = true;
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
@@ -794,8 +859,8 @@ public class Model : MonoBehaviour
                 {                   
                     countAnimAttack++;
                     view.AwakeTrail();
-                    Attack();
-                    makingDamage = true;
+                    Attack();                   
+                    if(!makingDamage)StartCoroutine(TimeToDoDamage());
                     preAttack1 = true;
                     stamina -= attackStamina;
                     view.UpdateStaminaBar(stamina / maxStamina);
@@ -834,6 +899,8 @@ public class Model : MonoBehaviour
             item.StartCoroutine(item.startDisolve());
             makingDamage = false;
         }
+
+        makingDamage = false;
     }
 
     public void Power1Damage()
@@ -862,6 +929,8 @@ public class Model : MonoBehaviour
 
     public void Defence()
     {
+        StartCoroutine(OnDefenceCorrutine());
+
         if (onRoll) StopDefence();
 
         if (stamina >= 0 && !stuned && !onRoll && !defenceBroken && !onDamage)
@@ -931,6 +1000,7 @@ public class Model : MonoBehaviour
 
     public void GetDamage(float damage, Transform enemy, bool isProyectile, bool heavyDamage)
     {
+        
         timeCdPower2 -= reduceTimePerHit;
         impulse = false;
         bool isBehind = false;
@@ -1008,6 +1078,8 @@ public class Model : MonoBehaviour
                 }
             }       
         }
+
+        StartCoroutine(OnDamageCorrutine());
     }
 
 

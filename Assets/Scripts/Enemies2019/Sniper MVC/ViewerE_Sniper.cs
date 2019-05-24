@@ -21,7 +21,10 @@ public class ViewerE_Sniper : MonoBehaviour
     public Camera cam;
     float _timeShaderMeleeAttack;
     bool _shaderMeleeAttackTrigger;
-
+    float timerExpandPool;
+    float timerVanishPool;
+    public GameObject bloodPool;
+    public Material matPool;
 
     public IEnumerator ShaderMA_True()
     {
@@ -52,6 +55,37 @@ public class ViewerE_Sniper : MonoBehaviour
         {
             item.Stop();
         }
+    }
+
+    public IEnumerator BloodPoolAnim()
+    {
+        while (timerExpandPool < 1)
+        {
+            MatPoolExpand();
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return new WaitForSeconds(2.5f);
+
+        while (timerVanishPool < 1)
+        {
+            MatPoolVanish();
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public void MatPoolExpand()
+    {
+        timerExpandPool += Time.deltaTime * 0.5f;
+        if (timerExpandPool >= 1) timerExpandPool = 1;
+        matPool.SetFloat("_FillAmount", timerExpandPool);
+    }
+
+    public void MatPoolVanish()
+    {
+        timerVanishPool += Time.deltaTime / 2.2f;
+        if (timerVanishPool >= 1) timerVanishPool = 1;
+        matPool.SetFloat("_Vanish", timerVanishPool);
     }
 
     public IEnumerator DeadCorrutine()
@@ -116,6 +150,7 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void DeadAnim()
     {
+        StartCoroutine(BloodPoolAnim());
         _anim.SetBool("Dead", true);
     }
 

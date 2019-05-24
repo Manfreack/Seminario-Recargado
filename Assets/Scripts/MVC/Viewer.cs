@@ -17,6 +17,7 @@ public class Viewer : MonoBehaviour
     public CamShake camShake;
     public Transform head;
     Quaternion headBaseRot;
+    public ParticleSystem blood;
 
     public Image power1;
     public Image power2;
@@ -418,6 +419,8 @@ public class Viewer : MonoBehaviour
 
     public void ReciveDamage()
     {
+
+        blood.Play();
         if (!model.onPowerState)
         {
             ShakeCameraDamage(1, 1.5f, 0.5f);

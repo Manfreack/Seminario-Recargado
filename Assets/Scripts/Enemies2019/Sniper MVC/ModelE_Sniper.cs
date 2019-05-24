@@ -89,6 +89,7 @@ public class ModelE_Sniper : EnemyEntity
          .SetTransition(EnemyInputs.MELEE_ATTACK, melee_attack)
          .SetTransition(EnemyInputs.PERSUIT, persuit)
          .SetTransition(EnemyInputs.FOLLOW, follow)
+         .SetTransition(EnemyInputs.RETREAT, retreat)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
@@ -187,6 +188,8 @@ public class ModelE_Sniper : EnemyEntity
 
             timeToRetreat -= Time.deltaTime;
 
+            if (timeToRetreat <= 0) onRetreat = true;
+
             // if (!isDead && onMeleeAttack) SendInputToFSM(EnemyInputs.MELEE_ATTACK);
 
             if (!isDead && !isWaitArea && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
@@ -210,7 +213,9 @@ public class ModelE_Sniper : EnemyEntity
             timeToMeleeAttack -= Time.deltaTime;
 
             timeToRetreat -= Time.deltaTime;
-           
+
+            
+
             currentAction = new A_SniperMeleeAttack(this);
 
             if (!isDead && isWaitArea && !onRetreat) SendInputToFSM(EnemyInputs.ATTACK);
@@ -236,6 +241,7 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
+            Debug.Log("asdasd");
 
             timeToStopBack -= Time.deltaTime;
 

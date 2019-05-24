@@ -65,6 +65,7 @@ public class ViewerE_Melee : MonoBehaviour
             MatPoolVanish();
             yield return new WaitForEndOfFrame();
         }
+
     }
 
     public void MatPoolExpand()
@@ -234,7 +235,8 @@ public class ViewerE_Melee : MonoBehaviour
         _anim.SetBool("Dead", true);
         var pool = Instantiate(bloodPool);
         matPool = pool.GetComponent<MeshRenderer>().material;
-        pool.transform.position = pechera.position;
+        pool.transform.forward = transform.forward;
+        pool.transform.position = transform.position - transform.forward;
         StartCoroutine(BloodPoolAnim());
     }
 

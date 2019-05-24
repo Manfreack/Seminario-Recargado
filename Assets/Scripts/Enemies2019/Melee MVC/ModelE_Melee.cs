@@ -13,6 +13,7 @@ public class ModelE_Melee : EnemyEntity
     public float timeToPatrol;
     public LayerMask layerPlayer;
     public LayerMask layerObst;
+    public LayerMask layerObstAndBarrels;
     public LayerMask layerEntites;
     public LayerMask layerAttack;
     public bool timeToAttack;
@@ -244,6 +245,17 @@ public class ModelE_Melee : EnemyEntity
         alreadyChangeDir = false;
     }
 
+    public IEnumerator OnDamageCorrutine()
+    {
+        onDamage = true;
+
+        while (onDamage)
+        {           
+           timeOnDamage -= Time.deltaTime;
+           if (timeOnDamage <= 0) onDamage = false;
+           yield return new WaitForEndOfFrame();
+        }
+    }
     public void Awake()
     {
         
@@ -620,6 +632,15 @@ public class ModelE_Melee : EnemyEntity
         {
             if (animClipName != "E_Warrior_Attack1" && animClipName != "E_Warrior_Attack2" && animClipName != "E_Warrior_Attack3" && animClipName != "Heavy Attack_EM" && animClipName != "Run_EM" && animClipName != "HitDefence") timeToRetreat -= Time.deltaTime;
 
+            if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("Attack2") || _view._anim.GetBool("Attack3") || _view._anim.GetBool("HeavyAttack")) && !isDead && !onDefence)
+            {
+                transform.LookAt(target.transform.position);
+            }
+
+            if (animClipName != "E_Warrior_Attack1" && animClipName != "E_Warrior_Attack2" && animClipName != "E_Warrior_Attack3") impulse = false;
+
+            if (impulse && (animClipName == "E_Warrior_Attack1" || animClipName == "E_Warrior_Attack2" || animClipName == "E_Warrior_Attack3")) transform.position += transform.forward * 2 * Time.deltaTime;
+
         };
 
         retreat.OnExit += x =>
@@ -720,30 +741,9 @@ public class ModelE_Melee : EnemyEntity
 
         }
 
-        if (onDamage)
-        {
-            timeOnDamage -= Time.deltaTime;
-            if (timeOnDamage <= 0)
-            {
-                onDamage = false;
-            }
-        }
-
-        if (life <= 0)
-        {
-            isDead = true;
-            SendInputToFSM(EnemyInputs.DIE);
-        }
-
-        if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("Attack2") || _view._anim.GetBool("Attack3") || _view._anim.GetBool("HeavyAttack")) && !isDead && !onDefence)
-        {
-            transform.LookAt(target.transform.position);
-        }
+     
 
         
-        if (animClipName != "E_Warrior_Attack1" && animClipName != "E_Warrior_Attack2" && animClipName != "E_Warrior_Attack3") impulse = false;
-
-        if (impulse && (animClipName == "E_Warrior_Attack1" || animClipName == "E_Warrior_Attack2" || animClipName == "E_Warrior_Attack3")) transform.position += transform.forward * 2 * Time.deltaTime;
                    
     }
 
@@ -837,7 +837,7 @@ public class ModelE_Melee : EnemyEntity
 
     public override Vector3 EntitiesAvoidance()
     {
-        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x => x != this).ToList();
+        var obs = Physics.OverlapSphere(transform.position, 1, layerObstAndBarrels).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x => x != this).ToList();
         obs.Remove(this);
         if (obs.Count() > 0)
         {
@@ -871,22 +871,11 @@ public class ModelE_Melee : EnemyEntity
             _view.HitDefenceAnimFalse();
             actualHits--;
             timeOnDamage = 0.5f;
-            if (!onDamage) onDamage = true;     
+            if (!onDamage) StartCoroutine(OnDamageCorrutine());    
             TakeDamageEvent();
             life -= damage;
             _view.LifeBar(life / maxLife);
-            _view.CreatePopText(damage);
-
-            if (life <= 0 && !isDead)
-            {
-                isDead = true;
-                if (cm.times < 2)
-                {
-                    cm.times++;
-                }
-
-            }
-
+            _view.CreatePopText(damage);          
 
             if (!firstHit)
             {
@@ -904,6 +893,16 @@ public class ModelE_Melee : EnemyEntity
             HitDefenceEvent();
             if (!_view._anim.GetBool("HeavyAttack") && !_view._anim.GetBool("Attack")) SendInputToFSM(EnemyInputs.ATTACK);
             onDefence = false;
+        }
+
+        if (life <= 0 && !isDead)
+        {
+            isDead = true;
+            if (cm.times < 2)
+            {
+                cm.times++;
+            }
+
         }
     }
 

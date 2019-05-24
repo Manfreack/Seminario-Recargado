@@ -44,6 +44,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                         _e.AttackEvent();
                         _e.onRetreat = true;
                         _e.firstAttack = true;
+
                     }
 
                     if (r == 0)
