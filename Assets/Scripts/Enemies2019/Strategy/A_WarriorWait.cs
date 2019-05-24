@@ -48,10 +48,16 @@ public class A_WarriorWait : i_EnemyActions
 
                 if (obs.Any() && !_e.cooldwonReposition)
                 {
-                    if (obs.First().flankDir != 1) _e.StartCoroutine(_e.AvoidWarriorRight());
+                    if (obs.First().flankDir != 1)
+                    {
+                        _e.StartCoroutine(_e.AvoidWarriorRight());
+                        obs.First().flankDir = 0;
+                        obs.First().StartCoroutine(obs.First().ChangeDirRotation());
+                    }
 
                     if (obs.First().flankDir == 1)
                     {
+                        Debug.Log(_e.name);
                         _e.flankDir = 0;
                         _e.StartCoroutine(_e.ChangeDirRotation());
                         obs.First().StartCoroutine(obs.First().ChangeDirRotation());
@@ -62,7 +68,9 @@ public class A_WarriorWait : i_EnemyActions
             
                 _e.rb.MovePosition(_e.rb.position + _e.transform.right * _e.speedRotation * Time.deltaTime);
 
-                if (_e.avoidVectObstacles != Vector3.zero)
+                var obstacles = _e.ObstacleAvoidance();
+
+                if (obstacles != Vector3.zero)
                 {
                     _e.rb.MovePosition(_e.rb.position  + _e.transform.forward * _e.speedRotation * Time.deltaTime);
                 }
@@ -76,7 +84,12 @@ public class A_WarriorWait : i_EnemyActions
 
                 if (obs.Any() && !_e.reposition && !_e.cooldwonReposition)
                 {
-                    if (obs.First().flankDir == 2) _e.StartCoroutine(_e.AvoidWarriorLeft());
+                    if (obs.First().flankDir == 2)
+                    {
+                        _e.StartCoroutine(_e.AvoidWarriorLeft());
+                        obs.First().flankDir = 0;
+                        obs.First().StartCoroutine(obs.First().ChangeDirRotation());
+                    }
 
                     if (obs.First().flankDir == 0)
                     {
@@ -89,7 +102,9 @@ public class A_WarriorWait : i_EnemyActions
             
                 _e.rb.MovePosition(_e.rb.position - _e.transform.right * _e.speedRotation * Time.deltaTime);
 
-                if (_e.avoidVectObstacles != Vector3.zero)
+                var obstacles = _e.ObstacleAvoidance();
+
+                if (obstacles != Vector3.zero)
                 {
                     _e.rb.MovePosition(_e.rb.position + _e.transform.forward * _e.speedRotation * Time.deltaTime);
                 }

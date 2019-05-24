@@ -183,19 +183,21 @@ public class ModelE_Melee : EnemyEntity
 
     public IEnumerator FollowCorrutine ()
     {
-        while (FollowsState)
-        {
-            pathToTarget.Clear();
+        /* while (FollowsState)
+         {
+             pathToTarget.Clear();
 
-            Node start = GetMyNode();
-            Node end = GetMyTargetNode();
+             Node start = GetMyNode();
+             Node end = GetMyTargetNode();
 
-            var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
-            originalPathToTarget.Remove(start);
-            pathToTarget.AddRange(originalPathToTarget);
-            currentIndex = pathToTarget.Count;
-            yield return new WaitForSeconds(0.5f);
-        }
+             var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
+             //originalPathToTarget.Remove(start);
+             pathToTarget.AddRange(originalPathToTarget);
+             currentIndex = pathToTarget.Count;
+             yield return new WaitForSeconds(0.5f);
+         }
+         */
+        yield return new WaitForSeconds(0.5f);
     }
 
     public IEnumerator RetreatCorrutineHeavy(float t)
@@ -266,6 +268,7 @@ public class ModelE_Melee : EnemyEntity
         maxLife = life;
         maxViewDistanceToAttack = viewDistanceAttack;
         actualHits = UnityEngine.Random.Range(hitsToStartDefenceMIN, hitsToStartDefenceMAX);
+        changeRotateWarrior = true;
 
         TakeDamageEvent += _view.TakeDamageAnim;
         DeadEvent += _view.DeadAnim;
@@ -335,7 +338,6 @@ public class ModelE_Melee : EnemyEntity
 
         StateConfigurer.Create(follow)
          .SetTransition(EnemyInputs.PERSUIT, persuit)
-         .SetTransition(EnemyInputs.WAIT, wait)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
@@ -389,6 +391,7 @@ public class ModelE_Melee : EnemyEntity
 
         persuit.OnFixedUpdate += () =>
         {
+
             if (aggressiveLevel == 1) viewDistanceAttack = 3.5f;
 
             if (aggressiveLevel == 2) viewDistanceAttack = 7f;
@@ -422,6 +425,7 @@ public class ModelE_Melee : EnemyEntity
 
         persuit.OnExit += x =>
         {
+
             PersuitState = false;
         };
 
@@ -434,6 +438,7 @@ public class ModelE_Melee : EnemyEntity
 
         defence.OnUpdate += () =>
         {
+
             DefenceEvent();
 
             timeToHoldDefence -= Time.deltaTime;
@@ -547,6 +552,7 @@ public class ModelE_Melee : EnemyEntity
             if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
+            
 
         };
 
@@ -572,6 +578,8 @@ public class ModelE_Melee : EnemyEntity
 
         attack.OnFixedUpdate += () =>
         {
+
+
             AttackState = true;
 
             currentAction = new A_AttackMeleeWarrior(this);
@@ -654,24 +662,38 @@ public class ModelE_Melee : EnemyEntity
 
             StartCoroutine(FollowCorrutine());
 
+            pathToTarget.Clear();
+
+            Node start = GetMyNode();
+            Node end = GetMyTargetNode();
+
+            var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
+            //originalPathToTarget.Remove(start);
+            pathToTarget.AddRange(originalPathToTarget);
+            currentIndex = pathToTarget.Count;
+          
+
         };
 
         follow.OnUpdate += () =>
         {
-            FollowsState = true;
-
-            var d = Vector3.Distance(transform.position, target.transform.position);
-
-            currentAction = new A_FollowTarget(this);
 
             if (!onDamage) CombatWalkEvent();
 
-            if (!isDead && d < viewDistancePersuit) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.PERSUIT);
+
+            if (isDead) SendInputToFSM(EnemyInputs.DIE);
+        };
+
+        follow.OnFixedUpdate += () =>
+        {
+            currentAction = new A_FollowTarget(this);
         };
 
         follow.OnExit += x => 
         {
-            FollowsState = true;
+
+            FollowsState = false;
         };
 
         die.OnEnter += x =>
@@ -721,13 +743,15 @@ public class ModelE_Melee : EnemyEntity
 
     private void Update()
     {
+        
+
         animClipName = _view._anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
 
         _myFsm.Update();
 
         FillFriends();
 
-        avoidVectObstacles = ObstacleAvoidance();
+       // avoidVectObstacles = ObstacleAvoidance();
 
         if (target != null)
         {
@@ -740,11 +764,7 @@ public class ModelE_Melee : EnemyEntity
 
 
         }
-
-     
-
-        
-                   
+                       
     }
 
     private void FixedUpdate()
@@ -786,7 +806,7 @@ public class ModelE_Melee : EnemyEntity
 
     public override Vector3 ObstacleAvoidance()
     {     
-       var obs = Physics.OverlapSphere(transform.position, 1, layerObst).Where(x=> !x.GetComponent<Model>());
+       var obs = Physics.OverlapSphere(transform.position, 1, layerObstAndBarrels).Where(x=> !x.GetComponent<Model>());
        if (obs.Count() > 0)
        {
            var dir = transform.position - obs.First().transform.position;

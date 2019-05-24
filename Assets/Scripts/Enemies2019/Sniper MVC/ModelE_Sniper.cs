@@ -11,6 +11,7 @@ public class ModelE_Sniper : EnemyEntity
     public LayerMask layerObst;
     public LayerMask layerEntites;
     public LayerMask layerPlayer;
+    public LayerMask layerObstAndBarrels;
     ViewerE_Sniper _view;
     public Transform attackPivot;
     public float timeToShoot;
@@ -34,6 +35,19 @@ public class ModelE_Sniper : EnemyEntity
     public Action IdleEvent;
 	
 	public float maxLife;
+
+    public IEnumerator OnDamageCorrutine()
+    {
+        onDamage = true;
+
+        while (onDamage)
+        {
+            timeOnDamage -= Time.deltaTime;
+            if (timeOnDamage <= 0) onDamage = false;
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     public void Awake()
     {
         playerNodes.AddRange(FindObjectsOfType<CombatNode>());
@@ -188,6 +202,8 @@ public class ModelE_Sniper : EnemyEntity
 
             timeToRetreat -= Time.deltaTime;
 
+            var d = Vector3.Distance(transform.position, target.transform.position);
+
             if (timeToRetreat <= 0) onRetreat = true;
 
             // if (!isDead && onMeleeAttack) SendInputToFSM(EnemyInputs.MELEE_ATTACK);
@@ -196,7 +212,7 @@ public class ModelE_Sniper : EnemyEntity
 
             if (!isDead && !isWaitArea && !isPersuit) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && onRetreat && timeToRetreat < 0) SendInputToFSM(EnemyInputs.RETREAT);
+            if (!isDead && onRetreat && timeToRetreat < 0 && d<=1.5) SendInputToFSM(EnemyInputs.RETREAT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
@@ -312,7 +328,7 @@ public class ModelE_Sniper : EnemyEntity
     {
         _myFsm.Update();
 
-        avoidVectObstacles = ObstacleAvoidance();
+        //avoidVectObstacles = ObstacleAvoidance();
         entitiesAvoidVect = EntitiesAvoidance();
 
         if (target != null && SearchForTarget.SearchTarget(target.transform, viewDistancePersuit, angleToPersuit, transform, true, layerObst)) isPersuit = true;
@@ -324,20 +340,6 @@ public class ModelE_Sniper : EnemyEntity
         if (target != null && SearchForTarget.SearchTarget(target.transform, distanceToMeleeAttack, angleToMeleeAttack, transform, true, layerObst)) onMeleeAttack = true;
         else onMeleeAttack = false;
 
-        if (onDamage)
-        {
-            timeOnDamage -= Time.deltaTime;
-            if (timeOnDamage <= 0)
-            {
-                onDamage = false;
-            }
-        }
-
-        if (life <= 0)
-        {
-            isDead = true;
-            SendInputToFSM(EnemyInputs.DIE);
-        }
     }
 
     private void FixedUpdate()
@@ -373,12 +375,21 @@ public class ModelE_Sniper : EnemyEntity
     public override void GetDamage(float damage)
     {
         timeOnDamage = 1f;
-        if (!onDamage) onDamage = true;
+        if (!onDamage)
+        {
+            onDamage = true;
+            StartCoroutine(OnDamageCorrutine());
+        }
         TakeDamageEvent();
         life -= damage;
 		_view.LifeBar(life / maxLife);
         _view.CreatePopText(damage);
 
+        if (life <= 0)
+        {
+            isDead = true;
+            SendInputToFSM(EnemyInputs.DIE);
+        }
     }
 
     public Vector3 FindNearScapeNode()
@@ -428,7 +439,7 @@ public class ModelE_Sniper : EnemyEntity
 
     public override Vector3 ObstacleAvoidance()
     {
-        var obs = Physics.OverlapSphere(transform.position, 2, layerObst);
+        var obs = Physics.OverlapSphere(transform.position, 2, layerObstAndBarrels);
         if (obs.Count() > 0)
         {
             var dir = transform.position - obs.First().transform.position;

@@ -31,7 +31,7 @@ public class A_Persuit : i_EnemyActions
                     else dir = (_e.FindNearNon_AggressiveNode().transform.position - _e.transform.position).normalized;
 
                     dir.y = 0;
-                    var avoid = _e.avoidVectObstacles.normalized;
+                    var avoid = _e.ObstacleAvoidance().normalized;
                     avoid.y = 0;
 
                     targetRotation = Quaternion.LookRotation(dir + avoid, Vector3.up);
@@ -48,7 +48,7 @@ public class A_Persuit : i_EnemyActions
                Quaternion targetRotation;
                var dir = (_e.FindNearNon_AggressiveNode().transform.position - _e.transform.position).normalized;
                dir.y = 0;
-               var avoid = _e.avoidVectObstacles.normalized;
+               var avoid = _e.ObstacleAvoidance().normalized;
                avoid.y = 0;
                targetRotation = Quaternion.LookRotation(dir + avoid, Vector3.up);
                _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);

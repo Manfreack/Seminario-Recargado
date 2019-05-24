@@ -150,8 +150,12 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void DeadAnim()
     {
-        StartCoroutine(BloodPoolAnim());
         _anim.SetBool("Dead", true);
+        var pool = Instantiate(bloodPool);
+        matPool = pool.GetComponent<MeshRenderer>().material;
+        pool.transform.forward = transform.forward;
+        pool.transform.position = transform.position - transform.forward;
+        StartCoroutine(BloodPoolAnim());
     }
 
     public void DeadBody()

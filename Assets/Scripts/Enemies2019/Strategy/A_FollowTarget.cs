@@ -13,15 +13,18 @@ public class A_FollowTarget : i_EnemyActions
         _entity.target.CombatState();
         _entity.target.saveSword = true;
 
+      
+
         if (!_entity.onDamage)
         {
 
             if (_entity.currentIndex > 0)
             {
                 float d = Vector3.Distance(_entity.pathToTarget[_entity.currentIndex - 1].transform.position, _entity.transform.position);
-                if (d >= 1 && !_entity.onDamage)
-                {
 
+                if (d > 1 && !_entity.onDamage)
+                {
+               
                     Quaternion targetRotation;
                     var _dir = (_entity.pathToTarget[_entity.currentIndex - 1].transform.position - _entity.transform.position).normalized;
                     _dir.y = 0;
@@ -30,12 +33,16 @@ public class A_FollowTarget : i_EnemyActions
                     _entity.rb.MovePosition(_entity.rb.position + _entity.transform.forward * _entity.speed * Time.deltaTime);
 
                 }
-                else
+                if(d<1)
+                {
+           
                     _entity.currentIndex--;
+                }
             }
 
             if (_entity.currentIndex <= 0)
             {
+              
                 Node start = _entity.GetMyNode();
                 Node end = _entity.GetMyTargetNode();
 

@@ -171,6 +171,29 @@ public class Model : MonoBehaviour
     [HideInInspector]
     public float fadeTimer;
 
+    public IEnumerator DefenceBroken()
+    {
+        timeToRecoverDefence = maxTimeToRecoverDefence;
+        defenceBroken = true;
+
+        while (defenceBroken)
+        {
+            timeToRecoverDefence -= Time.deltaTime;
+
+            tdefence += Time.deltaTime;
+
+            view.BrokenDefence(1 - (tdefence / maxTimeToRecoverDefence));
+
+            if (timeToRecoverDefence <= 0)
+            {
+                tdefence = 0;
+                timeToRecoverDefence = maxTimeToRecoverDefence;
+                defenceBroken = false;
+            }
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     public IEnumerator PowerDelayImpulse(float timeStart, float timeEnd, float time1, float time2)
     {
         yield return new WaitForSeconds(timeStart + timeEnd);
@@ -278,6 +301,15 @@ public class Model : MonoBehaviour
         for (t2 = 0; t2 < cdTime && n == 2; t2 += Time.deltaTime)
         {
             cdPower2 = true;
+            if (cdPower2)
+            {
+                timeCdPower2 -= Time.deltaTime;
+                if (timeCdPower2 <= 0)
+                {
+                    cdPower2 = false;
+                }
+            }
+            if (timeCdPower2 <= 0) timeCdPower2 = internCdPower2;
             view.UpdatePowerCD(n, t2 / cdTime);
             yield return new WaitForEndOfFrame();
         }
@@ -314,6 +346,17 @@ public class Model : MonoBehaviour
             cdPower4 = false;
             view.UpdatePowerCD(n, 1);
         }
+
+        while (cdPower2)
+        {
+            timeCdPower2 -= Time.deltaTime;
+            if (timeCdPower2 <= 0)
+            {
+                cdPower2 = false;
+            }
+        }
+
+        if (timeCdPower2 <= 0) timeCdPower2 = internCdPower2;
     }
 
     public IEnumerator OnDamageDelay()
@@ -326,6 +369,21 @@ public class Model : MonoBehaviour
     {
         yield return new WaitForSeconds(0.4f);
         CombatState();
+    }
+
+    public IEnumerator AttackRotation()
+    {
+        timeToRotateAttack = 0.3f;
+
+        while (timeToRotateAttack > 0)
+        {
+            timeToRotateAttack -= Time.deltaTime;
+            dirToRotateAttack.y = 0;
+            Quaternion targetRotation;
+            targetRotation = Quaternion.LookRotation(dirToRotateAttack, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+            yield return new WaitForEndOfFrame();
+        }
     }
 
     public enum PotionName { Health, Stamina, Extra_Health, Costless_Hit, Mana };
@@ -356,44 +414,6 @@ public class Model : MonoBehaviour
     void Update()
     {
         
-
-        if (defenceBroken)
-        {
-            timeToRecoverDefence -= Time.deltaTime;
-
-            tdefence += Time.deltaTime;
-
-            view.BrokenDefence(1 - (tdefence / maxTimeToRecoverDefence));
-
-            if(timeToRecoverDefence<=0)
-            {
-                tdefence = 0;
-                timeToRecoverDefence = maxTimeToRecoverDefence;
-                defenceBroken = false;
-            }
-        }
-
-        if (cdPower2)
-        {
-            timeCdPower2 -= Time.deltaTime;
-            if (timeCdPower2 <= 0)
-            {
-                cdPower2 = false;      
-            }
-        }
-
-        if (timeCdPower2 <= 0) timeCdPower2 = internCdPower2;
-
-        timeToRotateAttack -= Time.deltaTime;
-
-        if(timeToRotateAttack>0)
-        {
-            dirToRotateAttack.y = 0;
-            Quaternion targetRotation;
-            targetRotation = Quaternion.LookRotation(dirToRotateAttack, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-        }
-
         CombatParameters();
 
         WraperAction();      
@@ -437,28 +457,7 @@ public class Model : MonoBehaviour
         animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
         animClipName2 = view.anim.GetCurrentAnimatorClipInfo(1)[0].clip.name;
 
-        //TimeToDoDamage();
-       // ImpulseAttackAnimation();
-
-        /* if (animClipName == "GetDamage1" || animClipName == "GetDamage2" || animClipName == "GetDamage3") 
-         {
-             onRoll = false;
-             view.anim.SetBool("Roll", false);
-             view.anim.SetBool("RollAttack", false);
-         }
-
-
-         //RollImpulse();
-
-        /* if (onDefence)
-         {
-             var defenceDir = mainCamera.transform.forward;
-             defenceDir.y = 0;
-             Quaternion targetRotation;
-             targetRotation = Quaternion.LookRotation(defenceDir, Vector3.up);
-             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-         }
-         */
+      
         if (stamina<5)
         {
             StopDefence();
@@ -494,14 +493,7 @@ public class Model : MonoBehaviour
      
     }
 
-    /*public void TimeToDoDamage()
-    {
-        if (makingDamage && animClipName == "Attack4N-DAMAGE") MakeDamage();
-        if (makingDamage && animClipName == "Attack3N-DAMAGE") MakeDamage();
-        if (makingDamage && animClipName == "Attack2N-DAMAGE") MakeDamage();
-        if (makingDamage && animClipName == "Attack1N-DAMAGE") MakeDamage();
-    }
-    */
+   
     public void Roll(Vector3 dir)
     {
         if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") && animClipName != "Roll" && animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage")
@@ -616,7 +608,7 @@ public class Model : MonoBehaviour
 
     public void CastPower2()
     {
-        if (!cdPower2 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0 && isInCombat && !onDefence)
+        if (!cdPower2 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0 && isInCombat && !onDefence && !view.anim.GetBool("Parry"))
         {
             onRoll = false;
             view.BackRollAnim();
@@ -811,7 +803,7 @@ public class Model : MonoBehaviour
                stamina -= attackStamina + 3;
                view.UpdateStaminaBar(stamina / maxStamina);
                CombatState();
-               timeToRotateAttack = 0.3f;
+               StartCoroutine(AttackRotation());
                attackDamage = attack4Damage;
             }
 
@@ -830,7 +822,7 @@ public class Model : MonoBehaviour
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
                 CombatState();
-                timeToRotateAttack = 0.3f;
+                StartCoroutine(AttackRotation());
                 attackDamage = attack3Damage;
             }
 
@@ -848,7 +840,7 @@ public class Model : MonoBehaviour
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
                 CombatState();
-                timeToRotateAttack = 0.3f;
+                StartCoroutine(AttackRotation());
                 attackDamage = attack2Damage;
             }
 
@@ -864,7 +856,7 @@ public class Model : MonoBehaviour
                     preAttack1 = true;
                     stamina -= attackStamina;
                     view.UpdateStaminaBar(stamina / maxStamina);
-                    timeToRotateAttack = 0.3f;
+                    StartCoroutine(AttackRotation());
                     attackDamage = attack1Damage;
                     CombatState();
                 }
@@ -890,7 +882,7 @@ public class Model : MonoBehaviour
         foreach (var item in col)
         {
             item.GetDamage(attackDamage);
-            item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
+            if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
             makingDamage = false;
         }
 
@@ -922,9 +914,11 @@ public class Model : MonoBehaviour
                 item.GetComponent<ViewerE_Melee>().BackFromAttack();
                 item.GetComponent<ModelE_Melee>().StopRetreat();
             }
-            item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 8, ForceMode.Impulse);
+            if(item.life>0)item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 8, ForceMode.Impulse);
             makingDamage = false;
         }
+
+        makingDamage = false;
     }
 
     public void Defence()
@@ -1012,7 +1006,11 @@ public class Model : MonoBehaviour
         float angle = Vector3.Angle(dir, transform.forward);
         if (angle < 90) isBehind = true;
 
-        if(onRoll) view.ShakeCameraDamage(0.5f, 0.5f, 0.5f);
+        if (onRoll)
+        {
+            view.ShakeCameraDamage(0.5f, 0.5f, 0.5f);
+            view.blood.Play();
+        }
 
         if (!isBehind && !isProyectile && onDefence && !heavyDamage)
         {
@@ -1036,7 +1034,7 @@ public class Model : MonoBehaviour
         {
             view.BlockedFail();
             StopDefence();
-            defenceBroken = true;
+            StartCoroutine(DefenceBroken());
             view.defenceColdwon.fillAmount = 1;
             impulse = false;
             view.ShakeCameraDamage(1,1,0.5f);
