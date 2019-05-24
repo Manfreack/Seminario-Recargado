@@ -17,7 +17,8 @@ public class ViewerE_Sniper : MonoBehaviour
     Material fireHandsMat;
     public SkinnedMeshRenderer fireHandsRenderer;
     public float timeFireHands;
-    public GameObject prefabTextDamage;
+    public PopText prefabTextDamage;
+    GameObject canvas;
     public Camera cam;
     float _timeShaderMeleeAttack;
     bool _shaderMeleeAttackTrigger;
@@ -111,6 +112,7 @@ public class ViewerE_Sniper : MonoBehaviour
         myMeshes.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
 		ess = GetComponent<EnemyScreenSpace>();
         fireHandsMat = fireHandsRenderer.materials[2];
+        canvas = GameObject.Find("Canvas");
 
         _anim.SetBool("Idle", true);
 
@@ -230,16 +232,22 @@ public class ViewerE_Sniper : MonoBehaviour
     {
         if (!_model.isDead)
         {
-            var damageText = Instantiate(prefabTextDamage);
-            Vector2 screenPos =cam.WorldToScreenPoint(transform.position);
-            damageText.transform.position = screenPos;
-            damageText.GetComponent<PopText>().damageText = damage;
-            float distance = Vector3.Distance(transform.position, cam.transform.position);
-            var depthUI = damageText.GetComponent<DepthUI>();
-            depthUI.depth = -distance;
+            PopText text = Instantiate(prefabTextDamage);
+            StartCoroutine(FollowEnemy(text));
+            text.transform.SetParent(canvas.transform, false);
+            text.SetDamage(damage);
         }
     }
 
+    IEnumerator FollowEnemy(PopText text)
+    {
+        while (text != null)
+        {
+            Vector2 screenPos = cam.WorldToScreenPoint(transform.position + (Vector3.up * 2));
+            text.transform.position = screenPos;
+            yield return new WaitForEndOfFrame();
+        }
+    }
 
     public void FireHands()
     {

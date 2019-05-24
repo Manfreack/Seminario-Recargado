@@ -36,7 +36,7 @@ public class EnemyScreenSpace : MonoBehaviour
     {
         timer -= Time.deltaTime;
 
-        Vector3 worldPos = transform.position + (Vector3.up * 2);
+        Vector3 worldPos = transform.position + (Vector3.up * 1.75f);
         Vector3 screenPos = cam.WorldToScreenPoint(worldPos);
         healthBar.transform.position = screenPos;
 

@@ -17,7 +17,8 @@ public class ViewerE_Melee : MonoBehaviour
     EnemyScreenSpace ess;
     float timeOnDamage;
     bool auxTakeDamage;
-    public GameObject prefabTextDamage;
+    public PopText prefabTextDamage;
+    GameObject canvas;
     public Transform pechera;
     public Camera cam;
     int attacksCounter;
@@ -104,6 +105,7 @@ public class ViewerE_Melee : MonoBehaviour
         _model = GetComponent<ModelE_Melee>();
         myMeshes.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
         ess = GetComponent<EnemyScreenSpace>();
+        canvas = GameObject.Find("Canvas");
 
         _anim.SetBool("Idle", true);
 
@@ -310,13 +312,20 @@ public class ViewerE_Melee : MonoBehaviour
     {
         if (!_model.isDead)
         {
-            var damageText = Instantiate(prefabTextDamage);
-            Vector2 screenPos = cam.WorldToScreenPoint(transform.position);
-            damageText.transform.position = screenPos;
-            damageText.GetComponent<PopText>().damageText = damage;
-            float distance = Vector3.Distance(transform.position, cam.transform.position);
-            var depthUI = damageText.GetComponent<DepthUI>();
-            depthUI.depth = -distance;
+            PopText text = Instantiate(prefabTextDamage);
+            StartCoroutine(FollowEnemy(text));
+            text.transform.SetParent(canvas.transform, false);
+            text.SetDamage(damage);
+        }
+    }
+
+    IEnumerator FollowEnemy(PopText text)
+    {
+        while (text != null)
+        {
+            Vector2 screenPos = cam.WorldToScreenPoint(transform.position + (Vector3.up * 2));
+            text.transform.position = screenPos;
+            yield return new WaitForEndOfFrame();
         }
     }
 
