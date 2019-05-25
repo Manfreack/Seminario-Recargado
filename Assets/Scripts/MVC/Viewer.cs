@@ -75,7 +75,7 @@ public class Viewer : MonoBehaviour
     public IEnumerator SmashParticleEvent()
     {
         smashParticle.SetActive(false);
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.5f);
         if (!anim.GetBool("Parry"))
         {
             smashParticle.SetActive(true);
@@ -114,6 +114,8 @@ public class Viewer : MonoBehaviour
 
         anim.SetFloat("VelX", velocityX);
         anim.SetFloat("VelZ", velocityZ);
+
+        
     }
 
     public void  CanRollAttack()

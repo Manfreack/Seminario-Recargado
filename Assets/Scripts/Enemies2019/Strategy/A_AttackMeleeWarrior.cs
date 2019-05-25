@@ -21,8 +21,10 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                 var dir = (_e.target.transform.position - _e.transform.position).normalized;
                 dir.y = 0;
                 targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                var avoid = _e.EntitiesAvoidance();
+                avoid.y = 0;
                 _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                _e.rb.MovePosition(_e.rb.position + _e.transform.forward * _e.speed * 2 * Time.deltaTime);
+                _e.rb.MovePosition(_e.rb.position + (_e.transform.forward + avoid) * _e.speed * 2 * Time.deltaTime);
                 _e.AttackRunEvent();
             }
 

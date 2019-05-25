@@ -413,7 +413,9 @@ public class Model : MonoBehaviour
 
     void Update()
     {
-        
+
+        if(animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage"  && animClipName != "Roll") view.RollAttackAnimFalse();
+
         CombatParameters();
 
         WraperAction();      
@@ -765,7 +767,22 @@ public class Model : MonoBehaviour
     {
         dirToRotateAttack = d;
 
-        if(onRoll)
+        if (isInCombat && !view.anim.GetBool("TakeSword2") && animClipName =="Blocked-V2")
+        {
+            countAnimAttack++;
+            view.AwakeTrail();
+            Attack();
+            if (!makingDamage) StartCoroutine(TimeToDoDamage());
+            preAttack1 = true;
+            stamina -= attackStamina;
+            view.UpdateStaminaBar(stamina / maxStamina);
+            StartCoroutine(AttackRotation());
+            attackDamage = attack1Damage;
+            CombatState();
+        }
+
+
+        if (onRoll)
         {          
             attackDamage = attackRollDamage;
             RollAttackEvent();
@@ -796,8 +813,8 @@ public class Model : MonoBehaviour
                countAnimAttack++;
                Attack();
                if (!makingDamage) StartCoroutine(TimeToDoDamage());
-               timeImpulse = 0.04f;
-               timeEndImpulse = 0.2f;
+               timeImpulse = 0.07f;
+               timeEndImpulse = 0.25f;
                StartCoroutine(ImpulseAttackAnimation());
                preAttack4 = true;
                stamina -= attackStamina + 3;
@@ -815,8 +832,8 @@ public class Model : MonoBehaviour
                 if (countAnimAttack > 3) countAnimAttack = 3;
                 Attack();
                 if (!makingDamage) StartCoroutine(TimeToDoDamage());
-                timeImpulse = 0.1f;
-                timeEndImpulse = 0.2f;
+                timeImpulse = 0.15f;
+                timeEndImpulse = 0.25f;
                 StartCoroutine(ImpulseAttackAnimation());
                 preAttack3 = true;
                 stamina -= attackStamina;
@@ -833,8 +850,8 @@ public class Model : MonoBehaviour
                 if (countAnimAttack > 2) countAnimAttack = 2;
                 Attack();
                 if (!makingDamage) StartCoroutine(TimeToDoDamage());
-                timeImpulse = 0.01f;
-                timeEndImpulse = 0.3f;
+                timeImpulse = 0.1f;
+                timeEndImpulse = 0.35f;
                 StartCoroutine(ImpulseAttackAnimation());
                 preAttack2 = true;
                 stamina -= attackStamina;
@@ -844,7 +861,7 @@ public class Model : MonoBehaviour
                 attackDamage = attack2Damage;
             }
 
-            if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
+            if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" || animClipName == "Blocked-V2"
                 || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "P_Warrior_RunWhitSword") && !preAttack1 && countAnimAttack==0)
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))

@@ -12,21 +12,29 @@ public class CombatNode : MonoBehaviour
 
     public EnemyEntity myOwner;
 
-    public void Update()
+    public IEnumerator UpdateBusyNode()
     {
-        var obs = Physics.OverlapSphere(transform.position, 0.3f).Where(x=> {
+        while (true)
+        {
+            var obs = Physics.OverlapSphere(transform.position, 0.3f).Where(x =>
+            {
 
-            if (x.gameObject.layer == LayerMask.NameToLayer("Obstacles")) return true;
-            else return false;
+                if (x.gameObject.layer == LayerMask.NameToLayer("Obstacles")) return true;
+                else return false;
 
-        });
+            });
 
-        if (obs.Count() > 0) isBusy = true;
-        else isBusy = false;
-        
+            if (obs.Count() > 0) isBusy = true;
+            else isBusy = false;
+            yield return new WaitForSeconds(0.333f);
+        }
     }
 
+    public void Awake()
+    {
+        StartCoroutine(UpdateBusyNode());
 
- 
+    }
+
 
 }

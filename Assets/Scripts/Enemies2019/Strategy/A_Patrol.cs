@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class A_Patrol : i_EnemyActions
 {
@@ -11,8 +12,17 @@ public class A_Patrol : i_EnemyActions
 
         if (_entity.timeToPatrol <= 0)
         {
-            Node start = _entity.GetMyNode();
-            Node end = _entity.GetRandomNode();
+            Node start = _entity.myNodes.Where(x => x.patrolNode).OrderBy(x =>
+            {
+                var d = Vector3.Distance(x.transform.position, _entity.transform.position);
+                return d;
+            }).First();
+
+            Node end = _entity.myNodes.Where(x => x.patrolNode).OrderBy(x =>
+            {
+                var d = Vector3.Distance(x.transform.position, _entity.target.transform.position);
+                return d;
+            }).First();
 
             _entity.pathToTarget = MyBFS.GetPath(start, end, _entity.myNodes);
             _entity.currentIndex = _entity.pathToTarget.Count;

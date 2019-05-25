@@ -7,17 +7,8 @@ public class Node : MonoBehaviour
     public List<Node> links = new List<Node>();
     public Node previus;
     public bool visited;
-    
-    void Start()
-    {
-        
-    }
+    public bool patrolNode;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void OnDrawGizmos()
     {

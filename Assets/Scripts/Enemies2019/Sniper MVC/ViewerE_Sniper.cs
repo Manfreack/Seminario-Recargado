@@ -106,13 +106,13 @@ public class ViewerE_Sniper : MonoBehaviour
 
     void Awake()
     {
+        canvas = GameObject.Find("Canvas");
         _anim = GetComponent<Animator>();
         _model = GetComponent<ModelE_Sniper>();
         _rb = GetComponent<Rigidbody>();
         myMeshes.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
 		ess = GetComponent<EnemyScreenSpace>();
         fireHandsMat = fireHandsRenderer.materials[2];
-        canvas = GameObject.Find("Canvas");
 
         _anim.SetBool("Idle", true);
 
@@ -230,13 +230,10 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void CreatePopText(float damage)
     {
-        if (!_model.isDead)
-        {
-            PopText text = Instantiate(prefabTextDamage);
-            StartCoroutine(FollowEnemy(text));
-            text.transform.SetParent(canvas.transform, false);
-            text.SetDamage(damage);
-        }
+        PopText text = Instantiate(prefabTextDamage);
+        StartCoroutine(FollowEnemy(text));
+        text.transform.SetParent(canvas.transform, false);
+        text.SetDamage(damage);
     }
 
     IEnumerator FollowEnemy(PopText text)

@@ -13,7 +13,7 @@ public class CombatArea : MonoBehaviour
     public bool startArea;
     bool firstPass;
     EnemyCombatManager cm;
-    Vector3 targetPos;
+
 
     private void Awake()
     {
@@ -32,7 +32,6 @@ public class CombatArea : MonoBehaviour
 
     void Update()
     {
-        targetPos = FindObjectOfType<Model>().transform.position;
 
         if (myEntities <= 0 && !aux)
         {
@@ -53,7 +52,7 @@ public class CombatArea : MonoBehaviour
             foreach (var item in walls) item.SetActive(false);
             cm.times = 2;
             aux = true;
-        } 
+        }
     }
 
     public void OnTriggerEnter(Collider c)
@@ -62,19 +61,19 @@ public class CombatArea : MonoBehaviour
         {
             var orderEnemies = myNPCs.OrderBy(X =>
             {
-                var d = Vector3.Distance(X.transform.position, targetPos);
+                var d = Vector3.Distance(X.transform.position, player.transform.position);
                 return d;
             }).ToList();
 
- 
+
             foreach (var item in myNPCs) item.target = player;
             foreach (var item in walls)
             {
-                if (myEntities > 0 && !aux )
-                {                  
+                if (myEntities > 0 && !aux)
+                {
                     item.SetActive(true);
                 }
-              
+
             }
 
             firstPass = true;
