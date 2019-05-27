@@ -18,11 +18,9 @@ public class A_Patrol : i_EnemyActions
                 return d;
             }).First();
 
-            Node end = _entity.myNodes.Where(x => x.patrolNode).OrderBy(x =>
-            {
-                var d = Vector3.Distance(x.transform.position, _entity.target.transform.position);
-                return d;
-            }).First();
+            var randomNode = _entity.myNodes.Where(x => x.patrolNode && !x.isBusy).ToList();
+
+            Node end = randomNode[Random.Range(0, randomNode.Count)];
 
             _entity.pathToTarget = MyBFS.GetPath(start, end, _entity.myNodes);
             _entity.currentIndex = _entity.pathToTarget.Count;
@@ -41,7 +39,7 @@ public class A_Patrol : i_EnemyActions
                 _dir.y = 0;        
                 targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
                 _entity.transform.rotation = Quaternion.Slerp(_entity.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                _entity.rb.MovePosition(_entity.rb.position + _entity.transform.forward * _entity.speed * Time.deltaTime);
+                _entity.rb.MovePosition(_entity.rb.position + (_entity.transform.forward + _entity.EntitiesAvoidance()) * _entity.speed * Time.deltaTime);
 
             }
             else

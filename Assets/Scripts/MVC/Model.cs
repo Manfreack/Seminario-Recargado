@@ -6,7 +6,7 @@ using System.Linq;
 
 public class Model : MonoBehaviour
 {
-    public Transform attackPivot;
+
     public Viewer view;
     EnemyCombatManager ECM;
 
@@ -20,6 +20,7 @@ public class Model : MonoBehaviour
     public Pool<Powers> powerPool;
 
     public float radiusAttack;
+    public float angleToAttack;
     public float extraFireDamage;
     public float extraSlameDamage;
     public float skillPoints;
@@ -44,7 +45,7 @@ public class Model : MonoBehaviour
     public float lifeRecoveredForSec;
     public float lifeRecoveredForSecInCombat;
     public float maxTimeOnCombat;
-    public float timeToRoll;   
+    public float timeToRoll;
     bool makingDamage;
 
     [Header("Player Powers")]
@@ -388,10 +389,13 @@ public class Model : MonoBehaviour
 
     public enum PotionName { Health, Stamina, Extra_Health, Costless_Hit, Mana };
 
+   
+
     private void Awake()
     {
         ModifyNodes();
     }
+
 
     void Start()
     {
@@ -893,8 +897,52 @@ public class Model : MonoBehaviour
 
     public void MakeDamage()
     {
-        var col = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Distinct();
-        var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>());
+        var col = Physics.OverlapSphere(transform.position, radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Distinct().Where(x=>
+        {
+
+            var _dirToTarget = (x.transform.position - transform.position).normalized;
+
+            var _angleToTarget = Vector3.Angle(transform.forward, _dirToTarget);
+
+            var _distanceToTarget = Vector3.Distance(transform.position, x.transform.position);
+
+            if (_angleToTarget <= angleToAttack && _distanceToTarget <= radiusAttack)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        
+        });
+
+        var desMesh = Physics.OverlapSphere(transform.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()).Where(x =>
+        {
+
+            var _dirToTarget = (x.transform.position - transform.position).normalized;
+
+            var _angleToTarget = Vector3.Angle(transform.forward, _dirToTarget);
+
+            var _distanceToTarget = Vector3.Distance(transform.position, x.transform.position);
+
+            if (_angleToTarget <= angleToAttack && _distanceToTarget <= radiusAttack)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }); 
+
+
+
+      //  Quaternion playerForward = Quaternion.LookRotation(transform.forward, transform.up);
+
+      //  var col = Physics.OverlapBox(transform.position + transform.forward / 1.5f + new Vector3(0, 1, 0), new Vector3(1, 0.5f, 0.5f), playerForward).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Distinct();
+    //    var desMesh = Physics.OverlapBox(transform.position + transform.forward / 1.5f + new Vector3(0, 1, 0), new Vector3(1, 0.5f, 0.5f), playerForward).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>());
 
         foreach (var item in col)
         {
@@ -1138,8 +1186,15 @@ public class Model : MonoBehaviour
 
     public void OnDrawGizmos()
     {
+
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPivot.position, radiusAttack);
+        Gizmos.DrawWireSphere(transform.position + new Vector3(0, 0.3f, 0), radiusAttack);
+
+        Vector3 rightLimit = Quaternion.AngleAxis(angleToAttack, transform.up) * transform.forward;
+        Gizmos.DrawLine(transform.position + new Vector3(0, 0.2f, 0), transform.position + (rightLimit * radiusAttack));
+
+        Vector3 leftLimit = Quaternion.AngleAxis(-angleToAttack, transform.up) * transform.forward;
+        Gizmos.DrawLine(transform.position + new Vector3(0, 0.2f, 0), transform.position + (leftLimit * radiusAttack));
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position + new Vector3(0 ,0.3f, 0), distanceAggressiveNodes);

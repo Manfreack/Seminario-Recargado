@@ -34,7 +34,7 @@ public class ModelE_Melee : EnemyEntity
     public bool damageDone;
     public float speedRotation;
     bool firstHit;
-    bool impulse;
+    public bool impulse;
     public int changeRing;
     Vector3 lastPosition;
     Vector3 nearRingPosition;
@@ -182,25 +182,6 @@ public class ModelE_Melee : EnemyEntity
         cooldwonReposition = false;
     }
 
-
-    public IEnumerator FollowCorrutine()
-    {
-        /* while (FollowsState)
-         {
-             pathToTarget.Clear();
-
-             Node start = GetMyNode();
-             Node end = GetMyTargetNode();
-
-             var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
-             //originalPathToTarget.Remove(start);
-             pathToTarget.AddRange(originalPathToTarget);
-             currentIndex = pathToTarget.Count;
-             yield return new WaitForSeconds(0.5f);
-         }
-         */
-        yield return new WaitForSeconds(0.5f);
-    }
 
     public IEnumerator RetreatCorrutineHeavy(float t)
     {
@@ -460,23 +441,24 @@ public class ModelE_Melee : EnemyEntity
 
             currentAction = null;
 
-            if (!isDead && !isPersuit && !isWaitArea && !onRetreat && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (impulse)
+            {
+                transform.position += transform.forward * 2 * Time.deltaTime;
+            }
 
-            if (!isDead && !isWaitArea && isPersuit && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isPersuit && !isWaitArea && !onRetreat  && animClipName != "EM_CounterAttack" && animClipName != "IdelDefence" && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && delayToAttack <= 0 && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.ATTACK);
+            if (!isDead && !isWaitArea && isPersuit  && animClipName != "EM_CounterAttack" && animClipName != "IdelDefence" && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isWaitArea && timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea && animClipName != "EM_CounterAttack" && animClipName != "IdelDefence" && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.WAIT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
 
         defence.OnExit += x =>
         {
-            actualHits = UnityEngine.Random.Range(hitsToStartDefenceMIN, hitsToStartDefenceMAX);
-
-            //onDefence = false;
-
+            actualHits = UnityEngine.Random.Range(2, 3);
+            
             _view.DefenceAnimFalse();
         };
 
@@ -683,15 +665,12 @@ public class ModelE_Melee : EnemyEntity
         follow.OnEnter += x =>
         {
 
-            StartCoroutine(FollowCorrutine());
-
             pathToTarget.Clear();
 
             Node start = GetMyNode();
             Node end = GetMyTargetNode();
 
             var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
-            //originalPathToTarget.Remove(start);
             pathToTarget.AddRange(originalPathToTarget);
             currentIndex = pathToTarget.Count;
 
@@ -882,7 +861,7 @@ public class ModelE_Melee : EnemyEntity
 
     public override Vector3 EntitiesAvoidance()
     {
-        var obs = Physics.OverlapSphere(transform.position, 1, layerObstAndBarrels).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x => x != this);
+        var obs = Physics.OverlapSphere(transform.position, 1, layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x => x != this);
 
         if (obs.Count() > 0)
         {
@@ -908,7 +887,7 @@ public class ModelE_Melee : EnemyEntity
     {
         Vector3 dir = transform.position - target.transform.position;
         float angle = Vector3.Angle(dir, transform.forward);
-        impulse = false;
+
 
         if (!onDefence)
         {
@@ -936,7 +915,7 @@ public class ModelE_Melee : EnemyEntity
             timeToHoldDefence = 0;
             delayToAttack = 0;
             HitDefenceEvent();
-            if (!_view._anim.GetBool("HeavyAttack") && !_view._anim.GetBool("Attack")) SendInputToFSM(EnemyInputs.ATTACK);
+      
             onDefence = false;
         }
 
@@ -963,6 +942,7 @@ public class ModelE_Melee : EnemyEntity
             var angle = Vector3.Angle(dir, target.transform.forward);
             if (player.onDefence && angle >= 90) BlockedEvent();
             player.GetDamage(attackDamage, transform, false, false);
+            player.rb.AddForce(transform.forward * 2, ForceMode.Impulse);
         }
     }
 
@@ -977,6 +957,7 @@ public class ModelE_Melee : EnemyEntity
                 _view.sparks.Play();
             }
             player.GetDamage(attackDamage + 5, transform, false, true);
+            player.rb.AddForce(transform.forward * 2, ForceMode.Impulse);
         }
     }
 

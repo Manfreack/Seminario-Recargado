@@ -257,7 +257,7 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
-            Debug.Log("asdasd");
+
 
             timeToStopBack -= Time.deltaTime;
 

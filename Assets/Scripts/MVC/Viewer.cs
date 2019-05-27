@@ -52,7 +52,7 @@ public class Viewer : MonoBehaviour
     [Header("Time of the initial fade from black:")]
     public float fadeTime;
 
-    public GameObject smashParticle;
+    public ParticleSystem smashParticle;
 
     public IEnumerator DestroyParticles(GameObject p)
     {
@@ -74,11 +74,10 @@ public class Viewer : MonoBehaviour
 
     public IEnumerator SmashParticleEvent()
     {
-        smashParticle.SetActive(false);
         yield return new WaitForSeconds(0.5f);
         if (!anim.GetBool("Parry"))
         {
-            smashParticle.SetActive(true);
+            smashParticle.Play();
             trail.SetActive(false);
             ShakeCameraDamage(1,1,0.3f);
         }
