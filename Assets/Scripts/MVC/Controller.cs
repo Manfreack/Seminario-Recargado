@@ -6,8 +6,8 @@ using UnityEngine;
 public class Controller : MonoBehaviour
 {
     [Header("Speed out of the fight:")]
-    public float _SpeedWalk = 1f;
-    public float _SpeedRun = 2.5f;
+    public float _SpeedWalk = 0.9f;
+    public float _SpeedRun = 2.8f;
 
     [Header("Speed in the fight:")]
     public float _SpeedWalkFight = 1.2f;
@@ -257,8 +257,8 @@ public class Controller : MonoBehaviour
 
             if (pushW && pushA && !firstPushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
-                model.speed = 1.2f;
-                model.runSpeed = 3.1f;
+                model.speed = 1.1f;
+                model.runSpeed = 3.5f;
                 firstPushW = true;
                 if(!firstPushD) firstPushA = true;
                 Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
@@ -267,8 +267,8 @@ public class Controller : MonoBehaviour
 
             if (pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
-                model.speed = 1.2f;
-                model.runSpeed = 3.1f;
+                model.speed = 1.1f;
+                model.runSpeed = 3.5f;
                 firstPushW = true;
                 if (!firstPushA) firstPushD = true;
                 Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
@@ -277,8 +277,8 @@ public class Controller : MonoBehaviour
 
             if (!firstPushW && pushA && pushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
-                model.speed = 1.2f;
-                model.runSpeed = 3.1f;
+                model.speed = 1.1f;
+                model.runSpeed = 3.5f;
                 firstPushS = true;
                 if (!firstPushD) firstPushA = true;
                 Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
@@ -287,8 +287,8 @@ public class Controller : MonoBehaviour
 
             if (!firstPushW && !firstPushA && pushS && pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
-                model.speed = 1.2f;
-                model.runSpeed = 3.1f;
+                model.speed = 1.1f;
+                model.runSpeed = 3.5f;
                 firstPushS = true;
                 if (!firstPushA) firstPushD = true;
                 Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
