@@ -20,9 +20,9 @@ public class A_Patrol : i_EnemyActions
 
             var randomNode = _entity.myNodes.Where(x => x.patrolNode && !x.isBusy).ToList();
 
-            Node end = randomNode[Random.Range(0, randomNode.Count)];
+            _entity.endPatrolNode = randomNode[Random.Range(0, randomNode.Count)];
 
-            _entity.pathToTarget = MyBFS.GetPath(start, end, _entity.myNodes);
+            _entity.pathToTarget = MyBFS.GetPath(start, _entity.endPatrolNode, _entity.myNodes);
             _entity.currentIndex = _entity.pathToTarget.Count;
             _entity.timeToPatrol = 10;
         }
@@ -33,7 +33,6 @@ public class A_Patrol : i_EnemyActions
             float d = Vector3.Distance(_entity.pathToTarget[_entity.currentIndex - 1].transform.position, _entity.transform.position);
             if (d >= 1)
             {
-
                 Quaternion targetRotation;
                 var _dir = (_entity.pathToTarget[_entity.currentIndex - 1].transform.position - _entity.transform.position).normalized;
                 _dir.y = 0;        

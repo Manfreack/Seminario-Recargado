@@ -48,6 +48,7 @@ public class Viewer : MonoBehaviour
     CamController cam;
     public GameObject pauseMenu;
 
+
     public RawImage startFade;
     [Header("Time of the initial fade from black:")]
     public float fadeTime;
@@ -85,6 +86,7 @@ public class Viewer : MonoBehaviour
 
     public void Update()
     {
+        
        
         if(anim.GetBool("TakeSword2") && anim.GetBool("SaveSword2"))
         {
@@ -322,13 +324,7 @@ public class Viewer : MonoBehaviour
     public void UpdatePotions(int i)
     {
         potions[i].fillAmount = (float)model.potions[i] / 3;
-        /*
-        potions[i].text = "x" + model.potions[i];
-        if (model.potions[i] == 0)
-            potions[i].transform.parent.gameObject.SetActive(false);
-        else
-            potions[i].transform.parent.gameObject.SetActive(true);
-        */
+
     }
 
     public void UpdateTimer(string val = "")
@@ -417,7 +413,6 @@ public class Viewer : MonoBehaviour
         defenceActive.gameObject.SetActive(false);
     }
 
-
     public void ReciveDamage()
     {
 
@@ -453,6 +448,8 @@ public class Viewer : MonoBehaviour
         anim.SetInteger("AttackAnim", currentAttackAnimation);
     }
  
+
+
     public void Dead()
     {
         anim.SetBool("IsDead", true);

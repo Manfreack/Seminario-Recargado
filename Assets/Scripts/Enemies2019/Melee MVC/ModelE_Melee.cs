@@ -57,6 +57,7 @@ public class ModelE_Melee : EnemyEntity
     public Action DefenceEvent;
     public Action HitDefenceEvent;
     public Action AttackRunEvent;
+    public Node endPatrolNode;
 
     float maxLife;
     public float timeToRetreat;
@@ -753,9 +754,6 @@ public class ModelE_Melee : EnemyEntity
 
         _myFsm.Update();
 
-        // FillFriends();
-
-        // avoidVectObstacles = ObstacleAvoidance();
 
         if (target != null)
         {
@@ -915,7 +913,8 @@ public class ModelE_Melee : EnemyEntity
             timeToHoldDefence = 0;
             delayToAttack = 0;
             HitDefenceEvent();
-      
+            _view.EndChainAttack();
+            _view.HeavyAttackFalse();
             onDefence = false;
         }
 

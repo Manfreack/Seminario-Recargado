@@ -42,7 +42,7 @@ public class A_WarriorWait : i_EnemyActions
         {
             float distance = Vector3.Distance(_e.transform.position, _e.target.transform.position);
          
-            if (_e.flankDir == 1 && !_e.reposition)
+            if (_e.flankDir == 1 && !_e.reposition && _e.animClipName != "EM_CounterAttack" && _e.animClipName != "IdleDefence" && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "E_Warrior_Attack3" && _e.animClipName != "Heavy Attack_EM" && _e.animClipName != "HitDefence")
             {
                 var obs = Physics.OverlapSphere(_e.transform.position, 1f, _e.layerEntites).Where(x => x.GetComponent<ModelE_Melee>()).Select(x => x.GetComponent<ModelE_Melee>()).Where(x => x != _e);
 
@@ -76,7 +76,7 @@ public class A_WarriorWait : i_EnemyActions
                 }
             }
 
-            if (_e.flankDir == 0 && !_e.reposition)
+            if (_e.flankDir == 0 && !_e.reposition && _e.animClipName != "EM_CounterAttack" && _e.animClipName != "IdleDefence" && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "E_Warrior_Attack3" && _e.animClipName != "Heavy Attack_EM"  && _e.animClipName != "HitDefence")
             {
                 _e.WalkLeftEvent();
 
