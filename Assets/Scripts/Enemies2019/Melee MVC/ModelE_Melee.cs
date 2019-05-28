@@ -932,6 +932,9 @@ public class ModelE_Melee : EnemyEntity
     public override void MakeDamage()
     {
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
+
+        var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()).Distinct();
+
         if (player != null)
         {
             damageDone = true;
@@ -943,11 +946,19 @@ public class ModelE_Melee : EnemyEntity
             player.GetDamage(attackDamage, transform, false, false);
             player.rb.AddForce(transform.forward * 2, ForceMode.Impulse);
         }
+
+        foreach (var item in desMesh)
+        {
+            item.StartCoroutine(item.startDisolve());
+        }
     }
 
     public void MakeHeavyDamage()
     {
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
+
+        var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()).Distinct();
+
         if (player != null)
         {
             if (player.onDefence)
@@ -957,6 +968,11 @@ public class ModelE_Melee : EnemyEntity
             }
             player.GetDamage(attackDamage + 5, transform, false, true);
             player.rb.AddForce(transform.forward * 2, ForceMode.Impulse);
+        }
+
+        foreach (var item in desMesh)
+        {
+            item.StartCoroutine(item.startDisolve());
         }
     }
 

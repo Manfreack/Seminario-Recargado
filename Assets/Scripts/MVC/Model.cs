@@ -790,7 +790,6 @@ public class Model : MonoBehaviour
 
             if (enemies)
             {
-                Debug.Log("asd");
                 var dir = (enemies.transform.position - transform.position).normalized;
                 dir.y = 0;
                 Quaternion targetRotation;
