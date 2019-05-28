@@ -51,4 +51,5 @@ public abstract class EnemyEntity: MonoBehaviour
     public abstract CombatNode FindNearNon_AggressiveNode();
     public CombatNode myCombatNode;
     public CombatNode lastCombatNode;
+    public SkinnedMeshRenderer renderObject;
 }

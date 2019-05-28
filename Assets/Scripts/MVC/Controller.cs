@@ -144,7 +144,7 @@ public class Controller : MonoBehaviour
             {
                 useSword = true;
 
-                if (!pushW && !pushA && !pushS && !pushD) model.NormalAttack(model.transform.forward);
+                if (!pushW && !pushA && !pushS && !pushD) model.NormalAttack(new Vector3(0,0,0));
                 if (pushW && !pushA && !firstPushS && !pushD) model.NormalAttack(model.mainCamera.forward);
                 if (pushS && !pushA && !firstPushW && !pushD) model.NormalAttack(-model.mainCamera.forward);
                 if (pushA && !firstPushD && !pushS && !pushW) model.NormalAttack(-model.mainCamera.right);

@@ -226,6 +226,7 @@ public class Model : MonoBehaviour
         }
 
         view.RollAttackAnimFalse();
+        onRoll = false;
     }
 
     public IEnumerator OnDefenceCorrutine()
@@ -267,8 +268,8 @@ public class Model : MonoBehaviour
                     if (countAnimAttack == 2) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
                     if (countAnimAttack == 1) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce / 2) * Time.deltaTime, 2);
                     if (countAnimAttack == 3 || countAnimAttack == 4) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
-                    if (countAnimAttack == 0 && animClipName != "P_RollEstocada_Damage") transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce + 1) * Time.deltaTime, 2);
-                    if (animClipName == "P_RollEstocada_Damage") transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * (impulseForce / 2f) * Time.deltaTime, 2);
+                    if (countAnimAttack == 0) transform.position = Vector3.Lerp(lastPosition, transform.position + transform.forward * impulseForce * Time.deltaTime, 2);
+                    
                 }
             }
             yield return new WaitForEndOfFrame();
@@ -417,9 +418,7 @@ public class Model : MonoBehaviour
 
     void Update()
     {
-
-        if(animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage"  && animClipName != "Roll") view.RollAttackAnimFalse();
-
+    
         CombatParameters();
 
         WraperAction();      
@@ -771,6 +770,35 @@ public class Model : MonoBehaviour
     {
         dirToRotateAttack = d;
 
+        if (d == Vector3.zero)
+        {
+            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x => x.renderObject.isVisible && !x.isDead).Distinct().Where(x=>
+            {
+                Vector3 toTarget = (x.transform.position - transform.position).normalized;
+                Vector3 forward = transform.TransformDirection(Vector3.forward);
+
+                if (Vector3.Dot(forward, toTarget) > 0) return true;
+                else return false;
+
+            }).OrderBy(x =>
+            { 
+
+                var distance = Vector3.Distance(x.transform.position, transform.position);
+                return distance;
+
+            }).FirstOrDefault();
+
+            if (enemies)
+            {
+                Debug.Log("asd");
+                var dir = (enemies.transform.position - transform.position).normalized;
+                dir.y = 0;
+                Quaternion targetRotation;
+                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+            }
+        }
+
         if (isInCombat && !view.anim.GetBool("TakeSword2") && animClipName =="Blocked-V2")
         {
             countAnimAttack++;
@@ -786,7 +814,7 @@ public class Model : MonoBehaviour
         }
 
 
-        if (onRoll)
+        if (onRoll || animClipName =="RollAttack")
         {          
             attackDamage = attackRollDamage;
             RollAttackEvent();
@@ -795,7 +823,7 @@ public class Model : MonoBehaviour
             EndCombo();
             CombatState();
             timeImpulse = 0.8f;
-            timeEndImpulse = 0.4f;
+            timeEndImpulse = 0.2f;
             StartCoroutine(ImpulseAttackAnimation());
             view.anim.SetBool("Roll", false);
             view.anim.SetBool("CanRollAttack", false);
@@ -824,7 +852,7 @@ public class Model : MonoBehaviour
                stamina -= attackStamina + 3;
                view.UpdateStaminaBar(stamina / maxStamina);
                CombatState();
-               StartCoroutine(AttackRotation());
+                if (d != Vector3.zero) StartCoroutine(AttackRotation());
                attackDamage = attack4Damage;
             }
 
@@ -843,7 +871,7 @@ public class Model : MonoBehaviour
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
                 CombatState();
-                StartCoroutine(AttackRotation());
+                if (d != Vector3.zero) StartCoroutine(AttackRotation());
                 attackDamage = attack3Damage;
             }
 
@@ -861,12 +889,12 @@ public class Model : MonoBehaviour
                 stamina -= attackStamina;
                 view.UpdateStaminaBar(stamina / maxStamina);
                 CombatState();
-                StartCoroutine(AttackRotation());
+                if(d != Vector3.zero)StartCoroutine(AttackRotation());
                 attackDamage = attack2Damage;
             }
 
             if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" || animClipName == "Blocked-V2"
-                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "P_Warrior_RunWhitSword") && !preAttack1 && countAnimAttack==0)
+                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "P_Warrior_RunWhitSword" ||animClipName == "P_RollEstocada_Damage") && !preAttack1 && countAnimAttack==0)
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
                 {                   
@@ -877,7 +905,7 @@ public class Model : MonoBehaviour
                     preAttack1 = true;
                     stamina -= attackStamina;
                     view.UpdateStaminaBar(stamina / maxStamina);
-                    StartCoroutine(AttackRotation());
+                    if (d != Vector3.zero) StartCoroutine(AttackRotation());
                     attackDamage = attack1Damage;
                     CombatState();
                 }
@@ -897,61 +925,29 @@ public class Model : MonoBehaviour
 
     public void MakeDamage()
     {
-        var col = Physics.OverlapSphere(transform.position, radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Distinct().Where(x=>
-        {
 
-            var _dirToTarget = (x.transform.position - transform.position).normalized;
+        if (onRoll) onRoll = false;
 
-            var _angleToTarget = Vector3.Angle(transform.forward, _dirToTarget);
+        var col = Physics.OverlapSphere(transform.position + transform.forward * 1.2f + new Vector3(0, 0.7f, 0), radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Distinct().ToList();
+        var col2 = Physics.OverlapSphere(transform.position + transform.forward * 0.5f + new Vector3(0, 0.7f, 0), radiusAttack).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Distinct();
+        var desMesh = Physics.OverlapSphere(transform.position + transform.forward * 1.2f + new Vector3(0, 0.7f, 0), radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()).Distinct().ToList();
+        var desMesh2 = Physics.OverlapSphere(transform.position + transform.forward * 0.5f + new Vector3(0, 0.7f, 0), radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()).Distinct();
 
-            var _distanceToTarget = Vector3.Distance(transform.position, x.transform.position);
+        col.AddRange(col2);
 
-            if (_angleToTarget <= angleToAttack && _distanceToTarget <= radiusAttack)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        
-        });
+        var enemies = col.Distinct();
 
-        var desMesh = Physics.OverlapSphere(transform.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()).Where(x =>
-        {
+        desMesh.AddRange(desMesh2);
 
-            var _dirToTarget = (x.transform.position - transform.position).normalized;
-
-            var _angleToTarget = Vector3.Angle(transform.forward, _dirToTarget);
-
-            var _distanceToTarget = Vector3.Distance(transform.position, x.transform.position);
-
-            if (_angleToTarget <= angleToAttack && _distanceToTarget <= radiusAttack)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-
-        }); 
-
-
-
-      //  Quaternion playerForward = Quaternion.LookRotation(transform.forward, transform.up);
-
-      //  var col = Physics.OverlapBox(transform.position + transform.forward / 1.5f + new Vector3(0, 1, 0), new Vector3(1, 0.5f, 0.5f), playerForward).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Distinct();
-    //    var desMesh = Physics.OverlapBox(transform.position + transform.forward / 1.5f + new Vector3(0, 1, 0), new Vector3(1, 0.5f, 0.5f), playerForward).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>());
-
-        foreach (var item in col)
+        var destructibleMesh = desMesh.Distinct();
+        foreach (var item in enemies)
         {
             item.GetDamage(attackDamage);
             if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
             makingDamage = false;
         }
 
-        foreach (var item in desMesh)
+        foreach (var item in destructibleMesh)
         {
             item.StartCoroutine(item.startDisolve());
             makingDamage = false;
@@ -998,6 +994,7 @@ public class Model : MonoBehaviour
             InAction = true;
             InActionAttack = true;
             onDefence = true;
+            EndCombo();
         }
     }
 
@@ -1188,13 +1185,8 @@ public class Model : MonoBehaviour
     {
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position + new Vector3(0, 0.3f, 0), radiusAttack);
-
-        Vector3 rightLimit = Quaternion.AngleAxis(angleToAttack, transform.up) * transform.forward;
-        Gizmos.DrawLine(transform.position + new Vector3(0, 0.2f, 0), transform.position + (rightLimit * radiusAttack));
-
-        Vector3 leftLimit = Quaternion.AngleAxis(-angleToAttack, transform.up) * transform.forward;
-        Gizmos.DrawLine(transform.position + new Vector3(0, 0.2f, 0), transform.position + (leftLimit * radiusAttack));
+        Gizmos.DrawWireSphere(transform.position + transform.forward * 0.5f + new Vector3(0,0.7f,0), radiusAttack);
+        Gizmos.DrawWireSphere(transform.position + transform.forward *1.2f + new Vector3(0, 0.7f, 0), radiusAttack);
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position + new Vector3(0 ,0.3f, 0), distanceAggressiveNodes);

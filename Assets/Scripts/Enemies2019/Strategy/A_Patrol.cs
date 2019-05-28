@@ -34,11 +34,11 @@ public class A_Patrol : i_EnemyActions
             if (d >= 1)
             {
                 Quaternion targetRotation;
-                var _dir = (_entity.pathToTarget[_entity.currentIndex - 1].transform.position - _entity.transform.position).normalized;
+                var _dir = (_entity.pathToTarget[_entity.currentIndex - 1].transform.position - _entity.transform.position + _entity.EntitiesAvoidance()).normalized;
                 _dir.y = 0;        
-                targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
+                targetRotation = Quaternion.LookRotation(_dir , Vector3.up);
                 _entity.transform.rotation = Quaternion.Slerp(_entity.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                _entity.rb.MovePosition(_entity.rb.position + (_entity.transform.forward + _entity.EntitiesAvoidance()) * _entity.speed * Time.deltaTime);
+                _entity.rb.MovePosition(_entity.rb.position + _entity.transform.forward * _entity.speed * Time.deltaTime);
 
             }
             else
