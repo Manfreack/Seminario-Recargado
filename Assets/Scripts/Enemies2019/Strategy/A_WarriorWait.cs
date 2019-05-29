@@ -57,7 +57,7 @@ public class A_WarriorWait : i_EnemyActions
 
                     if (obs.First().flankDir == 1)
                     {
-                        Debug.Log(_e.name);
+
                         _e.flankDir = 0;
                         _e.StartCoroutine(_e.ChangeDirRotation());
                         obs.First().StartCoroutine(obs.First().ChangeDirRotation());

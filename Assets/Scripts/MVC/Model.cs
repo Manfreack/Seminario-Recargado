@@ -282,7 +282,8 @@ public class Model : MonoBehaviour
 
         while (makingDamage)
         {
-            if (animClipName == "Attack4N-DAMAGE" || animClipName == "Attack3N-DAMAGE" || animClipName == "Attack2N-DAMAGE" || animClipName == "Attack1N-DAMAGE") MakeDamage();
+            if (animClipName == "Attack4N-DAMAGE" || animClipName == "Attack3N-DAMAGE" || animClipName == "Attack2N-DAMAGE" || animClipName == "Attack1N-DAMAGE")  MakeDamage("Normal");
+            
             yield return new WaitForEndOfFrame();
         }
     }
@@ -803,7 +804,7 @@ public class Model : MonoBehaviour
             attackDamage = attackRollDamage;
             RollAttackEvent();
             view.AwakeTrail();
-            if (!makingDamage) StartCoroutine(TimeToDoDamage());
+           // StartCoroutine(TimeToDoDamage());
             EndCombo();
             CombatState();
             timeImpulse = 0.8f;
@@ -899,7 +900,7 @@ public class Model : MonoBehaviour
 
     
 
-    public void MakeDamage()
+    public void MakeDamage(string typeOfDamage)
     {
 
         if (onRoll) onRoll = false;
@@ -916,11 +917,31 @@ public class Model : MonoBehaviour
         desMesh.AddRange(desMesh2);
 
         var destructibleMesh = desMesh.Distinct();
-        foreach (var item in enemies)
+
+        if (typeOfDamage == "Normal")
         {
-            item.GetDamage(attackDamage);
-            if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
-            makingDamage = false;
+            foreach (var item in enemies)
+            {
+                item.GetDamage(attackDamage, "Normal");
+                if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
+                makingDamage = false;
+            }
+        }
+
+        if(typeOfDamage =="Stune" && enemies.Count()>0)
+        {
+            enemies.FirstOrDefault().GetDamage(attackDamage, "Stune");
+            enemies.FirstOrDefault().isStuned = true;
+            if (enemies.FirstOrDefault().life > 0) enemies.FirstOrDefault().GetComponent<Rigidbody>().AddForce(-enemies.FirstOrDefault().transform.forward * 2, ForceMode.Impulse);
+
+            var  restOfenemies = enemies.Skip(1);
+
+            foreach (var item in restOfenemies)
+            {
+                item.GetDamage(attackDamage, "Normal");
+                if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
+                makingDamage = false;
+            }
         }
 
         foreach (var item in destructibleMesh)
@@ -945,7 +966,7 @@ public class Model : MonoBehaviour
 
         foreach (var item in col)
         {
-            item.GetDamage(damagePower2);
+            item.GetDamage(damagePower2, "Normal");
             if (item.GetComponent<ViewerE_Melee>())
             {
                 item.GetComponent<ViewerE_Melee>().BackFromAttack();

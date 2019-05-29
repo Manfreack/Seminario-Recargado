@@ -29,7 +29,7 @@ Transform:
   m_LocalPosition: {x: 0.30428147, y: 0.9238281, z: 0.48824117}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 703545915045845132}
+  m_Father: {fileID: 5134374396925370274}
   m_RootOrder: 29
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &198469820152105605
@@ -4698,67 +4698,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!135 &903196737
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8027514497071050845}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.5
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &903196728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8027514497071050845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0fca75a50ab6bf943b44fe580e4263a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _anim: {fileID: 0}
-  myMeshes: []
-  myMats: []
-  sparks: {fileID: 198469820152105605}
-  blood: {fileID: 4146984900804723845}
-  bloodPool: {fileID: 1946835147635212657, guid: 75689cca7ef55a64fa8ce53c329c8dc1,
-    type: 3}
-  matPool: {fileID: 0}
-  prefabTextDamage: {fileID: 5005738266605970972, guid: 5697b75211bc06d4491902f5ba951b5a,
-    type: 3}
-  pechera: {fileID: 0}
-  cam: {fileID: 0}
-  sword: {fileID: 756780244282392812}
-  heavyMat: {fileID: 0}
-  timeShaderHeavyAttack: 0
-  animClipName: 
---- !u!114 &903196730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8027514497071050845}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97a1b81ea6d5884429f722c92699e838, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canvas: {fileID: 0}
-  barPrefab: {fileID: 893372877047870489, guid: 435981f1896240d4f96ebe9c129b35cd,
-    type: 3}
-  lm:
-    serializedVersion: 2
-    m_Bits: 12087
-  cam: {fileID: 0}
-  timer: 0
 --- !u!1 &835030969979085235
 GameObject:
   m_ObjectHideFlags: 0
@@ -14231,7 +14170,7 @@ Transform:
   - {fileID: 4872447973408532680}
   - {fileID: 6988942131880284655}
   - {fileID: 6998505528534451674}
-  m_Father: {fileID: 703545915045845132}
+  m_Father: {fileID: 5134374396925370274}
   m_RootOrder: 30
   m_LocalEulerAnglesHint: {x: -180, y: -90, z: 0}
 --- !u!198 &4146984900804723845
@@ -18922,6 +18861,67 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!135 &903196737
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2442354940951345011}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &903196728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2442354940951345011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fca75a50ab6bf943b44fe580e4263a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _anim: {fileID: 0}
+  myMeshes: []
+  myMats: []
+  sparks: {fileID: 198469820152105605}
+  blood: {fileID: 4146984900804723845}
+  bloodPool: {fileID: 1946835147635212657, guid: 75689cca7ef55a64fa8ce53c329c8dc1,
+    type: 3}
+  matPool: {fileID: 0}
+  prefabTextDamage: {fileID: 5008892037884293611, guid: eec94c02507c1a544885cd026583901b,
+    type: 3}
+  pechera: {fileID: 0}
+  cam: {fileID: 0}
+  sword: {fileID: 4900785664898402242}
+  heavyMat: {fileID: 0}
+  timeShaderHeavyAttack: 0
+  animClipName: 
+--- !u!114 &903196730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2442354940951345011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97a1b81ea6d5884429f722c92699e838, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  barPrefab: {fileID: 893372877047870489, guid: 435981f1896240d4f96ebe9c129b35cd,
+    type: 3}
+  lm:
+    serializedVersion: 2
+    m_Bits: 12087
+  cam: {fileID: 0}
+  timer: 0
 --- !u!1 &6333163874663577045
 GameObject:
   m_ObjectHideFlags: 0
@@ -23642,7 +23642,7 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!1001 &703545915013620485
+--- !u!1001 &5134374397023659051
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -23705,11 +23705,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 116161417, guid: 4ed790a5fce75704ab7784bcf7e92325, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.000001
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 116161417, guid: 4ed790a5fce75704ab7784bcf7e92325, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.000001
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2800653883799273742, guid: 4ed790a5fce75704ab7784bcf7e92325,
         type: 3}
@@ -23729,7 +23729,7 @@ PrefabInstance:
     - target: {fileID: 1801765274574872871, guid: 4ed790a5fce75704ab7784bcf7e92325,
         type: 3}
       propertyPath: myNodes.Array.size
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1801765274574872871, guid: 4ed790a5fce75704ab7784bcf7e92325,
         type: 3}
@@ -23971,6 +23971,16 @@ PrefabInstance:
       propertyPath: layerObstAndBarrels.m_Bits
       value: 65792
       objectReference: {fileID: 0}
+    - target: {fileID: 1801765274574872871, guid: 4ed790a5fce75704ab7784bcf7e92325,
+        type: 3}
+      propertyPath: renderObject
+      value: 
+      objectReference: {fileID: 7638551091894633680}
+    - target: {fileID: 1801765274574872871, guid: 4ed790a5fce75704ab7784bcf7e92325,
+        type: 3}
+      propertyPath: myNodes.Array.data[9]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6891305672447886370, guid: 4ed790a5fce75704ab7784bcf7e92325,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -23988,21 +23998,27 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 370c5df2edbb8914a9fd28f04b39b598, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ed790a5fce75704ab7784bcf7e92325, type: 3}
---- !u!1 &8027514497071050845 stripped
+--- !u!1 &2442354940951345011 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7396048236674782040, guid: 4ed790a5fce75704ab7784bcf7e92325,
     type: 3}
-  m_PrefabInstance: {fileID: 703545915013620485}
+  m_PrefabInstance: {fileID: 5134374397023659051}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &703545915045845132 stripped
+--- !u!4 &5134374396925370274 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 116161417, guid: 4ed790a5fce75704ab7784bcf7e92325,
     type: 3}
-  m_PrefabInstance: {fileID: 703545915013620485}
+  m_PrefabInstance: {fileID: 5134374397023659051}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &756780244282392812 stripped
+--- !u!137 &7638551091894633680 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3260997491150676219, guid: 4ed790a5fce75704ab7784bcf7e92325,
+    type: 3}
+  m_PrefabInstance: {fileID: 5134374397023659051}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4900785664898402242 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 235278821101413353, guid: 4ed790a5fce75704ab7784bcf7e92325,
     type: 3}
-  m_PrefabInstance: {fileID: 703545915013620485}
+  m_PrefabInstance: {fileID: 5134374397023659051}
   m_PrefabAsset: {fileID: 0}

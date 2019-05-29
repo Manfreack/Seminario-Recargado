@@ -6,7 +6,7 @@ using System;
 
 public class ModelE_Sniper : EnemyEntity
 {
-    public enum EnemyInputs { PATROL, PERSUIT, ATTACK, MELEE_ATTACK, FOLLOW, DIE, ANSWER, RETREAT }
+    public enum EnemyInputs { PATROL, PERSUIT, ATTACK, MELEE_ATTACK, FOLLOW, DIE, ANSWER, RETREAT, STUNED }
     private EventFSM<EnemyInputs> _myFsm;
     public LayerMask layerObst;
     public LayerMask layerEntites;
@@ -33,6 +33,7 @@ public class ModelE_Sniper : EnemyEntity
     public Action AttackMeleeEvent;
     public Action MoveEvent;
     public Action IdleEvent;
+    public Action StunedEvent;
 	
 	public float maxLife;
 
@@ -67,6 +68,7 @@ public class ModelE_Sniper : EnemyEntity
         var follow = new FSM_State<EnemyInputs>("FOLLOW");
         var answerCall = new FSM_State<EnemyInputs>("ANSWER");
         var retreat = new FSM_State<EnemyInputs>("RETREAT");
+        var stuned = new FSM_State<EnemyInputs>("STUNED");
 
         TakeDamageEvent += _view.TakeDamageAnim;
         DeadEvent += _view.DeadAnim;
@@ -74,6 +76,7 @@ public class ModelE_Sniper : EnemyEntity
         AttackMeleeEvent += _view.AttackMeleeAnim;
         IdleEvent += _view.IdleAnim;
         MoveEvent += _view.BackFromIdle;
+        StunedEvent += _view.StunedAnim;
 
         StateConfigurer.Create(patrol)
            .SetTransition(EnemyInputs.PERSUIT, persuit)
@@ -89,6 +92,7 @@ public class ModelE_Sniper : EnemyEntity
           .SetTransition(EnemyInputs.ATTACK, attack)
           .SetTransition(EnemyInputs.MELEE_ATTACK, melee_attack)
           .SetTransition(EnemyInputs.FOLLOW, follow)
+          .SetTransition(EnemyInputs.STUNED, stuned)
           .SetTransition(EnemyInputs.DIE, die)
           .Done();
 
@@ -96,6 +100,7 @@ public class ModelE_Sniper : EnemyEntity
          .SetTransition(EnemyInputs.ATTACK, attack)
          .SetTransition(EnemyInputs.MELEE_ATTACK, melee_attack)
          .SetTransition(EnemyInputs.FOLLOW, follow)
+         .SetTransition(EnemyInputs.STUNED, stuned)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
@@ -104,6 +109,7 @@ public class ModelE_Sniper : EnemyEntity
          .SetTransition(EnemyInputs.PERSUIT, persuit)
          .SetTransition(EnemyInputs.FOLLOW, follow)
          .SetTransition(EnemyInputs.RETREAT, retreat)
+         .SetTransition(EnemyInputs.STUNED, stuned)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
@@ -115,9 +121,18 @@ public class ModelE_Sniper : EnemyEntity
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
+        StateConfigurer.Create(stuned)
+         .SetTransition(EnemyInputs.PERSUIT, persuit)
+         .SetTransition(EnemyInputs.ATTACK, attack)
+         .SetTransition(EnemyInputs.FOLLOW, follow)
+         .SetTransition(EnemyInputs.RETREAT, retreat)
+         .SetTransition(EnemyInputs.DIE, die)
+         .Done();
+
         StateConfigurer.Create(follow)
          .SetTransition(EnemyInputs.PERSUIT, persuit)
          .SetTransition(EnemyInputs.ATTACK, attack)
+         .SetTransition(EnemyInputs.STUNED, stuned)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
@@ -184,6 +199,8 @@ public class ModelE_Sniper : EnemyEntity
 
             if (!isDead && !isWaitArea && !isPersuit) SendInputToFSM(EnemyInputs.FOLLOW);
 
+            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
+
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
 
@@ -212,11 +229,43 @@ public class ModelE_Sniper : EnemyEntity
 
             if (!isDead && !isWaitArea && !isPersuit) SendInputToFSM(EnemyInputs.FOLLOW);
 
+            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
+
             if (!isDead && onRetreat && timeToRetreat < 0 && d<=1.5) SendInputToFSM(EnemyInputs.RETREAT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
- 
+
+        stuned.OnEnter += x =>
+        {
+            timeStuned = 3;
+            StunedEvent();
+        };
+
+        stuned.OnUpdate += () =>
+        {
+            timeStuned -= Time.deltaTime;
+
+            currentAction = new A_Idle();
+
+            if (isDead) SendInputToFSM(EnemyInputs.DIE);
+
+            if (!isDead && !isWaitArea && isPersuit && timeStuned <=0) SendInputToFSM(EnemyInputs.PERSUIT);
+
+            if (!isDead && !isWaitArea && !isPersuit && timeStuned <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
+
+            if (!isDead && onRetreat && timeToRetreat < 0 && timeStuned <= 0) SendInputToFSM(EnemyInputs.RETREAT);
+
+            if (!isDead && isWaitArea && timeStuned <=0 ) SendInputToFSM(EnemyInputs.ATTACK);
+
+        };
+
+        stuned.OnExit += x =>
+        {
+            isStuned = false;
+            _view.StunedAnimFalse();
+        };
+
         melee_attack.OnUpdate += () =>
         {
 
@@ -230,8 +279,7 @@ public class ModelE_Sniper : EnemyEntity
 
             timeToRetreat -= Time.deltaTime;
 
-            
-
+           
             currentAction = new A_SniperMeleeAttack(this);
 
             if (!isDead && isWaitArea && !onRetreat) SendInputToFSM(EnemyInputs.ATTACK);
@@ -247,7 +295,7 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnEnter += x =>
         {
-            
+           
             timeToStopBack = UnityEngine.Random.Range(5, 6);
 
             positionToBack = FindNearScapeNode();
@@ -267,7 +315,9 @@ public class ModelE_Sniper : EnemyEntity
 
             if (!isDead && isWaitArea && !onRetreat) SendInputToFSM(EnemyInputs.ATTACK);
 
-           // if (!isDead && onMeleeAttack && !onRetreat) SendInputToFSM(EnemyInputs.MELEE_ATTACK);
+            // if (!isDead && onMeleeAttack && !onRetreat) SendInputToFSM(EnemyInputs.MELEE_ATTACK);
+
+            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
 
             if (!isDead && !isWaitArea && !isPersuit && !onMeleeAttack && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
 
@@ -294,6 +344,8 @@ public class ModelE_Sniper : EnemyEntity
             if (!onDamage) MoveEvent();
 
             if (!isDead && !isWaitArea && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
+
+            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
 
             if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.ATTACK);
         };
@@ -372,7 +424,7 @@ public class ModelE_Sniper : EnemyEntity
         else return Vector3.zero;
     }
 
-    public override void GetDamage(float damage)
+    public override void GetDamage(float damage, string typeOfDamage)
     {
         timeOnDamage = 1f;
         if (!onDamage)
@@ -380,10 +432,23 @@ public class ModelE_Sniper : EnemyEntity
             onDamage = true;
             StartCoroutine(OnDamageCorrutine());
         }
-        TakeDamageEvent();
-        life -= damage;
-		_view.LifeBar(life / maxLife);
-        _view.CreatePopText(damage);
+
+        if (typeOfDamage == "Normal")
+        {
+            timeStuned = 0;
+            TakeDamageEvent();
+            life -= damage;
+            _view.LifeBar(life / maxLife);
+            _view.CreatePopText(damage);
+        }
+
+        if (typeOfDamage == "Stune")
+        {
+            isStuned = true;
+            life -= damage;
+            _view.LifeBar(life / maxLife);
+            _view.CreatePopText(damage);
+        }
 
         if (life <= 0)
         {

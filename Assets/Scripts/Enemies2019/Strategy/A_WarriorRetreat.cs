@@ -41,7 +41,7 @@ public class A_WarriorRetreat : i_EnemyActions
 
             if (Physics.Raycast(_e.transform.position, -_e.transform.forward, out hit, 0.5f, _e.layerObst))
             {
-                Debug.Log(hit.transform.name);
+
                 _e.timeToRetreat = 0;
             }
         }

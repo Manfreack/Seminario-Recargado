@@ -130,6 +130,16 @@ public class ViewerE_Sniper : MonoBehaviour
         FireHands();
     }
 
+    public void StunedAnim()
+    {
+        _anim.SetBool("Stuned", true);
+    }
+
+    public void StunedAnimFalse()
+    {
+        _anim.SetBool("Stuned", false);
+    }
+
     public void MeleettackShader()
     {
         fireHandsMat.SetFloat("_RangedFireOpacity", 0);
@@ -156,7 +166,7 @@ public class ViewerE_Sniper : MonoBehaviour
         var pool = Instantiate(bloodPool);
         matPool = pool.GetComponent<MeshRenderer>().material;
         pool.transform.forward = transform.forward;
-        pool.transform.position = transform.position - transform.forward;
+        pool.transform.position = transform.position - transform.forward + new Vector3(0,0.1f,0);
         StartCoroutine(BloodPoolAnim());
     }
 

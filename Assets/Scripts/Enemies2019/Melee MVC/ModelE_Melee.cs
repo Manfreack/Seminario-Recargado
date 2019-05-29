@@ -244,17 +244,6 @@ public class ModelE_Melee : EnemyEntity
         }
     }
 
-    public IEnumerator DelayWait()
-    {
-        while (WaitState)
-        {
-            delayWaitState = true;
-            yield return new WaitForSeconds(0.0333f);
-            delayWaitState = false;
-            yield return new WaitForSeconds(0.0333f);
-        }
-    }
-
     public void Awake()
     {
 
@@ -265,6 +254,7 @@ public class ModelE_Melee : EnemyEntity
         maxViewDistanceToAttack = viewDistanceAttack;
         actualHits = UnityEngine.Random.Range(hitsToStartDefenceMIN, hitsToStartDefenceMAX);
         changeRotateWarrior = true;
+        timeStuned = 3;
 
         TakeDamageEvent += _view.TakeDamageAnim;
         DeadEvent += _view.DeadAnim;
@@ -282,6 +272,7 @@ public class ModelE_Melee : EnemyEntity
         DefenceEvent += _view.DefenceAnim;
         HitDefenceEvent += _view.HitDefenceAnim;
         HitDefenceEvent += target.GetComponent<Viewer>().ParryAnim;
+        StunedEvent += _view.StunedAnim;
 
         var patrol = new FSM_State<EnemyInputs>("PATROL");
         var defence = new FSM_State<EnemyInputs>("DEFENCE");
@@ -471,12 +462,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
 
-            if (!isDead && !isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.FOLLOW);
-
-            if (!isDead && isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.PERSUIT);
-
-            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
-
+     
         };
 
         defence.OnExit += x =>
@@ -489,8 +475,6 @@ public class ModelE_Melee : EnemyEntity
         wait.OnEnter += x =>
         {
             WaitState = true;
-
-            StartCoroutine(DelayWait());
 
             onDefence = false;
 
@@ -512,10 +496,6 @@ public class ModelE_Melee : EnemyEntity
         wait.OnUpdate += () =>
         {
 
-
-            if (delayWaitState)
-            {
-
                 if (!reposition) timeToChangeRotation -= Time.deltaTime;
 
                 if (timeToChangeRotation <= 0 && changeRotateWarrior)
@@ -532,7 +512,7 @@ public class ModelE_Melee : EnemyEntity
                     changeRotateWarrior = true;
                 }
 
-                var NearNodes = Physics.OverlapSphere(transform.position, distanceToHit).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
+                var NearNodes = Physics.OverlapSphere(transform.position, distanceToHit).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null).ToList();
 
                 foreach (var item in NearNodes)
                 {
@@ -541,20 +521,18 @@ public class ModelE_Melee : EnemyEntity
 
                 if (NearNodes.Count() > 0)
                 {
+                    var restOfNodes = playerNodes;
 
-                    restOfNodes = new List<CombatNode>();
-
-                    restOfNodes.AddRange(playerNodes);
-
-                    restOfNodes.RemoveAll(y => NearNodes.Contains(y));
+                    foreach (var item in NearNodes)
+                    {
+                        restOfNodes.Remove(item);
+                    }
 
                     foreach (var item in restOfNodes)
                     {
                         if (item.myOwner == this) item.myOwner = null;
                     }
-
                 }
-            }
 
             currentAction = new A_WarriorWait(this, flankDir);
 
@@ -647,6 +625,7 @@ public class ModelE_Melee : EnemyEntity
             firstAttack = false;
             onRetreat = false;
             timeToAttack = false;
+            onDefence = false;
             _view._anim.SetBool("WalkBack", false);
             _view.EndChainAttack();
             checkTurn = false;
@@ -659,15 +638,23 @@ public class ModelE_Melee : EnemyEntity
 
             currentAction = new A_Idle();
 
+            if (timeStuned <= 0) isStuned = false;
+
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
-            if (!isDead && isWaitArea && !onRetreat) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea && !onRetreat && timeStuned <=0) SendInputToFSM(EnemyInputs.WAIT);
 
-            if (!isDead && isPersuit && !isWaitArea && !onRetreat) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && isPersuit && !isWaitArea && !onRetreat && timeStuned <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && !isPersuit && !isWaitArea && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isWaitArea && !onRetreat && timeStuned <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && onRetreat && timeStuned <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
+        };
+
+        stuned.OnExit += x =>
+        {
+            isStuned = false;
+            _view.StunedAnimFalse();
         };
 
         retreat.OnEnter += x =>
@@ -940,14 +927,15 @@ public class ModelE_Melee : EnemyEntity
         impulse = false;
     }
 
-    public override void GetDamage(float damage)
+    public override void GetDamage(float damage, string typeOfDamage)
     {
         Vector3 dir = transform.position - target.transform.position;
         float angle = Vector3.Angle(dir, transform.forward);
 
 
-        if (!onDefence)
+        if (!onDefence && typeOfDamage =="Normal")
         {
+            timeStuned = 0;
             _view.DefenceAnimFalse();
             _view.HitDefenceAnimFalse();
             actualHits--;
@@ -964,6 +952,17 @@ public class ModelE_Melee : EnemyEntity
                 SendInputToFSM(EnemyInputs.PERSUIT);
                 CombatIdleEvent();
             }
+        }
+
+        if (!onDefence && typeOfDamage == "Stune")
+        {
+            StunedEvent();
+            actualHits--;
+            timeOnDamage = 0.5f;
+            if (!onDamage) StartCoroutine(OnDamageCorrutine());        
+            life -= damage;
+            _view.LifeBar(life / maxLife);
+            _view.CreatePopText(damage);
         }
 
 
