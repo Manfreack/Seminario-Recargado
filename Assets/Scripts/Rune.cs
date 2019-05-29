@@ -5,13 +5,14 @@ using UnityEngine;
 public class Rune : MonoBehaviour
 {
     public float healingAmount;
+    public float cooldownTime;
     bool used;
-    Renderer r;
+    Material mat;
 
     void Start()
     {
         used = false;
-        r = GetComponent<Renderer>();
+        mat = transform.GetChild(0).GetComponent<Renderer>().material;
     }
 
     void OnTriggerEnter(Collider c)
@@ -21,24 +22,35 @@ public class Rune : MonoBehaviour
             Model player = c.gameObject.GetComponent<Model>();
             if (player)
             {
-                player.life += healingAmount;
-                player.view.UpdateLifeBar(player.life / player.maxLife);
-                StartCoroutine(Use());
+                if(player.life != player.maxLife)
+                {
+                    player.UpdateLife(healingAmount);
+                    used = true;
+                    StartCoroutine(Opacity(false));
+                    StartCoroutine(Cooldown());
+                }
             }
         }
     }
 
-    IEnumerator Use()
+    IEnumerator Opacity(bool show)
     {
-        used = true;
         float time = 0;
-
         while (time < 1)
         {
             time += Time.deltaTime;
-            float red = Mathf.Lerp(0, 255, time);
-            r.material.color = new Color(red, 0, 0);
+            if (show)
+                mat.SetFloat("_GlobalOpacity", time);
+            else
+                mat.SetFloat("_GlobalOpacity", 1 - time);
             yield return new WaitForEndOfFrame();
         }
+    }
+
+    IEnumerator Cooldown()
+    {
+        yield return new WaitForSeconds(cooldownTime + 1);
+        StartCoroutine(Opacity(true));
+        used = false;
     }
 }

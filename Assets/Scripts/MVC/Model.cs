@@ -898,7 +898,12 @@ public class Model : MonoBehaviour
 
     }
 
-    
+    public void UpdateLife (float val)
+    {
+        life += val;
+        if (life > maxLife) life = maxLife;
+        view.UpdateLifeBar(life / maxLife);
+    }
 
     public void MakeDamage(string typeOfDamage)
     {
@@ -1082,9 +1087,8 @@ public class Model : MonoBehaviour
         if(heavyDamage && !onDefence)
         {
             float dmg = damage - armor;
-            life -= dmg;
+            UpdateLife(-dmg);
             timeToHeal = maxTimeToHeal;
-            view.UpdateLifeBar(life / maxLife);
             OnDamage();
             impulse = false;
         }
@@ -1112,9 +1116,8 @@ public class Model : MonoBehaviour
                 float dmg = damage - armor;
                 armor = 0;
                 view.UpdateArmorBar(armor / maxArmor);
-                life -= dmg;
+                UpdateLife(-dmg);
                 timeToHeal = maxTimeToHeal;
-                view.UpdateLifeBar(life / maxLife);
                 impulse = false;
             }
 
