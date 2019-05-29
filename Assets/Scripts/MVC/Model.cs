@@ -537,19 +537,6 @@ public class Model : MonoBehaviour
             isInCombat = false;
             saveSword = false;
         }
-
-
-        timeToHeal -= Time.deltaTime;
-
-        if (timeToHeal <= 0 && life > 0)
-        {
-            life += lifeRecoveredForSec * Time.deltaTime;
-            if (isInCombat) life += lifeRecoveredForSecInCombat * Time.deltaTime;
-            else life += lifeRecoveredForSec * Time.deltaTime;
-
-            if (life > maxLife) life = maxLife;
-            view.UpdateLifeBar(life / maxLife);
-        }
     }
 
     public void RollImpulse()
@@ -805,8 +792,6 @@ public class Model : MonoBehaviour
             Attack();
             if (!makingDamage) StartCoroutine(TimeToDoDamage());
             preAttack1 = true;
-            stamina -= attackStamina;
-            view.UpdateStaminaBar(stamina / maxStamina);
             StartCoroutine(AttackRotation());
             attackDamage = attack1Damage;
             CombatState();
@@ -848,8 +833,6 @@ public class Model : MonoBehaviour
                timeEndImpulse = 0.25f;
                StartCoroutine(ImpulseAttackAnimation());
                preAttack4 = true;
-               stamina -= attackStamina + 3;
-               view.UpdateStaminaBar(stamina / maxStamina);
                CombatState();
                 if (d != Vector3.zero) StartCoroutine(AttackRotation());
                attackDamage = attack4Damage;
@@ -867,8 +850,6 @@ public class Model : MonoBehaviour
                 timeEndImpulse = 0.25f;
                 StartCoroutine(ImpulseAttackAnimation());
                 preAttack3 = true;
-                stamina -= attackStamina;
-                view.UpdateStaminaBar(stamina / maxStamina);
                 CombatState();
                 if (d != Vector3.zero) StartCoroutine(AttackRotation());
                 attackDamage = attack3Damage;
@@ -885,8 +866,6 @@ public class Model : MonoBehaviour
                 timeEndImpulse = 0.35f;
                 StartCoroutine(ImpulseAttackAnimation());
                 preAttack2 = true;
-                stamina -= attackStamina;
-                view.UpdateStaminaBar(stamina / maxStamina);
                 CombatState();
                 if(d != Vector3.zero)StartCoroutine(AttackRotation());
                 attackDamage = attack2Damage;
@@ -902,8 +881,6 @@ public class Model : MonoBehaviour
                     Attack();                   
                     if(!makingDamage)StartCoroutine(TimeToDoDamage());
                     preAttack1 = true;
-                    stamina -= attackStamina;
-                    view.UpdateStaminaBar(stamina / maxStamina);
                     if (d != Vector3.zero) StartCoroutine(AttackRotation());
                     attackDamage = attack1Damage;
                     CombatState();
