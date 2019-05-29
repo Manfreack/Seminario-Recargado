@@ -7,7 +7,7 @@ using System;
 public class ModelE_Melee : EnemyEntity
 {
 
-    public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE, STUNED }
+    public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE, STUNED, KNOCK }
     public EventFSM<EnemyInputs> _myFsm;
     public List<CombatNode> restOfNodes = new List<CombatNode>();
     public float timeToPatrol;
@@ -58,6 +58,7 @@ public class ModelE_Melee : EnemyEntity
     public Action HitDefenceEvent;
     public Action AttackRunEvent;
     public Action StunedEvent;
+    public Action KnockEvent;
     public Node endPatrolNode;
 
     float maxLife;
@@ -273,6 +274,7 @@ public class ModelE_Melee : EnemyEntity
         HitDefenceEvent += _view.HitDefenceAnim;
         HitDefenceEvent += target.GetComponent<Viewer>().ParryAnim;
         StunedEvent += _view.StunedAnim;
+        KnockEvent += _view.KnockedAnim;
 
         var patrol = new FSM_State<EnemyInputs>("PATROL");
         var defence = new FSM_State<EnemyInputs>("DEFENCE");
@@ -284,6 +286,7 @@ public class ModelE_Melee : EnemyEntity
         var follow = new FSM_State<EnemyInputs>("FOLLOW");
         var answerCall = new FSM_State<EnemyInputs>("ANSWER");
         var stuned = new FSM_State<EnemyInputs>("STUNED");
+        var knocked = new FSM_State<EnemyInputs>("KNOCK");
 
         StateConfigurer.Create(patrol)
            .SetTransition(EnemyInputs.PERSUIT, persuit)
@@ -299,10 +302,18 @@ public class ModelE_Melee : EnemyEntity
           .SetTransition(EnemyInputs.DIE, die)
           .Done();
 
+        StateConfigurer.Create(knocked)
+       .SetTransition(EnemyInputs.PERSUIT, persuit)
+       .SetTransition(EnemyInputs.FOLLOW, follow)
+       .SetTransition(EnemyInputs.WAIT, wait)
+       .SetTransition(EnemyInputs.DIE, die)
+       .Done();
+
         StateConfigurer.Create(persuit)
          .SetTransition(EnemyInputs.WAIT, wait)
          .SetTransition(EnemyInputs.FOLLOW, follow)
          .SetTransition(EnemyInputs.STUNED, stuned)
+         .SetTransition(EnemyInputs.KNOCK, knocked)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
@@ -311,6 +322,7 @@ public class ModelE_Melee : EnemyEntity
          .SetTransition(EnemyInputs.ATTACK, attack)
          .SetTransition(EnemyInputs.DEFENCE, defence)
          .SetTransition(EnemyInputs.STUNED, stuned)
+         .SetTransition(EnemyInputs.KNOCK, knocked)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
@@ -319,6 +331,7 @@ public class ModelE_Melee : EnemyEntity
        .SetTransition(EnemyInputs.FOLLOW, follow)
        .SetTransition(EnemyInputs.WAIT, wait)
        .SetTransition(EnemyInputs.DEFENCE, defence)
+       .SetTransition(EnemyInputs.KNOCK, knocked)
        .SetTransition(EnemyInputs.DIE, die)
        .Done();
 
@@ -330,6 +343,7 @@ public class ModelE_Melee : EnemyEntity
         .SetTransition(EnemyInputs.WAIT, wait)
         .SetTransition(EnemyInputs.RETREAT, retreat)
         .SetTransition(EnemyInputs.STUNED, stuned)
+        .SetTransition(EnemyInputs.KNOCK, knocked)
         .SetTransition(EnemyInputs.DIE, die)
         .Done();
 
@@ -338,6 +352,7 @@ public class ModelE_Melee : EnemyEntity
          .SetTransition(EnemyInputs.PERSUIT, persuit)
          .SetTransition(EnemyInputs.STUNED, stuned)
          .SetTransition(EnemyInputs.WAIT, wait)
+         .SetTransition(EnemyInputs.KNOCK, knocked)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
@@ -418,7 +433,9 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
 
-            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
+            if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
+
+            if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
 
             if (!isDead && !isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.FOLLOW);
 
@@ -460,9 +477,11 @@ public class ModelE_Melee : EnemyEntity
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
-            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
+            if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
 
-     
+            if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
+
+
         };
 
         defence.OnExit += x =>
@@ -512,7 +531,7 @@ public class ModelE_Melee : EnemyEntity
                     changeRotateWarrior = true;
                 }
 
-                var NearNodes = Physics.OverlapSphere(transform.position, distanceToHit).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null).ToList();
+                var NearNodes = Physics.OverlapSphere(transform.position, distanceToHit+1).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null).ToList();
 
                 foreach (var item in NearNodes)
                 {
@@ -556,7 +575,9 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && delayToAttack <= 0 && !onDefence) SendInputToFSM(EnemyInputs.ATTACK);
 
-            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
+            if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
+
+            if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
 
             if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
 
@@ -603,7 +624,9 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && !isPersuit && !isWaitArea && !onRetreat && !onDefence) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
+            if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
+
+            if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
 
             if (onRetreat && !onDefence) SendInputToFSM(EnemyInputs.RETREAT);
 
@@ -657,6 +680,38 @@ public class ModelE_Melee : EnemyEntity
             _view.StunedAnimFalse();
         };
 
+        knocked.OnEnter += x =>
+        {
+            cm.times++;
+            firstAttack = false;
+            onRetreat = false;
+            timeToAttack = false;
+            onDefence = false;
+            _view._anim.SetBool("WalkBack", false);
+            _view.EndChainAttack();
+            checkTurn = false;
+            isKnock = true;
+        };
+
+        knocked.OnUpdate += () =>
+        {
+            Debug.Log("sadas");
+
+            currentAction = new A_Idle();
+
+           // if (animClipName != "E_Warrior_Tumble") isKnock = false;
+
+            if (isDead) SendInputToFSM(EnemyInputs.DIE);
+
+            if (!isDead && isWaitArea && !onRetreat && !isKnock) SendInputToFSM(EnemyInputs.WAIT);
+
+            if (!isDead && isPersuit && !isWaitArea && !onRetreat && !isKnock) SendInputToFSM(EnemyInputs.PERSUIT);
+
+            if (!isDead && !isPersuit && !isWaitArea && !onRetreat && !isKnock) SendInputToFSM(EnemyInputs.FOLLOW);
+
+            if (!isDead && onRetreat && !isKnock) SendInputToFSM(EnemyInputs.FOLLOW);
+        };
+
         retreat.OnEnter += x =>
         {
             onDefence = false;
@@ -678,7 +733,9 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
 
-            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
+            if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
+
+            if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
 
             if (!isDead && isWaitArea && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.WAIT);
 
@@ -731,7 +788,9 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
 
-            if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
+            if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
+
+            if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
@@ -965,6 +1024,16 @@ public class ModelE_Melee : EnemyEntity
             _view.CreatePopText(damage);
         }
 
+        if (!onDefence && typeOfDamage == "Knock")
+        {
+            KnockEvent();
+            timeOnDamage = 0.5f;
+            if (!onDamage) StartCoroutine(OnDamageCorrutine());
+            life -= damage;
+            _view.LifeBar(life / maxLife);
+            _view.CreatePopText(damage);
+        }
+
 
         if (onDefence && angle > 90)
         {
@@ -1047,62 +1116,58 @@ public class ModelE_Melee : EnemyEntity
 
     public override CombatNode FindNearAggressiveNode()
     {
-        var node = playerNodes.Where(x => x.aggressive && !x.isBusy && (x.myOwner == null || x.myOwner == this)).Where(x => {
-
-            var nearNodes = Physics.OverlapSphere(x.transform.position, distanceToHit).Where(y=> y.GetComponent<CombatNode>() && y!=x).Select(y => y.GetComponent<CombatNode>());
-
-            if (nearNodes.Any(y => y.myOwner != this)) return true;
-
-            else return false;
-
-        })
-        .OrderBy(x =>
+        var node = playerNodes.Where(x => x.aggressive && !x.isBusy && (x.myOwner == null || x.myOwner == this)).OrderBy(x =>
         {
             var d = Vector3.Distance(x.transform.position, transform.position);
             return d;
 
         }).FirstOrDefault();
 
-        myCombatNode = node;
-
-        myCombatNode.myOwner = this;
-
-        if (lastCombatNode == null)
+        if (node)
         {
-            lastCombatNode = node;
-            lastCombatNode.myOwner = this;
-        }
+            myCombatNode = node;
 
-        if (myCombatNode != lastCombatNode)
-        {
-            lastCombatNode.myOwner = null;
-            lastCombatNode = myCombatNode;
-        }
+            myCombatNode.myOwner = this;
 
-        var NearNodes = Physics.OverlapSphere(myCombatNode.transform.position, distanceToHit).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
-
-        foreach (var item in NearNodes)
-        {
-            item.myOwner = this;
-        }
-
-        if (NearNodes.Count() > 0)
-        {
-
-            var restOfNodes = new List<CombatNode>();
-
-            restOfNodes.AddRange(playerNodes);
-
-            restOfNodes.RemoveAll(y => NearNodes.Contains(y));
-
-            foreach (var item in restOfNodes)
+            if (lastCombatNode == null)
             {
-                if (item.myOwner == this) item.myOwner = null;
+                lastCombatNode = node;
+                lastCombatNode.myOwner = this;
             }
 
+            if (myCombatNode != lastCombatNode)
+            {
+                lastCombatNode.myOwner = null;
+                lastCombatNode = myCombatNode;
+            }
+
+            var NearNodes = Physics.OverlapSphere(myCombatNode.transform.position, distanceToHit + 1).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
+
+            foreach (var item in NearNodes)
+            {
+                item.myOwner = this;
+            }
+
+            if (NearNodes.Count() > 0)
+            {
+
+                var restOfNodes = new List<CombatNode>();
+
+                restOfNodes.AddRange(playerNodes);
+
+                restOfNodes.RemoveAll(y => NearNodes.Contains(y));
+
+                foreach (var item in restOfNodes)
+                {
+                    if (item.myOwner == this) item.myOwner = null;
+                }
+
+            }
+
+            return node;
         }
 
-        return node;
+        else return myCombatNode;
     }
 
     public override CombatNode FindNearNon_AggressiveNode()

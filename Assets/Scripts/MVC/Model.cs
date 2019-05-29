@@ -54,6 +54,10 @@ public class Model : MonoBehaviour
     public float damagePower2;
     public float reduceTimePerHit;
 
+    [Header("Player ParryStats:")]
+
+    public float parryBar;
+    public float perfectParryTimer;
 
     [Header("Player StaminaStats:")]
 
@@ -145,6 +149,7 @@ public class Model : MonoBehaviour
     public Action StopDefenceEvent;
     public Action StreakEvent;
     public Action RollAttackEvent;
+    public Action CounterAttackEvent;
 
     public Transform closestEnemy;
     public LayerMask enemyLM;
@@ -383,8 +388,11 @@ public class Model : MonoBehaviour
             timeToRotateAttack -= Time.deltaTime;
             dirToRotateAttack.y = 0;
             Quaternion targetRotation;
-            targetRotation = Quaternion.LookRotation(dirToRotateAttack, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+            if (dirToRotateAttack != Vector3.zero)
+            {
+                targetRotation = Quaternion.LookRotation(dirToRotateAttack, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+            }
             yield return new WaitForEndOfFrame();
         }
     }
@@ -419,7 +427,14 @@ public class Model : MonoBehaviour
 
     void Update()
     {
-    
+        parryBar -= Time.deltaTime/8;
+
+        if (parryBar <= 0) parryBar = 0;
+
+        if (parryBar>=1) parryBar = 0;
+
+        view.UpdateParryBar(parryBar);
+
         CombatParameters();
 
         WraperAction();      
@@ -702,9 +717,13 @@ public class Model : MonoBehaviour
         acceleration += 3f * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
-        if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" && animClipName != "P_RollEstocada_Damage" && animClipName != "P_RollEstocada_End"
-                                                                      && animClipName != "GetDamage2" && animClipName != "P_Warrior_RolAttack_Pre" && animClipName != "P_Warrior_FailDefence"
-                                                                      && animClipName != "GetDamage3" && animClipName != "P_Warrior_RolAttack_Damage" && animClipName != "P_Warrior_RolAttack_End")
+        /* if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" && animClipName != "P_RollEstocada_Damage" && animClipName != "P_RollEstocada_End"
+                                                                       && animClipName != "GetDamage2" && animClipName != "P_Warrior_RolAttack_Pre" && animClipName != "P_Warrior_FailDefence"
+                                                                       && animClipName != "GetDamage3" && animClipName != "P_Warrior_RolAttack_Damage" && animClipName != "P_Warrior_RolAttack_End")
+                                                                       */
+
+        if (!InAction && !onDamage && countAnimAttack == 0 && !onRoll && (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
+                                                               || animClipName == "P_Warrior_RunWhitSword01" || animClipName == "RollAttack"))
         {
             Quaternion targetRotation;
 
@@ -790,11 +809,12 @@ public class Model : MonoBehaviour
         {
             countAnimAttack++;
             view.AwakeTrail();
-            Attack();
+            if (perfectParryTimer > 1) Attack();
+            else CounterAttackEvent();
             if (!makingDamage) StartCoroutine(TimeToDoDamage());
             preAttack1 = true;
-            StartCoroutine(AttackRotation());
-            attackDamage = attack1Damage;
+            if (d != Vector3.zero) StartCoroutine(AttackRotation());
+            attackDamage = 5;
             CombatState();
         }
 
@@ -804,7 +824,6 @@ public class Model : MonoBehaviour
             attackDamage = attackRollDamage;
             RollAttackEvent();
             view.AwakeTrail();
-           // StartCoroutine(TimeToDoDamage());
             EndCombo();
             CombatState();
             timeImpulse = 0.8f;
@@ -949,6 +968,13 @@ public class Model : MonoBehaviour
             }
         }
 
+        if (typeOfDamage == "Knock" && enemies.Count() > 0)
+        {
+            enemies.FirstOrDefault().GetDamage(attackDamage, "Knock");
+            enemies.FirstOrDefault().isKnock = true;
+            if (enemies.FirstOrDefault().life > 0) enemies.FirstOrDefault().GetComponent<Rigidbody>().AddForce(-enemies.FirstOrDefault().transform.forward * 5, ForceMode.Impulse);
+        }
+
         foreach (var item in destructibleMesh)
         {
             item.StartCoroutine(item.startDisolve());
@@ -993,6 +1019,7 @@ public class Model : MonoBehaviour
         if (stamina >= 0 && !stuned && !onRoll && !defenceBroken && !onDamage)
         {
             DefenceEvent();
+            perfectParryTimer += Time.deltaTime;
             InAction = true;
             InActionAttack = true;
             onDefence = true;
@@ -1002,6 +1029,7 @@ public class Model : MonoBehaviour
 
     public void StopDefence()
     {
+        perfectParryTimer = 0;
         StopDefenceEvent();
         InActionAttack = false;
         InAction = false;
@@ -1078,9 +1106,18 @@ public class Model : MonoBehaviour
 
         if (!isBehind && !isProyectile && onDefence && !heavyDamage)
         {
-            stamina -= blockStamina;
-            view.UpdateStaminaBar(stamina / maxStamina);          
-            BlockEvent();
+
+            parryBar += 0.25f;
+            if(parryBar<1)BlockEvent();
+            else
+            {
+                view.BlockedFail();
+                StopDefence();
+                StartCoroutine(DefenceBroken());
+                view.defenceColdwon.fillAmount = 1;
+                impulse = false;
+                view.ShakeCameraDamage(1, 1, 0.5f);
+            }
             view.ShakeCameraDamage(0.5f,0.5f,0.5f);
         }
 

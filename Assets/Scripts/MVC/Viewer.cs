@@ -25,6 +25,7 @@ public class Viewer : MonoBehaviour
     public Image power4;
     public Image defenceActive;
     public Image defenceColdwon;
+    public Image parryBar;
 
     public GameObject youDied;
     public GameObject youWin;
@@ -75,10 +76,9 @@ public class Viewer : MonoBehaviour
 
     public IEnumerator SmashParticleEvent()
     {
+        smashParticle.SetActive(false);
         yield return new WaitForSeconds(0.5f);
         trail.SetActive(false);
-        ShakeCameraDamage(1, 1, 0.3f);
-        /* smashParticle.SetActive(false);
 
          if (!anim.GetBool("Parry"))
          {
@@ -86,7 +86,7 @@ public class Viewer : MonoBehaviour
              trail.SetActive(false);
              ShakeCameraDamage(1,1,0.3f);
          }
-         */
+         
     }
 
     public void Update()
@@ -304,6 +304,21 @@ public class Viewer : MonoBehaviour
     public void UpdateArmorBar(float val)
     {
         //StartCoroutine(BarSmooth(val, armor));
+    }
+
+    public void UpdateParryBar(float val)
+    {
+        StartCoroutine(BarSmooth(val, parryBar));
+    }
+
+    public void CounterAttackAnim()
+    {
+        anim.SetBool("CounterAttack",true);
+    }
+
+    public void CounterAttackFalse()
+    {
+        anim.SetBool("CounterAttack", false);
     }
 
     public IEnumerator BarSmooth(float target, Image barToAffect)

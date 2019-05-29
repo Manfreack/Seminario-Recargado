@@ -53,6 +53,7 @@ public class Controller : MonoBehaviour
         model.StopDefenceEvent += view.NoDefence;
         model.StreakEvent += view.Streak;
         model.RollAttackEvent += view.RollAttackAnim;
+        model.CounterAttackEvent += view.CounterAttackAnim;
     }
 
     // Update is called once per frame

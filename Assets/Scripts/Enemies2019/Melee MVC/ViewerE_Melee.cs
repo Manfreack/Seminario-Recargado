@@ -148,6 +148,17 @@ public class ViewerE_Melee : MonoBehaviour
         _anim.SetBool("Stuned", false);
     }
 
+    public void KnockedAnim()
+    {
+        _anim.SetBool("Knocked", true);
+    }
+
+    public void KnockedAnimFalse()
+    {
+        _anim.SetBool("Knocked", false);
+        _model.isKnock = false;
+    }
+
     public void RunAttackAnim()
     {
         _anim.SetBool("RunAttack", true);

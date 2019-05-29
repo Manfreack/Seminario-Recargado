@@ -166,7 +166,7 @@ public class ViewerE_Sniper : MonoBehaviour
         var pool = Instantiate(bloodPool);
         matPool = pool.GetComponent<MeshRenderer>().material;
         pool.transform.forward = transform.forward;
-        pool.transform.position = transform.position - transform.forward + new Vector3(0,0.1f,0);
+        pool.transform.position = transform.position - transform.forward/2 + new Vector3(0,0.1f,0);
         StartCoroutine(BloodPoolAnim());
     }
 

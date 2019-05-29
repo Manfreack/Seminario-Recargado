@@ -20,6 +20,7 @@ public abstract class EnemyEntity: MonoBehaviour
     public bool onRetreat;
     public bool firstSaw;
     public bool isStuned;
+    public bool isKnock;
     public float timeOnDamage;
     public float timeStuned;
     public Model target;
