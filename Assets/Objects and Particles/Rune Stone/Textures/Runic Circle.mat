@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Runic Circle
+  m_Shader: {fileID: 4800000, guid: 39aa72fb8876517468ad8b991839b7eb, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Noise:
+        m_Texture: {fileID: 2800000, guid: 611322fa830f08a439a04fa2f0521d43, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RunicCircle:
+        m_Texture: {fileID: 2800000, guid: e6551f9059f4f3445926331f86b671de, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureSample0:
+        m_Texture: {fileID: 2800000, guid: 138ae4b08ba7f89438effbd67e97ccef, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Cutoff: 0.5
+    - _GlobalOpacity: 1
+    - _NoiseAddAmount: 0.58
+    - _RotationSpeed: 0.1
+    - _StoneUsedState: 0
+    - _TessMax: 5
+    - _TessMin: 1
+    - _TessValue: 32
+    - _VertexOffsetIntensity: 0.05
+    - __dirty: 0
+    m_Colors:
+    - _ColorNotUsed1: {r: 0.9598377, g: 1, b: 0.2720588, a: 0}
+    - _ColorNotUsed2: {r: 0.6470588, g: 0.2275862, b: 0, a: 0}
+    - _ColorUsed1: {r: 1, g: 0, b: 0, a: 0}
+    - _ColorUsed2: {r: 0.5294118, g: 0, b: 0, a: 0}
