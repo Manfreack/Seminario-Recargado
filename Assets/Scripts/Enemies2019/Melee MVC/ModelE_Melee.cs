@@ -457,6 +457,8 @@ public class ModelE_Melee : EnemyEntity
 
         defence.OnUpdate += () =>
         {
+            _view.EndChainAttack();
+            _view.HeavyAttackFalse();
 
             DefenceEvent();
 
@@ -510,6 +512,10 @@ public class ModelE_Melee : EnemyEntity
 
             if (timeToChangeRotation <= 0) timeToChangeRotation = UnityEngine.Random.Range(1.5f, 3);
 
+            var myNodes = playerNodes.Where(y => y.myOwner == this);
+
+            foreach (var item in myNodes) item.myOwner = null;
+
         };
 
 
@@ -541,7 +547,9 @@ public class ModelE_Melee : EnemyEntity
 
                 if (NearNodes.Count() > 0)
                 {
-                    var restOfNodes = playerNodes;
+                    var restOfNodes = new List<CombatNode>();
+
+                    restOfNodes.AddRange(playerNodes);
 
                     foreach (var item in NearNodes)
                     {
@@ -832,6 +840,10 @@ public class ModelE_Melee : EnemyEntity
             ca.myEntities--;
             cm.times++;
             cm.enemiesList.Remove(this);
+
+            var myNodes = playerNodes.Where(y => y.myOwner == this);
+
+            foreach (var item in myNodes) item.myOwner = null;
         };
 
         _myFsm = new EventFSM<EnemyInputs>(patrol);
@@ -1149,7 +1161,7 @@ public class ModelE_Melee : EnemyEntity
                 item.myOwner = this;
             }
 
-            if (NearNodes.Count() > 0)
+           /* if (NearNodes.Count() > 0)
             {
 
                 var restOfNodes = new List<CombatNode>();
@@ -1164,11 +1176,11 @@ public class ModelE_Melee : EnemyEntity
                 }
 
             }
-
+            */
             return node;
         }
 
-        else return myCombatNode;
+        else return playerNodes[0];
     }
 
     public override CombatNode FindNearNon_AggressiveNode()
@@ -1180,46 +1192,50 @@ public class ModelE_Melee : EnemyEntity
 
         }).FirstOrDefault();
 
-        myCombatNode = node;
-
-        myCombatNode.myOwner = this;
-
-        if (lastCombatNode == null)
+        if (node)
         {
-            lastCombatNode = node;
-            lastCombatNode.myOwner = this;
-        }
+            myCombatNode = node;
 
-        if (myCombatNode != lastCombatNode)
-        {
-            lastCombatNode.myOwner = null;
-            lastCombatNode = myCombatNode;
-        }
+            myCombatNode.myOwner = this;
 
-        var NearNodes = Physics.OverlapSphere(myCombatNode.transform.position, distanceToHit).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
-
-        foreach (var item in NearNodes)
-        {
-            item.myOwner = this;
-        }
-
-        if (NearNodes.Count() > 0)
-        {
-
-            var restOfNodes = new List<CombatNode>();
-
-            restOfNodes.AddRange(playerNodes);
-
-            restOfNodes.RemoveAll(y => NearNodes.Contains(y));
-
-            foreach (var item in restOfNodes)
+            if (lastCombatNode == null)
             {
-                if (item.myOwner == this) item.myOwner = null;
+                lastCombatNode = node;
+                lastCombatNode.myOwner = this;
             }
 
-        }
+            if (myCombatNode != lastCombatNode)
+            {
+                lastCombatNode.myOwner = null;
+                lastCombatNode = myCombatNode;
+            }
 
-        return node;
+            var NearNodes = Physics.OverlapSphere(myCombatNode.transform.position, distanceToHit).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null);
+
+            foreach (var item in NearNodes)
+            {
+                item.myOwner = this;
+            }
+
+            /*if (NearNodes.Count() > 0)
+            {
+
+                var restOfNodes = new List<CombatNode>();
+
+                restOfNodes.AddRange(playerNodes);
+
+                restOfNodes.RemoveAll(y => NearNodes.Contains(y));
+
+                foreach (var item in restOfNodes)
+                {
+                    if (item.myOwner == this) item.myOwner = null;
+                }
+
+            }
+            */
+            return node;
+        }
+        else return playerNodes[0];
     }
 
     public void StopRetreat()

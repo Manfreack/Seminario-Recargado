@@ -18,9 +18,13 @@ public class A_AttackMeleeWarrior : i_EnemyActions
             if (!_e.onAttackArea && !_e.firstAttack && !_e.onDamage && _e.animClipName != "EM_CounterAttack" && _e.animClipName != "IdleDefence" && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "E_Warrior_Attack3" && _e.animClipName != "Heavy Attack_EM" && _e.animClipName != "HitDefence")
             {
                 Quaternion targetRotation;
-                var dir = (_e.target.transform.position - _e.transform.position + _e.ObstacleAvoidance() + _e.EntitiesAvoidance()).normalized;
+                var dir = (_e.target.transform.position - _e.transform.position).normalized;
                 dir.y = 0;
-                targetRotation = Quaternion.LookRotation(dir , Vector3.up);
+                var avoidObs = _e.ObstacleAvoidance();
+                avoidObs.y = 0;
+                var avoidEntites = _e.EntitiesAvoidance();
+                avoidEntites.y = 0;
+                targetRotation = Quaternion.LookRotation(dir + avoidEntites + avoidObs , Vector3.up);
                 _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
                 _e.rb.MovePosition(_e.rb.position + _e.transform.forward * _e.speed * 2 * Time.deltaTime);
                 _e.AttackRunEvent();

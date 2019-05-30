@@ -16,6 +16,13 @@ public class CombatNode : MonoBehaviour
     {
         while (true)
         {
+            if (myOwner)
+            {
+                var d = Vector3.Distance(transform.position, myOwner.transform.position);
+                if (myOwner.isDead || d>= 2) myOwner = null;
+
+            }
+
             var obs = Physics.OverlapSphere(transform.position, 0.3f).Where(x =>
             {
 
@@ -24,9 +31,10 @@ public class CombatNode : MonoBehaviour
 
             });
 
+
             if (obs.Count() > 0) isBusy = true;
             else isBusy = false;
-            yield return new WaitForSeconds(0.333f);
+            yield return new WaitForSeconds(0.0333f);
         }
     }
 

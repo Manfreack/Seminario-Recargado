@@ -549,6 +549,8 @@ public class Model : MonoBehaviour
             view.SaveSwordAnim2();
             view.anim.SetBool("IdleCombat", false);
             view.anim.SetBool("Roll", false);
+            InAction = false;
+            InActionAttack = false;
             onRoll = false;
             isInCombat = false;
             saveSword = false;
@@ -717,10 +719,6 @@ public class Model : MonoBehaviour
         acceleration += 3f * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
-        /* if (!InAction && !onDamage && countAnimAttack == 0 && !view.anim.GetBool("RollAttack") && !onRoll && animClipName != "GetDamage1" && animClipName != "P_RollEstocada_Damage" && animClipName != "P_RollEstocada_End"
-                                                                       && animClipName != "GetDamage2" && animClipName != "P_Warrior_RolAttack_Pre" && animClipName != "P_Warrior_FailDefence"
-                                                                       && animClipName != "GetDamage3" && animClipName != "P_Warrior_RolAttack_Damage" && animClipName != "P_Warrior_RolAttack_End")
-                                                                       */
 
         if (!InAction && !onDamage && countAnimAttack == 0 && !onRoll && (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
                                                                || animClipName == "P_Warrior_RunWhitSword01" || animClipName == "RollAttack"))
@@ -779,7 +777,7 @@ public class Model : MonoBehaviour
 
         if (d == Vector3.zero)
         {
-            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x => x.renderObject.isVisible && !x.isDead).Distinct().Where(x=>
+            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x => x.renderObject.isVisible && !x.isDead).Distinct()/*.Where(x=>
             {
                 Vector3 toTarget = (x.transform.position - transform.position).normalized;
                 Vector3 forward = transform.TransformDirection(Vector3.forward);
@@ -787,7 +785,7 @@ public class Model : MonoBehaviour
                 if (Vector3.Dot(forward, toTarget) > 0) return true;
                 else return false;
 
-            }).OrderBy(x =>
+            })*/.OrderBy(x =>
             { 
 
                 var distance = Vector3.Distance(x.transform.position, transform.position);

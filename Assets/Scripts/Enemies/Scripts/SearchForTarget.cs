@@ -14,7 +14,7 @@ public class SearchForTarget : MonoBehaviour {
 
         if (target == null) return false;
 
-        var _dirToTarget = (target.position - _enemy.position).normalized;
+        var _dirToTarget = (target.position + new Vector3(0, 0.5f, 0) - _enemy.position + new Vector3(0, 0.5f, 0)).normalized;
 
         var _angleToTarget = Vector3.Angle(_enemy.forward, _dirToTarget);
 
@@ -26,15 +26,15 @@ public class SearchForTarget : MonoBehaviour {
 
         if (detector)
         {         
-            if (Physics.Raycast(_enemy.position, _dirToTarget , out hit, _distanceToTarget, layer))
+            if (Physics.Raycast(_enemy.position + new Vector3(0, 0.5f, 0), _dirToTarget , out hit, _distanceToTarget, layer))
             {
                 if (hit.transform.name == target.name)
                 {
-                    Debug.DrawLine(_enemy.position, hit.point, Color.yellow);
+                    Debug.DrawLine(_enemy.position + new Vector3(0, 0.5f, 0), hit.point, Color.yellow);
                 }
                 else
                 {
-                    Debug.DrawLine(_enemy.position, hit.point, Color.red);
+                    Debug.DrawLine(_enemy.position + new Vector3(0, 0.5f, 0), hit.point, Color.red);
                     obstaclesBetween = true;
                 }
                 
