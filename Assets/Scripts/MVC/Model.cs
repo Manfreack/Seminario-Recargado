@@ -424,6 +424,8 @@ public class Model : MonoBehaviour
 
     void Update()
     {
+     
+
         parryBar -= Time.deltaTime/8;
 
         if (parryBar <= 0) parryBar = 0;
@@ -717,7 +719,7 @@ public class Model : MonoBehaviour
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
 
-        if (!InAction && !onDamage && countAnimAttack == 0 && !onRoll && (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
+        if (!onDamage && countAnimAttack == 0  && (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
                                                                || animClipName == "P_Warrior_RunWhitSword01" || animClipName == "RollAttack"))
         {
             Quaternion targetRotation;
@@ -1087,7 +1089,7 @@ public class Model : MonoBehaviour
 
     public void GetDamage(float damage, Transform enemy, bool isProyectile, bool heavyDamage)
     {
-        
+        EndCombo();
         timeCdPower2 -= reduceTimePerHit;
         impulse = false;
         bool isBehind = false;

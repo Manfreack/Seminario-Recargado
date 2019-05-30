@@ -1048,7 +1048,7 @@ public class ModelE_Melee : EnemyEntity
         }
 
 
-        if (onDefence && angle > 90)
+        if (onDefence && angle > 90 && animClipName =="IdelDefence")
         {
             timeToHoldDefence = 0;
             delayToAttack = 0;
