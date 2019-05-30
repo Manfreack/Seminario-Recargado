@@ -889,7 +889,7 @@ public class Model : MonoBehaviour
             }
 
             if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" || animClipName == "Blocked-V2"
-                || animClipName == "Idel V2.0" || animClipName == "Walk03" || animClipName == "Run03" || animClipName == "P_Warrior_RunWhitSword" ||animClipName == "P_RollEstocada_Damage") && !preAttack1 && countAnimAttack==0)
+                || animClipName == "Idel V2.0" || animClipName == "P_Warrior_Walk" || animClipName == "P_Warrior_Run01" || animClipName == "P_Warrior_RunWhitSword" ||animClipName == "P_RollEstocada_Damage") && !preAttack1 && countAnimAttack==0)
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
                 {                   
