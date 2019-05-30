@@ -249,13 +249,16 @@ public class Model : MonoBehaviour
 
     public IEnumerator OnDamageCorrutine()
     {
-        while (animClipName == "GetDamage1" || animClipName == "GetDamage2" || animClipName == "GetDamage3")
+        onDamage = true;
+        while (animClipName == "P_Warrior_TakeDamage3" || animClipName == "P_Warrior_TakeDamage2" || animClipName == "P_Warrior_TakeDamage1")
         {
             onRoll = false;
             view.anim.SetBool("Roll", false);
             view.anim.SetBool("RollAttack", false);
             yield return new WaitForEndOfFrame();
         }
+
+        onDamage = false;
     }
 
     public IEnumerator ImpulseAttackAnimation()
@@ -365,12 +368,6 @@ public class Model : MonoBehaviour
         }
 
         if (timeCdPower2 <= 0) timeCdPower2 = internCdPower2;
-    }
-
-    public IEnumerator OnDamageDelay()
-    {
-        yield return new WaitForSeconds(0.5f);
-        onDamage = false;
     }
 
     public IEnumerator CombatDelayState()
@@ -1094,7 +1091,6 @@ public class Model : MonoBehaviour
         timeCdPower2 -= reduceTimePerHit;
         impulse = false;
         bool isBehind = false;
-        StartCoroutine(OnDamageDelay());
         timeEndImpulse = 0;
         timeImpulse = 0;
         makingDamage = false;
@@ -1164,7 +1160,7 @@ public class Model : MonoBehaviour
 
             if (!onPowerState)
             {
-                onDamage = true;
+               // onDamage = true;
             }
             if (life > 0 && !onPowerState && !onRoll) OnDamage();
             
