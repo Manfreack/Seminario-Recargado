@@ -112,7 +112,7 @@ public class ViewerE_Sniper : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         myMeshes.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
 		ess = GetComponent<EnemyScreenSpace>();
-        fireHandsMat = fireHandsRenderer.materials[2];
+        fireHandsMat = fireHandsRenderer.materials[1];
 
         _anim.SetBool("Idle", true);
 

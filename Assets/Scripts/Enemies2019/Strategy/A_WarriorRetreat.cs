@@ -28,7 +28,7 @@ public class A_WarriorRetreat : i_EnemyActions
         targetRotation = Quaternion.LookRotation(dir, Vector3.up);
         _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
 
-        if (_e.onRetreat && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "Heavy Attack_EM" && _e.animClipName != "E_Warrior_Attack3"  && _e.animClipName != "Run_EM" && _e.animClipName != "HitDefence" && _e.timeToRetreat > 0 && d<maxD && _e.animClipName == "WalkBack_EM")
+        if (_e.onRetreat && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "Heavy Attack_EM" && _e.animClipName != "E_Warrior_Attack3"  && _e.animClipName != "Run_EM" && _e.animClipName != "Blocked_EM" && _e.timeToRetreat > 0 && d<maxD && _e.animClipName == "WalkBack_EM")
         {
 
 
@@ -46,7 +46,7 @@ public class A_WarriorRetreat : i_EnemyActions
             }
         }
 
-        if (_e.onRetreat && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "Heavy Attack_EM" && _e.animClipName != "E_Warrior_Attack3" && _e.animClipName != "Run_EM" && _e.animClipName != "HitDefence" && _e.timeToRetreat > 0 && d > maxD)
+        if (_e.onRetreat && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "Heavy Attack_EM" && _e.animClipName != "E_Warrior_Attack3" && _e.animClipName != "Run_EM" && _e.animClipName != "Blocked_EM" && _e.timeToRetreat > 0 && d > maxD)
         {
 
 

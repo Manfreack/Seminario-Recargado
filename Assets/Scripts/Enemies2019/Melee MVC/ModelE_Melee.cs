@@ -500,6 +500,7 @@ public class ModelE_Melee : EnemyEntity
             if (!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
 
             _view._anim.SetBool("WalkBack", false);
+            _view.BackFromBlocked();
             firstAttack = false;
             onRetreat = false;
 
@@ -579,7 +580,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
 
-            if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
+            if (!isDead && actualHits <= 0 && !isKnock && !isStuned) SendInputToFSM(EnemyInputs.DEFENCE);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -630,7 +631,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (onRetreat && !onDefence) SendInputToFSM(EnemyInputs.RETREAT);
 
-            if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
+            if (!isDead && actualHits <= 0 && !isKnock && !isStuned) SendInputToFSM(EnemyInputs.DEFENCE);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -695,7 +696,7 @@ public class ModelE_Melee : EnemyEntity
 
         knocked.OnUpdate += () =>
         {
-            Debug.Log("sadas");
+
 
             currentAction = new A_Idle();
 
@@ -731,7 +732,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && !isPersuit && !isWaitArea && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && actualHits <= 0) SendInputToFSM(EnemyInputs.DEFENCE);
+            if (!isDead && actualHits <= 0 && !isKnock && !isStuned) SendInputToFSM(EnemyInputs.DEFENCE);
 
             if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
 

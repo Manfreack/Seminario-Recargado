@@ -954,8 +954,14 @@ public class Model : MonoBehaviour
 
         if(typeOfDamage =="Stune" && enemies.Count()>0)
         {
-            enemies.FirstOrDefault().GetDamage(attackDamage, "Stune");
-            enemies.FirstOrDefault().isStuned = true;
+            if (!enemies.FirstOrDefault().isKnock)
+            {
+                enemies.FirstOrDefault().GetDamage(attackDamage, "Stune");
+                enemies.FirstOrDefault().isStuned = true;
+            }
+
+            else enemies.FirstOrDefault().GetDamage(attackDamage, "Normal");
+
             if (enemies.FirstOrDefault().life > 0) enemies.FirstOrDefault().GetComponent<Rigidbody>().AddForce(-enemies.FirstOrDefault().transform.forward * 2, ForceMode.Impulse);
 
             var  restOfenemies = enemies.Skip(1);
