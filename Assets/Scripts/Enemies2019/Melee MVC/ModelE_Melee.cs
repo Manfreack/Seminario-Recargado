@@ -738,7 +738,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && isPersuit && !isWaitArea && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && !isPersuit && !isWaitArea && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && actualHits <= 0 && !isKnock && !isStuned) SendInputToFSM(EnemyInputs.DEFENCE);
 
@@ -784,7 +784,6 @@ public class ModelE_Melee : EnemyEntity
             var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
             pathToTarget.AddRange(originalPathToTarget);
             currentIndex = pathToTarget.Count;
-
 
         };
 
