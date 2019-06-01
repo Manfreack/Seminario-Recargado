@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class EnemyEntity: MonoBehaviour
 {
+    public NavMeshAgent navMeshAgent;
     public int aggressiveLevel;
     public float life;
     public float totalLife;

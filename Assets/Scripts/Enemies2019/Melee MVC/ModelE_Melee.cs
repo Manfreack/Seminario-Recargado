@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.AI;
 
 public class ModelE_Melee : EnemyEntity
 {
-
+    
     public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE, STUNED, KNOCK }
     public EventFSM<EnemyInputs> _myFsm;
     public List<CombatNode> restOfNodes = new List<CombatNode>();
@@ -247,7 +248,7 @@ public class ModelE_Melee : EnemyEntity
 
     public void Awake()
     {
-
+        navMeshAgent = GetComponent<NavMeshAgent>();
         delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
         rb = gameObject.GetComponent<Rigidbody>();
         _view = GetComponent<ViewerE_Melee>();
@@ -775,16 +776,7 @@ public class ModelE_Melee : EnemyEntity
 
         follow.OnEnter += x =>
         {
-
-            pathToTarget.Clear();
-
-            Node start = GetMyNode();
-            Node end = GetMyTargetNode();
-
-            var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
-            pathToTarget.AddRange(originalPathToTarget);
-            currentIndex = pathToTarget.Count;
-
+            navMeshAgent.isStopped = false;
         };
 
         follow.OnUpdate += () =>
@@ -810,7 +802,7 @@ public class ModelE_Melee : EnemyEntity
 
         follow.OnExit += x =>
         {
-
+            navMeshAgent.isStopped = true;
             FollowsState = false;
         };
 

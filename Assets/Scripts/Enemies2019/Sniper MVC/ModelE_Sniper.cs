@@ -325,14 +325,8 @@ public class ModelE_Sniper : EnemyEntity
         };
 
         follow.OnEnter += x =>
-        {           
-            Node start = GetMyNode();
-            Node end = GetMyTargetNode();
-
-            var originalPathToTarget = MyBFS.GetPath(start, end, myNodes);
-            originalPathToTarget.Remove(start);
-            pathToTarget.AddRange(originalPathToTarget);
-            currentIndex = pathToTarget.Count;
+        {
+            navMeshAgent.isStopped = false;
         };
 
 
@@ -348,6 +342,11 @@ public class ModelE_Sniper : EnemyEntity
             if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
 
             if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.ATTACK);
+        };
+
+        follow.OnExit += x =>
+        {
+            navMeshAgent.isStopped = true;
         };
 
         die.OnEnter += x =>

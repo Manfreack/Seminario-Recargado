@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class A_FollowTarget : i_EnemyActions
 {
@@ -13,9 +14,11 @@ public class A_FollowTarget : i_EnemyActions
         _entity.target.CombatState();
         _entity.target.saveSword = true;
 
-      
 
-        if (!_entity.onDamage)
+        _entity.navMeshAgent.SetDestination(_entity.target.transform.position);
+
+
+       /* if (!_entity.onDamage)
         {
 
             if (_entity.currentIndex > 0)
@@ -50,7 +53,9 @@ public class A_FollowTarget : i_EnemyActions
                 _entity.currentIndex = _entity.pathToTarget.Count;
             }
         }
+        */
     }
+    
 
     public A_FollowTarget(EnemyEntity e)
     {

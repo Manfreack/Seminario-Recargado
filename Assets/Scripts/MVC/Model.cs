@@ -776,15 +776,7 @@ public class Model : MonoBehaviour
 
         if (d == Vector3.zero)
         {
-            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x => x.renderObject.isVisible && !x.isDead).Distinct()/*.Where(x=>
-            {
-                Vector3 toTarget = (x.transform.position - transform.position).normalized;
-                Vector3 forward = transform.TransformDirection(Vector3.forward);
-
-                if (Vector3.Dot(forward, toTarget) > 0) return true;
-                else return false;
-
-            })*/.OrderBy(x =>
+            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x => x.renderObject.isVisible && !x.isDead).Distinct().OrderBy(x =>
             { 
 
                 var distance = Vector3.Distance(x.transform.position, transform.position);
@@ -833,7 +825,7 @@ public class Model : MonoBehaviour
             transform.forward = dir;
         }
 
-        if (!isDead && stamina - attackStamina >= 0 && !onRoll && !onDefence && !view.anim.GetBool("SaveSword2"))
+        if (!isDead && stamina - attackStamina >= 0 && !onDefence && !view.anim.GetBool("SaveSword2") && animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage" && animClipName != "P_RollEstocada_End" && animClipName != "Roll")
         {
 
             view.anim.SetLayerWeight(0, 1);
