@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using UnityEngine.AI;
 
 public class ModelE_Sniper : EnemyEntity
 {
@@ -51,6 +52,7 @@ public class ModelE_Sniper : EnemyEntity
 
     public void Awake()
     {
+        navMeshAgent = GetComponent<NavMeshAgent>();
         playerNodes.AddRange(FindObjectsOfType<CombatNode>());
         rb = gameObject.GetComponent<Rigidbody>();
         _view = GetComponent<ViewerE_Sniper>();
@@ -168,6 +170,12 @@ public class ModelE_Sniper : EnemyEntity
             angleToPersuit = 180;
         };
 
+        answerCall.OnEnter += x =>
+        {
+            navMeshAgent.enabled = true;
+            navMeshAgent.isStopped = false;
+        };
+
         answerCall.OnFixedUpdate += () =>
         {
 
@@ -179,9 +187,19 @@ public class ModelE_Sniper : EnemyEntity
             if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.ATTACK);
         };
 
+        answerCall.OnExit += x =>
+        {
+            navMeshAgent.isStopped = true;
+        };
+
+        persuit.OnEnter += x =>
+        {
+            navMeshAgent.enabled = false;
+        };
+
         persuit.OnFixedUpdate += () =>
         {
-
+            navMeshAgent.enabled = false;
 
             isAnswerCall = false;
 
@@ -202,6 +220,11 @@ public class ModelE_Sniper : EnemyEntity
             if (!isDead && isStuned) SendInputToFSM(EnemyInputs.STUNED);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
+        };
+
+        attack.OnEnter += x =>
+        {
+            navMeshAgent.enabled = false;
         };
 
         attack.OnUpdate += () =>
@@ -238,6 +261,7 @@ public class ModelE_Sniper : EnemyEntity
 
         stuned.OnEnter += x =>
         {
+            navMeshAgent.enabled = false;
             timeStuned = 3;
             StunedEvent();
         };
@@ -295,7 +319,8 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnEnter += x =>
         {
-           
+            navMeshAgent.enabled = false;
+
             timeToStopBack = UnityEngine.Random.Range(5, 6);
 
             positionToBack = FindNearScapeNode();
@@ -326,6 +351,7 @@ public class ModelE_Sniper : EnemyEntity
 
         follow.OnEnter += x =>
         {
+            navMeshAgent.enabled = true;
             navMeshAgent.isStopped = false;
         };
 
@@ -351,6 +377,7 @@ public class ModelE_Sniper : EnemyEntity
 
         die.OnEnter += x =>
         {
+            navMeshAgent.enabled = false;
             DeadEvent();
             currentAction = null;
 

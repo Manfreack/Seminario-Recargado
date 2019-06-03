@@ -22,7 +22,7 @@ public class A_SniperAttack : i_EnemyActions
         _avoid.y = 0;
         _e.transform.position += _avoid * _e.speed * Time.deltaTime;
 
-        if(_e.timeToShoot<=0 && !_e.onDamage)
+        if(_e.timeToShoot<=0 && !_e.onDamage && !_e.target.onCounterAttack)
         {
 
             var _dirToTarget = (_e.target.transform.position - _e.transform.position).normalized;

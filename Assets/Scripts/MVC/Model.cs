@@ -109,6 +109,7 @@ public class Model : MonoBehaviour
     public bool onDefence;
     public bool onRoll;
     public bool saveSword;
+    public bool onCounterAttack;
     bool impulse;
     bool starChangeDirAttack;
 
@@ -176,6 +177,21 @@ public class Model : MonoBehaviour
 
     [HideInInspector]
     public float fadeTimer;
+
+    public IEnumerator CounterAttackState()
+    {
+        float counterTimer = 0;
+
+        onCounterAttack = true;
+
+        while (counterTimer < 1.5f)
+        {
+            counterTimer += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
+        onCounterAttack = false;
+    }
 
     public IEnumerator DefenceBroken()
     {
@@ -516,7 +532,7 @@ public class Model : MonoBehaviour
    
     public void Roll(Vector3 dir)
     {
-        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && !onRoll && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") && animClipName != "Roll" && animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage")
+        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") && animClipName != "Roll" && animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage")
         {
             RollEvent();
             stamina -= rollStamina;
@@ -563,7 +579,7 @@ public class Model : MonoBehaviour
           
             view.RollAttackAnimFalse();
         }
-        if (onRoll && (animClipName == "RollAttack" || animClipName == "P_RollEstocada_Damage" || animClipName == "P_RollEstocada_End" || animClipName == "Roll"))
+        if (animClipName == "RollAttack" || animClipName == "P_RollEstocada_Damage" || animClipName == "P_RollEstocada_End" || animClipName == "Roll")
         {
             view.NoReciveDamage();
 
@@ -720,7 +736,7 @@ public class Model : MonoBehaviour
 
 
         if (!onDamage && countAnimAttack == 0  && (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
-                                                               || animClipName == "P_Warrior_RunWhitSword01" || animClipName == "RollAttack"))
+                                                               || animClipName == "P_WARRIOR_RUNWHITSWORD" || animClipName == "RollAttack"))
         {
             Quaternion targetRotation;
 
@@ -776,7 +792,22 @@ public class Model : MonoBehaviour
 
         if (d == Vector3.zero)
         {
-            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x => x.renderObject.isVisible && !x.isDead).Distinct().OrderBy(x =>
+            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x => x.renderObject.isVisible && !x.isDead).Distinct()
+            .Where(x=> 
+            {
+
+                Vector3 forward = transform.TransformDirection(Vector3.forward);
+                Vector3 toOther = x.transform.position - transform.position;
+
+                if (Vector3.Dot(forward, toOther) < 0)
+                {
+                    return false;
+                }
+
+                else return true;
+                
+            })
+            .OrderBy(x =>
             { 
 
                 var distance = Vector3.Distance(x.transform.position, transform.position);
@@ -790,15 +821,16 @@ public class Model : MonoBehaviour
                 dir.y = 0;
                 Quaternion targetRotation;
                 targetRotation = Quaternion.LookRotation(dir, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 15 * Time.deltaTime);
             }
         }
 
         if (isInCombat && !view.anim.GetBool("TakeSword2") && animClipName =="Blocked-V2")
         {
+            StartCoroutine(CounterAttackState());
             countAnimAttack++;
             view.AwakeTrail();
-            if (perfectParryTimer > 1) Attack();
+            if (perfectParryTimer > 0.5f) Attack();
             else CounterAttackEvent();
             if (!makingDamage) StartCoroutine(TimeToDoDamage());
             preAttack1 = true;
@@ -808,7 +840,7 @@ public class Model : MonoBehaviour
         }
 
 
-        if (onRoll || animClipName =="RollAttack")
+        if (animClipName =="RollAttack")
         {          
             attackDamage = attackRollDamage;
             RollAttackEvent();

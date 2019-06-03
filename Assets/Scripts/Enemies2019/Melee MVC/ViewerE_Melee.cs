@@ -136,6 +136,8 @@ public class ViewerE_Melee : MonoBehaviour
 
         animClipName = _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
 
+        if (!_model.isKnock) _anim.SetBool("Knocked", false);
+
     }
 
     public void StunedAnim()

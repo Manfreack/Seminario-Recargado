@@ -14,6 +14,7 @@ public class A_FollowTarget : i_EnemyActions
         _entity.target.CombatState();
         _entity.target.saveSword = true;
 
+        _entity.navMeshAgent.enabled = true;
 
         _entity.navMeshAgent.SetDestination(_entity.target.transform.position);
 

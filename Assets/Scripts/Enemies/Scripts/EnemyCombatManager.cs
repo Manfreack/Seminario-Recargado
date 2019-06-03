@@ -8,11 +8,14 @@ public class EnemyCombatManager : MonoBehaviour {
     public int times;
     public List<ModelE_Melee> enemiesList = new List<ModelE_Melee>();
     Vector3 targetPos;
+    public bool secondBehaviour;
+    public ModelE_Melee influencedTarget;
+    float timeToReset;
 
 	void Start () {
 
-        times = 2;
-        enemiesList.AddRange(FindObjectsOfType<ModelE_Melee>());
+        times = 1;
+        enemiesList.AddRange(FindObjectsOfType<ModelE_Melee>().Where(x => !x.isDead));
         targetPos = FindObjectOfType<Model>().transform.position;
      
 	}
@@ -23,7 +26,7 @@ public class EnemyCombatManager : MonoBehaviour {
 
         enemiesList.AddRange(FindObjectsOfType<ModelE_Melee>().Where(x=> !x.isDead));
 
-        if (times > 2) times = 2;
+        if (times > 1) times = 1;
 
 
         int count = 0;
@@ -35,7 +38,17 @@ public class EnemyCombatManager : MonoBehaviour {
             if (count > 2) item.timeToAttack = false;
         }
 
+        if (secondBehaviour && times > 0)
+        {
+            timeToReset += Time.deltaTime;
 
+            if (timeToReset > 5)
+            {
+                secondBehaviour = false;
+                timeToReset = 0;
+            }
+        }
+   
 
     }
 
@@ -67,25 +80,23 @@ public class EnemyCombatManager : MonoBehaviour {
 
 
 
-    public void ChangeOrderAttack(ModelE_Melee e)
+    public void ChangeOrderAttack(ModelE_Melee e, ModelE_Melee e2)
     {
-        foreach (var item in enemiesList)
+        var random = Random.Range(0, 2);
+    
+        if(random ==0)
         {
-            
-            if (item != e && item.timeToAttack)
-            {
-                int r = Random.Range(0, 2);
-
-                if (r != 0)
-                {
-                    item.delayToAttack += 2;
-                }
-
-                if (r == 0)
-                {
-                    item.delayToAttack = e.delayToAttack;
-                }
-            }
+            influencedTarget = e;
+            e.timeToAttack = true;
+            e.checkTurn = true;
+            e.delayToAttack += 2;
         }
+
+        else
+        {
+            influencedTarget = e2;
+
+        }
+
     }
 }

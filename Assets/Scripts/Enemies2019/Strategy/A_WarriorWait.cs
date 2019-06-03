@@ -15,12 +15,17 @@ public class A_WarriorWait : i_EnemyActions
         _e.target.CombatState();
         _e.target.saveSword = true;
      
-       if (!_e.timeToAttack && _e.cm.times > 0 && !_e.checkTurn)
+       if (!_e.timeToAttack && _e.cm.times > 0 && !_e.checkTurn && !_e.cm.secondBehaviour )
        {
-            if (_e.cm.times <= 1) _e.cm.ChangeOrderAttack(_e);
             _e.checkTurn = true;
             _e.cm.times--;
-            _e.timeToAttack = true;          
+            _e.timeToAttack = true;                  
+            if (!_e.cm.secondBehaviour && _e.myWarriorFriends.Count > 0)
+            {
+                _e.cm.secondBehaviour = true;
+                int r = Random.Range(0, _e.myWarriorFriends.Count);
+                _e.cm.ChangeOrderAttack(_e.myWarriorFriends[r], _e);
+            }
        }
 
         Quaternion targetRotation;     
