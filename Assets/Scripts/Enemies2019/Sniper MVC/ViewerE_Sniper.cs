@@ -16,6 +16,7 @@ public class ViewerE_Sniper : MonoBehaviour
 	EnemyScreenSpace ess;
     Material fireHandsMat;
     public SkinnedMeshRenderer fireHandsRenderer;
+    public List<ParticleSystem> fireHandsParticles;
     public float timeFireHands;
     public PopText prefabTextDamage;
     GameObject canvas;
@@ -26,6 +27,7 @@ public class ViewerE_Sniper : MonoBehaviour
     float timerVanishPool;
     public GameObject bloodPool;
     public Material matPool;
+    bool startFireHands;
 
     public IEnumerator ShaderMA_True()
     {
@@ -114,7 +116,8 @@ public class ViewerE_Sniper : MonoBehaviour
 		ess = GetComponent<EnemyScreenSpace>();
         fireHandsMat = fireHandsRenderer.materials[1];
 
-        _anim.SetBool("Idle", true);
+        //_model.timeToShoot = 1;
+        startFireHands = true;
 
         foreach (var item in myMeshes)
         {
@@ -200,12 +203,25 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void IdleAnim()
     {
-        _anim.SetBool("Idle", true);
+        _anim.SetBool("IdleCombat", true);
+        _anim.SetBool("Move", false);
+
     }
 
     public void BackFromIdle()
     {
-        _anim.SetBool("Idle", false);
+        _anim.SetBool("IdleCombat", false);
+    }
+
+    public void MoveFlyAnim()
+    {
+        _anim.SetBool("Move", true);
+        _anim.SetBool("IdleCombat", false);
+    }
+
+    public void MoveFlyAnimFalse()
+    {
+        _anim.SetBool("Move", false);     
     }
 
     public void BackFromDamage()
@@ -256,10 +272,17 @@ public class ViewerE_Sniper : MonoBehaviour
         }
     }
 
+
+
     public void FireHands()
     {
+     
+        if(!startFireHands) foreach(var item in fireHandsParticles) item.Play();
+
         if (_model.timeToShoot < 1)
         {
+            startFireHands = true;
+
             timeFireHands += Time.deltaTime * 2;
             if (timeFireHands > 1) timeFireHands = 1;
 
@@ -268,6 +291,8 @@ public class ViewerE_Sniper : MonoBehaviour
 
         if (_model.timeToShoot > 1)
         {
+            startFireHands = false;
+
             timeFireHands -= Time.deltaTime * 2;
             if (timeFireHands < 0) timeFireHands = 0;
 

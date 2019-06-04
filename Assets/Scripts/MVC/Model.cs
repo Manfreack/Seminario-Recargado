@@ -490,10 +490,11 @@ public class Model : MonoBehaviour
         if (currentPotionEffect != null)
             currentPotionEffect.PotionEffect();
 
-        animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-        animClipName2 = view.anim.GetCurrentAnimatorClipInfo(1)[0].clip.name;
+        if (view.anim.GetCurrentAnimatorClipInfo(0)[0].clip != null) animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+        if (view.anim.GetCurrentAnimatorClipInfo(1)[0].clip != null) animClipName2 = view.anim.GetCurrentAnimatorClipInfo(1)[0].clip.name;
 
-      
+
+
         if (stamina<5)
         {
             StopDefence();
@@ -792,7 +793,7 @@ public class Model : MonoBehaviour
 
         if (d == Vector3.zero)
         {
-            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x => x.renderObject.isVisible && !x.isDead).Distinct()
+            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x=> !x.isDead).Distinct()
             .Where(x=> 
             {
 

@@ -77,7 +77,7 @@ public class ModelE_Sniper : EnemyEntity
         AttackEvent += _view.AttackRangeAnim;
         AttackMeleeEvent += _view.AttackMeleeAnim;
         IdleEvent += _view.IdleAnim;
-        MoveEvent += _view.BackFromIdle;
+        MoveEvent += _view.MoveFlyAnim;
         StunedEvent += _view.StunedAnim;
 
         StateConfigurer.Create(patrol)
@@ -194,6 +194,7 @@ public class ModelE_Sniper : EnemyEntity
 
         persuit.OnEnter += x =>
         {
+            MoveEvent();
             navMeshAgent.enabled = false;
         };
 
@@ -224,6 +225,8 @@ public class ModelE_Sniper : EnemyEntity
 
         attack.OnEnter += x =>
         {
+            IdleEvent();
+
             navMeshAgent.enabled = false;
         };
 
@@ -319,6 +322,8 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnEnter += x =>
         {
+            MoveEvent();
+
             navMeshAgent.enabled = false;
 
             timeToStopBack = UnityEngine.Random.Range(5, 6);
@@ -351,6 +356,8 @@ public class ModelE_Sniper : EnemyEntity
 
         follow.OnEnter += x =>
         {
+            MoveEvent();
+
             navMeshAgent.enabled = true;
             navMeshAgent.isStopped = false;
         };
