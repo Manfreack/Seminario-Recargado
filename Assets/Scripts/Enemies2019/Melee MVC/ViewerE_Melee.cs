@@ -140,6 +140,17 @@ public class ViewerE_Melee : MonoBehaviour
 
     }
 
+    public void PerfectBlockedAnim()
+    {
+        sparks.Play();
+        _anim.SetBool("PerfectBlocked", true);
+    }
+
+    public void PerfectBlockedFalse()
+    {
+        _anim.SetBool("PerfectBlocked", false);
+    }
+
     public void StunedAnim()
     {
         _anim.SetBool("Stuned", true);

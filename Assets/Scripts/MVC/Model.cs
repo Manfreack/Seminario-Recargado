@@ -827,19 +827,17 @@ public class Model : MonoBehaviour
         }
 
         if (isInCombat && !view.anim.GetBool("TakeSword2") && animClipName =="Blocked-V2")
-        {
-            StartCoroutine(CounterAttackState());
+        {        
             countAnimAttack++;
             view.AwakeTrail();
-            if (perfectParryTimer > 0.5f) Attack();
-            else CounterAttackEvent();
+            Attack();
             if (!makingDamage) StartCoroutine(TimeToDoDamage());
             preAttack1 = true;
             if (d != Vector3.zero) StartCoroutine(AttackRotation());
-            attackDamage = 5;
             CombatState();
+            attackDamage = attack1Damage;
         }
-
+        
 
         if (animClipName =="RollAttack")
         {          
@@ -858,7 +856,7 @@ public class Model : MonoBehaviour
             transform.forward = dir;
         }
 
-        if (!isDead && stamina - attackStamina >= 0 && !onDefence && !view.anim.GetBool("SaveSword2") && animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage" && animClipName != "P_RollEstocada_End" && animClipName != "Roll")
+        if (!isDead && stamina - attackStamina >= 0 && !onDefence && !view.anim.GetBool("SaveSword2") && animClipName != "RollAttack"  && animClipName != "Roll")
         {
 
             view.anim.SetLayerWeight(0, 1);
@@ -1135,7 +1133,21 @@ public class Model : MonoBehaviour
         {
 
             parryBar += 0.25f;
+
+            if (perfectParryTimer <= 0.3f)
+            {
+                CounterAttackEvent();
+                StartCoroutine(CounterAttackState());
+                if (!makingDamage) StartCoroutine(TimeToDoDamage());
+                preAttack1 = true;
+                StartCoroutine(AttackRotation());
+                attackDamage = 5;
+                CombatState();
+                view.ShakeCameraDamage(0.5f, 0.5f, 0.5f);
+            }
+
             if(parryBar<1)BlockEvent();
+
             else
             {
                 view.BlockedFail();

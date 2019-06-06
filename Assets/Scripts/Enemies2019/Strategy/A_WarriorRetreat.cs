@@ -28,7 +28,7 @@ public class A_WarriorRetreat : i_EnemyActions
         targetRotation = Quaternion.LookRotation(dir, Vector3.up);
         _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
 
-        if (_e.onRetreat &&  _e.timeToRetreat > 0 && d<maxD && _e.animClipName == "WalkBack_EM")
+        if (_e.onRetreat &&  _e.timeToRetreat > 0 && d<maxD && _e.animClipName == "E_Warrior_Retreat")
         {
 
 

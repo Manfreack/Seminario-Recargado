@@ -17,7 +17,7 @@ public class A_Persuit : i_EnemyActions
 
             if (_e.GetComponent<ModelE_Melee>())
             {
-                if (_e.GetComponent<ModelE_Melee>().animClipName == "Follow_EM" || _e.GetComponent<ModelE_Melee>().animClipName == "Run_EM")
+                if (_e.GetComponent<ModelE_Melee>().animClipName == "E_Warrior_Patrol" || _e.GetComponent<ModelE_Melee>().animClipName == "E_Warrior_Persuit")
                 {
                     _e.target.CombatState();
                     Quaternion targetRotation;

@@ -60,6 +60,7 @@ public class ModelE_Melee : EnemyEntity
     public Action AttackRunEvent;
     public Action StunedEvent;
     public Action KnockEvent;
+    public Action PerfectBlocked;
     public Node endPatrolNode;
 
     float maxLife;
@@ -278,6 +279,8 @@ public class ModelE_Melee : EnemyEntity
         HitDefenceEvent += target.GetComponent<Viewer>().ParryAnim;
         StunedEvent += _view.StunedAnim;
         KnockEvent += _view.KnockedAnim;
+        PerfectBlocked += _view.PerfectBlockedAnim;
+
 
         var patrol = new FSM_State<EnemyInputs>("PATROL");
         var defence = new FSM_State<EnemyInputs>("DEFENCE");
@@ -517,7 +520,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!timeToAttack) delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
 
-            _view._anim.SetBool("WalkBack", false);
+            
             _view.BackFromBlocked();
             firstAttack = false;
             onRetreat = false;
@@ -541,7 +544,7 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnUpdate += () =>
         {
-
+                _view._anim.SetBool("WalkBack", false);
                 if (!reposition) timeToChangeRotation -= Time.deltaTime;
 
                 if (timeToChangeRotation <= 0 && changeRotateWarrior)
@@ -713,6 +716,7 @@ public class ModelE_Melee : EnemyEntity
 
         knocked.OnEnter += x =>
         {
+            _view.PerfectBlockedFalse();
             navMeshAgent.enabled = false;
             cm.times++;
             firstAttack = false;
@@ -779,7 +783,7 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
-            if (animClipName != "E_Warrior_Attack1" && animClipName != "E_Warrior_Attack2" && animClipName != "E_Warrior_Attack3" && animClipName != "Heavy Attack_EM" && animClipName != "Run_EM" && animClipName != "HitDefence") timeToRetreat -= Time.deltaTime;
+            if (animClipName == "E_Warrior_Retreat" || animClipName == "IdleCombat_EM") timeToRetreat -= Time.deltaTime;
 
             if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("Attack2") || _view._anim.GetBool("Attack3") || _view._anim.GetBool("HeavyAttack")) && !isDead && !onDefence)
             {
@@ -1098,7 +1102,8 @@ public class ModelE_Melee : EnemyEntity
             _view.BackFromAttack();
             var dir = (target.transform.position - transform.position).normalized;
             var angle = Vector3.Angle(dir, target.transform.forward);
-            if (player.onDefence && angle >= 90) BlockedEvent();
+            if (player.onDefence && angle >= 90 && player.perfectParryTimer>0.3f) BlockedEvent();
+            if (player.onDefence && angle >= 90 && player.perfectParryTimer<0.3f) PerfectBlocked();
             player.GetDamage(attackDamage, transform, false, false);
             player.rb.AddForce(transform.forward * 2, ForceMode.Impulse);
         }
@@ -1224,12 +1229,14 @@ public class ModelE_Melee : EnemyEntity
 
     public void StopRetreat()
     {
+
         if (cm.influencedTarget == this) cm.secondBehaviour = false;
         cm.times++;
         firstAttack = false;
         onRetreat = false;
         timeToAttack = false;
         _view._anim.SetBool("WalkBack", false);
+        CombatIdleEvent();
         if (myWarriorFriends.Count > 0) StartCoroutine(DelayTurn());
         else checkTurn = false;
     }
