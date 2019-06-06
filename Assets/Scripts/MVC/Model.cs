@@ -944,6 +944,13 @@ public class Model : MonoBehaviour
         view.UpdateLifeBar(life / maxLife);
     }
 
+    public void UpdateStamina(float val)
+    {
+        stamina += val;
+        if (stamina > maxStamina) stamina = maxStamina;
+        view.UpdateStaminaBar(stamina / maxStamina);
+    }
+
     public void MakeDamage(string typeOfDamage)
     {
 

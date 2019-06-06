@@ -15,25 +15,32 @@ public class Rune : MonoBehaviour
         mat = transform.GetChild(0).GetComponent<Renderer>().material;
     }
 
-    void OnTriggerEnter(Collider c)
+    void OnTriggerStay(Collider c)
     {
         if (!used)
         {
-            Model player = c.gameObject.GetComponent<Model>();
-            if (player)
+            Model p = c.gameObject.GetComponent<Model>();
+            if (p != null)
             {
-                if(player.life != player.maxLife)
+                if(p.life != p.maxLife)
                 {
-                    player.UpdateLife(healingAmount);
-                    used = true;
-                    StartCoroutine(Opacity(false));
-                    StartCoroutine(Cooldown());
+                    if (p.isInCombat)
+                    {
+                        used = true;
+                        StartCoroutine(Opacity(false, p));
+                        StartCoroutine(Cooldown());
+                    }
+                    else
+                    {
+                        p.UpdateLife(healingAmount * Time.deltaTime);
+                        p.UpdateStamina(healingAmount * Time.deltaTime);
+                    }
                 }
             }
         }
     }
 
-    IEnumerator Opacity(bool show)
+    IEnumerator Opacity(bool show, Model player = null)
     {
         float time = 0;
         while (time < 1)
@@ -42,11 +49,15 @@ public class Rune : MonoBehaviour
             if (show)
                 mat.SetFloat("_GlobalOpacity", time);
             else
+            {
                 mat.SetFloat("_GlobalOpacity", 1 - time);
+                player.UpdateLife(healingAmount * Time.deltaTime);
+                player.UpdateStamina(healingAmount * Time.deltaTime);
+            }
             yield return new WaitForEndOfFrame();
         }
     }
-
+     
     IEnumerator Cooldown()
     {
         yield return new WaitForSeconds(cooldownTime + 1);
