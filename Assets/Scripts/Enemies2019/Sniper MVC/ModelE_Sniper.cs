@@ -188,13 +188,19 @@ public class ModelE_Sniper : EnemyEntity
 
         answerCall.OnExit += x =>
         {
-            navMeshAgent.isStopped = true;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
         };
 
         persuit.OnEnter += x =>
         {
             MoveEvent();
-            navMeshAgent.enabled = false;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
         };
 
         persuit.OnFixedUpdate += () =>
@@ -226,7 +232,10 @@ public class ModelE_Sniper : EnemyEntity
         {
             IdleEvent();
 
-            navMeshAgent.enabled = false;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
         };
 
         attack.OnUpdate += () =>
@@ -263,7 +272,10 @@ public class ModelE_Sniper : EnemyEntity
 
         stuned.OnEnter += x =>
         {
-            navMeshAgent.enabled = false;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
             timeStuned = 3;
             StunedEvent();
         };
@@ -323,7 +335,10 @@ public class ModelE_Sniper : EnemyEntity
         {
             MoveEvent();
 
-            navMeshAgent.enabled = false;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
 
             timeToStopBack = UnityEngine.Random.Range(5, 6);
 
@@ -356,9 +371,6 @@ public class ModelE_Sniper : EnemyEntity
         follow.OnEnter += x =>
         {
             MoveEvent();
-
-            navMeshAgent.enabled = true;
-            navMeshAgent.isStopped = false;
         };
 
 
@@ -378,7 +390,10 @@ public class ModelE_Sniper : EnemyEntity
 
         follow.OnExit += x =>
         {
-            navMeshAgent.isStopped = true;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
         };
 
         die.OnEnter += x =>

@@ -379,6 +379,14 @@ public class ModelE_Melee : EnemyEntity
 
         StateConfigurer.Create(die).Done();
 
+        patrol.OnEnter += x =>
+        {
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
+        };
+
         patrol.OnFixedUpdate += () =>
         {
             timeToPatrol -= Time.deltaTime;
@@ -489,12 +497,26 @@ public class ModelE_Melee : EnemyEntity
             timeToHoldDefence = maxTimeToDefence;
 
             onDefence = true;
+
+            if(timeToAttack)
+            {
+                _view.EndChainAttack();
+                _view.HeavyAttackFalse();
+                if (cm.influencedTarget == this) cm.secondBehaviour = false;
+                cm.times++;
+                firstAttack = false;
+                onRetreat = false;
+                timeToAttack = false;
+                _view._anim.SetBool("WalkBack", false);
+                CombatIdleEvent();
+                if (myWarriorFriends.Count > 0) StartCoroutine(DelayTurn());
+                else checkTurn = false;
+            }
         };
 
         defence.OnUpdate += () =>
         {
             
-
             _view.EndChainAttack();
             _view.HeavyAttackFalse();
 
@@ -1054,6 +1076,7 @@ public class ModelE_Melee : EnemyEntity
         if (obs.Count() > 0)
         {
             var dir = transform.position - obs.First().transform.position;
+            dir.y = 0;
             return dir.normalized;
         }
         else return Vector3.zero;

@@ -865,6 +865,7 @@ public class Model : MonoBehaviour
 
             if ((animClipName == "Attack3N-FINISH" && !preAttack4))
             {
+               Debug.Log(4);
                view.AwakeTrail();
                countAnimAttack++;
                Attack();
@@ -881,6 +882,7 @@ public class Model : MonoBehaviour
 
             if (animClipName == "Attack2N-FINISH" && !preAttack3)
             {
+                Debug.Log(3);
                 countAnimAttack++;
                 view.AwakeTrail();
                 if (countAnimAttack > 3) countAnimAttack = 3;
@@ -897,6 +899,7 @@ public class Model : MonoBehaviour
 
             if (animClipName == "Attack1N-FINISH" && !preAttack2)
             {
+                Debug.Log(2);
                 countAnimAttack++;
                 view.AwakeTrail();
                 if (countAnimAttack > 2) countAnimAttack = 2;
@@ -915,7 +918,8 @@ public class Model : MonoBehaviour
                 || animClipName == "Idel V2.0" || animClipName == "P_Warrior_Walk" || animClipName == "P_Warrior_Run01" || animClipName == "P_Warrior_RunWhitSword" ||animClipName == "P_RollEstocada_Damage") && !preAttack1 && countAnimAttack==0)
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
-                {                   
+                {
+                    Debug.Log(1);
                     countAnimAttack++;
                     view.AwakeTrail();
                     Attack();                   

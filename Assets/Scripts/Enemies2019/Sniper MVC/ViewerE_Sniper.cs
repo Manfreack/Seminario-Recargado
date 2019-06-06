@@ -28,6 +28,8 @@ public class ViewerE_Sniper : MonoBehaviour
     public GameObject bloodPool;
     public Material matPool;
     bool startFireHands;
+    bool auxTakeDamage;
+    float timeOnDamage;
 
     public IEnumerator ShaderMA_True()
     {
@@ -93,6 +95,7 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public IEnumerator DeadCorrutine()
     {
+        
         yield return new WaitForSeconds(3);
         GetComponent<CapsuleCollider>().enabled = false;
         GetComponent<Rigidbody>().useGravity = false;
@@ -114,7 +117,7 @@ public class ViewerE_Sniper : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
         myMeshes.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
 		ess = GetComponent<EnemyScreenSpace>();
-        fireHandsMat = fireHandsRenderer.materials[1];
+        fireHandsMat = fireHandsRenderer.materials[2];
 
         //_model.timeToShoot = 1;
         startFireHands = true;
@@ -129,6 +132,16 @@ public class ViewerE_Sniper : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (auxTakeDamage)
+        {
+            timeOnDamage -= Time.deltaTime;
+            if (timeOnDamage <= 0)
+            {
+                _anim.SetBool("TakeDamage", false);
+                auxTakeDamage = false;
+            }
+        }
+
         DamageShader();
         FireHands();
     }
@@ -136,6 +149,8 @@ public class ViewerE_Sniper : MonoBehaviour
     public void StunedAnim()
     {
         _anim.SetBool("Stuned", true);
+        damaged = true;
+        timeShaderDamage = 1;
     }
 
     public void StunedAnimFalse()
@@ -171,6 +186,7 @@ public class ViewerE_Sniper : MonoBehaviour
         pool.transform.forward = transform.forward;
         pool.transform.position = transform.position - transform.forward/2 + new Vector3(0,0.1f,0);
         StartCoroutine(BloodPoolAnim());
+        DeadBody();
     }
 
     public void DeadBody()
@@ -221,7 +237,8 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void MoveFlyAnimFalse()
     {
-        _anim.SetBool("Move", false);     
+        _anim.SetBool("Move", false);
+     
     }
 
     public void BackFromDamage()
@@ -239,6 +256,11 @@ public class ViewerE_Sniper : MonoBehaviour
         blood.gameObject.SetActive(true);
         blood.Stop();
         blood.Play();
+        timeOnDamage = 0.25f;
+        if (!auxTakeDamage)
+        {
+            auxTakeDamage = true;
+        }
     }
 
     public void DamageShader()

@@ -9,7 +9,6 @@ public class Node : MonoBehaviour
     public Node previus;
     public bool visited;
     public bool patrolNode;
-    public bool isBusy;
 
     public IEnumerator UpdateBusyNode()
     {
@@ -22,9 +21,7 @@ public class Node : MonoBehaviour
                 else return false;
 
             });
-
-            if (obs.Count() > 0) isBusy = true;
-            else isBusy = false;
+          
             yield return new WaitForSeconds(0.333f);
         }
     }

@@ -222,6 +222,7 @@ ModelImporter:
     13700014: Head
     13700016: TopArmour
     13700018: TopArmour001
+    2186277476908879412: ImportLogs
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -237,7 +238,8 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: Event BackFromDamage has a time (0.666667) outside the
+      clip's valid range (0.000000..0.666664). It will never be fired
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -624,7 +626,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.9079777
+      - time: 1
         functionName: BackFromDamage
         data: 
         objectReferenceParameter: {instanceID: 0}

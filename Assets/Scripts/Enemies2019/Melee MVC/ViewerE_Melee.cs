@@ -176,6 +176,7 @@ public class ViewerE_Melee : MonoBehaviour
     public void PerfectBlockedAnim()
     {
         sparks.Play();
+      
         _anim.SetBool("PerfectBlocked", true);
     }
 
@@ -186,6 +187,8 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void StunedAnim()
     {
+        damaged = true;
+        timeShaderDamage = 1;
         _anim.SetBool("Stuned", true);
     }
 
@@ -196,6 +199,8 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void KnockedAnim()
     {
+        damaged = true;
+        timeShaderDamage = 1;
         _anim.SetBool("Knocked", true);
     }
 
