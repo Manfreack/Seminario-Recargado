@@ -90,6 +90,7 @@ public class ModelE_Melee : EnemyEntity
     public bool RetreatState;
     public bool reposition;
     public bool cooldwonReposition;
+    
 
     bool delayWaitState;
 
@@ -391,6 +392,8 @@ public class ModelE_Melee : EnemyEntity
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
+            
+
         };
 
         patrol.OnUpdate += () =>
@@ -400,12 +403,12 @@ public class ModelE_Melee : EnemyEntity
 
         answerCall.OnEnter += x =>
         {
-            navMeshAgent.enabled = true;
-            navMeshAgent.isStopped = false;
+           
         };
 
         answerCall.OnFixedUpdate += () =>
         {
+
             currentAction = new A_FollowTarget(this);
             CombatWalkEvent();
             if (!isDead && isPersuit) SendInputToFSM(EnemyInputs.PERSUIT);
@@ -418,12 +421,23 @@ public class ModelE_Melee : EnemyEntity
 
         answerCall.OnExit += x =>
         {
-            navMeshAgent.isStopped = true;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
+        };
+
+        persuit.OnEnter += x =>
+        {
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
         };
 
         persuit.OnFixedUpdate += () =>
         {
-            navMeshAgent.enabled = false;
+
             if (aggressiveLevel == 1) viewDistanceAttack = 3.5f;
 
             if (aggressiveLevel == 2) viewDistanceAttack = 7f;
@@ -467,15 +481,20 @@ public class ModelE_Melee : EnemyEntity
 
         defence.OnEnter += x =>
         {
-            timeToHoldDefence = maxTimeToDefence;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
 
-            navMeshAgent.enabled = false;
+            timeToHoldDefence = maxTimeToDefence;
 
             onDefence = true;
         };
 
         defence.OnUpdate += () =>
         {
+            
+
             _view.EndChainAttack();
             _view.HeavyAttackFalse();
 
@@ -514,6 +533,11 @@ public class ModelE_Melee : EnemyEntity
 
         wait.OnEnter += x =>
         {
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
+
             WaitState = true;
 
             onDefence = false;
@@ -536,15 +560,15 @@ public class ModelE_Melee : EnemyEntity
             foreach (var item in myNodes) item.myOwner = null;
 
             distanceToBack = aggressiveLevel;
-
-            navMeshAgent.enabled = false;
-
+           
         };
 
 
         wait.OnUpdate += () =>
         {
-                _view._anim.SetBool("WalkBack", false);
+           
+
+            _view._anim.SetBool("WalkBack", false);
                 if (!reposition) timeToChangeRotation -= Time.deltaTime;
 
                 if (timeToChangeRotation <= 0 && changeRotateWarrior)
@@ -629,7 +653,11 @@ public class ModelE_Melee : EnemyEntity
 
         attack.OnEnter += x =>
         {
-            navMeshAgent.enabled = false;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
+
             onDefence = false;
 
             delayToAttack = 0;
@@ -641,7 +669,7 @@ public class ModelE_Melee : EnemyEntity
 
         attack.OnFixedUpdate += () =>
         {
-
+          
 
             AttackState = true;
 
@@ -677,7 +705,10 @@ public class ModelE_Melee : EnemyEntity
 
         stuned.OnEnter += x =>
         {
-            navMeshAgent.enabled = false;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
             cm.times++;
             firstAttack = false;
             onRetreat = false;
@@ -691,6 +722,8 @@ public class ModelE_Melee : EnemyEntity
 
         stuned.OnUpdate += () =>
         {
+            
+
             timeStuned -= Time.deltaTime;
 
             currentAction = new A_Idle();
@@ -716,8 +749,11 @@ public class ModelE_Melee : EnemyEntity
 
         knocked.OnEnter += x =>
         {
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
             _view.PerfectBlockedFalse();
-            navMeshAgent.enabled = false;
             cm.times++;
             firstAttack = false;
             onRetreat = false;
@@ -732,6 +768,7 @@ public class ModelE_Melee : EnemyEntity
 
         knocked.OnUpdate += () =>
         {
+
             currentAction = new A_Idle();
 
             timeKnocked -= Time.deltaTime;
@@ -751,7 +788,10 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnEnter += x =>
         {
-            navMeshAgent.enabled = false;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
             onDefence = false;
             if (distanceToBack == 1) timeToRetreat = 1.5f;
             if (distanceToBack == 2) timeToRetreat = 3.5f;
@@ -783,6 +823,11 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
+
             if (animClipName == "E_Warrior_Retreat" || animClipName == "IdleCombat_EM") timeToRetreat -= Time.deltaTime;
 
             if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("Attack2") || _view._anim.GetBool("Attack3") || _view._anim.GetBool("HeavyAttack")) && !isDead && !onDefence)
@@ -794,6 +839,8 @@ public class ModelE_Melee : EnemyEntity
 
             if (impulse && (animClipName == "E_Warrior_Attack1" || animClipName == "E_Warrior_Attack2" || animClipName == "E_Warrior_Attack3")) transform.position += transform.forward * 2 * Time.deltaTime;
 
+            _view._anim.SetBool("WalkL", false);
+            _view._anim.SetBool("WalkR", false);
         };
 
         retreat.OnExit += x =>
@@ -804,8 +851,7 @@ public class ModelE_Melee : EnemyEntity
 
         follow.OnEnter += x =>
         {
-            navMeshAgent.enabled = true;
-            navMeshAgent.isStopped = false;          
+           
         };
 
         follow.OnUpdate += () =>
@@ -831,14 +877,20 @@ public class ModelE_Melee : EnemyEntity
 
         follow.OnExit += x =>
         {
-            navMeshAgent.isStopped = true;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
             FollowsState = false;
         };
 
         die.OnEnter += x =>
         {
 
-            navMeshAgent.enabled = false;
+            if (navMeshAgent)
+            {
+                if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+            }
             DeadEvent();
             currentAction = null;
             timeToAttack = false;
@@ -889,7 +941,7 @@ public class ModelE_Melee : EnemyEntity
     private void Update()
     {
 
-        animClipName = _view._anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+        animClipName = _view._anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;    
 
         _myFsm.Update();
 

@@ -172,8 +172,7 @@ public class ModelE_Sniper : EnemyEntity
 
         answerCall.OnEnter += x =>
         {
-            navMeshAgent.enabled = true;
-            navMeshAgent.isStopped = false;
+
         };
 
         answerCall.OnFixedUpdate += () =>

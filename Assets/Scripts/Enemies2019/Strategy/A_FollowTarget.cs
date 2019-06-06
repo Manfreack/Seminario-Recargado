@@ -14,10 +14,12 @@ public class A_FollowTarget : i_EnemyActions
         _entity.target.CombatState();
         _entity.target.saveSword = true;
 
-        _entity.navMeshAgent.enabled = true;
+        if (_entity.navMeshAgent)
+        {
+            if (!_entity.navMeshAgent.enabled) _entity.navMeshAgent.enabled = true;
 
-        _entity.navMeshAgent.SetDestination(_entity.target.transform.position);
-
+            if (_entity.navMeshAgent.enabled) _entity.navMeshAgent.SetDestination(_entity.target.transform.position);
+        }
 
        /* if (!_entity.onDamage)
         {

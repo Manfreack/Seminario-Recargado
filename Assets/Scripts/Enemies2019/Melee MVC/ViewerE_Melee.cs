@@ -29,6 +29,8 @@ public class ViewerE_Melee : MonoBehaviour
     public string animClipName;
     float timerExpandPool;
     float timerVanishPool;
+    float timeToEndCounterAttackAnim;
+    float timeToEndHeavyAttackAnim;
 
     public IEnumerator ShaderHA_True()
     {
@@ -137,6 +139,37 @@ public class ViewerE_Melee : MonoBehaviour
         animClipName = _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
 
         if (!_model.isKnock) _anim.SetBool("Knocked", false);
+
+        if (animClipName == "EM_CounterAttack")
+        {
+            timeToEndCounterAttackAnim += Time.deltaTime;
+            if (timeToEndCounterAttackAnim >= 0.13f)
+            {
+                BackFromBlocked();
+                CombatIdleAnim();
+                timeToEndCounterAttackAnim = 0;
+            }
+        }
+        else timeToEndCounterAttackAnim = 0;
+
+
+        if (animClipName == "Heavy Attack_EM")
+        {
+            timeToEndHeavyAttackAnim += Time.deltaTime;
+            if (timeToEndHeavyAttackAnim >= 1.23f)
+            {
+                HeavyAttackFalse();
+                CombatIdleAnim();
+                timeToEndHeavyAttackAnim = 0;
+            }
+        }
+        else timeToEndHeavyAttackAnim = 0;
+
+        if (_model.timeStuned <= 0 && animClipName == "E_Warrior_Stuned")
+        {
+            _model.isStuned = false;
+            _model._view.StunedAnimFalse();
+        }
 
     }
 
