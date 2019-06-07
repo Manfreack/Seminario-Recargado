@@ -165,7 +165,7 @@ public class ViewerE_Melee : MonoBehaviour
         }
         else timeToEndHeavyAttackAnim = 0;
 
-        if (_model.timeStuned <= 0 && animClipName == "E_Warrior_Stuned")
+        if (_model.timeStuned <= 0 && animClipName == "E_Warrior_Stuned2")
         {
             _model.isStuned = false;
             _model._view.StunedAnimFalse();

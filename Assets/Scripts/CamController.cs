@@ -19,7 +19,11 @@ public class CamController : MonoBehaviour {
     public float smoothDistance;
     public float smoothPosition;
     public float smoothAttacks;
+    public float smoothMovement;
+    public float smoothWalk;
+    public float smoothRun;
     bool onAttack;
+    bool onMovement;
 
     public float ShakeDuration = 0.3f;
     public float ShakeAmplitude = 1.2f;
@@ -54,6 +58,60 @@ public class CamController : MonoBehaviour {
 
     void Update()
     {
+        if(model.animClipName == "P_WARRIOR_WALK" || model.animClipName == "P_WARRIOR_RUN")
+        {
+           
+            if(!onMovement)
+            {
+                if (model.animClipName == "P_WARRIOR_WALK") smoothMovement = smoothWalk;
+                if (model.animClipName == "P_WARRIOR_RUN") smoothMovement = smoothRun;
+
+                middleRig.m_TrackedObjectOffset.y -= Time.deltaTime * smoothMovement;
+                topRig.m_TrackedObjectOffset.y -= Time.deltaTime * smoothMovement;
+                bottonRig.m_TrackedObjectOffset.y -= Time.deltaTime * smoothMovement;
+
+                if (middleRig.m_TrackedObjectOffset.y <= 1.25f)
+                {
+                    middleRig.m_TrackedObjectOffset.y = 1.25f;
+                    topRig.m_TrackedObjectOffset.y = 1.25f;
+                    bottonRig.m_TrackedObjectOffset.y = 1.25f;
+                    onMovement = true;
+                }
+            }
+
+            if (onMovement)
+            {
+
+                if (model.animClipName == "P_WARRIOR_WALK") smoothMovement = smoothWalk;
+                if (model.animClipName == "P_WARRIOR_RUN") smoothMovement = smoothRun;
+
+                middleRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothMovement;
+                topRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothMovement;
+                bottonRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothMovement;
+
+                if (middleRig.m_TrackedObjectOffset.y >= 1.28f)
+                {
+                    middleRig.m_TrackedObjectOffset.y = 1.28f;
+                    topRig.m_TrackedObjectOffset.y = 1.28f;
+                    bottonRig.m_TrackedObjectOffset.y = 1.28f;
+                    onMovement = false;
+                }
+            }
+        }
+
+        if (model.animClipName == "NewIdel2.0")
+        {
+            middleRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothMovement;
+            topRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothMovement;
+            bottonRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothMovement;
+
+            if (middleRig.m_TrackedObjectOffset.y >= 1.28f)
+            {
+                middleRig.m_TrackedObjectOffset.y = 1.28f;
+                topRig.m_TrackedObjectOffset.y = 1.28f;
+                bottonRig.m_TrackedObjectOffset.y = 1.28f;
+            }
+        }
 
         if (onAttack)
         {
@@ -70,7 +128,7 @@ public class CamController : MonoBehaviour {
             }
         }
 
-        if (!onAttack)
+        if (!onAttack && model.animClipName != "NewIdel2.0" && model.animClipName != "P_WARRIOR_WALK" && model.animClipName != "P_WARRIOR_RUN")
         {
             middleRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothAttacks;
             topRig.m_TrackedObjectOffset.y += Time.deltaTime * smoothAttacks;

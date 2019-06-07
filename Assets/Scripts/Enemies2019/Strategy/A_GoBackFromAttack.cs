@@ -21,7 +21,7 @@ public class A_GoBackFromAttack : i_EnemyActions
                  _dir.y = 0;
                  targetRotation = Quaternion.LookRotation(_dir, Vector3.up);
                  _e.transform.rotation = Quaternion.Slerp(_e.transform.rotation, targetRotation, 7 * Time.deltaTime);
-                 _e.rb.MovePosition(_e.rb.position + _dir * _e.speed * Time.deltaTime);
+                 _e.rb.MovePosition(_e.rb.position + _dir * _e.speed* 1.5f  * Time.deltaTime);
                            
             }
 
