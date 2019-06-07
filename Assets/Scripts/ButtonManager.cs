@@ -5,13 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class ButtonManager : MonoBehaviour
 {
-
     CamController cam;
     public GameObject pauseMenu;
 
     public void Awake()
     {
-        if (SceneManager.GetActiveScene().buildIndex == 9)
+        if (SceneManager.GetActiveScene().buildIndex == 0)
         {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
@@ -50,5 +49,10 @@ public class ButtonManager : MonoBehaviour
     public void Quit()
     {
         Application.Quit();
+    }
+
+    public void ToggleWindow (GameObject window)
+    {
+        window.SetActive(!window.activeSelf);
     }
 }
