@@ -163,7 +163,7 @@ public class CamController : MonoBehaviour {
 
                 cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
                 {
-                    new CinemachineFreeLook.Orbit(4.5f, 2.15f),
+                    new CinemachineFreeLook.Orbit(2.5f, 2.15f),
                     new CinemachineFreeLook.Orbit(2.5f, actualCamDistance),
                     new CinemachineFreeLook.Orbit(0.4f, 1.3f)
                 };
@@ -191,7 +191,7 @@ public class CamController : MonoBehaviour {
 
                 cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
                 {
-                    new CinemachineFreeLook.Orbit(4.5f, 2.15f),
+                    new CinemachineFreeLook.Orbit(2.5f, 2.15f),
                     new CinemachineFreeLook.Orbit(2.5f, actualCamDistance),
                     new CinemachineFreeLook.Orbit(0.4f, 1.3f)
                 };

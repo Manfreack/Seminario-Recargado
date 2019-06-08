@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class Viewer : MonoBehaviour
 {
@@ -49,8 +50,11 @@ public class Viewer : MonoBehaviour
     CamController cam;
     public GameObject pauseMenu;
 
-    public enum AnimPlayerNames {Dead, Attack1_Pre, Attack1_Damage, Attack1_End };
+    public enum AnimPlayerNames {Dead, Attack1_Pre, Attack1_Damage, Attack1_End, Attack2_Pre, Attack2_Damage, Attack2_End, Attack3_Pre, Attack3_Damage, Attack3_End, Attack4_Pre, Attack4_Damage, Attack4_End,
+                                 Parry1, Parry2, Parry3, Parry4, BackAttack2, TurnAttack_Pre, TurnAttack_Damage, TurnAttack_End, TakeDamage1, TakeDamage2, TakeDamage3, Defence, Blocked, FailDefence, Kick, IdleCombat, WalkW, WalkS,
+                                 WalkD, WalkA, RunCombat, Run, Idle, Roll, RollAttack, RollEstocada_Damage};
 
+    public Dictionary<AnimPlayerNames, string> AnimDictionary = new Dictionary<AnimPlayerNames, string>();
 
     public RawImage startFade;
     [Header("Time of the initial fade from black:")]
@@ -93,14 +97,54 @@ public class Viewer : MonoBehaviour
 
     public void Start()
     {
-      /*  var clips = anim.runtimeAnimatorController.animationClips;
+        var clips = anim.runtimeAnimatorController.animationClips.ToList();
 
         // Iterate over the clips and gather their information
         foreach (var animClip in clips)
         {
             Debug.Log(animClip.name + ": " + animClip.length);
         }
-        */
+
+        AnimDictionary.Add(AnimPlayerNames.Dead, clips[0].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack1_Pre, clips[1].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack1_Damage, clips[2].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack1_End, clips[3].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack2_Pre, clips[4].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack2_Damage, clips[5].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack2_End, clips[6].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack3_Pre, clips[7].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack3_Damage, clips[8].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack3_End, clips[9].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack4_Pre, clips[10].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack4_Damage, clips[11].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack4_End, clips[12].name);
+        AnimDictionary.Add(AnimPlayerNames.Parry1, clips[13].name);
+        AnimDictionary.Add(AnimPlayerNames.Parry2, clips[14].name);
+        AnimDictionary.Add(AnimPlayerNames.Parry3, clips[15].name);
+        AnimDictionary.Add(AnimPlayerNames.Parry4, clips[16].name);
+        AnimDictionary.Add(AnimPlayerNames.BackAttack2, clips[17].name);
+        AnimDictionary.Add(AnimPlayerNames.TurnAttack_Pre, clips[18].name);
+        AnimDictionary.Add(AnimPlayerNames.TurnAttack_Damage, clips[19].name);
+        AnimDictionary.Add(AnimPlayerNames.TurnAttack_End, clips[20].name);
+        AnimDictionary.Add(AnimPlayerNames.TakeDamage2, clips[22].name);
+        AnimDictionary.Add(AnimPlayerNames.TakeDamage3, clips[23].name);
+        AnimDictionary.Add(AnimPlayerNames.TakeDamage1, clips[24].name);
+        AnimDictionary.Add(AnimPlayerNames.Defence, clips[26].name);
+        AnimDictionary.Add(AnimPlayerNames.Blocked, clips[27].name);
+        AnimDictionary.Add(AnimPlayerNames.FailDefence, clips[28].name);
+        AnimDictionary.Add(AnimPlayerNames.Kick, clips[29].name);
+        AnimDictionary.Add(AnimPlayerNames.IdleCombat, clips[31].name);
+        AnimDictionary.Add(AnimPlayerNames.WalkW, clips[32].name);
+        AnimDictionary.Add(AnimPlayerNames.WalkS, clips[33].name);
+        AnimDictionary.Add(AnimPlayerNames.WalkD, clips[34].name);
+        AnimDictionary.Add(AnimPlayerNames.WalkA, clips[35].name);
+        AnimDictionary.Add(AnimPlayerNames.RunCombat, clips[36].name);
+        AnimDictionary.Add(AnimPlayerNames.Run, clips[37].name);
+        AnimDictionary.Add(AnimPlayerNames.Idle, clips[38].name);
+        AnimDictionary.Add(AnimPlayerNames.Roll, clips[39].name);
+        AnimDictionary.Add(AnimPlayerNames.RollAttack, clips[39].name);
+        AnimDictionary.Add(AnimPlayerNames.RollEstocada_Damage, clips[40].name);
+
     }
 
     public void Update()
