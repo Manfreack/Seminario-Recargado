@@ -692,7 +692,7 @@ public class Model : MonoBehaviour
 
     public void Movement(Vector3 dir)
     {
-
+        view.anim.SetBool("Idle", false);
         acceleration += 3f * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 

@@ -49,6 +49,8 @@ public class Viewer : MonoBehaviour
     CamController cam;
     public GameObject pauseMenu;
 
+    public enum AnimPlayerNames {Dead, Attack1_Pre, Attack1_Damage, Attack1_End };
+
 
     public RawImage startFade;
     [Header("Time of the initial fade from black:")]
@@ -87,6 +89,18 @@ public class Viewer : MonoBehaviour
              ShakeCameraDamage(1,1,0.3f);
          }
          
+    }
+
+    public void Start()
+    {
+      /*  var clips = anim.runtimeAnimatorController.animationClips;
+
+        // Iterate over the clips and gather their information
+        foreach (var animClip in clips)
+        {
+            Debug.Log(animClip.name + ": " + animClip.length);
+        }
+        */
     }
 
     public void Update()
