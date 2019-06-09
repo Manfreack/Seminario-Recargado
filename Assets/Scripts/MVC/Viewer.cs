@@ -52,7 +52,7 @@ public class Viewer : MonoBehaviour
 
     public enum AnimPlayerNames {Dead, Attack1_Pre, Attack1_Damage, Attack1_End, Attack2_Pre, Attack2_Damage, Attack2_End, Attack3_Pre, Attack3_Damage, Attack3_End, Attack4_Pre, Attack4_Damage, Attack4_End,
                                  Parry1, Parry2, Parry3, Parry4, BackAttack2, TurnAttack_Pre, TurnAttack_Damage, TurnAttack_End, TakeDamage1, TakeDamage2, TakeDamage3, Defence, Blocked, FailDefence, Kick, IdleCombat, WalkW, WalkS,
-                                 WalkD, WalkA, RunCombat, Run, Idle, Roll, RollAttack, RollEstocada_Damage};
+                                 WalkD, WalkA, RunCombat, Run, Walk, Idle, Roll, RollAttack, RollEstocada_Damage};
 
     public Dictionary<AnimPlayerNames, string> AnimDictionary = new Dictionary<AnimPlayerNames, string>();
 
@@ -100,24 +100,24 @@ public class Viewer : MonoBehaviour
         var clips = anim.runtimeAnimatorController.animationClips.ToList();
 
         // Iterate over the clips and gather their information
-        foreach (var animClip in clips)
+      /*  foreach (var animClip in clips)
         {
             Debug.Log(animClip.name + ": " + animClip.length);
         }
-
+        */
         AnimDictionary.Add(AnimPlayerNames.Dead, clips[0].name);
         AnimDictionary.Add(AnimPlayerNames.Attack1_Pre, clips[1].name);
         AnimDictionary.Add(AnimPlayerNames.Attack1_Damage, clips[2].name);
         AnimDictionary.Add(AnimPlayerNames.Attack1_End, clips[3].name);
-        AnimDictionary.Add(AnimPlayerNames.Attack2_Pre, clips[4].name);
-        AnimDictionary.Add(AnimPlayerNames.Attack2_Damage, clips[5].name);
-        AnimDictionary.Add(AnimPlayerNames.Attack2_End, clips[6].name);
-        AnimDictionary.Add(AnimPlayerNames.Attack3_Pre, clips[7].name);
-        AnimDictionary.Add(AnimPlayerNames.Attack3_Damage, clips[8].name);
-        AnimDictionary.Add(AnimPlayerNames.Attack3_End, clips[9].name);
-        AnimDictionary.Add(AnimPlayerNames.Attack4_Pre, clips[10].name);
-        AnimDictionary.Add(AnimPlayerNames.Attack4_Damage, clips[11].name);
-        AnimDictionary.Add(AnimPlayerNames.Attack4_End, clips[12].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack2_Damage, clips[4].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack2_End, clips[5].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack2_Pre, clips[6].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack3_Damage, clips[7].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack3_End, clips[8].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack3_Pre, clips[9].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack4_Damage, clips[10].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack4_End, clips[11].name);
+        AnimDictionary.Add(AnimPlayerNames.Attack4_Pre, clips[12].name);
         AnimDictionary.Add(AnimPlayerNames.Parry1, clips[13].name);
         AnimDictionary.Add(AnimPlayerNames.Parry2, clips[14].name);
         AnimDictionary.Add(AnimPlayerNames.Parry3, clips[15].name);
@@ -140,10 +140,12 @@ public class Viewer : MonoBehaviour
         AnimDictionary.Add(AnimPlayerNames.WalkA, clips[35].name);
         AnimDictionary.Add(AnimPlayerNames.RunCombat, clips[36].name);
         AnimDictionary.Add(AnimPlayerNames.Run, clips[37].name);
-        AnimDictionary.Add(AnimPlayerNames.Idle, clips[38].name);
-        AnimDictionary.Add(AnimPlayerNames.Roll, clips[39].name);
-        AnimDictionary.Add(AnimPlayerNames.RollAttack, clips[39].name);
-        AnimDictionary.Add(AnimPlayerNames.RollEstocada_Damage, clips[40].name);
+        AnimDictionary.Add(AnimPlayerNames.Walk, clips[38].name);
+        AnimDictionary.Add(AnimPlayerNames.Idle, clips[39].name);
+        AnimDictionary.Add(AnimPlayerNames.Roll, clips[41].name);
+        AnimDictionary.Add(AnimPlayerNames.RollAttack, clips[42].name);
+        AnimDictionary.Add(AnimPlayerNames.RollEstocada_Damage, clips[43].name);
+
 
     }
 

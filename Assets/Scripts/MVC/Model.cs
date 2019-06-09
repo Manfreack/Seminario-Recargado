@@ -240,7 +240,7 @@ public class Model : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        while (animClipName == "RollAttack" || animClipName == "P_RollEstocada_Damage" || animClipName == "P_RollEstocada_End" || animClipName == "Roll")
+        while (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
         {
             
             yield return new WaitForEndOfFrame();
@@ -266,7 +266,7 @@ public class Model : MonoBehaviour
     public IEnumerator OnDamageCorrutine()
     {
         onDamage = true;
-        while (animClipName == "P_Warrior_TakeDamage3" || animClipName == "P_Warrior_TakeDamage2" || animClipName == "P_Warrior_TakeDamage1")
+        while (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage3] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage2] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage1])
         {
             onRoll = false;
             view.anim.SetBool("Roll", false);
@@ -306,7 +306,8 @@ public class Model : MonoBehaviour
 
         while (makingDamage)
         {
-            if (animClipName == "Attack4N-DAMAGE" || animClipName == "Attack3N-DAMAGE" || animClipName == "Attack2N-DAMAGE" || animClipName == "Attack1N-DAMAGE")  MakeDamage("Normal");
+            if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack1_Damage] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack2_Damage] 
+                || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack3_Damage] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack4_Damage])  MakeDamage("Normal");
             
             yield return new WaitForEndOfFrame();
         }
@@ -533,7 +534,8 @@ public class Model : MonoBehaviour
    
     public void Roll(Vector3 dir)
     {
-        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") && animClipName != "Roll" && animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage")
+        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") 
+            && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage])
         {
             RollEvent();
             stamina -= rollStamina;
@@ -560,7 +562,8 @@ public class Model : MonoBehaviour
 
         if (timeOnCombat <= 0) timeOnCombat = 0;
 
-        if (timeOnCombat <= 0 && isInCombat && (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkA" || animClipName == "WalkD"))
+        if (timeOnCombat <= 0 && isInCombat && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] 
+            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS] ||  animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD]))
         {
             view.SaveSwordAnim2();
             view.anim.SetBool("IdleCombat", false);
@@ -575,12 +578,12 @@ public class Model : MonoBehaviour
 
     public void RollImpulse()
     {
-        if (animClipName != "RollAttack" && animClipName != "P_RollEstocada_Damage" && animClipName != "P_RollEstocada_End" && animClipName != "Roll")
+        if (animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] && animClipName != "P_RollEstocada_End" && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
         {
           
             view.RollAttackAnimFalse();
         }
-        if (animClipName == "RollAttack" || animClipName == "P_RollEstocada_Damage" || animClipName == "P_RollEstocada_End" || animClipName == "Roll")
+        if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] || animClipName == "P_RollEstocada_End" || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
         {
             view.NoReciveDamage();
 
@@ -736,8 +739,8 @@ public class Model : MonoBehaviour
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
 
-        if (!onDamage && countAnimAttack == 0  && (animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" 
-                                                               || animClipName == "P_WARRIOR_RUNWHITSWORD" || animClipName == "RollAttack"))
+        if (!onDamage && countAnimAttack == 0  && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
+            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack]))
         {
             Quaternion targetRotation;
 
@@ -826,7 +829,7 @@ public class Model : MonoBehaviour
             }
         }
 
-        if (isInCombat && !view.anim.GetBool("TakeSword2") && animClipName =="Blocked-V2")
+        if (isInCombat && !view.anim.GetBool("TakeSword2") && animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Blocked])
         {        
             countAnimAttack++;
             view.AwakeTrail();
@@ -839,7 +842,7 @@ public class Model : MonoBehaviour
         }
         
 
-        if (animClipName =="RollAttack")
+        if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
         {          
             attackDamage = attackRollDamage;
             RollAttackEvent();
@@ -856,14 +859,14 @@ public class Model : MonoBehaviour
             transform.forward = dir;
         }
 
-        if (!isDead && stamina - attackStamina >= 0 && !onDefence && !view.anim.GetBool("SaveSword2") && animClipName != "RollAttack"  && animClipName != "Roll")
+        if (!isDead && stamina - attackStamina >= 0 && !onDefence && !view.anim.GetBool("SaveSword2") && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
         {
 
             view.anim.SetLayerWeight(0, 1);
             view.anim.SetLayerWeight(1, 0);
             view.anim.SetBool("TakeSword2", false);
 
-            if ((animClipName == "Attack3N-FINISH" && !preAttack4))
+            if ((animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack3_End] && !preAttack4))
             {
              
                view.AwakeTrail();
@@ -880,7 +883,7 @@ public class Model : MonoBehaviour
             }
 
 
-            if (animClipName == "Attack2N-FINISH" && !preAttack3)
+            if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack2_End] && !preAttack3)
             {
                
                 countAnimAttack++;
@@ -897,7 +900,7 @@ public class Model : MonoBehaviour
                 attackDamage = attack3Damage;
             }
 
-            if (animClipName == "Attack1N-FINISH" && !preAttack2)
+            if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack1_End] && !preAttack2)
             {
                
                 countAnimAttack++;
@@ -914,8 +917,9 @@ public class Model : MonoBehaviour
                 attackDamage = attack2Damage;
             }
 
-            if ((animClipName == "IdleCombat-new" || animClipName == "WalkW" || animClipName == "WalkS" || animClipName == "WalkD" || animClipName == "WalkA" || animClipName == "Blocked-V2"
-                || animClipName == "NewIdel2.0" || animClipName == "P_WARRIOR_WALK" || animClipName == "P_WARRIOR_RUN" || animClipName == "P_WARRIOR_RUNWHITSWORD" || animClipName == "P_RollEstocada_Damage") && !preAttack1 && countAnimAttack==0)
+            if ((animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] 
+                || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Blocked] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Idle] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] 
+                || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage]) && !preAttack1 && countAnimAttack==0)
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
                 {
