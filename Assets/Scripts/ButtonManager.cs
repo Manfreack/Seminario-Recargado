@@ -7,6 +7,7 @@ public class ButtonManager : MonoBehaviour
 {
     CamController cam;
     public GameObject pauseMenu;
+    public MenuCamera menuCamera;
 
     public void Awake()
     {
@@ -25,6 +26,12 @@ public class ButtonManager : MonoBehaviour
     {
         Time.timeScale = 1;
         SceneManager.LoadScene(1);
+    }
+
+    public void StartGame()
+    {
+        if (menuCamera)
+            StartCoroutine(menuCamera.StartGame());
     }
 
     public void MainMenu()
