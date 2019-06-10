@@ -47,6 +47,10 @@ public class Viewer : MonoBehaviour
 
     public float preAttacktime;
 
+
+    public float velocityX;
+    public float velocityZ;
+
     CamController cam;
     public GameObject pauseMenu;
 
@@ -163,16 +167,16 @@ public class Viewer : MonoBehaviour
 
         if (anim.GetBool("RollAttack")) anim.SetInteger("TakeDamage", 0);
 
-        var velocityX = Input.GetAxis("Vertical");
-        var velocityZ = Input.GetAxis("Horizontal");
+        velocityX = Input.GetAxis("Vertical");
+        velocityZ = Input.GetAxis("Horizontal");
 
-        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
+       // if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
 
-        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
+      //  if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
 
-        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
+      //  if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
 
-        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
+      //  if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
 
 
         if (velocityX > 1) velocityX = 1;

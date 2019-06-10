@@ -240,6 +240,7 @@ public class ModelE_Sniper : EnemyEntity
 
         attack.OnUpdate += () =>
         {
+         
 
             isAnswerCall = false;
 
