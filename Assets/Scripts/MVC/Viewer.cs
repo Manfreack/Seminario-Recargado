@@ -46,13 +46,16 @@ public class Viewer : MonoBehaviour
     public int currentAttackAnimation;
 
     public float preAttacktime;
+    public string animClipName;
+
+    float timeToSaveSword;
 
     CamController cam;
     public GameObject pauseMenu;
 
     public enum AnimPlayerNames {Dead, Attack1_Pre, Attack1_Damage, Attack1_End, Attack2_Pre, Attack2_Damage, Attack2_End, Attack3_Pre, Attack3_Damage, Attack3_End, Attack4_Pre, Attack4_Damage, Attack4_End,
                                  Parry1, Parry2, Parry3, Parry4, BackAttack2, TurnAttack_Pre, TurnAttack_Damage, TurnAttack_End, TakeDamage1, TakeDamage2, TakeDamage3, Defence, Blocked, FailDefence, Kick, IdleCombat, WalkW, WalkS,
-                                 WalkD, WalkA, RunCombat, Run, Walk, Idle, Roll, RollAttack, RollEstocada_Damage};
+                                 WalkD, WalkA, RunCombat, Run, Walk, Idle, Roll, RollAttack, RollEstocada_Damage, Doge_Left, Doge_Back, Doge_Right};
 
     public Dictionary<AnimPlayerNames, string> AnimDictionary = new Dictionary<AnimPlayerNames, string>();
 
@@ -100,7 +103,7 @@ public class Viewer : MonoBehaviour
         var clips = anim.runtimeAnimatorController.animationClips.ToList();
 
         // Iterate over the clips and gather their information
-        int aux = 0;
+       int aux = 0;
         foreach (var animClip in clips)
         {
             Debug.Log(animClip.name + ": " + aux++);
@@ -134,7 +137,7 @@ public class Viewer : MonoBehaviour
         AnimDictionary.Add(AnimPlayerNames.Blocked, clips[27].name);
         AnimDictionary.Add(AnimPlayerNames.FailDefence, clips[28].name);
         AnimDictionary.Add(AnimPlayerNames.Kick, clips[29].name);
-        AnimDictionary.Add(AnimPlayerNames.IdleCombat, clips[47].name);
+        AnimDictionary.Add(AnimPlayerNames.IdleCombat, clips[55].name);
         AnimDictionary.Add(AnimPlayerNames.WalkW, clips[36].name);
         AnimDictionary.Add(AnimPlayerNames.WalkS, clips[37].name);
         AnimDictionary.Add(AnimPlayerNames.WalkD, clips[38].name);
@@ -146,6 +149,9 @@ public class Viewer : MonoBehaviour
         AnimDictionary.Add(AnimPlayerNames.Roll, clips[41].name);
         AnimDictionary.Add(AnimPlayerNames.RollAttack, clips[42].name);
         AnimDictionary.Add(AnimPlayerNames.RollEstocada_Damage, clips[43].name);
+        AnimDictionary.Add(AnimPlayerNames.Doge_Back, clips[45].name);
+        AnimDictionary.Add(AnimPlayerNames.Doge_Left, clips[46].name);
+        AnimDictionary.Add(AnimPlayerNames.Doge_Right, clips[47].name);
 
 
     }
@@ -153,8 +159,19 @@ public class Viewer : MonoBehaviour
     public void Update()
     {
         
-       
-        if(anim.GetBool("TakeSword2") && anim.GetBool("SaveSword2"))
+
+        if (animClipName == "TakeSword.V3")
+        {
+            timeToSaveSword += Time.deltaTime;
+            if (timeToSaveSword >= 0.1f)
+            {
+                BackTakeSword2();
+                timeToSaveSword = 0;
+            }
+        }
+        else timeToSaveSword =0;
+
+        if (anim.GetBool("TakeSword2") && anim.GetBool("SaveSword2"))
         {
             anim.SetBool("TakeSword2", false);
             anim.SetBool("SaveSword2", false);
@@ -186,6 +203,28 @@ public class Viewer : MonoBehaviour
         anim.SetFloat("VelZ", velocityZ);
 
         
+    }
+
+    public void DogeLeftAnim()
+    {
+        anim.SetBool("DogeLeft", true);
+    }
+
+    public void DogeRightAnim()
+    {
+        anim.SetBool("DogeRight", true);
+    }
+
+    public void DogeBackAnim()
+    {
+        anim.SetBool("DogeBack", true);
+    }
+
+    public void EndDoge()
+    {
+        anim.SetBool("DogeBack", false);
+        anim.SetBool("DogeRight", false);
+        anim.SetBool("DogeLeft", false);
     }
 
     public void  CanRollAttack()

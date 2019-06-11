@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class ViewerE_Melee : MonoBehaviour
 {
@@ -31,6 +32,10 @@ public class ViewerE_Melee : MonoBehaviour
     float timerVanishPool;
     float timeToEndCounterAttackAnim;
     float timeToEndHeavyAttackAnim;
+
+    public enum EnemyMeleeAnim {TakeDamage, Dead, Attack1, Attack2, Attack3, HeavyAttack, WalkStreaf, Persuit, IdleCombat, Patrol, Retreat, Stuned, Knocked, AttackBlocked, Blocked, CounterAttack, IdleDefence, Idle };
+
+    public Dictionary<EnemyMeleeAnim, string> animDictionary = new Dictionary<EnemyMeleeAnim, string>();
 
     public IEnumerator ShaderHA_True()
     {
@@ -102,6 +107,8 @@ public class ViewerE_Melee : MonoBehaviour
 
     void Awake()
     {
+     
+
         heavyMat = sword.GetComponent<SkinnedMeshRenderer>().materials[1];
         _anim = GetComponent<Animator>();
         _model = GetComponent<ModelE_Melee>();
@@ -116,6 +123,37 @@ public class ViewerE_Melee : MonoBehaviour
             myMats.Add(item.materials[0]);
             item.materials[0].SetFloat("_Intensity", 0);
         }
+
+
+        var clips = _anim.runtimeAnimatorController.animationClips.ToList();
+
+         //Iterate over the clips and gather their information
+         int aux = 0;
+         foreach (var animClip in clips)
+         {
+             Debug.Log(animClip.name + ": " + aux++);
+         }
+         
+
+        animDictionary.Add(EnemyMeleeAnim.TakeDamage, clips[0].name);
+        animDictionary.Add(EnemyMeleeAnim.Dead, clips[1].name);
+        animDictionary.Add(EnemyMeleeAnim.Attack1, clips[2].name);
+        animDictionary.Add(EnemyMeleeAnim.HeavyAttack, clips[3].name);
+        animDictionary.Add(EnemyMeleeAnim.Attack3, clips[4].name);
+        animDictionary.Add(EnemyMeleeAnim.Attack2, clips[5].name);
+        animDictionary.Add(EnemyMeleeAnim.Persuit, clips[6].name);
+        animDictionary.Add(EnemyMeleeAnim.WalkStreaf, clips[7].name);
+        animDictionary.Add(EnemyMeleeAnim.IdleCombat, clips[9].name);
+        animDictionary.Add(EnemyMeleeAnim.Patrol, clips[10].name);
+        animDictionary.Add(EnemyMeleeAnim.Retreat, clips[11].name);
+        animDictionary.Add(EnemyMeleeAnim.Idle, clips[12].name);
+        animDictionary.Add(EnemyMeleeAnim.Stuned, clips[14].name);
+        animDictionary.Add(EnemyMeleeAnim.Knocked, clips[15].name);
+        animDictionary.Add(EnemyMeleeAnim.AttackBlocked, clips[16].name);
+        animDictionary.Add(EnemyMeleeAnim.CounterAttack, clips[17].name);
+        animDictionary.Add(EnemyMeleeAnim.Blocked, clips[18].name);
+        animDictionary.Add(EnemyMeleeAnim.IdleDefence, clips[19].name);
+
     }
 
     void Update()

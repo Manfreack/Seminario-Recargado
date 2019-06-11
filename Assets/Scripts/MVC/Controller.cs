@@ -54,6 +54,9 @@ public class Controller : MonoBehaviour
         model.StreakEvent += view.Streak;
         model.RollAttackEvent += view.RollAttackAnim;
         model.CounterAttackEvent += view.CounterAttackAnim;
+        model.DogeBackEvent += view.DogeBackAnim;
+        model.DogeLeftEvent += view.DogeLeftAnim;
+        model.DogeRightEvent += view.DogeRightAnim;
     }
 
     // Update is called once per frame
@@ -179,34 +182,34 @@ public class Controller : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space) && model.animClipName != "GetDamage1" && model.animClipName != "GetDamage2" && model.animClipName != "GetDamage3")
             {
-                if (!pushW && !pushA && !pushS && !pushD) model.Roll(model.transform.forward);
-                if (pushW && !pushA && !firstPushS && !pushD) model.Roll(model.mainCamera.forward);
-                if (pushS && !pushA && !firstPushW && !pushD) model.Roll(-model.mainCamera.forward);
-                if (pushA && !firstPushD && !pushS && !pushW) model.Roll(-model.mainCamera.right);
-                if (pushD && !firstPushA && !pushS && !pushW) model.Roll(model.mainCamera.right);
+                if (!pushW && !pushA && !pushS && !pushD) model.Roll(model.transform.forward, Model.DogeDirecctions.Roll);
+                if (pushW && !pushA && !firstPushS && !pushD) model.Roll(model.mainCamera.forward, Model.DogeDirecctions.Roll);
+                if (pushS && !pushA && !firstPushW && !pushD) model.Roll(-model.mainCamera.forward, Model.DogeDirecctions.Back);
+                if (pushA && !firstPushD && !pushS && !pushW) model.Roll(-model.mainCamera.right, Model.DogeDirecctions.Right);
+                if (pushD && !firstPushA && !pushS && !pushW) model.Roll(model.mainCamera.right, Model.DogeDirecctions.Left);
 
                 if (pushW && pushA && !firstPushS && !firstPushD)
                 {
                     Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
-                    model.Roll(dir);
+                    model.Roll(dir, Model.DogeDirecctions.Roll);
                 }
 
                 if (pushW && !firstPushA && !firstPushS && pushD)
                 {
                     Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
-                    model.Roll(dir);
+                    model.Roll(dir, Model.DogeDirecctions.Roll);
                 }
 
                 if (!firstPushW && pushA && pushS && !firstPushD)
                 {
                     Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
-                    model.Roll(dir);
+                    model.Roll(dir, Model.DogeDirecctions.Back);
                 }
 
                 if (!firstPushW && !firstPushA && pushS && pushD)
                 {
                     Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
-                    model.Roll(dir);
+                    model.Roll(dir, Model.DogeDirecctions.Back);
                 }
             }
 

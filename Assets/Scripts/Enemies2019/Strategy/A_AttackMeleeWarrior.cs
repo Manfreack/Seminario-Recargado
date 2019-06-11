@@ -15,7 +15,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
 
         if (!_e.onDamage)
         {
-            if (!_e.onAttackArea && !_e.firstAttack && !_e.onDamage && _e.animClipName != "EM_CounterAttack" && _e.animClipName != "IdleDefence" && _e.animClipName != "E_Warrior_Attack1" && _e.animClipName != "E_Warrior_Attack2" && _e.animClipName != "E_Warrior_Attack3" && _e.animClipName != "Heavy Attack_EM" && _e.animClipName != "HitDefence" && !_e.target.onCounterAttack)
+            if (!_e.onAttackArea && !_e.firstAttack && !_e.onDamage &&  (_e.animClipName == _e._view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Patrol] || _e.animClipName == _e._view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Persuit]))
             {
                 Quaternion targetRotation;
                 var dir = (_e.target.transform.position - _e.transform.position).normalized;
@@ -41,6 +41,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
 
             else if(_e.onAttackArea && !_e.onRetreat && !_e.firstAttack && !_e.target.onCounterAttack)
             {
+                _e._view.RunAttackAnim();
 
                 if (!_e.isPersuit && !_e.isWaitArea) _e.FollowState();
 

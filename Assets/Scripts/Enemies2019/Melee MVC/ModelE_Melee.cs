@@ -526,16 +526,16 @@ public class ModelE_Melee : EnemyEntity
 
             currentAction = null;
 
-            if (impulse && animClipName == "EM_CounterAttack")
+            if (impulse && animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack]) 
             {
                 transform.position += transform.forward * 2 * Time.deltaTime;
             }
 
-            if (!isDead && !isPersuit && !isWaitArea && !onRetreat  && animClipName != "EM_CounterAttack" && animClipName != "IdelDefence" && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isWaitArea && !onRetreat  && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence] && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && !isWaitArea && isPersuit  && animClipName != "EM_CounterAttack" && animClipName != "IdelDefence" && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isWaitArea && isPersuit  && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence] && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isWaitArea && animClipName != "EM_CounterAttack" && animClipName != "IdelDefence" && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence] && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.WAIT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -685,13 +685,14 @@ public class ModelE_Melee : EnemyEntity
             delayToAttack = 0;
             onRetreat = false;
             firstAttack = false;
-
+            _view.CombatWalkAnim();
             damageDone = false;
         };
 
         attack.OnFixedUpdate += () =>
         {
-          
+
+            AttackRunEvent();
 
             AttackState = true;
 
@@ -815,6 +816,7 @@ public class ModelE_Melee : EnemyEntity
                 if (navMeshAgent.enabled) navMeshAgent.enabled = false;
             }
             onDefence = false;
+            _view._anim.SetBool("RunAttack", false);
             if (distanceToBack == 1) timeToRetreat = 1.5f;
             if (distanceToBack == 2) timeToRetreat = 3.5f;
         };
@@ -850,16 +852,16 @@ public class ModelE_Melee : EnemyEntity
                 if (navMeshAgent.enabled) navMeshAgent.enabled = false;
             }
 
-            if (animClipName == "E_Warrior_Retreat" || animClipName == "IdleCombat_EM") timeToRetreat -= Time.deltaTime;
+            if (animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Retreat] || animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleCombat]) timeToRetreat -= Time.deltaTime;
 
             if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("Attack2") || _view._anim.GetBool("Attack3") || _view._anim.GetBool("HeavyAttack")) && !isDead && !onDefence)
             {
                 transform.LookAt(target.transform.position);
             }
 
-            if (animClipName != "E_Warrior_Attack1" && animClipName != "E_Warrior_Attack2" && animClipName != "E_Warrior_Attack3") impulse = false;
+            if (animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Attack1] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Attack2] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Attack3]) impulse = false;
 
-            if (impulse && (animClipName == "E_Warrior_Attack1" || animClipName == "E_Warrior_Attack2" || animClipName == "E_Warrior_Attack3")) transform.position += transform.forward * 2 * Time.deltaTime;
+            if (impulse && (animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Attack1] || animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Attack2] || animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Attack3])) transform.position += transform.forward * 2 * Time.deltaTime;
 
             _view._anim.SetBool("WalkL", false);
             _view._anim.SetBool("WalkR", false);
@@ -1166,6 +1168,8 @@ public class ModelE_Melee : EnemyEntity
 
     public override void MakeDamage()
     {
+        _view._anim.SetBool("RunAttack", false);
+
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
 
         var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()).Distinct();
