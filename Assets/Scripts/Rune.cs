@@ -22,7 +22,7 @@ public class Rune : MonoBehaviour
             Model p = c.gameObject.GetComponent<Model>();
             if (p != null)
             {
-                if(p.life != p.maxLife || p.stamina != p.maxStamina)
+                if(p.life != p.maxLife)
                 {
                     if (p.isInCombat)
                     {

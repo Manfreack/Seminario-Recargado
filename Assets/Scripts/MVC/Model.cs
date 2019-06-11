@@ -534,7 +534,7 @@ public class Model : MonoBehaviour
    
     public void Roll(Vector3 dir)
     {
-        if (stamina - rollStamina >= 0 && !view.anim.GetBool("Roll") && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") 
+        if (stamina - rollStamina >= 0 /*&& !view.anim.GetBool("Roll")*/ && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") 
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage])
         {
             RollEvent();
@@ -545,7 +545,7 @@ public class Model : MonoBehaviour
             dirToDahs.y = 0;
             makingDamage = false;
             impulse = false;
-            timeToRoll = 0.45f;
+            timeToRoll = 0.75f;
             lastPosition = transform.position;
             StartCoroutine(RollImpulseCorrutine());
         }
@@ -557,7 +557,8 @@ public class Model : MonoBehaviour
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
         {
-            view.anim.SetBool("IdleCombat", true);
+
+            view.anim.SetBool("IsInCombat", true);
         }
 
         if (timeOnCombat <= 0) timeOnCombat = 0;
@@ -567,6 +568,7 @@ public class Model : MonoBehaviour
         {
             view.SaveSwordAnim2();
             view.anim.SetBool("IdleCombat", false);
+            view.anim.SetBool("IsInCombat", false);
             view.anim.SetBool("Roll", false);
             InAction = false;
             InActionAttack = false;
@@ -591,13 +593,11 @@ public class Model : MonoBehaviour
 
             transform.forward = dirToDahs;
 
-            transform.position += transform.forward * 6 * Time.deltaTime;
+            transform.position += transform.forward * 5 * Time.deltaTime;
 
             if (timeToRoll <= 0)
             {
-                var dir = mainCamera.forward;
-                dir.y = 0;
-                transform.forward = dir;
+              
                 onRoll = false;
                
             }            
@@ -740,7 +740,7 @@ public class Model : MonoBehaviour
 
 
         if (!onDamage && countAnimAttack == 0  && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
-            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack]))
+            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat]) && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
         {
             Quaternion targetRotation;
 
@@ -849,8 +849,8 @@ public class Model : MonoBehaviour
             view.AwakeTrail();
             EndCombo();
             CombatState();
-            timeImpulse = 0.8f;
-            timeEndImpulse = 0.2f;
+          //  timeImpulse = 0.8f;
+            //timeEndImpulse = 0.2f;
             StartCoroutine(ImpulseAttackAnimation());
             view.anim.SetBool("Roll", false);
             view.anim.SetBool("CanRollAttack", false);

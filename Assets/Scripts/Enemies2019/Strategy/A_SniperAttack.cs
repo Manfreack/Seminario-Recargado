@@ -38,8 +38,6 @@ public class A_SniperAttack : i_EnemyActions
                 if (hit.transform.name == _e.target.name) onSight = true;
             }
 
-          
-
             if (onSight &&  !_e.onDamage)
             {
                 _e.AttackEvent();

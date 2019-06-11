@@ -47,10 +47,6 @@ public class Viewer : MonoBehaviour
 
     public float preAttacktime;
 
-
-    public float velocityX;
-    public float velocityZ;
-
     CamController cam;
     public GameObject pauseMenu;
 
@@ -104,11 +100,12 @@ public class Viewer : MonoBehaviour
         var clips = anim.runtimeAnimatorController.animationClips.ToList();
 
         // Iterate over the clips and gather their information
-      /*  foreach (var animClip in clips)
+        int aux = 0;
+        foreach (var animClip in clips)
         {
-            Debug.Log(animClip.name + ": " + animClip.length);
+            Debug.Log(animClip.name + ": " + aux++);
         }
-        */
+        
         AnimDictionary.Add(AnimPlayerNames.Dead, clips[0].name);
         AnimDictionary.Add(AnimPlayerNames.Attack1_Pre, clips[1].name);
         AnimDictionary.Add(AnimPlayerNames.Attack1_Damage, clips[2].name);
@@ -137,15 +134,15 @@ public class Viewer : MonoBehaviour
         AnimDictionary.Add(AnimPlayerNames.Blocked, clips[27].name);
         AnimDictionary.Add(AnimPlayerNames.FailDefence, clips[28].name);
         AnimDictionary.Add(AnimPlayerNames.Kick, clips[29].name);
-        AnimDictionary.Add(AnimPlayerNames.IdleCombat, clips[31].name);
-        AnimDictionary.Add(AnimPlayerNames.WalkW, clips[32].name);
-        AnimDictionary.Add(AnimPlayerNames.WalkS, clips[33].name);
-        AnimDictionary.Add(AnimPlayerNames.WalkD, clips[34].name);
-        AnimDictionary.Add(AnimPlayerNames.WalkA, clips[35].name);
-        AnimDictionary.Add(AnimPlayerNames.RunCombat, clips[36].name);
-        AnimDictionary.Add(AnimPlayerNames.Run, clips[37].name);
-        AnimDictionary.Add(AnimPlayerNames.Walk, clips[38].name);
-        AnimDictionary.Add(AnimPlayerNames.Idle, clips[39].name);
+        AnimDictionary.Add(AnimPlayerNames.IdleCombat, clips[47].name);
+        AnimDictionary.Add(AnimPlayerNames.WalkW, clips[36].name);
+        AnimDictionary.Add(AnimPlayerNames.WalkS, clips[37].name);
+        AnimDictionary.Add(AnimPlayerNames.WalkD, clips[38].name);
+        AnimDictionary.Add(AnimPlayerNames.WalkA, clips[39].name);
+        AnimDictionary.Add(AnimPlayerNames.RunCombat, clips[31].name);
+        AnimDictionary.Add(AnimPlayerNames.Run, clips[32].name);
+        AnimDictionary.Add(AnimPlayerNames.Walk, clips[33].name);
+        AnimDictionary.Add(AnimPlayerNames.Idle, clips[34].name);
         AnimDictionary.Add(AnimPlayerNames.Roll, clips[41].name);
         AnimDictionary.Add(AnimPlayerNames.RollAttack, clips[42].name);
         AnimDictionary.Add(AnimPlayerNames.RollEstocada_Damage, clips[43].name);
@@ -167,20 +164,23 @@ public class Viewer : MonoBehaviour
 
         if (anim.GetBool("RollAttack")) anim.SetInteger("TakeDamage", 0);
 
-        velocityX = Input.GetAxis("Vertical");
-        velocityZ = Input.GetAxis("Horizontal");
+        var velocityX = Input.GetAxis("Vertical");
+        var velocityZ = Input.GetAxis("Horizontal");
 
-       // if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
+        /*if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
 
-      //  if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
 
-      //  if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
+        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
 
-      //  if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
-
+        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
+        */
 
         if (velocityX > 1) velocityX = 1;
         if (velocityZ > 1) velocityZ = 1;
+
+        if (velocityX == 0 && velocityZ == 0) anim.SetBool("IdleCombat", true);
+        else  anim.SetBool("IdleCombat", false);
 
         anim.SetFloat("VelX", velocityX);
         anim.SetFloat("VelZ", velocityZ);
