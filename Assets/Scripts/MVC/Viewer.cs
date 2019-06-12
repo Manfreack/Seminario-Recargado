@@ -55,7 +55,7 @@ public class Viewer : MonoBehaviour
 
     public enum AnimPlayerNames {Dead, Attack1_Pre, Attack1_Damage, Attack1_End, Attack2_Pre, Attack2_Damage, Attack2_End, Attack3_Pre, Attack3_Damage, Attack3_End, Attack4_Pre, Attack4_Damage, Attack4_End,
                                  Parry1, Parry2, Parry3, Parry4, BackAttack2, TurnAttack_Pre, TurnAttack_Damage, TurnAttack_End, TakeDamage1, TakeDamage2, TakeDamage3, Defence, Blocked, FailDefence, Kick, IdleCombat, WalkW, WalkS,
-                                 WalkD, WalkA, RunCombat, Run, Walk, Idle, Roll, RollAttack, RollEstocada_Damage, Doge_Left, Doge_Back, Doge_Right};
+                                 WalkD, WalkA, RunCombat, Run, Walk, Idle, Roll, RollAttack, RollEstocada_Damage, Dodge_Left, Dodge_Back, Dodge_Right};
 
     public Dictionary<AnimPlayerNames, string> AnimDictionary = new Dictionary<AnimPlayerNames, string>();
 
@@ -137,7 +137,7 @@ public class Viewer : MonoBehaviour
         AnimDictionary.Add(AnimPlayerNames.Blocked, clips[27].name);
         AnimDictionary.Add(AnimPlayerNames.FailDefence, clips[28].name);
         AnimDictionary.Add(AnimPlayerNames.Kick, clips[29].name);
-        AnimDictionary.Add(AnimPlayerNames.IdleCombat, clips[55].name);
+        AnimDictionary.Add(AnimPlayerNames.IdleCombat, clips[58].name);
         AnimDictionary.Add(AnimPlayerNames.WalkW, clips[36].name);
         AnimDictionary.Add(AnimPlayerNames.WalkS, clips[37].name);
         AnimDictionary.Add(AnimPlayerNames.WalkD, clips[38].name);
@@ -149,9 +149,9 @@ public class Viewer : MonoBehaviour
         AnimDictionary.Add(AnimPlayerNames.Roll, clips[41].name);
         AnimDictionary.Add(AnimPlayerNames.RollAttack, clips[42].name);
         AnimDictionary.Add(AnimPlayerNames.RollEstocada_Damage, clips[43].name);
-        AnimDictionary.Add(AnimPlayerNames.Doge_Back, clips[45].name);
-        AnimDictionary.Add(AnimPlayerNames.Doge_Left, clips[46].name);
-        AnimDictionary.Add(AnimPlayerNames.Doge_Right, clips[47].name);
+        AnimDictionary.Add(AnimPlayerNames.Dodge_Back, clips[45].name);
+        AnimDictionary.Add(AnimPlayerNames.Dodge_Left, clips[46].name);
+        AnimDictionary.Add(AnimPlayerNames.Dodge_Right, clips[47].name);
 
 
     }
@@ -205,26 +205,26 @@ public class Viewer : MonoBehaviour
         
     }
 
-    public void DogeLeftAnim()
+    public void DodgeLeftAnim()
     {
-        anim.SetBool("DogeLeft", true);
+        anim.SetBool("DodgeLeft", true);
     }
 
     public void DogeRightAnim()
     {
-        anim.SetBool("DogeRight", true);
+        anim.SetBool("DodgeRight", true);
     }
 
     public void DogeBackAnim()
     {
-        anim.SetBool("DogeBack", true);
+        anim.SetBool("DodgeBack", true);
     }
 
-    public void EndDoge()
+    public void EndDodge()
     {
-        anim.SetBool("DogeBack", false);
-        anim.SetBool("DogeRight", false);
-        anim.SetBool("DogeLeft", false);
+        anim.SetBool("DodgeBack", false);
+        anim.SetBool("DodgeRight", false);
+        anim.SetBool("DodgeLeft", false);
     }
 
     public void  CanRollAttack()

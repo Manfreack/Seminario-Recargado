@@ -55,7 +55,7 @@ public class Controller : MonoBehaviour
         model.RollAttackEvent += view.RollAttackAnim;
         model.CounterAttackEvent += view.CounterAttackAnim;
         model.DogeBackEvent += view.DogeBackAnim;
-        model.DogeLeftEvent += view.DogeLeftAnim;
+        model.DogeLeftEvent += view.DodgeLeftAnim;
         model.DogeRightEvent += view.DogeRightAnim;
     }
 
