@@ -20,11 +20,19 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _FlowMap:
-        m_Texture: {fileID: 2800000, guid: 1207a4adcc48386458eb4425a0a3ecba, type: 3}
+        m_Texture: {fileID: 2800000, guid: f8b4f631d8791ef41bfd326e68272ebb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HitGradient:
+        m_Texture: {fileID: 2800000, guid: ee9904b77bb100848946e286b28d624d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Mask:
+        m_Texture: {fileID: 2800000, guid: 57d2bf093b0797b40ac4594b01e32048, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskI:
@@ -32,7 +40,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TextureSample0:
-        m_Texture: {fileID: 2800000, guid: 92a93c650dc9c5b49a21f93a5ee306cd, type: 3}
+        m_Texture: {fileID: 2800000, guid: ee9904b77bb100848946e286b28d624d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
@@ -40,9 +48,16 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _Float0: 0.85
+    - _HitBaseOverlay: 0.25
     - _HitFill: 0
     - _HitFillAmount: 0
+    - _HitOverlayExtraIntensity: 0
+    - _HitOverlayIntensity: 1.5
     - _InitialFadeAmount: 0
     - _InitualFade: 1
     - _InitualFadeAmount: 1
+    - _MaxHitOverlay: 0.6
+    - _SinExtraAmount: 1
+    - _SinTimeScale: 3
     m_Colors: []

@@ -72,10 +72,12 @@ public class Controller : MonoBehaviour
 
             if (Input.GetKey(KeyCode.Mouse1) && model.isInCombat && model.stamina>5)
             {
+                view.anim.SetBool("PressDefence", true);
                 model.Defence();
             }
             if (!Input.GetKey(KeyCode.Mouse1))
             {
+                view.anim.SetBool("PressDefence", false);
                 model.StopDefence();
             }        
             

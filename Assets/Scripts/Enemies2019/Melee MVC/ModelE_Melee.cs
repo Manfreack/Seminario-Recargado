@@ -9,6 +9,7 @@ public class ModelE_Melee : EnemyEntity
 {
     
     public enum EnemyInputs { PATROL, PERSUIT, WAIT, ATTACK, RETREAT , FOLLOW, DIE, ANSWER, DEFENCE, STUNED, KNOCK }
+    public Transform NodePath;
     public EventFSM<EnemyInputs> _myFsm;
     public List<CombatNode> restOfNodes = new List<CombatNode>();
     public float timeToPatrol;
@@ -252,6 +253,8 @@ public class ModelE_Melee : EnemyEntity
 
     public void Awake()
     {
+        cm = FindObjectOfType<EnemyCombatManager>();
+        myNodes.AddRange(NodePath.GetComponentsInChildren<Node>());
         var myEntites = FindObjectsOfType<EnemyEntity>().Where(x => x != this && x.EnemyID_Area == EnemyID_Area);
         nearEntities.Clear();
         nearEntities.AddRange(myEntites);
