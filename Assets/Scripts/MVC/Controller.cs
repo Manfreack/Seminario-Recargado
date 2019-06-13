@@ -94,6 +94,12 @@ public class Controller : MonoBehaviour
                 view.FalseRunAnim();
             }
 
+            if ((Input.GetKeyUp(KeyCode.D) && Input.GetKey(KeyCode.A)) || (Input.GetKeyUp(KeyCode.A) && Input.GetKey(KeyCode.D)) 
+                || (Input.GetKeyUp(KeyCode.W) && Input.GetKey(KeyCode.S)) || (Input.GetKeyUp(KeyCode.S) && Input.GetKey(KeyCode.W)))
+            {
+                model.acceleration = 0;
+            }
+
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.A))
             {
                 view.anim.SetBool("Idle", false);
@@ -191,25 +197,25 @@ public class Controller : MonoBehaviour
                 if (pushW && pushA && !firstPushS && !firstPushD)
                 {
                     Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
-                    model.Roll(dir, Model.DogeDirecctions.Roll);
+                    model.Roll(dir.normalized, Model.DogeDirecctions.Roll);
                 }
 
                 if (pushW && !firstPushA && !firstPushS && pushD)
                 {
                     Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
-                    model.Roll(dir, Model.DogeDirecctions.Roll);
+                    model.Roll(dir.normalized, Model.DogeDirecctions.Roll);
                 }
 
                 if (!firstPushW && pushA && pushS && !firstPushD)
                 {
                     Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
-                    model.Roll(dir, Model.DogeDirecctions.Back);
+                    model.Roll(dir.normalized, Model.DogeDirecctions.Back);
                 }
 
                 if (!firstPushW && !firstPushA && pushS && pushD)
                 {
                     Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
-                    model.Roll(dir, Model.DogeDirecctions.Back);
+                    model.Roll(dir.normalized, Model.DogeDirecctions.Back);
                 }
             }
 

@@ -5,12 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class ButtonManager : MonoBehaviour
 {
-    CamController cam;
+    public CamController cam;
     public GameObject pauseMenu;
     public MenuCamera menuCamera;
 
     public void Awake()
     {
+        cam = FindObjectOfType<CamController>();
+
         if (SceneManager.GetActiveScene().buildIndex == 0)
         {
             Cursor.visible = true;

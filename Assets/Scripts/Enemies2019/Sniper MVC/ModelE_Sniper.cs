@@ -271,6 +271,7 @@ public class ModelE_Sniper : EnemyEntity
             if (!isDead && onRetreat && timeToRetreat < 0 && d<=1.5) SendInputToFSM(EnemyInputs.RETREAT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
+
         };
 
         stuned.OnEnter += x =>
@@ -336,6 +337,8 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnEnter += x =>
         {
+            _view.anim.SetBool("Retreat", true);
+
             MoveEvent();
 
             if (navMeshAgent)
@@ -369,6 +372,11 @@ public class ModelE_Sniper : EnemyEntity
             if (!isDead && !isWaitArea && !isPersuit && !onMeleeAttack && !onRetreat) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
+        };
+
+        retreat.OnExit += x =>
+        {
+            _view.anim.SetBool("Retreat", false);
         };
 
         follow.OnEnter += x =>

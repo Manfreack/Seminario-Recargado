@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class ViewerE_Sniper : MonoBehaviour
 {
-    Animator _anim;
+    public Animator anim;
     ModelE_Sniper _model;
     Rigidbody _rb;
     public List<SkinnedMeshRenderer> myMeshes = new List<SkinnedMeshRenderer>();
@@ -30,6 +31,10 @@ public class ViewerE_Sniper : MonoBehaviour
     bool startFireHands;
     bool auxTakeDamage;
     float timeOnDamage;
+
+    public enum EnemyWizzardAnims {Attack, Dead, TakeDamage, Move, Idle, CombatIdle, Stuned, StunedIdle, UpFly, UpStuned };
+
+    public Dictionary<EnemyWizzardAnims, string> animDictionary = new Dictionary<EnemyWizzardAnims, string>();
 
     public IEnumerator ShaderMA_True()
     {
@@ -112,7 +117,7 @@ public class ViewerE_Sniper : MonoBehaviour
     void Awake()
     {
         canvas = GameObject.Find("Canvas");
-        _anim = GetComponent<Animator>();
+        anim = GetComponent<Animator>();
         _model = GetComponent<ModelE_Sniper>();
         _rb = GetComponent<Rigidbody>();
         myMeshes.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
@@ -127,6 +132,28 @@ public class ViewerE_Sniper : MonoBehaviour
             myMats.Add(item.materials[0]);
             item.materials[0].SetFloat("_Intensity", 0);
         }
+
+
+        var clips = anim.runtimeAnimatorController.animationClips.ToList();
+
+        //Iterate over the clips and gather their information
+        /* int aux = 0;
+         foreach (var animClip in clips)
+         {
+             Debug.Log(animClip.name + ": " + aux++);
+         }
+         */
+
+        animDictionary.Add(EnemyWizzardAnims.Attack, clips[0].name);
+        animDictionary.Add(EnemyWizzardAnims.Dead, clips[1].name);
+        animDictionary.Add(EnemyWizzardAnims.TakeDamage, clips[2].name);
+        animDictionary.Add(EnemyWizzardAnims.UpFly, clips[3].name);
+        animDictionary.Add(EnemyWizzardAnims.Idle, clips[4].name);
+        animDictionary.Add(EnemyWizzardAnims.CombatIdle, clips[5].name);
+        animDictionary.Add(EnemyWizzardAnims.Move, clips[6].name);
+        animDictionary.Add(EnemyWizzardAnims.Stuned, clips[7].name);
+        animDictionary.Add(EnemyWizzardAnims.StunedIdle, clips[8].name);
+        animDictionary.Add(EnemyWizzardAnims.UpStuned, clips[9].name);
     }
 
     // Update is called once per frame
@@ -137,7 +164,7 @@ public class ViewerE_Sniper : MonoBehaviour
             timeOnDamage -= Time.deltaTime;
             if (timeOnDamage <= 0)
             {
-                _anim.SetBool("TakeDamage", false);
+                anim.SetBool("TakeDamage", false);
                 auxTakeDamage = false;
             }
         }
@@ -148,14 +175,14 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void StunedAnim()
     {
-        _anim.SetBool("Stuned", true);
+        anim.SetBool("Stuned", true);
         damaged = true;
         timeShaderDamage = 1;
     }
 
     public void StunedAnimFalse()
     {
-        _anim.SetBool("Stuned", false);
+        anim.SetBool("Stuned", false);
     }
 
     public void MeleettackShader()
@@ -180,7 +207,7 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void DeadAnim()
     {
-        _anim.SetBool("Dead", true);
+        anim.SetBool("Dead", true);
         var pool = Instantiate(bloodPool);
         matPool = pool.GetComponent<MeshRenderer>().material;
         pool.transform.forward = transform.forward;
@@ -196,61 +223,61 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void AttackRangeAnim()
     {
-        _anim.SetBool("AttackRange", true);
+        anim.SetBool("AttackRange", true);
     }
 
     public void BackFromAttackRange()
     {
-        _anim.SetBool("AttackRange", false);
+        anim.SetBool("AttackRange", false);
     }
 
     public void AttackMeleeAnim()
     {
         StartCoroutine(ShaderMA_True());
-        _anim.SetBool("AttackMelee", true);
+        anim.SetBool("AttackMelee", true);
     }
 
     public void BackFromAttackMelee()
     {
         _shaderMeleeAttackTrigger = false;
         StartCoroutine(ShaderMA_False());
-        _anim.SetBool("AttackMelee", false);
+        anim.SetBool("AttackMelee", false);
     }
 
     public void IdleAnim()
     {
-        _anim.SetBool("IdleCombat", true);
-        _anim.SetBool("Move", false);
+        anim.SetBool("IdleCombat", true);
+        anim.SetBool("Move", false);
 
     }
 
     public void BackFromIdle()
     {
-        _anim.SetBool("IdleCombat", false);
+        anim.SetBool("IdleCombat", false);
     }
 
     public void MoveFlyAnim()
     {
-        _anim.SetBool("Move", true);
-        _anim.SetBool("IdleCombat", false);
+        anim.SetBool("Move", true);
+        anim.SetBool("IdleCombat", false);
     }
 
     public void MoveFlyAnimFalse()
     {
-        _anim.SetBool("Move", false);
+        anim.SetBool("Move", false);
      
     }
 
     public void BackFromDamage()
     {
-        _anim.SetBool("TakeDamage", false);
+        anim.SetBool("TakeDamage", false);
         _model.onDamage = false;
     }
 
     public void TakeDamageAnim()
     {
         _model.onDamage = true;
-        _anim.SetBool("TakeDamage", true);
+        anim.SetBool("TakeDamage", true);
         damaged = true;
         timeShaderDamage = 1;
         blood.gameObject.SetActive(true);

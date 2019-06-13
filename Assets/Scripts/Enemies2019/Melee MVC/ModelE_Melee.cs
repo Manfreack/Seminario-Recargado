@@ -1138,6 +1138,7 @@ public class ModelE_Melee : EnemyEntity
             life -= damage;
             _view.LifeBar(life / maxLife);
             _view.CreatePopText(damage);
+            _view.StartCoroutine(_view.SlowAnimSpeed());
 
             if (!firstHit)
             {
@@ -1148,7 +1149,7 @@ public class ModelE_Melee : EnemyEntity
         }
 
         if (!onDefence && typeOfDamage == "Stune")
-        {
+        {            
             StunedEvent();
             actualHits--;
             timeOnDamage = 0.5f;
@@ -1156,6 +1157,7 @@ public class ModelE_Melee : EnemyEntity
             life -= damage;
             _view.LifeBar(life / maxLife);
             _view.CreatePopText(damage);
+            _view.StartCoroutine(_view.SlowAnimSpeed());
         }
 
         if (!onDefence && typeOfDamage == "Knock")
@@ -1169,7 +1171,7 @@ public class ModelE_Melee : EnemyEntity
         }
 
 
-        if (onDefence && angle > 90 && animClipName =="IdelDefence")
+        if (onDefence && angle > 90 && animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence])
         {
             timeToHoldDefence = 0;
             delayToAttack = 0;

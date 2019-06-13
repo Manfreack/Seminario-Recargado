@@ -320,7 +320,7 @@ public class Model : MonoBehaviour
             if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack1_Damage] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack2_Damage]
                 || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack3_Damage] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack4_Damage])
             {
-                MakeDamage("Normal");
+                MakeDamage("Normal");               
                 timeToRoll = 0;
             }
             yield return new WaitForEndOfFrame();
@@ -792,7 +792,7 @@ public class Model : MonoBehaviour
             view.UpdateStaminaBar(stamina / maxStamina);
         }
 
-        acceleration += 3f * Time.deltaTime;
+        acceleration +=  Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
 
@@ -800,7 +800,9 @@ public class Model : MonoBehaviour
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat]
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Run]))
         {
-           
+
+            EndCombo();
+
             Quaternion targetRotation;
 
             if (!isRuning)
@@ -1059,6 +1061,7 @@ public class Model : MonoBehaviour
         {
             foreach (var item in enemies)
             {
+                view.StartCoroutine(view.SlowAnimSpeed());
                 item.GetDamage(attackDamage, "Normal");
                 if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
                 makingDamage = false;
@@ -1235,7 +1238,7 @@ public class Model : MonoBehaviour
 
             if(perfectParryTimer > 0.3f)
             {
-                view.ParryAnim();
+                view.Blocked();
                 view.ShakeCameraDamage(0.5f, 0.5f, 0.5f);
             }
           

@@ -22,7 +22,7 @@ public class Arrow : Munition {
         timer += Time.deltaTime;
         if (timer >= 5) ammoAmount.ReturnBulletToPool(this);
 
-        if (player.onRoll) GetComponent<BoxCollider>().isTrigger = true;
+        if (player.onRoll || player.invulnerable) GetComponent<BoxCollider>().isTrigger = true;
         else GetComponent<BoxCollider>().isTrigger = false;
 
         transform.position += transform.forward * 13 * Time.deltaTime;

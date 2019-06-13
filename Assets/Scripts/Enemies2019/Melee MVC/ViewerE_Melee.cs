@@ -32,6 +32,7 @@ public class ViewerE_Melee : MonoBehaviour
     float timerVanishPool;
     float timeToEndCounterAttackAnim;
     float timeToEndHeavyAttackAnim;
+    bool slowSpeed;
 
     public enum EnemyMeleeAnim {TakeDamage, Dead, Attack1, Attack2, Attack3, HeavyAttack, WalkStreaf, Persuit, IdleCombat, Patrol, Retreat, Stuned, Knocked, AttackBlocked, Blocked, CounterAttack, IdleDefence, Idle };
 
@@ -102,6 +103,18 @@ public class ViewerE_Melee : MonoBehaviour
             if (posY - 2 >= transform.position.y)
                 gameObject.SetActive(false);
             yield return new WaitForEndOfFrame();
+        }
+    }
+
+    public IEnumerator SlowAnimSpeed()
+    {
+        if (!slowSpeed)
+        {
+            slowSpeed = true;
+            _anim.speed = 0;
+            yield return new WaitForSeconds(0.1f);
+            _anim.speed = 1;
+            slowSpeed = false;
         }
     }
 

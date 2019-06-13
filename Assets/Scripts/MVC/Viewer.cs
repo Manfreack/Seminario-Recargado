@@ -53,6 +53,8 @@ public class Viewer : MonoBehaviour
     CamController cam;
     public GameObject pauseMenu;
 
+    bool slowSpeed;
+
     public enum AnimPlayerNames {Dead, Attack1_Pre, Attack1_Damage, Attack1_End, Attack2_Pre, Attack2_Damage, Attack2_End, Attack3_Pre, Attack3_Damage, Attack3_End, Attack4_Pre, Attack4_Damage, Attack4_End,
                                  Parry1, Parry2, Parry3, Parry4, BackAttack2, TurnAttack_Pre, TurnAttack_Damage, TurnAttack_End, TakeDamage1, TakeDamage2, TakeDamage3, Defence, Blocked, FailDefence, Kick, IdleCombat, WalkW, WalkS,
                                  WalkD, WalkA, RunCombat, Run, Walk, Idle, Roll, RollAttack, RollEstocada_Damage, Dodge_Left, Dodge_Back, Dodge_Right};
@@ -97,6 +99,18 @@ public class Viewer : MonoBehaviour
                 trail.SetActive(false);
                 ShakeCameraDamage(1, 1, 0.3f);
             }
+        }
+    }
+
+    public IEnumerator SlowAnimSpeed()
+    {
+        if (!slowSpeed)
+        {
+            slowSpeed = true;
+            anim.speed = 0;
+            yield return new WaitForSeconds(0.1f);
+            anim.speed = 1;
+            slowSpeed = false;
         }
     }
 
@@ -185,6 +199,8 @@ public class Viewer : MonoBehaviour
 
         var velocityX = Input.GetAxis("Vertical");
         var velocityZ = Input.GetAxis("Horizontal");
+
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) velocityZ = 0;
   
         if (velocityX > 1) velocityX = 1;
         if (velocityZ > 1) velocityZ = 1;
