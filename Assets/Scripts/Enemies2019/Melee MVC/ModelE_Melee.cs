@@ -252,6 +252,15 @@ public class ModelE_Melee : EnemyEntity
 
     public void Awake()
     {
+        var myEntites = FindObjectsOfType<EnemyEntity>().Where(x => x != this && x.EnemyID_Area == EnemyID_Area);
+        nearEntities.Clear();
+        nearEntities.AddRange(myEntites);
+
+        var warriors = FindObjectsOfType<ModelE_Melee>().Where(x => x != this && x.EnemyID_Area == EnemyID_Area);
+        myWarriorFriends.Clear();
+        myWarriorFriends.AddRange(warriors);
+
+        ca = FindObjectsOfType<CombatArea>().Where(x=> x.EnemyID_Area == EnemyID_Area).FirstOrDefault();
         navMeshAgent = GetComponent<NavMeshAgent>();
         delayToAttack = UnityEngine.Random.Range(timeMinAttack, timeMaxAttack);
         rb = gameObject.GetComponent<Rigidbody>();
@@ -591,21 +600,21 @@ public class ModelE_Melee : EnemyEntity
            
 
             _view._anim.SetBool("WalkBack", false);
-                if (!reposition) timeToChangeRotation -= Time.deltaTime;
+             if (!reposition) timeToChangeRotation -= Time.deltaTime;
 
-                if (timeToChangeRotation <= 0 && changeRotateWarrior)
-                {
-                    timeToChangeRotation = UnityEngine.Random.Range(0.5f, 1.5f);
+             if (timeToChangeRotation <= 0 && changeRotateWarrior)
+             {
+                    timeToChangeRotation = UnityEngine.Random.Range(2f, 3f);
                     flankDir = 2;
                     changeRotateWarrior = false;
-                }
+             }
 
-                if (timeToChangeRotation <= 0 && !changeRotateWarrior)
-                {
+             if (timeToChangeRotation <= 0 && !changeRotateWarrior)
+             {
                     flankDir = UnityEngine.Random.Range(0, 2);
                     timeToChangeRotation = UnityEngine.Random.Range(2, 3);
                     changeRotateWarrior = true;
-                }
+             }
 
                 var NearNodes = Physics.OverlapSphere(transform.position, distanceToHit+1).Where(y => y.GetComponent<CombatNode>()).Select(y => y.GetComponent<CombatNode>()).Where(y => y.myOwner == null).ToList();
 
@@ -744,8 +753,7 @@ public class ModelE_Melee : EnemyEntity
         };
 
         stuned.OnUpdate += () =>
-        {
-            
+        {           
 
             timeStuned -= Time.deltaTime;
 
@@ -817,6 +825,8 @@ public class ModelE_Melee : EnemyEntity
             }
             onDefence = false;
             _view._anim.SetBool("RunAttack", false);
+            _view._anim.SetBool("WalkCombat", false);
+            _view.CombatIdleAnim();
             if (distanceToBack == 1) timeToRetreat = 1.5f;
             if (distanceToBack == 2) timeToRetreat = 3.5f;
         };
@@ -852,7 +862,20 @@ public class ModelE_Melee : EnemyEntity
                 if (navMeshAgent.enabled) navMeshAgent.enabled = false;
             }
 
-            if (animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Retreat] || animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleCombat]) timeToRetreat -= Time.deltaTime;
+            if (animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Retreat] || animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleCombat] || animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Idle])
+            {
+                timeToRetreat -= Time.deltaTime;
+
+                var d = Vector3.Distance(transform.position, target.transform.position);
+
+                float maxD = 0;
+
+                if (aggressiveLevel == 1) maxD = 2.5f;
+                if (aggressiveLevel == 2) maxD = 5f;
+
+                if (d < maxD) _view.WalckBackAnim();
+                if (d > maxD) _view.CombatIdleAnim();
+            }
 
             if ((_view._anim.GetBool("Attack") || _view._anim.GetBool("Attack2") || _view._anim.GetBool("Attack3") || _view._anim.GetBool("HeavyAttack")) && !isDead && !onDefence)
             {
@@ -960,6 +983,7 @@ public class ModelE_Melee : EnemyEntity
     private void Start()
     {
         playerNodes.AddRange(FindObjectsOfType<CombatNode>());
+        if (!firstEnemyToSee) gameObject.SetActive(false);
     }
 
     private void Update()
@@ -1174,7 +1198,7 @@ public class ModelE_Melee : EnemyEntity
 
         var desMesh = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<DestructibleOBJ>()).Select(x => x.GetComponent<DestructibleOBJ>()).Distinct();
 
-        if (player != null)
+        if (player != null && !player.invulnerable)
         {
             damageDone = true;
             _view.WalckBackAnim();

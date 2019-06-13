@@ -28,7 +28,7 @@ public class EnemyScreenSpace : MonoBehaviour
 
         depthUI = healthBar.GetComponent<DepthUI>();
         canvas.GetComponent<ScreenSpaceCanvas>().AddToCanvas(healthBar);
-
+        healthBar.SetActive(false);
         timer = 0;
     }
 

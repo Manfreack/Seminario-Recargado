@@ -61,6 +61,9 @@ public class ModelE_Sniper : EnemyEntity
         timeToMeleeAttack = UnityEngine.Random.Range(minTimeDelayMeleeAttack, maxTimeDelayMeleeAttack);
         timeToStopBack = UnityEngine.Random.Range(3, 4);
 		maxLife = life;
+        var myEntites = FindObjectsOfType<EnemyEntity>().Where(x => x != this && x.EnemyID_Area == EnemyID_Area);
+        nearEntities.Clear();
+        nearEntities.AddRange(myEntites);
 
         var patrol = new FSM_State<EnemyInputs>("PATROL");
         var persuit = new FSM_State<EnemyInputs>("PERSUIT");
@@ -421,6 +424,11 @@ public class ModelE_Sniper : EnemyEntity
     private void SendInputToFSM(EnemyInputs inp)
     {
         _myFsm.SendInput(inp);
+    }
+
+    public void Start()
+    {
+        if (!firstEnemyToSee) gameObject.SetActive(false);
     }
 
     private void Update()

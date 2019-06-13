@@ -13,12 +13,16 @@ public class CombatArea : MonoBehaviour
     public bool startArea;
     bool firstPass;
     EnemyCombatManager cm;
+    public int EnemyID_Area;
 
 
     private void Awake()
     {
         cm = FindObjectOfType<EnemyCombatManager>();
         player = FindObjectOfType<Model>();
+        var enemies = FindObjectsOfType<EnemyEntity>().Where(x=> x.EnemyID_Area == EnemyID_Area);
+        myNPCs.Clear();
+        myNPCs.AddRange(enemies);
     }
 
     void Start()

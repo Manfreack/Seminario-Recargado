@@ -19,6 +19,7 @@ public class Viewer : MonoBehaviour
     public Transform head;
     Quaternion headBaseRot;
     public ParticleSystem blood;
+    public ParticleSystem healParticles;
 
     public Image power1;
     public Image power2;
@@ -26,7 +27,6 @@ public class Viewer : MonoBehaviour
     public Image power4;
     public Image defenceActive;
     public Image defenceColdwon;
-    public Image parryBar;
 
     public GameObject youDied;
     public GameObject youWin;
@@ -86,16 +86,18 @@ public class Viewer : MonoBehaviour
     public IEnumerator SmashParticleEvent()
     {
         smashParticle.SetActive(false);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.7f);
         trail.SetActive(false);
 
-         if (!anim.GetBool("Parry"))
-         {
-             smashParticle.SetActive(true);
-             trail.SetActive(false);
-             ShakeCameraDamage(1,1,0.3f);
-         }
-         
+        if (animClipName == AnimDictionary[AnimPlayerNames.Attack4_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Pre] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_End])
+        {
+            if (!anim.GetBool("Parry"))
+            {
+                smashParticle.SetActive(true);
+                trail.SetActive(false);
+                ShakeCameraDamage(1, 1, 0.3f);
+            }
+        }
     }
 
     public void Start()
@@ -103,12 +105,12 @@ public class Viewer : MonoBehaviour
         var clips = anim.runtimeAnimatorController.animationClips.ToList();
 
         // Iterate over the clips and gather their information
-       int aux = 0;
+        /*int aux = 0;
         foreach (var animClip in clips)
         {
             Debug.Log(animClip.name + ": " + aux++);
         }
-        
+        */
         AnimDictionary.Add(AnimPlayerNames.Dead, clips[0].name);
         AnimDictionary.Add(AnimPlayerNames.Attack1_Pre, clips[1].name);
         AnimDictionary.Add(AnimPlayerNames.Attack1_Damage, clips[2].name);
@@ -183,16 +185,7 @@ public class Viewer : MonoBehaviour
 
         var velocityX = Input.GetAxis("Vertical");
         var velocityZ = Input.GetAxis("Horizontal");
-
-        /*if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
-
-        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
-
-        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D) && !model.isDead && model.isInCombat) velocityZ = 0;
-
-        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A) && !model.isDead && model.isInCombat) velocityZ = 0;
-        */
-
+  
         if (velocityX > 1) velocityX = 1;
         if (velocityZ > 1) velocityZ = 1;
 
@@ -409,10 +402,7 @@ public class Viewer : MonoBehaviour
         //StartCoroutine(BarSmooth(val, armor));
     }
 
-    public void UpdateParryBar(float val)
-    {
-        StartCoroutine(BarSmooth(val, parryBar));
-    }
+
 
     public void CounterAttackAnim()
     {

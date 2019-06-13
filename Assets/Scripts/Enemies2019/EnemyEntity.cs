@@ -6,6 +6,8 @@ using UnityEngine.AI;
 public abstract class EnemyEntity: MonoBehaviour
 {
     public NavMeshAgent navMeshAgent;
+    public int EnemyID_Area;
+    public bool firstEnemyToSee;
     public int aggressiveLevel;
     public float life;
     public float totalLife;

@@ -106,9 +106,7 @@ public class ViewerE_Melee : MonoBehaviour
     }
 
     void Awake()
-    {
-     
-
+    {   
         heavyMat = sword.GetComponent<SkinnedMeshRenderer>().materials[1];
         _anim = GetComponent<Animator>();
         _model = GetComponent<ModelE_Melee>();
@@ -128,12 +126,12 @@ public class ViewerE_Melee : MonoBehaviour
         var clips = _anim.runtimeAnimatorController.animationClips.ToList();
 
          //Iterate over the clips and gather their information
-         int aux = 0;
+        /* int aux = 0;
          foreach (var animClip in clips)
          {
              Debug.Log(animClip.name + ": " + aux++);
          }
-         
+         */
 
         animDictionary.Add(EnemyMeleeAnim.TakeDamage, clips[0].name);
         animDictionary.Add(EnemyMeleeAnim.Dead, clips[1].name);

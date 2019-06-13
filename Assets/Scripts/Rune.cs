@@ -6,38 +6,67 @@ public class Rune : MonoBehaviour
 {
     public float healingAmount;
     public float cooldownTime;
+    public ParticleSystem particles;
     bool used;
+    bool useParticles;
     Material mat;
+    Model player;
 
     void Start()
     {
         used = false;
         mat = transform.GetChild(0).GetComponent<Renderer>().material;
+        player = FindObjectOfType<Model>();
+        particles = player.view.healParticles;
     }
 
     void OnTriggerStay(Collider c)
     {
-        if (!used)
+
+        if (!used && c.GetComponent<Model>())
         {
-            Model p = c.gameObject.GetComponent<Model>();
-            if (p != null)
+            if (player != null)
             {
-                if(p.life != p.maxLife)
+                if (player.life != player.maxLife)
                 {
-                    if (p.isInCombat)
+                    if (player.isInCombat)
                     {
                         used = true;
-                        StartCoroutine(Opacity(false, p));
+                        StartCoroutine(Opacity(false, player));
                         StartCoroutine(Cooldown());
+                        StartCoroutine(HealParticlesOpacity());
                     }
                     else
                     {
-                        p.UpdateLife(healingAmount * Time.deltaTime);
-                        p.UpdateStamina(healingAmount * Time.deltaTime);
+                        particles.Play();
+                        useParticles = true;
+                        player.UpdateLife(healingAmount * Time.deltaTime);
+                        player.UpdateStamina(healingAmount * Time.deltaTime);
                     }
                 }
+
+                else particles.Stop();
             }
         }
+    }
+
+    public void OnTriggerExit(Collider c)
+    {
+        if (c.GetComponent<Model>())
+        {
+            if (!player.isInCombat)
+            {
+                particles.Stop();
+                useParticles = false;
+            }
+        }
+    }
+
+    IEnumerator HealParticlesOpacity()
+    {
+        particles.Play();
+        yield return new WaitForSeconds(2);
+        particles.Stop();
     }
 
     IEnumerator Opacity(bool show, Model player = null)
