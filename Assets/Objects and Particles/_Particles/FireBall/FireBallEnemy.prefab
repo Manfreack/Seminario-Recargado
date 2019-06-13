@@ -16,6 +16,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!65 &1795139529908020949
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5227565387540644931}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1790742178111350265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30,20 +43,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   timer: 0
+  prefabExplosion: {fileID: 845333328605625338, guid: e814e06de1dee3245babf14bbd93abe4,
+    type: 3}
+  fireBallParticles: {fileID: 9109540041225713567}
   ammoAmount: {fileID: 0}
---- !u!65 &1795139529908020949
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5227565387540644931}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1059993696540906193
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -146,6 +149,12 @@ PrefabInstance:
 --- !u!1 &5227565387540644931 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5060306155646326418, guid: b4caa77f3e1465e4e8a53a040176b5d5,
+    type: 3}
+  m_PrefabInstance: {fileID: 1059993696540906193}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &9109540041225713567 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8133022371340477774, guid: b4caa77f3e1465e4e8a53a040176b5d5,
     type: 3}
   m_PrefabInstance: {fileID: 1059993696540906193}
   m_PrefabAsset: {fileID: 0}

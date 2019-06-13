@@ -33,6 +33,9 @@ public class ViewerE_Melee : MonoBehaviour
     float timeToEndCounterAttackAnim;
     float timeToEndHeavyAttackAnim;
     bool slowSpeed;
+    public ParticleSystem lightHit;
+    public ParticleSystem heavyHit;
+
 
     public enum EnemyMeleeAnim {TakeDamage, Dead, Attack1, Attack2, Attack3, HeavyAttack, WalkStreaf, Persuit, IdleCombat, Patrol, Retreat, Stuned, Knocked, AttackBlocked, Blocked, CounterAttack, IdleDefence, Idle };
 
@@ -116,6 +119,13 @@ public class ViewerE_Melee : MonoBehaviour
             _anim.speed = 1;
             slowSpeed = false;
         }
+    }
+
+    IEnumerator StopHitParticles()
+    {
+        yield return new WaitForSeconds(1);
+        lightHit.gameObject.SetActive(false);
+        heavyHit.gameObject.SetActive(false);
     }
 
     void Awake()
@@ -220,6 +230,18 @@ public class ViewerE_Melee : MonoBehaviour
             _model._view.StunedAnimFalse();
         }
 
+    }
+
+    public void LightHitAntisipation()
+    {
+        lightHit.Clear();
+        lightHit.Play();
+    }
+
+    public void HeavyHitAntisipation()
+    {
+        heavyHit.Clear();
+        heavyHit.Play();
     }
 
     public void PerfectBlockedAnim()

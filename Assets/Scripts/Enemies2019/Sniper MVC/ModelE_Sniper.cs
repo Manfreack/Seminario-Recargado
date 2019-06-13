@@ -13,7 +13,7 @@ public class ModelE_Sniper : EnemyEntity
     public LayerMask layerEntites;
     public LayerMask layerPlayer;
     public LayerMask layerObstAndBarrels;
-    ViewerE_Sniper _view;
+    public ViewerE_Sniper view;
     public Transform attackPivot;
     public float timeToShoot;
     public EnemyAmmo munition;
@@ -26,7 +26,11 @@ public class ModelE_Sniper : EnemyEntity
     public float maxTimeToRetreat;
     public float maxTimeDelayMeleeAttack;
     public float minTimeDelayMeleeAttack;
+    public float timeToMove;
+    public bool changeMovementOnAttack;
     public Transform scapeNodesParent;
+    public int dirToMoveOnAttack;
+    public string animClipName;
 
     public Action TakeDamageEvent;
     public Action DeadEvent;
@@ -35,6 +39,8 @@ public class ModelE_Sniper : EnemyEntity
     public Action MoveEvent;
     public Action IdleEvent;
     public Action StunedEvent;
+    public Action FlyRightEvent;
+    public Action FlyLeftEvent;
 	
 	public float maxLife;
 
@@ -55,7 +61,7 @@ public class ModelE_Sniper : EnemyEntity
         navMeshAgent = GetComponent<NavMeshAgent>();
         playerNodes.AddRange(FindObjectsOfType<CombatNode>());
         rb = gameObject.GetComponent<Rigidbody>();
-        _view = GetComponent<ViewerE_Sniper>();
+        view = GetComponent<ViewerE_Sniper>();
         munition = FindObjectOfType<EnemyAmmo>();
         timeToShoot = UnityEngine.Random.Range(3, 5);
         timeToMeleeAttack = UnityEngine.Random.Range(minTimeDelayMeleeAttack, maxTimeDelayMeleeAttack);
@@ -75,13 +81,15 @@ public class ModelE_Sniper : EnemyEntity
         var retreat = new FSM_State<EnemyInputs>("RETREAT");
         var stuned = new FSM_State<EnemyInputs>("STUNED");
 
-        TakeDamageEvent += _view.TakeDamageAnim;
-        DeadEvent += _view.DeadAnim;
-        AttackEvent += _view.AttackRangeAnim;
-        AttackMeleeEvent += _view.AttackMeleeAnim;
-        IdleEvent += _view.IdleAnim;
-        MoveEvent += _view.MoveFlyAnim;
-        StunedEvent += _view.StunedAnim;
+        TakeDamageEvent += view.TakeDamageAnim;
+        DeadEvent += view.DeadAnim;
+        AttackEvent += view.AttackRangeAnim;
+        AttackMeleeEvent += view.AttackMeleeAnim;
+        IdleEvent += view.IdleAnim;
+        MoveEvent += view.MoveFlyAnim;
+        StunedEvent += view.StunedAnim;
+        FlyRightEvent += view.FlyRightAnim;
+        FlyLeftEvent += view.FlyLeftAnim;
 
         StateConfigurer.Create(patrol)
            .SetTransition(EnemyInputs.PERSUIT, persuit)
@@ -305,7 +313,7 @@ public class ModelE_Sniper : EnemyEntity
         stuned.OnExit += x =>
         {
             isStuned = false;
-            _view.StunedAnimFalse();
+            view.StunedAnimFalse();
         };
 
         melee_attack.OnUpdate += () =>
@@ -337,7 +345,7 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnEnter += x =>
         {
-            _view.anim.SetBool("Retreat", true);
+            view.anim.SetBool("Retreat", true);
 
             MoveEvent();
 
@@ -376,7 +384,7 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnExit += x =>
         {
-            _view.anim.SetBool("Retreat", false);
+            view.anim.SetBool("Retreat", false);
         };
 
         follow.OnEnter += x =>
@@ -443,6 +451,8 @@ public class ModelE_Sniper : EnemyEntity
     {
         _myFsm.Update();
 
+        animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+
         //avoidVectObstacles = ObstacleAvoidance();
         entitiesAvoidVect = EntitiesAvoidance();
 
@@ -501,16 +511,16 @@ public class ModelE_Sniper : EnemyEntity
             timeStuned = 0;
             TakeDamageEvent();
             life -= damage;
-            _view.LifeBar(life / maxLife);
-            _view.CreatePopText(damage);
+            view.LifeBar(life / maxLife);
+            view.CreatePopText(damage);
         }
 
         if (typeOfDamage == "Stune")
         {
             isStuned = true;
             life -= damage;
-            _view.LifeBar(life / maxLife);
-            _view.CreatePopText(damage);
+            view.LifeBar(life / maxLife);
+            view.CreatePopText(damage);
         }
 
         if (life <= 0)

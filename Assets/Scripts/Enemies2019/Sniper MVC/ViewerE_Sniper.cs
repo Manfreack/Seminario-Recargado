@@ -31,6 +31,7 @@ public class ViewerE_Sniper : MonoBehaviour
     bool startFireHands;
     bool auxTakeDamage;
     float timeOnDamage;
+    public ParticleSystem heavyHit;
 
     public enum EnemyWizzardAnims {Attack, Dead, TakeDamage, Move, Idle, CombatIdle, Stuned, StunedIdle, UpFly, UpStuned };
 
@@ -157,6 +158,13 @@ public class ViewerE_Sniper : MonoBehaviour
     }
 
     // Update is called once per frame
+
+    public void HeavyHitAntisipation()
+    {
+        heavyHit.Clear();
+        heavyHit.Play();
+    }
+
     void Update()
     {
         if (auxTakeDamage)
@@ -173,9 +181,21 @@ public class ViewerE_Sniper : MonoBehaviour
         FireHands();
     }
 
+    public void FlyRightAnim()
+    {
+        anim.SetBool("FlyRight", true);
+    }
+
+    public void FlyLeftAnim()
+    {
+        anim.SetBool("FlyLeft", true);
+    }
+
     public void StunedAnim()
     {
         anim.SetBool("Stuned", true);
+        anim.SetBool("FlyLeft", false);
+        anim.SetBool("FlyRight", false);
         damaged = true;
         timeShaderDamage = 1;
     }
@@ -183,6 +203,8 @@ public class ViewerE_Sniper : MonoBehaviour
     public void StunedAnimFalse()
     {
         anim.SetBool("Stuned", false);
+        anim.SetBool("FlyLeft", false);
+        anim.SetBool("FlyRight", false);
     }
 
     public void MeleettackShader()
@@ -224,11 +246,15 @@ public class ViewerE_Sniper : MonoBehaviour
     public void AttackRangeAnim()
     {
         anim.SetBool("AttackRange", true);
+        anim.SetBool("FlyLeft", false);
+        anim.SetBool("FlyRight", false);
     }
 
     public void BackFromAttackRange()
     {
         anim.SetBool("AttackRange", false);
+        anim.SetBool("FlyLeft", false);
+        anim.SetBool("FlyRight", false);
     }
 
     public void AttackMeleeAnim()
@@ -248,6 +274,8 @@ public class ViewerE_Sniper : MonoBehaviour
     {
         anim.SetBool("IdleCombat", true);
         anim.SetBool("Move", false);
+        anim.SetBool("FlyLeft", false);
+        anim.SetBool("FlyRight", false);
 
     }
 
@@ -260,6 +288,8 @@ public class ViewerE_Sniper : MonoBehaviour
     {
         anim.SetBool("Move", true);
         anim.SetBool("IdleCombat", false);
+        anim.SetBool("FlyLeft", false);
+        anim.SetBool("FlyRight", false);
     }
 
     public void MoveFlyAnimFalse()

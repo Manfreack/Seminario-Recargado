@@ -20,6 +20,7 @@ public class Viewer : MonoBehaviour
     Quaternion headBaseRot;
     public ParticleSystem blood;
     public ParticleSystem healParticles;
+    public ParticleSystem antisipationRing;
 
     public Image power1;
     public Image power2;
@@ -91,14 +92,13 @@ public class Viewer : MonoBehaviour
         yield return new WaitForSeconds(0.7f);
         trail.SetActive(false);
 
-        if (animClipName == AnimDictionary[AnimPlayerNames.Attack4_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Pre] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_End])
+        if (animClipName == AnimDictionary[AnimPlayerNames.Attack4_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Pre] 
+            || animClipName == AnimDictionary[AnimPlayerNames.Attack4_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack3_End])
         {
-            if (!anim.GetBool("Parry"))
-            {
-                smashParticle.SetActive(true);
-                trail.SetActive(false);
-                ShakeCameraDamage(1, 1, 0.3f);
-            }
+            
+            smashParticle.SetActive(true);
+            trail.SetActive(false);
+            ShakeCameraDamage(1, 1, 0.3f);
         }
     }
 
@@ -174,7 +174,7 @@ public class Viewer : MonoBehaviour
 
     public void Update()
     {
-        
+        animClipName = model.animClipName;
 
         if (animClipName == "TakeSword.V3")
         {
@@ -212,6 +212,12 @@ public class Viewer : MonoBehaviour
         anim.SetFloat("VelZ", velocityZ);
 
         
+    }
+
+    public void RollAttackAntisipation()
+    {
+        antisipationRing.Clear();
+        antisipationRing.Play();
     }
 
     public void DodgeLeftAnim()
