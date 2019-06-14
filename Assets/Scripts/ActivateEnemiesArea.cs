@@ -12,6 +12,12 @@ public class ActivateEnemiesArea : MonoBehaviour
     public bool desactive;
 
 
+    public void Awake()
+    {
+        var myEntites = FindObjectsOfType<EnemyEntity>().Where(x => x.EnemyID_Area == roomNumber).Select(x => x.gameObject);
+        enemies.AddRange(myEntites);
+    }
+
     public void OnTriggerStay(Collider c)
     {
         if (c.GetComponent<Model>() && active)
