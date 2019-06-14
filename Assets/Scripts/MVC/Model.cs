@@ -170,6 +170,7 @@ public class Model : MonoBehaviour
     public string animClipName2;
 
     public bool defenceBroken;
+    float canRollAttackTimer;
     public float maxTimeToRecoverDefence;
     public float timeToRecoverDefence;
     float tdefence;
@@ -177,6 +178,17 @@ public class Model : MonoBehaviour
     [HideInInspector]
     public float fadeTimer;
     public enum DogeDirecctions {Left,Right,Back, Roll };
+
+    IEnumerator CanRollAttackCorrutine()
+    {
+        canRollAttackTimer = 3;
+
+        while(canRollAttackTimer>0)
+        {
+            canRollAttackTimer -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+    }
 
     public IEnumerator InvulnerableCorrutine()
     {
@@ -544,12 +556,14 @@ public class Model : MonoBehaviour
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage1] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage2] 
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage3])
         {
+
             StartCoroutine(InvulnerableCorrutine());
 
             if (directions == DogeDirecctions.Roll)
             {
-                RollEvent();
-                timeToRoll = 0.75f;
+                if (isInCombat) StartCoroutine(CanRollAttackCorrutine());
+                RollEvent();              
+                timeToRoll = 0.75f;               
             }
 
             if (isInCombat)
@@ -875,7 +889,6 @@ public class Model : MonoBehaviour
             })
             .OrderBy(x =>
             { 
-
                 var distance = Vector3.Distance(x.transform.position, transform.position);
                 return distance;
 
@@ -918,7 +931,8 @@ public class Model : MonoBehaviour
             CombatState();
         }
 
-        if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
+        //if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
+        if (canRollAttackTimer>0)
         {          
             attackDamage = attackRollDamage;
             RollAttackEvent();
@@ -975,14 +989,18 @@ public class Model : MonoBehaviour
 
             if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack1_End])
             {
+
                 view.EndDodge();
                 countAnimAttack++;
                 view.AwakeTrail();
                 if (countAnimAttack > 2) countAnimAttack = 2;
                 Attack();
                 if (!makingDamage) StartCoroutine(TimeToDoDamage());
-                timeImpulse = 0.1f;
-                timeEndImpulse = 0.35f;
+                if (view.currentAttackAnimation == 2)
+                {
+                    timeImpulse = 0.1f;
+                    timeEndImpulse = 0.35f;
+                }
                 StartCoroutine(ImpulseAttackAnimation());
                 CombatState();
                 //if(d != Vector3.zero)
@@ -996,6 +1014,7 @@ public class Model : MonoBehaviour
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
                 {
+ 
                     view.EndDodge();
                     countAnimAttack++;
                     view.AwakeTrail();
