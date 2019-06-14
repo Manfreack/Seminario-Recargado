@@ -119,12 +119,12 @@ public class Viewer : MonoBehaviour
         var clips = anim.runtimeAnimatorController.animationClips.ToList();
 
         // Iterate over the clips and gather their information
-        /*int aux = 0;
+        int aux = 0;
         foreach (var animClip in clips)
         {
             Debug.Log(animClip.name + ": " + aux++);
         }
-        */
+        
         AnimDictionary.Add(AnimPlayerNames.Dead, clips[0].name);
         AnimDictionary.Add(AnimPlayerNames.Attack1_Pre, clips[1].name);
         AnimDictionary.Add(AnimPlayerNames.Attack1_Damage, clips[2].name);
@@ -175,6 +175,8 @@ public class Viewer : MonoBehaviour
     public void Update()
     {
         animClipName = model.animClipName;
+
+        if (animClipName == AnimDictionary[AnimPlayerNames.IdleCombat] || animClipName == AnimDictionary[AnimPlayerNames.BackAttack2]) currentAttackAnimation = 0;
 
         if (animClipName == "TakeSword.V3")
         {

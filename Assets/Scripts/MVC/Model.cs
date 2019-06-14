@@ -169,10 +169,6 @@ public class Model : MonoBehaviour
     public string animClipName;
     public string animClipName2;
 
-    bool preAttack1;
-    bool preAttack2;
-    bool preAttack3;
-    bool preAttack4;
     public bool defenceBroken;
     public float maxTimeToRecoverDefence;
     public float timeToRecoverDefence;
@@ -193,7 +189,7 @@ public class Model : MonoBehaviour
     {
         float counterTimer = 0;
 
-        onCounterAttack = true;
+        //onCounterAttack = true;
 
         while (counterTimer < 1.5f)
         {
@@ -201,7 +197,7 @@ public class Model : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        onCounterAttack = false;
+       // onCounterAttack = false;
     }
 
     public IEnumerator DefenceBroken()
@@ -634,9 +630,12 @@ public class Model : MonoBehaviour
 
             if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
             {
-                transform.forward = dirToDahs;
-
-                transform.position += dirToDahs * 5 * Time.deltaTime;
+                Quaternion targetRotation;
+                var dir = mainCamera.transform.forward;
+                dir.y = 0;
+                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                transform.position += transform.forward * 5 * Time.deltaTime;
             }
 
             else
@@ -696,6 +695,7 @@ public class Model : MonoBehaviour
     {
         if (!cdPower2 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0 && isInCombat && !onDefence && !view.anim.GetBool("Parry"))
         {
+            EndCombo();
             onRoll = false;
             view.BackRollAnim();
             view.RollAttackAnimFalse();
@@ -897,7 +897,6 @@ public class Model : MonoBehaviour
             view.AwakeTrail();
             Attack();
             if (!makingDamage) StartCoroutine(TimeToDoDamage());
-            preAttack1 = true;
             //if (d != Vector3.zero)
             StartCoroutine(AttackRotation());
             CombatState();
@@ -913,7 +912,6 @@ public class Model : MonoBehaviour
             view.AwakeTrail();
             Attack();
             if (!makingDamage) StartCoroutine(TimeToDoDamage());
-            preAttack1 = true;
             // if (d != Vector3.zero && view.anim.GetBool("DodgeLeft") && view.anim.GetBool("DodgeRight") && view.anim.GetBool("DodgeBack")) 
             StartCoroutine(AttackRotation());
             attackDamage = attack1Damage;
@@ -930,9 +928,7 @@ public class Model : MonoBehaviour
             StartCoroutine(ImpulseAttackAnimation());
             view.anim.SetBool("Roll", false);
             view.anim.SetBool("CanRollAttack", false);
-            var dir = mainCamera.transform.forward;
-            dir.y = 0;
-            transform.forward = dir;
+
         }
 
         if (!isDead && !onDefence && !view.anim.GetBool("SaveSword2") && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll]
@@ -971,7 +967,6 @@ public class Model : MonoBehaviour
                 timeImpulse = 0.15f;
                 timeEndImpulse = 0.25f;
                 StartCoroutine(ImpulseAttackAnimation());
-                preAttack3 = true;
                 CombatState();
                 // if (d != Vector3.zero)
                 StartCoroutine(AttackRotation());
@@ -989,7 +984,6 @@ public class Model : MonoBehaviour
                 timeImpulse = 0.1f;
                 timeEndImpulse = 0.35f;
                 StartCoroutine(ImpulseAttackAnimation());
-                preAttack2 = true;
                 CombatState();
                 //if(d != Vector3.zero)
                 StartCoroutine(AttackRotation());
@@ -1007,7 +1001,6 @@ public class Model : MonoBehaviour
                     view.AwakeTrail();
                     Attack();                   
                     if(!makingDamage)StartCoroutine(TimeToDoDamage());
-                    preAttack1 = true;
                     // if (d != Vector3.zero && view.anim.GetBool("DodgeLeft") && view.anim.GetBool("DodgeRight") && view.anim.GetBool("DodgeBack")) 
                     StartCoroutine(AttackRotation());
                     attackDamage = attack1Damage;
@@ -1194,10 +1187,6 @@ public class Model : MonoBehaviour
         view.currentAttackAnimation = 0;
         view.anim.SetInteger("AttackAnim", 0);
         view.SleepTrail();
-        preAttack1 = false;
-        preAttack2 = false;
-        preAttack3 = false;
-        preAttack4 = false;
     }
 
     public void SaveSword()
@@ -1229,11 +1218,11 @@ public class Model : MonoBehaviour
                 CounterAttackEvent();
                 StartCoroutine(CounterAttackState());
                 if (!makingDamage) StartCoroutine(TimeToDoDamage());
-                preAttack1 = true;
                 StartCoroutine(AttackRotation());
                 attackDamage = 5;
                 CombatState();
                 view.ShakeCameraDamage(0.5f, 0.5f, 0.5f);
+                view.anim.speed = 1;
             }
 
             if(perfectParryTimer > 0.3f)

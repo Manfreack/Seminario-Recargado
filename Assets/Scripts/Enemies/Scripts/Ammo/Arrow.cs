@@ -21,8 +21,8 @@ public class Arrow : Munition {
         yield return new WaitForSeconds(3);
         hit = false;
         GetComponent<BoxCollider>().isTrigger = false;
-        ammoAmount.ReturnBulletToPool(this);
         fireBallParticles.SetActive(true);
+        ammoAmount.ReturnBulletToPool(this);      
         Destroy(explotion);
 
     }

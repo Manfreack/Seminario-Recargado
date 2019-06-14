@@ -26,7 +26,6 @@ public class ActivateEnemiesArea : MonoBehaviour
             foreach (var item in enemies)
             {
                 item.SetActive(true);
-
             }
         }
     }
@@ -41,7 +40,6 @@ public class ActivateEnemiesArea : MonoBehaviour
             foreach (var item in enemies)
             {
                 item.SetActive(false);
-
             }
         }
     }

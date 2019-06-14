@@ -482,6 +482,7 @@ public class ModelE_Sniper : EnemyEntity
         newArrow.transform.position = attackPivot.position;
         var dir = (target.transform.position - newArrow.transform.position).normalized;
         dir.y = 0;
+        newArrow.fireBallParticles.SetActive(true);
         newArrow.gameObject.SetActive(true);
         newArrow.transform.forward = dir;
     }

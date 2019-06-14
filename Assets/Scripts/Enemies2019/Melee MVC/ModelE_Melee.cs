@@ -703,6 +703,7 @@ public class ModelE_Melee : EnemyEntity
 
         attack.OnFixedUpdate += () =>
         {
+            _view._anim.SetBool("WalkBack", false);
 
             AttackRunEvent();
 
@@ -829,7 +830,10 @@ public class ModelE_Melee : EnemyEntity
             onDefence = false;
             _view._anim.SetBool("RunAttack", false);
             _view._anim.SetBool("WalkCombat", false);
-            _view.CombatIdleAnim();
+            _view._anim.SetBool("WalkCombat", false);
+            _view._anim.SetBool("WalkL", false);
+            _view._anim.SetBool("WalkR", false);
+            _view._anim.SetBool("Idle", false);
             if (distanceToBack == 1) timeToRetreat = 1.5f;
             if (distanceToBack == 2) timeToRetreat = 3.5f;
         };
@@ -1182,6 +1186,28 @@ public class ModelE_Melee : EnemyEntity
             _view.EndChainAttack();
             _view.HeavyAttackFalse();
             onDefence = false;
+        }
+
+        if (onDefence && angle > 90)
+        {
+            timeStuned = 0;
+            _view.DefenceAnimFalse();
+            _view.HitDefenceAnimFalse();
+            actualHits--;
+            timeOnDamage = 0.5f;
+            if (!onDamage) StartCoroutine(OnDamageCorrutine());
+            TakeDamageEvent();
+            life -= damage;
+            _view.LifeBar(life / maxLife);
+            _view.CreatePopText(damage);
+            _view.StartCoroutine(_view.SlowAnimSpeed());
+
+            if (!firstHit)
+            {
+                firstHit = true;
+                SendInputToFSM(EnemyInputs.PERSUIT);
+                CombatIdleEvent();
+            }
         }
 
         if (life <= 0 && !isDead)
