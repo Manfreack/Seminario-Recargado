@@ -7,7 +7,6 @@ public class ButtonManager : MonoBehaviour
 {
     public CamController cam;
     public GameObject pauseMenu;
-    public MenuCamera menuCamera;
 
     public void Awake()
     {
@@ -27,19 +26,13 @@ public class ButtonManager : MonoBehaviour
     public void LoadLevel1()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene(1);
-    }
-
-    public void StartGame()
-    {
-        if (menuCamera)
-            StartCoroutine(menuCamera.StartGame());
+        LoadingScreen.instance.LoadLevel(1);
     }
 
     public void MainMenu()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene(0);
+        LoadingScreen.instance.LoadLevel(0);
     }
 
     public void Resume()
@@ -52,7 +45,7 @@ public class ButtonManager : MonoBehaviour
     public void Restart()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        LoadingScreen.instance.LoadLevel(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void Quit()

@@ -67,7 +67,6 @@ public class MenuCamera : MonoBehaviour
         StartCoroutine(RotateCamera());
     }
 
-
     IEnumerator TitleEffect()
     {
         Material titleMat = title.GetComponent<Renderer>().material;

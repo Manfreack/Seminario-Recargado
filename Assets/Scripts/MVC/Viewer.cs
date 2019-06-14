@@ -35,6 +35,7 @@ public class Viewer : MonoBehaviour
     public GameObject trail;
 
     public Image lifeBar;
+    public Image tempLifeBar;
     public Image staminaBar;
     public Image manaBar;
     public Image armor;
@@ -408,7 +409,7 @@ public class Viewer : MonoBehaviour
 
     public void UpdateLifeBar(float val)
     {
-        StartCoroutine(BarSmooth(val, lifeBar));
+        StartCoroutine(UpdateHealth(val));
     }
 
     public void UpdateStaminaBar(float val)
@@ -436,6 +437,18 @@ public class Viewer : MonoBehaviour
     public void CounterAttackFalse()
     {
         anim.SetBool("CounterAttack", false);
+    }
+
+    public IEnumerator UpdateHealth(float target)
+    {
+        lifeBar.fillAmount = target;
+        yield return new WaitForSeconds(0.2f);
+        while (tempLifeBar.fillAmount >= target)
+        {
+            tempLifeBar.fillAmount -= Time.deltaTime / 10;
+            yield return new WaitForEndOfFrame();
+        }
+        tempLifeBar.fillAmount = target;
     }
 
     public IEnumerator BarSmooth(float target, Image barToAffect)
