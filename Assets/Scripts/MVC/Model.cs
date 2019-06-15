@@ -158,7 +158,6 @@ public class Model : MonoBehaviour
     public Transform closestEnemy;
     public LayerMask enemyLM;
     bool checking;
-    bool delayForDash;
     bool timeToRotate;
     Vector3 dirToDahs;
     public float impulseForce;
@@ -170,6 +169,7 @@ public class Model : MonoBehaviour
     public string animClipName2;
 
     public bool defenceBroken;
+    public bool onDash;
     float canRollAttackTimer;
     public float maxTimeToRecoverDefence;
     public float timeToRecoverDefence;
@@ -570,20 +570,26 @@ public class Model : MonoBehaviour
             {
                 if (directions == DogeDirecctions.Left)
                 {
+                    onDash = true;
                     DogeLeftEvent();
                     timeToRoll = 0.2f;
+                    
                 }
 
                 if (directions == DogeDirecctions.Right)
                 {
+                    onDash = true;
                     DogeRightEvent();
                     timeToRoll = 0.2f;
+                   
                 }
 
                 if (directions == DogeDirecctions.Back)
                 {
+                    onDash = true;
                     DogeBackEvent();
                     timeToRoll = 0.2f;
+                    
                 }
             }
 
@@ -625,6 +631,7 @@ public class Model : MonoBehaviour
             onRoll = false;
             isInCombat = false;
             saveSword = false;
+            onDash = false;
         }
     }
 
@@ -642,7 +649,12 @@ public class Model : MonoBehaviour
 
             timeToRoll -= Time.deltaTime;
 
-            if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
+            if(animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
+            {
+                transform.position += transform.forward * 5 * Time.deltaTime;
+            }
+
+            if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
             {
                 Quaternion targetRotation;
                 var dir = mainCamera.transform.forward;
@@ -652,7 +664,7 @@ public class Model : MonoBehaviour
                 transform.position += transform.forward * 5 * Time.deltaTime;
             }
 
-            else
+            if (animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
             {
                 transform.position += dirToDahs * 7.5f * Time.deltaTime;
 
@@ -665,8 +677,11 @@ public class Model : MonoBehaviour
 
             view.anim.SetFloat("RollTime", timeToRoll);
 
+          
+
             if (timeToRoll <= 0)
             {
+                onDash = false;
                 view.anim.SetBool("Roll", false);
                 view.EndDodge();
                 onRoll = false;            
@@ -1073,7 +1088,7 @@ public class Model : MonoBehaviour
         {
             foreach (var item in enemies)
             {
-                view.StartCoroutine(view.SlowAnimSpeed());
+               // view.StartCoroutine(view.SlowAnimSpeed());
                 item.GetDamage(attackDamage, "Normal");
                 if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
                 makingDamage = false;

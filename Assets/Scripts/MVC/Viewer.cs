@@ -103,7 +103,7 @@ public class Viewer : MonoBehaviour
         }
     }
 
-    public IEnumerator SlowAnimSpeed()
+   /* public IEnumerator SlowAnimSpeed()
     {
         if (!slowSpeed)
         {
@@ -114,7 +114,7 @@ public class Viewer : MonoBehaviour
             slowSpeed = false;
         }
     }
-
+    */
     public void Start()
     {
         var clips = anim.runtimeAnimatorController.animationClips.ToList();
@@ -178,6 +178,8 @@ public class Viewer : MonoBehaviour
         animClipName = model.animClipName;
 
         currentAttackAnimation = model.countAnimAttack;
+
+        anim.SetBool("OnDash", model.onDash);
 
         if (animClipName == AnimDictionary[AnimPlayerNames.IdleCombat] || animClipName == AnimDictionary[AnimPlayerNames.BackAttack2]) currentAttackAnimation = 0;
 

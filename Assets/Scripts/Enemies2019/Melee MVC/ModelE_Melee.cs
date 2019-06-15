@@ -1145,7 +1145,7 @@ public class ModelE_Melee : EnemyEntity
             life -= damage;
             _view.LifeBar(life / maxLife);
             _view.CreatePopText(damage);
-            _view.StartCoroutine(_view.SlowAnimSpeed());
+           // _view.StartCoroutine(_view.SlowAnimSpeed());
 
             if (!firstHit)
             {
@@ -1164,7 +1164,7 @@ public class ModelE_Melee : EnemyEntity
             life -= damage;
             _view.LifeBar(life / maxLife);
             _view.CreatePopText(damage);
-            _view.StartCoroutine(_view.SlowAnimSpeed());
+            //_view.StartCoroutine(_view.SlowAnimSpeed());
         }
 
         if (!onDefence && typeOfDamage == "Knock")
@@ -1200,7 +1200,7 @@ public class ModelE_Melee : EnemyEntity
             life -= damage;
             _view.LifeBar(life / maxLife);
             _view.CreatePopText(damage);
-            _view.StartCoroutine(_view.SlowAnimSpeed());
+          //  _view.StartCoroutine(_view.SlowAnimSpeed());
 
             if (!firstHit)
             {

@@ -109,7 +109,7 @@ public class ViewerE_Melee : MonoBehaviour
         }
     }
 
-    public IEnumerator SlowAnimSpeed()
+   /* public IEnumerator SlowAnimSpeed()
     {
         if (!slowSpeed)
         {
@@ -120,7 +120,7 @@ public class ViewerE_Melee : MonoBehaviour
             slowSpeed = false;
         }
     }
-
+    */
     IEnumerator StopHitParticles()
     {
         yield return new WaitForSeconds(1);
@@ -179,7 +179,11 @@ public class ViewerE_Melee : MonoBehaviour
 
     void Update()
     {
+        animClipName = _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+
         DamageShader();
+
+        if(animClipName != animDictionary[EnemyMeleeAnim.HeavyAttack]) heavyMat.SetFloat("_Opacity", 0);
 
         if (auxTakeDamage)
         {
@@ -193,9 +197,7 @@ public class ViewerE_Melee : MonoBehaviour
 
         if(_model.isDead) foreach (var item in myMats) item.SetFloat("_Intensity", 0);
 
-        if (!_anim.GetBool("HeavyAttack")) HeavyAttackShaderFalse();
-
-        animClipName = _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+        if (!_anim.GetBool("HeavyAttack")) HeavyAttackShaderFalse();    
 
         if (!_model.isKnock) _anim.SetBool("Knocked", false);
 
