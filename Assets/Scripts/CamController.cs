@@ -36,13 +36,17 @@ public class CamController : MonoBehaviour {
     CinemachineComposer middleRig;
     CinemachineComposer topRig;
     CinemachineComposer bottonRig;
+    CinemachineTransposer middleRigBody;
+    CinemachineTransposer topRigBody;
+    CinemachineTransposer bottonRigBody;
+
 
     public IEnumerator AttackTiltCamera()
     {
         onAttack = true;
         yield return new WaitForSeconds(0.2f);
         onAttack = false;
-        
+
     }
 
     void Start()
@@ -54,14 +58,18 @@ public class CamController : MonoBehaviour {
         middleRig = cinemaCam.GetRig(1).GetCinemachineComponent<CinemachineComposer>();
         topRig = cinemaCam.GetRig(0).GetCinemachineComponent<CinemachineComposer>();
         bottonRig = cinemaCam.GetRig(2).GetCinemachineComponent<CinemachineComposer>();
+
+        topRigBody = cinemaCam.GetRig(0).GetCinemachineComponent<CinemachineTransposer>();
+        middleRigBody = cinemaCam.GetRig(1).GetCinemachineComponent<CinemachineTransposer>();
+        bottonRigBody = cinemaCam.GetRig(2).GetCinemachineComponent<CinemachineTransposer>();
     }
 
     void Update()
     {
-        if(model.animClipName == "P_WARRIOR_WALK" || model.animClipName == "P_WARRIOR_RUN")
+        if (model.animClipName == "P_WARRIOR_WALK" || model.animClipName == "P_WARRIOR_RUN")
         {
-           
-            if(!onMovement)
+
+            if (!onMovement)
             {
                 if (model.animClipName == "P_WARRIOR_WALK") smoothMovement = smoothWalk;
                 if (model.animClipName == "P_WARRIOR_RUN") smoothMovement = smoothRun;
@@ -141,7 +149,7 @@ public class CamController : MonoBehaviour {
                 bottonRig.m_TrackedObjectOffset.y = 1.28f;
             }
         }
-        
+
 
         if (blockMouse)
         {
@@ -154,7 +162,7 @@ public class CamController : MonoBehaviour {
             Cursor.lockState = CursorLockMode.None;
         }
 
-        if(model.isInCombat)
+        if (model.isInCombat)
         {
             if (actualCamDistance < distanceCombat)
             {
@@ -184,10 +192,10 @@ public class CamController : MonoBehaviour {
 
         else
         {
-            if(actualCamDistance > distanceIdle )
-            { 
-          
-            actualCamDistance -= Time.deltaTime * smoothDistance;
+            if (actualCamDistance > distanceIdle)
+            {
+
+                actualCamDistance -= Time.deltaTime * smoothDistance;
 
                 cinemaCam.m_Orbits = new CinemachineFreeLook.Orbit[3]
                 {
@@ -225,7 +233,7 @@ public class CamController : MonoBehaviour {
         }
 
 
-       
+
     }
 
     public void AttackCameraEffect()
@@ -240,5 +248,66 @@ public class CamController : MonoBehaviour {
 
         ShakeElapsedTime = timeShake;
     }
-  
+
+    public void ChangeTarget(EnemyEntity e)
+    {
+        cinemaCam.LookAt = e.transform;
+
+        cinemaCam.m_BindingMode = CinemachineTransposer.BindingMode.LockToTarget;
+
+        cinemaCam.m_XAxis.m_MaxSpeed = 0;
+        cinemaCam.m_XAxis.Value = -180;
+
+        middleRigBody.m_XDamping = 0;
+        middleRigBody.m_YDamping = 0;
+        middleRigBody.m_ZDamping = 0;
+        middleRig.m_HorizontalDamping = 0;
+        middleRig.m_VerticalDamping = 0;
+        middleRig.m_ScreenX = 0.5f;
+
+        topRigBody.m_XDamping = 0;
+        topRigBody.m_YDamping = 0;
+        topRigBody.m_ZDamping = 0;
+        topRig.m_HorizontalDamping = 0;
+        topRig.m_VerticalDamping = 0;
+        topRig.m_ScreenX = 0.5f;
+
+        bottonRigBody.m_XDamping = 0;
+        bottonRigBody.m_YDamping = 0;
+        bottonRigBody.m_ZDamping = 0;
+        bottonRig.m_HorizontalDamping = 0;
+        bottonRig.m_VerticalDamping = 0;
+        bottonRig.m_ScreenX = 0.5f;
+    }
+
+    public void StopLockedTarget()
+    {
+        cinemaCam.LookAt = model.transform;
+
+        cinemaCam.m_BindingMode = CinemachineTransposer.BindingMode.WorldSpace;
+
+        cinemaCam.m_XAxis.m_MaxSpeed = 300;
+        cinemaCam.m_XAxis.Value = 90;
+
+        middleRigBody.m_XDamping = 1;
+        middleRigBody.m_YDamping = 1;
+        middleRigBody.m_ZDamping = 1;
+        middleRig.m_HorizontalDamping = 1;
+        middleRig.m_VerticalDamping = 1;
+        middleRig.m_ScreenX = 0.315f;
+
+        topRigBody.m_XDamping = 1;
+        topRigBody.m_YDamping = 1;
+        topRigBody.m_ZDamping = 1;
+        topRig.m_HorizontalDamping = 1;
+        topRig.m_VerticalDamping = 1;
+        topRig.m_ScreenX = 0.315f;
+
+        bottonRigBody.m_XDamping = 1;
+        bottonRigBody.m_YDamping = 1;
+        bottonRigBody.m_ZDamping = 1;
+        bottonRig.m_HorizontalDamping = 1;
+        bottonRig.m_VerticalDamping = 1;
+        bottonRig.m_ScreenX = 0.315f;
+    }
 }

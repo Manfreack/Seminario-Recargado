@@ -9,6 +9,11 @@ public class Model : MonoBehaviour
 
     public Viewer view;
     EnemyCombatManager ECM;
+    public List<EnemyEntity> enemiesToLock = new List<EnemyEntity>();
+    public EnemyEntity targetLocked;
+    public bool targetLockedOn;
+    public int lockIndex;
+    public LayerMask layerEnemies;
 
     public float distanceAggressiveNodes;
     public float distanceNon_AggressiveNodes;
@@ -271,14 +276,17 @@ public class Model : MonoBehaviour
 
     public IEnumerator OnDefenceCorrutine()
     {
-        while (onDefence)
+        if (!targetLockedOn)
         {
-            var defenceDir = mainCamera.transform.forward;
-            defenceDir.y = 0;
-            Quaternion targetRotation;
-            targetRotation = Quaternion.LookRotation(defenceDir, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-            yield return new WaitForEndOfFrame();
+            while (onDefence)
+            {
+                var defenceDir = mainCamera.transform.forward;
+                defenceDir.y = 0;
+                Quaternion targetRotation;
+                targetRotation = Quaternion.LookRotation(defenceDir, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                yield return new WaitForEndOfFrame();
+            }
         }
     }
 
@@ -419,17 +427,20 @@ public class Model : MonoBehaviour
     {
         timeToRotateAttack = 0.3f;
 
-        while (timeToRotateAttack > 0)
+        if (!targetLockedOn)
         {
-            timeToRotateAttack -= Time.deltaTime;
-            dirToRotateAttack.y = 0;
-            Quaternion targetRotation;
-            if (dirToRotateAttack != Vector3.zero)
+            while (timeToRotateAttack > 0)
             {
-                targetRotation = Quaternion.LookRotation(dirToRotateAttack, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                timeToRotateAttack -= Time.deltaTime;
+                dirToRotateAttack.y = 0;
+                Quaternion targetRotation;
+                if (dirToRotateAttack != Vector3.zero)
+                {
+                    targetRotation = Quaternion.LookRotation(dirToRotateAttack, Vector3.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                }
+                yield return new WaitForEndOfFrame();
             }
-            yield return new WaitForEndOfFrame();
         }
     }
 
@@ -608,7 +619,25 @@ public class Model : MonoBehaviour
     } 
 
     public void CombatParameters()
-    {       
+    {
+        if (targetLocked)
+        {
+            if (targetLockedOn)
+            {
+                var dir = (targetLocked.transform.position - transform.position).normalized;
+                dir.y = 0;
+                Quaternion targetRotation;
+                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+            }
+
+            if (targetLocked.isDead && targetLocked)
+            {
+                mainCamera.GetComponent<CamController>().StopLockedTarget();
+                targetLocked = null;
+                targetLockedOn = false;
+            }
+        }
 
         timeOnCombat -= Time.deltaTime;
         if (timeOnCombat > 0)
@@ -656,12 +685,17 @@ public class Model : MonoBehaviour
 
             if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
             {
-                Quaternion targetRotation;
-                var dir = mainCamera.transform.forward;
-                dir.y = 0;
-                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-                transform.position += transform.forward * 5 * Time.deltaTime;
+                if (!targetLockedOn)
+                {
+                    Quaternion targetRotation;
+                    var dir = mainCamera.transform.forward;
+                    dir.y = 0;
+                    targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                    transform.position += transform.forward * 5 * Time.deltaTime;
+                }
+
+                else transform.position += transform.forward * 5 * Time.deltaTime;
             }
 
             if (animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
@@ -821,11 +855,17 @@ public class Model : MonoBehaviour
             view.UpdateStaminaBar(stamina / maxStamina);
         }
 
-        acceleration +=  Time.deltaTime;
+        acceleration += 3 * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
+        if (!onDamage && countAnimAttack == 0 && targetLockedOn && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
+            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat]
+            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Run]))
+        {
+            rb.MovePosition(rb.position + dir * acceleration * speed * Time.deltaTime);
+        }
 
-        if (!onDamage && countAnimAttack == 0  && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
+        if (!onDamage && countAnimAttack == 0 && !targetLockedOn && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat]
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Run]))
         {
@@ -868,56 +908,65 @@ public class Model : MonoBehaviour
         }
     }
    
-    public void Idle()
+    public void LockEnemies()
     {
-        isIdle = true;
+        enemiesToLock.Clear();
+        enemiesToLock.AddRange(FindObjectsOfType<EnemyEntity>().Where(x=> !x.isDead).Where(x =>
+        {
+            RaycastHit hit;
+
+            var _dirToTarget = (x.transform.position - transform.position).normalized;
+
+            var _distanceToTarget = Vector3.Distance(x.transform.position, transform.position);
+
+            if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), _dirToTarget, out hit, _distanceToTarget, layerEnemies))
+            {
+                if (hit.transform.name == x.transform.name) return true;
+                else return false;
+            }
+
+            else return false;
+
+        }).OrderBy(x =>
+        {
+            var d = Vector3.Distance(x.transform.position, transform.position);
+            return d;
+        }));
+
+        if (enemiesToLock.Any())
+        {
+            if (!targetLockedOn)
+            {
+                targetLocked = enemiesToLock.First();
+                mainCamera.GetComponent<CamController>().ChangeTarget(targetLocked);
+                targetLockedOn = true;
+                lockIndex = 0;
+            }
+
+            else
+            {
+                mainCamera.GetComponent<CamController>().StopLockedTarget();
+                targetLocked = null;
+                targetLockedOn = false;
+            }
+        }
     }
 
-    public void NoIdle()
+    public void ChangeTarget()
     {
-        isIdle = false;
+        if(targetLockedOn && enemiesToLock.Count>1)
+        {
+            lockIndex++;
+            if (lockIndex > enemiesToLock.Count-1) lockIndex=0;
+            targetLocked = enemiesToLock[lockIndex];
+            mainCamera.GetComponent<CamController>().ChangeTarget(targetLocked);
+        }
     }
-
 
 
     public void NormalAttack(Vector3 d)
     {
         dirToRotateAttack = mainCamera.transform.forward;
-
-        if (d == Vector3.zero && view.anim.GetBool("DodgeLeft") && view.anim.GetBool("DodgeRight") && view.anim.GetBool("DodgeBack"))
-        {
-            Debug.Log(1);
-            var enemies = Physics.OverlapSphere(transform.position, 4).Where(x => x.GetComponent<EnemyEntity>()).Select(x => x.GetComponent<EnemyEntity>()).Where(x=> !x.isDead).Distinct()
-            .Where(x=> 
-            {
-
-                Vector3 forward = transform.TransformDirection(Vector3.forward);
-                Vector3 toOther = x.transform.position - transform.position;
-
-                if (Vector3.Dot(forward, toOther) < 0)
-                {
-                    return false;
-                }
-
-                else return true;
-                
-            })
-            .OrderBy(x =>
-            { 
-                var distance = Vector3.Distance(x.transform.position, transform.position);
-                return distance;
-
-            }).FirstOrDefault();
-
-            if (enemies)
-            {
-                var dir = (enemies.transform.position - transform.position).normalized;
-                dir.y = 0;
-                Quaternion targetRotation;
-                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 15 * Time.deltaTime);
-            }
-        }
 
         if (isInCombat && !view.anim.GetBool("TakeSword2") && animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Blocked])
         {        

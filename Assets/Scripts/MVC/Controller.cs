@@ -62,6 +62,16 @@ public class Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            model.LockEnemies();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            model.ChangeTarget();
+        }
+
         if (!model.isPlatformJumping && !view.startFade.enabled && !view.pauseMenu.activeSelf)
         {         
 
@@ -349,7 +359,8 @@ public class Controller : MonoBehaviour
                 model.speed = _SpeedWalkFight;
                 model.runSpeed = _SpeedRunFight;
                 firstPushW = true;
-                model.CombatMovement(model.mainCamera.forward, true, false);
+                if(!model.targetLockedOn) model.CombatMovement(model.mainCamera.forward, true, false);
+                else model.CombatMovement(model.transform.forward, true, false);
             }
 
             if (pushS && !pushA && !firstPushW && !pushD && !model.isDead && model.countAnimAttack <= 0)
@@ -357,7 +368,9 @@ public class Controller : MonoBehaviour
                 firstPushS = true;
                 model.speed = _SpeedWalkFight;
                 model.runSpeed = _SpeedRunFight;
-                model.CombatMovement(-model.mainCamera.forward, false, true);
+                if (!model.targetLockedOn) model.CombatMovement(-model.mainCamera.forward, false, true);
+                else model.CombatMovement(-model.transform.forward, false, true);
+                
             }
 
             if (pushA && !firstPushD && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
@@ -365,7 +378,8 @@ public class Controller : MonoBehaviour
                 model.speed = _SpeedWalkFight;
                 model.runSpeed = _SpeedRunFight;
                 firstPushA = true;
-                model.CombatMovement(-model.mainCamera.right, false, true);
+                if (!model.targetLockedOn) model.CombatMovement(-model.mainCamera.right, false, true);
+                else model.CombatMovement(-model.transform.right, false, true);
             }
 
             if (pushD && !firstPushA && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
@@ -373,7 +387,8 @@ public class Controller : MonoBehaviour
                 model.speed = _SpeedWalkFight;
                 model.runSpeed = _SpeedRunFight;
                 firstPushD = true;
-                model.CombatMovement(model.mainCamera.right, false, true);
+                if (!model.targetLockedOn) model.CombatMovement(model.mainCamera.right, false, true); 
+                else model.CombatMovement(model.transform.right, false, true); 
             }
 
             if (pushW && pushA && !firstPushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0 )
