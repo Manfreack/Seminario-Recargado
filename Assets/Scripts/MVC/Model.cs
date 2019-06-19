@@ -1169,6 +1169,7 @@ public class Model : MonoBehaviour
 
         if (typeOfDamage == "Knock" && enemies.Count() > 0)
         {
+            view.ShakeCameraDamage(1, 1, 0.5f);          
             enemies.FirstOrDefault().GetDamage(attackDamage, "Knock");
             enemies.FirstOrDefault().isKnock = true;
             if (enemies.FirstOrDefault().life > 0) enemies.FirstOrDefault().GetComponent<Rigidbody>().AddForce(-enemies.FirstOrDefault().transform.forward * 5, ForceMode.Impulse);
@@ -1300,6 +1301,8 @@ public class Model : MonoBehaviour
 
             if (perfectParryTimer <= 0.3f)
             {
+                mainCamera.GetComponent<CamController>().StartCoroutine(mainCamera.GetComponent<CamController>().KickCameraChange());
+                rb.AddForce(-transform.forward , ForceMode.Impulse);
                 CounterAttackEvent();
                 StartCoroutine(CounterAttackState());
                 if (!makingDamage) StartCoroutine(TimeToDoDamage());

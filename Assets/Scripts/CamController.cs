@@ -12,6 +12,7 @@ public class CamController : MonoBehaviour {
     Model model;
     public CinemachineFreeLook cinemaCam;
     public CinemachineFreeLook cinemaCam2;
+    public CinemachineFreeLook cinemaCam_KickCam;
     public float distanceIdle;
     public float distanceCombat;
     public float actualCamDistance;
@@ -45,6 +46,13 @@ public class CamController : MonoBehaviour {
         yield return new WaitForSeconds(0.2f);
         onAttack = false;
 
+    }
+
+    public IEnumerator KickCameraChange()
+    {
+        cinemaCam_KickCam.Priority = 3;
+        yield return new WaitForSeconds(1);
+        cinemaCam_KickCam.Priority = 0;
     }
 
     void Start()
