@@ -531,6 +531,7 @@ public class ModelE_Melee : EnemyEntity
             
             _view.EndChainAttack();
             _view.HeavyAttackFalse();
+            _view._anim.SetBool("RunAttack", false);
 
             DefenceEvent();
 
@@ -1389,4 +1390,5 @@ public class ModelE_Melee : EnemyEntity
     {
         if (c.GetComponent<CombatNode>() && isWaitArea) c.GetComponent<CombatNode>().myOwner = null;
     }
+
 }

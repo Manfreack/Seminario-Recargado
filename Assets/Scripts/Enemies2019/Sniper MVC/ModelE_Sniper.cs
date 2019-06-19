@@ -740,4 +740,5 @@ public class ModelE_Sniper : EnemyEntity
 
         return node;
     }
+
 }

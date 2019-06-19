@@ -42,8 +42,7 @@ public class A_WarriorWait : i_EnemyActions
         }
 
        
-
-        if(_e.changeRotateWarrior && !_e.onDamage)
+        if(_e.changeRotateWarrior && !_e.onDamage && (_e.animClipName == _e._view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.WalkStreaf] || _e.animClipName == _e._view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleCombat] || _e.animClipName == _e._view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Patrol]) )
         {
             float distance = Vector3.Distance(_e.transform.position, _e.target.transform.position);
          

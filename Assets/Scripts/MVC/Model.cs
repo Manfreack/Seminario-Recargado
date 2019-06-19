@@ -636,6 +636,7 @@ public class Model : MonoBehaviour
                 mainCamera.GetComponent<CamController>().StopLockedTarget();
                 targetLocked = null;
                 targetLockedOn = false;
+
             }
         }
 
@@ -966,6 +967,7 @@ public class Model : MonoBehaviour
 
     public void NormalAttack(Vector3 d)
     {
+      
         dirToRotateAttack = mainCamera.transform.forward;
 
         if (isInCombat && !view.anim.GetBool("TakeSword2") && animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Blocked])
@@ -997,7 +999,7 @@ public class Model : MonoBehaviour
 
         //if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
         if (canRollAttackTimer>0)
-        {          
+        {
             attackDamage = attackRollDamage;
             RollAttackEvent();
             view.AwakeTrail();
@@ -1137,7 +1139,6 @@ public class Model : MonoBehaviour
         {
             foreach (var item in enemies)
             {
-               // view.StartCoroutine(view.SlowAnimSpeed());
                 item.GetDamage(attackDamage, "Normal");
                 if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
                 makingDamage = false;
@@ -1217,7 +1218,8 @@ public class Model : MonoBehaviour
         if (stamina >= 0 && !stuned && !onRoll && !defenceBroken && !onDamage  && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] &&  animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Back]
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right])
         {
-            DefenceEvent();
+            if (!view.anim.GetBool("CounterAttack")) DefenceEvent();
+            else CounterAttackEvent();
             perfectParryTimer += Time.deltaTime;
             InAction = true;
             InActionAttack = true;

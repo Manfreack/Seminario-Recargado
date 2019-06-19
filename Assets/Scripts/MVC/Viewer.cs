@@ -257,7 +257,6 @@ public class Viewer : MonoBehaviour
     public void RollAttackAnim()
     {
         anim.SetBool("RollAttack", true);
-        anim.SetBool("CanRollAttack", false);
     }
 
     public void RollAttackAnimFalse()

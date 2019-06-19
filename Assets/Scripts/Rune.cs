@@ -27,7 +27,7 @@ public class Rune : MonoBehaviour
         {
             if (player != null)
             {
-                if (player.life != player.maxLife)
+                if (player.life != player.maxLife || player.stamina != player.maxStamina)
                 {
                     if (player.isInCombat)
                     {

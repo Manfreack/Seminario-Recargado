@@ -7,6 +7,7 @@ public class ViewerE_Melee : MonoBehaviour
 {
     public Animator _anim;
     ModelE_Melee _model;
+    Model _player;
     public List<SkinnedMeshRenderer> myMeshes = new List<SkinnedMeshRenderer>();
     public List<Material> myMats = new List<Material>();
     bool damaged;
@@ -35,7 +36,7 @@ public class ViewerE_Melee : MonoBehaviour
     bool slowSpeed;
     public ParticleSystem lightHit;
     public ParticleSystem heavyHit;
-
+    public ParticleSystem lockParticle;
 
     public enum EnemyMeleeAnim {TakeDamage, Dead, Attack1, Attack2, Attack3, HeavyAttack, WalkStreaf, Persuit, IdleCombat, Patrol, Retreat, Stuned, Knocked, AttackBlocked, Blocked, CounterAttack, IdleDefence, Idle };
 
@@ -129,7 +130,8 @@ public class ViewerE_Melee : MonoBehaviour
     }
 
     void Awake()
-    {   
+    {
+        _player = FindObjectOfType<Model>();
         heavyMat = sword.GetComponent<SkinnedMeshRenderer>().materials[1];
         _anim = GetComponent<Animator>();
         _model = GetComponent<ModelE_Melee>();
@@ -179,6 +181,14 @@ public class ViewerE_Melee : MonoBehaviour
 
     void Update()
     {
+        if (_player.targetLocked)
+        {
+            if (_player.targetLocked.name == transform.name) lockParticle.gameObject.SetActive(true);
+            else lockParticle.gameObject.SetActive(false); 
+        }
+
+        else lockParticle.gameObject.SetActive(false);
+
         animClipName = _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
 
         DamageShader();

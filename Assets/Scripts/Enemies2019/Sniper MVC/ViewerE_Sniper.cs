@@ -7,6 +7,7 @@ public class ViewerE_Sniper : MonoBehaviour
 {
     public Animator anim;
     ModelE_Sniper _model;
+    Model _player;
     Rigidbody _rb;
     public List<SkinnedMeshRenderer> myMeshes = new List<SkinnedMeshRenderer>();
     public List<Material> myMats = new List<Material>();
@@ -32,6 +33,7 @@ public class ViewerE_Sniper : MonoBehaviour
     bool auxTakeDamage;
     float timeOnDamage;
     public ParticleSystem heavyHit;
+    public ParticleSystem lockParticle;
 
     public enum EnemyWizzardAnims {Attack, Dead, TakeDamage, Move, Idle, CombatIdle, Stuned, StunedIdle, UpFly, UpStuned };
 
@@ -117,6 +119,7 @@ public class ViewerE_Sniper : MonoBehaviour
 
     void Awake()
     {
+        _player = FindObjectOfType<Model>();
         canvas = GameObject.Find("Canvas");
         anim = GetComponent<Animator>();
         _model = GetComponent<ModelE_Sniper>();
@@ -167,6 +170,14 @@ public class ViewerE_Sniper : MonoBehaviour
 
     void Update()
     {
+        if (_player.targetLocked)
+        {
+            if (_player.targetLocked.name == transform.name) lockParticle.gameObject.SetActive(true);
+            else lockParticle.gameObject.SetActive(false);
+        }
+
+        else lockParticle.gameObject.SetActive(false);
+
         if (auxTakeDamage)
         {
             timeOnDamage -= Time.deltaTime;
@@ -229,11 +240,13 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void DeadAnim()
     {
+        transform.position += new Vector3(0, -0.2f, 0);
+        anim.applyRootMotion = false;
         anim.SetBool("Dead", true);
         var pool = Instantiate(bloodPool);
         matPool = pool.GetComponent<MeshRenderer>().material;
         pool.transform.forward = transform.forward;
-        pool.transform.position = transform.position - transform.forward/2 + new Vector3(0,0.1f,0);
+        pool.transform.position = transform.position - transform.forward/2 + new Vector3(0,0.2f,0);
         StartCoroutine(BloodPoolAnim());
         DeadBody();
     }
