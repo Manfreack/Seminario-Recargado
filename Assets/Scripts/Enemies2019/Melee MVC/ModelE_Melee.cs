@@ -40,11 +40,12 @@ public class ModelE_Melee : EnemyEntity
     public int changeRing;
     Vector3 lastPosition;
     Vector3 nearRingPosition;
+    Vector3 stunedForward;
     public string animClipName;
     public float timeReposition;
     public float timeReposition2;
 
-    public Action TakeDamageEvent;
+    public Action<int> TakeDamageEvent;
     public Action DeadEvent;
     public Action AttackEvent;
     public Action HeavyAttackEvent;
@@ -749,6 +750,8 @@ public class ModelE_Melee : EnemyEntity
 
         stuned.OnEnter += x =>
         {
+            stunedForward = transform.forward;
+
             if (navMeshAgent)
             {
                 if (navMeshAgent.enabled) navMeshAgent.enabled = false;
@@ -765,7 +768,8 @@ public class ModelE_Melee : EnemyEntity
         };
 
         stuned.OnUpdate += () =>
-        {           
+        {
+            transform.forward = stunedForward;
 
             timeStuned -= Time.deltaTime;
 
@@ -1155,7 +1159,7 @@ public class ModelE_Melee : EnemyEntity
         impulse = false;
     }
 
-    public override void GetDamage(float damage, string typeOfDamage)
+    public override void GetDamage(float damage, string typeOfDamage, int damageAnimationIndex)
     {
         Vector3 dir = transform.position - target.transform.position;
         float angle = Vector3.Angle(dir, transform.forward);
@@ -1169,11 +1173,10 @@ public class ModelE_Melee : EnemyEntity
             actualHits--;
             timeOnDamage = 0.5f;
             if (!onDamage) StartCoroutine(OnDamageCorrutine());
-            TakeDamageEvent();
+            TakeDamageEvent(damageAnimationIndex);
             life -= damage;
             _view.LifeBar(life / maxLife);
             _view.CreatePopText(damage);
-           // _view.StartCoroutine(_view.SlowAnimSpeed());
 
             if (!firstHit)
             {
@@ -1192,7 +1195,6 @@ public class ModelE_Melee : EnemyEntity
             life -= damage;
             _view.LifeBar(life / maxLife);
             _view.CreatePopText(damage);
-            //_view.StartCoroutine(_view.SlowAnimSpeed());
         }
 
         if (!onDefence && typeOfDamage == "Knock")
@@ -1224,11 +1226,10 @@ public class ModelE_Melee : EnemyEntity
             actualHits--;
             timeOnDamage = 0.5f;
             if (!onDamage) StartCoroutine(OnDamageCorrutine());
-            TakeDamageEvent();
+            TakeDamageEvent(damageAnimationIndex);
             life -= damage;
             _view.LifeBar(life / maxLife);
             _view.CreatePopText(damage);
-          //  _view.StartCoroutine(_view.SlowAnimSpeed());
 
             if (!firstHit)
             {

@@ -41,7 +41,7 @@ public abstract class EnemyEntity: MonoBehaviour
     public abstract Node GetRandomNode();
     public List<EnemyEntity> nearEntities = new List<EnemyEntity>();
     public List<Node> pathToTarget = new List<Node>();
-    public abstract void GetDamage(float damage, string typeOfDamage);
+    public abstract void GetDamage(float damage, string typeOfDamage, int damageAnimationIndex);
     public abstract void MakeDamage();
     public List<Node> myNodes = new List<Node>();
     public i_EnemyActions currentAction;

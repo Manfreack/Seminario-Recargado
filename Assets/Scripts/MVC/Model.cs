@@ -1083,8 +1083,10 @@ public class Model : MonoBehaviour
         {
             foreach (var item in enemies)
             {
-                item.GetDamage(attackDamage, "Normal");
-                if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
+                if(countAnimAttack<3) item.GetDamage(attackDamage, "Normal", 1);
+                if(countAnimAttack<4 && countAnimAttack>2) item.GetDamage(attackDamage, "Normal", 2);
+                if (countAnimAttack < 5 && countAnimAttack > 3) item.GetDamage(attackDamage, "Normal", 3);
+                item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
                 makingDamage = false;
             }
         }
@@ -1093,11 +1095,16 @@ public class Model : MonoBehaviour
         {
             if (!enemies.FirstOrDefault().isKnock)
             {
-                enemies.FirstOrDefault().GetDamage(attackDamage, "Stune");
+                enemies.FirstOrDefault().GetDamage(attackDamage, "Stune",0);
                 enemies.FirstOrDefault().isStuned = true;
             }
 
-            else enemies.FirstOrDefault().GetDamage(attackDamage, "Normal");
+            else
+            {             
+                if (countAnimAttack < 3) enemies.FirstOrDefault().GetDamage(attackDamage, "Normal",1);
+                if (countAnimAttack < 4 && countAnimAttack > 2) enemies.FirstOrDefault().GetDamage(attackDamage, "Normal", 2);
+                if (countAnimAttack < 5 && countAnimAttack > 3) enemies.FirstOrDefault().GetDamage(attackDamage, "Normal", 3);
+            }
 
             if (enemies.FirstOrDefault().life > 0) enemies.FirstOrDefault().GetComponent<Rigidbody>().AddForce(-enemies.FirstOrDefault().transform.forward * 2, ForceMode.Impulse);
 
@@ -1105,8 +1112,10 @@ public class Model : MonoBehaviour
 
             foreach (var item in restOfenemies)
             {
-                item.GetDamage(attackDamage, "Normal");
-                if (item.life > 0) item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
+                if (countAnimAttack < 3) item.GetDamage(attackDamage, "Normal", 1);
+                if (countAnimAttack < 4 && countAnimAttack > 2) item.GetDamage(attackDamage, "Normal", 2);
+                if (countAnimAttack < 5 && countAnimAttack > 3) item.GetDamage(attackDamage, "Normal", 3);
+                item.GetComponent<Rigidbody>().AddForce(-item.transform.forward * 2, ForceMode.Impulse);
                 makingDamage = false;
             }
         }
@@ -1114,9 +1123,9 @@ public class Model : MonoBehaviour
         if (typeOfDamage == "Knock" && enemies.Count() > 0)
         {
             view.ShakeCameraDamage(1, 1, 0.5f);          
-            enemies.FirstOrDefault().GetDamage(attackDamage, "Knock");
+            enemies.FirstOrDefault().GetDamage(attackDamage, "Knock",0);
             enemies.FirstOrDefault().isKnock = true;
-            if (enemies.FirstOrDefault().life > 0) enemies.FirstOrDefault().GetComponent<Rigidbody>().AddForce(-enemies.FirstOrDefault().transform.forward * 5, ForceMode.Impulse);
+            enemies.FirstOrDefault().GetComponent<Rigidbody>().AddForce(-enemies.FirstOrDefault().transform.forward * 5, ForceMode.Impulse);
         }
 
         foreach (var item in destructibleMesh)
@@ -1141,7 +1150,9 @@ public class Model : MonoBehaviour
 
         foreach (var item in col)
         {
-            item.GetDamage(damagePower2, "Normal");
+            if (countAnimAttack < 3) item.GetDamage(damagePower2, "Normal", 1);
+            if (countAnimAttack < 4 && countAnimAttack > 2) item.GetDamage(damagePower2, "Normal", 2);
+            if (countAnimAttack < 5 && countAnimAttack > 3) item.GetDamage(attackDamage, "Normal", 3);
             if (item.GetComponent<ViewerE_Melee>())
             {
                 item.GetComponent<ViewerE_Melee>().BackFromAttack();

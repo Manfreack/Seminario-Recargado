@@ -38,7 +38,7 @@ public class ViewerE_Melee : MonoBehaviour
     public ParticleSystem heavyHit;
     public ParticleSystem lockParticle;
 
-    public enum EnemyMeleeAnim {TakeDamage, Dead, Attack1, Attack2, Attack3, HeavyAttack, WalkStreaf, Persuit, IdleCombat, Patrol, Retreat, Stuned, Knocked, AttackBlocked, Blocked, CounterAttack, IdleDefence, Idle };
+    public enum EnemyMeleeAnim {TakeDamage ,TakeDamage2, TakeDamage3, Dead, Attack1, Attack2, Attack3, HeavyAttack, WalkStreaf, Persuit, IdleCombat, Patrol, Retreat, Stuned, Knocked, AttackBlocked, Blocked, CounterAttack, IdleDefence, Idle };
 
     public Dictionary<EnemyMeleeAnim, string> animDictionary = new Dictionary<EnemyMeleeAnim, string>();
 
@@ -151,32 +151,34 @@ public class ViewerE_Melee : MonoBehaviour
         var clips = _anim.runtimeAnimatorController.animationClips.ToList();
 
          //Iterate over the clips and gather their information
-        /* int aux = 0;
+         /*int aux = 0;
          foreach (var animClip in clips)
          {
              Debug.Log(animClip.name + ": " + aux++);
          }
          */
 
-        animDictionary.Add(EnemyMeleeAnim.TakeDamage, clips[0].name);
-        animDictionary.Add(EnemyMeleeAnim.Dead, clips[1].name);
-        animDictionary.Add(EnemyMeleeAnim.Attack1, clips[2].name);
-        animDictionary.Add(EnemyMeleeAnim.HeavyAttack, clips[3].name);
-        animDictionary.Add(EnemyMeleeAnim.Attack3, clips[4].name);
-        animDictionary.Add(EnemyMeleeAnim.Attack2, clips[5].name);
-        animDictionary.Add(EnemyMeleeAnim.Persuit, clips[6].name);
+        
+        animDictionary.Add(EnemyMeleeAnim.Dead, clips[0].name);
+        animDictionary.Add(EnemyMeleeAnim.Attack1, clips[1].name);
+        animDictionary.Add(EnemyMeleeAnim.HeavyAttack, clips[2].name);
+        animDictionary.Add(EnemyMeleeAnim.Attack3, clips[3].name);
+        animDictionary.Add(EnemyMeleeAnim.Attack2, clips[4].name);
+        animDictionary.Add(EnemyMeleeAnim.Persuit, clips[5].name);
         animDictionary.Add(EnemyMeleeAnim.WalkStreaf, clips[7].name);
-        animDictionary.Add(EnemyMeleeAnim.IdleCombat, clips[9].name);
-        animDictionary.Add(EnemyMeleeAnim.Patrol, clips[10].name);
-        animDictionary.Add(EnemyMeleeAnim.Retreat, clips[11].name);
-        animDictionary.Add(EnemyMeleeAnim.Idle, clips[12].name);
-        animDictionary.Add(EnemyMeleeAnim.Stuned, clips[14].name);
-        animDictionary.Add(EnemyMeleeAnim.Knocked, clips[15].name);
-        animDictionary.Add(EnemyMeleeAnim.AttackBlocked, clips[16].name);
-        animDictionary.Add(EnemyMeleeAnim.CounterAttack, clips[17].name);
-        animDictionary.Add(EnemyMeleeAnim.Blocked, clips[18].name);
-        animDictionary.Add(EnemyMeleeAnim.IdleDefence, clips[19].name);
-
+        animDictionary.Add(EnemyMeleeAnim.IdleCombat, clips[8].name);
+        animDictionary.Add(EnemyMeleeAnim.Patrol, clips[9].name);
+        animDictionary.Add(EnemyMeleeAnim.Retreat, clips[10].name);
+        animDictionary.Add(EnemyMeleeAnim.Idle, clips[11].name);
+        animDictionary.Add(EnemyMeleeAnim.Stuned, clips[13].name);
+        animDictionary.Add(EnemyMeleeAnim.Knocked, clips[14].name);
+        animDictionary.Add(EnemyMeleeAnim.AttackBlocked, clips[15].name);
+        animDictionary.Add(EnemyMeleeAnim.CounterAttack, clips[16].name);
+        animDictionary.Add(EnemyMeleeAnim.Blocked, clips[17].name);
+        animDictionary.Add(EnemyMeleeAnim.IdleDefence, clips[18].name);
+        animDictionary.Add(EnemyMeleeAnim.TakeDamage, clips[19].name);
+        animDictionary.Add(EnemyMeleeAnim.TakeDamage2, clips[20].name);
+        animDictionary.Add(EnemyMeleeAnim.TakeDamage3, clips[21].name);
     }
 
     void Update()
@@ -444,15 +446,14 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void BackFromDamage()
     {
-        _anim.SetBool("TakeDamage", false);       
+        _anim.SetInteger("TakeDamageCounter", 0);
     }
 
-    public void TakeDamageAnim()
+    public void TakeDamageAnim(int index)
     {
-        _anim.SetBool("TakeDamage", true);
+        _anim.SetInteger("TakeDamageCounter", index);
         damaged = true;
         timeShaderDamage = 1;
-       // blood.gameObject.SetActive(true);
         blood.Stop();
         blood.Play();
         timeOnDamage = 0.5f;

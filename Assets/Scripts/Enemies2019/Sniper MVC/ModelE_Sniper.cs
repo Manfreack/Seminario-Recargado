@@ -519,7 +519,7 @@ public class ModelE_Sniper : EnemyEntity
         else return Vector3.zero;
     }
 
-    public override void GetDamage(float damage, string typeOfDamage)
+    public override void GetDamage(float damage, string typeOfDamage, int damageAnimationIndex)
     {
         timeOnDamage = 1f;
         if (!onDamage)
