@@ -10,6 +10,7 @@ public class Arrow : Munition {
     Model player;
     bool hit;
     public EnemyAmmo ammoAmount;
+    public EnemyEntity owner;
 
     IEnumerator DestroyExplotion()
     {
@@ -17,7 +18,8 @@ public class Arrow : Munition {
         GetComponent<BoxCollider>().isTrigger = true;
         fireBallParticles.SetActive(false);
         var explotion = Instantiate(prefabExplosion);
-        explotion.transform.position = transform.position;       
+        explotion.transform.position = transform.position;
+        if (owner.myPointer) owner.myPointer.StopAdvertisement();
         yield return new WaitForSeconds(3);
         hit = false;
         GetComponent<BoxCollider>().isTrigger = false;
@@ -37,6 +39,7 @@ public class Arrow : Munition {
 	// Update is called once per frame
 	void Update () {
 
+        if (owner.myPointer) owner.myPointer.StartAdvertisement();
         timer += Time.deltaTime;
         if (timer >= 5) ammoAmount.ReturnBulletToPool(this);
 
@@ -69,7 +72,7 @@ public class Arrow : Munition {
 
     public void OnCollisionEnter(Collision c)
     {
-        if (c.gameObject.GetComponent<Model>()) player.GetDamage(damage,transform,true,false);
+        if (c.gameObject.GetComponent<Model>()) player.GetDamage(damage,transform,true,false, owner);
         
         StartCoroutine(DestroyExplotion());
        

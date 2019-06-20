@@ -91,7 +91,6 @@ public class ModelE_Melee : EnemyEntity
     public bool RetreatState;
     public bool reposition;
     public bool cooldwonReposition;
-    
 
     bool delayWaitState;
 
@@ -421,6 +420,11 @@ public class ModelE_Melee : EnemyEntity
             timeToPatrol -= Time.deltaTime;
         };
 
+        patrol.OnExit += x =>
+        {
+            onCombat = true;
+        };
+
         answerCall.OnEnter += x =>
         {
            
@@ -688,6 +692,8 @@ public class ModelE_Melee : EnemyEntity
 
         attack.OnEnter += x =>
         {
+            if (myPointer) myPointer.StartAdvertisement();
+
             if (navMeshAgent)
             {
                 if (navMeshAgent.enabled) navMeshAgent.enabled = false;
@@ -738,6 +744,7 @@ public class ModelE_Melee : EnemyEntity
         attack.OnExit += x =>
         {
             AttackState = false;
+            
         };
 
         stuned.OnEnter += x =>
@@ -841,6 +848,7 @@ public class ModelE_Melee : EnemyEntity
 
         retreat.OnFixedUpdate += () =>
         {
+            
             RetreatState = true;
 
             currentAction = new A_WarriorRetreat(this);
@@ -872,6 +880,8 @@ public class ModelE_Melee : EnemyEntity
 
             if (animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Retreat] || animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleCombat] || animClipName == _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Idle])
             {
+                if (myPointer) myPointer.StopAdvertisement();
+
                 timeToRetreat -= Time.deltaTime;
 
                 var d = Vector3.Distance(transform.position, target.transform.position);
@@ -941,6 +951,11 @@ public class ModelE_Melee : EnemyEntity
 
         die.OnEnter += x =>
         {
+            if(myPointer)
+            {
+                myPointer = target.pointerPool.GetObjectFromPool();
+                myPointer.owner = this;
+            }
 
             if (navMeshAgent)
             {
@@ -1011,6 +1026,18 @@ public class ModelE_Melee : EnemyEntity
             onAttackArea = SearchForTarget.SearchTarget(target.transform, distanceToHit, angleToHit, transform, true, layerObst);
 
 
+        }
+
+        if(target.isInCombat && renderObject.isVisible && myPointer)
+        {
+            target.ReturnPointer(myPointer);
+            myPointer = null;
+        }
+
+        if (target.isInCombat && !renderObject.isVisible && !myPointer && !isDead && onCombat)
+        {
+            myPointer = target.pointerPool.GetObjectFromPool();
+            myPointer.owner = this; 
         }
 
     }
@@ -1239,7 +1266,7 @@ public class ModelE_Melee : EnemyEntity
             var angle = Vector3.Angle(dir, target.transform.forward);
             if (player.onDefence && angle >= 90 && player.perfectParryTimer>0.3f) BlockedEvent();
             if (player.onDefence && angle >= 90 && player.perfectParryTimer<0.3f) PerfectBlocked();
-            player.GetDamage(attackDamage, transform, false, false);
+            player.GetDamage(attackDamage, transform, false, false, this);
             player.rb.AddForce(transform.forward * 2, ForceMode.Impulse);
         }
 
@@ -1262,7 +1289,7 @@ public class ModelE_Melee : EnemyEntity
                 _view.sparks.gameObject.SetActive(true);
                 _view.sparks.Play();
             }
-            player.GetDamage(attackDamage + 5, transform, false, true);
+            player.GetDamage(attackDamage + 5, transform, false, true, this);
             player.rb.AddForce(transform.forward * 2, ForceMode.Impulse);
         }
 

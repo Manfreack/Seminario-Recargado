@@ -21,11 +21,6 @@ public class PowerManager : MonoBehaviour {
 
         _model = FindObjectOfType<Model>();
         _power = FindObjectOfType<Powers>();
-
-        powerDictionary.Add(0, StocadaWarrior);
-        powerDictionary.Add(1, WarriorRotatePower);
-        powerDictionary.Add(2, UppercutWarrior);
-        powerDictionary.Add(3, JumpAttackWarrior);
     }
 	
 	void Update () {
@@ -41,7 +36,7 @@ public class PowerManager : MonoBehaviour {
         powerDictionary[id](_power,_model);
     }
 
-    public void WarriorRotatePower(Powers power, Model model) {
+   /* public void WarriorRotatePower(Powers power, Model model) {
 
         model.ReturnBulletToPool(power);
         currentPowerAction.Ipower();
@@ -81,9 +76,9 @@ public class PowerManager : MonoBehaviour {
         model.ReturnBulletToPool(power);
         var rb = model.GetComponent<Rigidbody>();
         var actualPos = model.transform.position;
-        var radius = model.mySkills.RadiusSlameSkill;
+      //  var radius = model.mySkills.RadiusSlameSkill;
         float extraDamage = model.extraSlameDamage;
-        currentPowerAction = new Slame(actualPos, extraDamage, radius, rb);
+    //    currentPowerAction = new Slame(actualPos, extraDamage, radius, rb);
         currentPowerAction.Ipower();
         constancepower = false;
     }
@@ -106,19 +101,19 @@ public class PowerManager : MonoBehaviour {
         p.transform.forward = power.transform.forward;
         SetDecorator(id, p, power, model);
         */
-    }
+    
 
     public void SetDecorator(int id , GameObject particles, Powers power , Model model)
     {
 
-        if (id == 0)
+      /*  if (id == 0)
         {
             if (model.mySkills.FireSkill1)
             {
                 _currentDecorator = new BiggerFireBall(particles);
                 power.SetDecorator(_currentDecorator);
             }
-        }
+        }*/
     }
 
    

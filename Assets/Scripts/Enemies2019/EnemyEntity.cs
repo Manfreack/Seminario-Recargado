@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public abstract class EnemyEntity: MonoBehaviour
 {
+    public bool onCombat;
+    public EnemyPointer myPointer;
     public NavMeshAgent navMeshAgent;
     public int EnemyID_Area;
     public bool firstEnemyToSee;

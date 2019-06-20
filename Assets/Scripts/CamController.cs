@@ -50,9 +50,21 @@ public class CamController : MonoBehaviour {
 
     public IEnumerator KickCameraChange()
     {
-        cinemaCam_KickCam.Priority = 3;
+        cinemaCam_KickCam.Priority = 1;
+        cinemaCam.Priority = 0;
+        cinemaCam2.Priority = 0;
         yield return new WaitForSeconds(1);
         cinemaCam_KickCam.Priority = 0;
+        if (model.targetLockedOn)
+        {
+            cinemaCam2.Priority = 1;
+            cinemaCam.Priority = 0;
+        }
+        else
+        {
+            cinemaCam2.Priority = 0;
+            cinemaCam.Priority = 1;
+        }
     }
 
     void Start()
@@ -255,13 +267,14 @@ public class CamController : MonoBehaviour {
     public void ChangeTarget(EnemyEntity e)
     {
         cinemaCam.m_Priority = 0;
-
+        cinemaCam2.m_Priority = 1;
         cinemaCam2.LookAt = e.transform;
 
     }
 
     public void StopLockedTarget()
     {
-        cinemaCam.m_Priority = 2;
+        cinemaCam.m_Priority = 1;
+        cinemaCam2.m_Priority = 0;
     }
 }

@@ -14,15 +14,16 @@ public class Model : MonoBehaviour
     public bool targetLockedOn;
     public int lockIndex;
     public LayerMask layerEnemies;
+    EnemyEntity snapTarget;
 
     public float distanceAggressiveNodes;
     public float distanceNon_AggressiveNodes;
     public CombatNodesManager nodesManager;
     public List<CombatNode> combatNodesArea = new List<CombatNode>();
 
-    public PowerManager powerManager;
-    public Powers prefabPower;
-    public Pool<Powers> powerPool;
+    public Transform pointerParent;
+    public EnemyPointer pointerPrefab;
+    public Pool<EnemyPointer> pointerPool;
 
     public float radiusAttack;
     public float angleToAttack;
@@ -105,7 +106,6 @@ public class Model : MonoBehaviour
 
     public int stocadaAmount;
 
-    public Skills mySkills;
     public bool isIdle;
     public bool onPowerState;
     public bool isRuning;
@@ -133,7 +133,6 @@ public class Model : MonoBehaviour
     public Transform mainCamera;
     public Vector3 dir;
     public Rigidbody rb;
-    public EnemyClass currentEnemy;
 
     Platform currentPlatform;
     public bool isPlatformJumping;
@@ -202,21 +201,6 @@ public class Model : MonoBehaviour
         invulnerable = false;
     }
 
-    public IEnumerator CounterAttackState()
-    {
-        float counterTimer = 0;
-
-        //onCounterAttack = true;
-
-        while (counterTimer < 1.5f)
-        {
-            counterTimer += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
-
-       // onCounterAttack = false;
-    }
-
     public IEnumerator DefenceBroken()
     {
         timeToRecoverDefence = maxTimeToRecoverDefence;
@@ -278,7 +262,7 @@ public class Model : MonoBehaviour
     {
         if (!targetLockedOn)
         {
-            while (onDefence)
+            while (onDefence && !view.anim.GetBool("CounterAttack"))
             {
                 var defenceDir = mainCamera.transform.forward;
                 defenceDir.y = 0;
@@ -459,9 +443,7 @@ public class Model : MonoBehaviour
         ECM = FindObjectOfType<EnemyCombatManager>();
         timeOnCombat = -1;
         rb = GetComponent<Rigidbody>();
-        powerManager = FindObjectOfType<PowerManager>();
-        powerPool = new Pool<Powers>(10, PowersFactory, Powers.InitializePower, Powers.DisposePower, true);
-        mySkills = new Skills();
+        pointerPool = new Pool<EnemyPointer>(5, PointerFactory, EnemyPointer.InitializePointer, EnemyPointer.DisposePointer, true);
         timeToRecoverDefence = maxTimeToRecoverDefence;
         for (int i = 0; i < 2; i++)
             view.UpdatePotions(i);
@@ -773,44 +755,6 @@ public class Model : MonoBehaviour
             StartCoroutine(ImpulseAttackAnimation());
             StartCoroutine(PowerDelayImpulse(0.6f, 0.2f, 0.1f, 0.2f));
             StartCoroutine(PowerColdown(timeCdPower2, 2));            
-        }
-    }
-
-    public void CastPower1()
-    {
-        if (!cdPower1 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0)
-        {
-            stamina -= powerStamina;
-            view.UpdateStaminaBar(stamina / maxStamina);
-
-            Powers newPower = powerPool.GetObjectFromPool();
-            newPower.myCaller = transform;
-            powerManager.SetIPower(1, newPower, this);
-            RotateAttack();
-            onPowerState = true;
-        }
-    }
-
-    public void CastPower3()
-    {
-        if (!cdPower3 && !onPowerState && !onDamage && !isDead && !onRoll && stamina - powerStamina >= 0)
-        {
-            stamina -= powerStamina;
-            view.UpdateStaminaBar(stamina / maxStamina);
-
-            CombatState();
-            Uppercut();
-        }
-    }
-
-    public void CastPower4()
-    {
-        if (!cdPower4 && !onPowerState && !onDamage && !isDead && !onRoll  && countAnimAttack == 0 && stamina - powerStamina >= 0)
-        {
-            Powers newPower = powerPool.GetObjectFromPool();
-            newPower.myCaller = transform;
-            powerManager.SetIPower(3, newPower, this);
-            onPowerState = true;
         }
     }
 
@@ -1282,7 +1226,7 @@ public class Model : MonoBehaviour
         view.SaveSwordAnim2();
     }
 
-    public void GetDamage(float damage, Transform enemy, bool isProyectile, bool heavyDamage)
+    public void GetDamage(float damage, Transform enemy, bool isProyectile, bool heavyDamage, EnemyEntity e)
     {
         EndCombo();
         timeCdPower2 -= reduceTimePerHit;
@@ -1301,16 +1245,14 @@ public class Model : MonoBehaviour
 
             if (perfectParryTimer <= 0.3f)
             {
+                snapTarget = e;
                 mainCamera.GetComponent<CamController>().StartCoroutine(mainCamera.GetComponent<CamController>().KickCameraChange());
                 rb.AddForce(-transform.forward , ForceMode.Impulse);
                 CounterAttackEvent();
-                StartCoroutine(CounterAttackState());
-                if (!makingDamage) StartCoroutine(TimeToDoDamage());
-                StartCoroutine(AttackRotation());
+                if (!makingDamage) StartCoroutine(TimeToDoDamage());             
                 attackDamage = 5;
                 CombatState();
                 view.ShakeCameraDamage(0.5f, 0.5f, 0.5f);
-                view.anim.speed = 1;
             }
 
             if(perfectParryTimer > 0.3f)
@@ -1380,19 +1322,20 @@ public class Model : MonoBehaviour
         StartCoroutine(OnDamageCorrutine());
     }
 
-
-    public Powers PowersFactory()
+    public EnemyPointer PointerFactory()
     {
-        Powers newPower = Instantiate(prefabPower);
-        newPower.transform.SetParent(powerManager.transform);
-        newPower.myCaller = transform;
-        return newPower;
+        EnemyPointer p = Instantiate(pointerPrefab);
+        p.mat = p.GetComponent<MeshRenderer>().material;
+        p.transform.position = pointerParent.position;
+        p.transform.SetParent(pointerParent);
+        return p;
     }
 
-    public void ReturnBulletToPool(Powers powers)
+    public void ReturnPointer(EnemyPointer p)
     {
-        powerPool.DisablePoolObject(powers);
+        pointerPool.DisablePoolObject(p);
     }
+
 
     public void OnCollisionEnter(Collision c)
     {

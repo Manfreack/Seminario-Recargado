@@ -56,7 +56,7 @@ public class SkillsManager: MonoBehaviour  {
 
     public void BiggerFireBall(SkillNode node)
     {
-        player.mySkills.FireSkill1 = true;
+       // player.mySkills.FireSkill1 = true;
         player.skillPoints--;
         node.myButton.interactable = false;
         skillPointsText.text = "SkillPoints: " + player.skillPoints;

@@ -179,6 +179,7 @@ public class ModelE_Sniper : EnemyEntity
         patrol.OnExit += x =>
         {
             angleToPersuit = 180;
+            onCombat = true;
         };
 
         answerCall.OnEnter += x =>
@@ -251,6 +252,7 @@ public class ModelE_Sniper : EnemyEntity
 
         attack.OnUpdate += () =>
         {
+            if (myPointer && timeToShoot< 1.5f) myPointer.StartAdvertisement();
 
             isAnswerCall = false;
 
@@ -363,7 +365,7 @@ public class ModelE_Sniper : EnemyEntity
 
         retreat.OnUpdate += () =>
         {
-
+            if (myPointer) myPointer.StopAdvertisement();
 
             timeToStopBack -= Time.deltaTime;
 
@@ -417,6 +419,12 @@ public class ModelE_Sniper : EnemyEntity
 
         die.OnEnter += x =>
         {
+            if(myPointer)
+            {
+                myPointer = target.pointerPool.GetObjectFromPool();
+                myPointer.owner = this;
+            }
+
             navMeshAgent.enabled = false;
             DeadEvent();
             currentAction = null;
@@ -453,7 +461,6 @@ public class ModelE_Sniper : EnemyEntity
 
         animClipName = view.anim.GetCurrentAnimatorClipInfo(0)[0].clip.name;
 
-        //avoidVectObstacles = ObstacleAvoidance();
         entitiesAvoidVect = EntitiesAvoidance();
 
         if (target != null && SearchForTarget.SearchTarget(target.transform, viewDistancePersuit, angleToPersuit, transform, true, layerObst)) isPersuit = true;
@@ -464,6 +471,19 @@ public class ModelE_Sniper : EnemyEntity
 
         if (target != null && SearchForTarget.SearchTarget(target.transform, distanceToMeleeAttack, angleToMeleeAttack, transform, true, layerObst)) onMeleeAttack = true;
         else onMeleeAttack = false;
+
+
+        if (renderObject.isVisible && myPointer)
+        {
+            target.ReturnPointer(myPointer);
+            myPointer = null;
+        }
+
+        if (!renderObject.isVisible && !myPointer && !isDead && onCombat)
+        {
+            myPointer = target.pointerPool.GetObjectFromPool();
+            myPointer.owner = this;
+        }
 
     }
 
@@ -479,6 +499,7 @@ public class ModelE_Sniper : EnemyEntity
         Arrow newArrow = munition.arrowsPool.GetObjectFromPool();
         newArrow.gameObject.SetActive(false);
         newArrow.ammoAmount = munition;
+        newArrow.owner = this;
         newArrow.transform.position = attackPivot.position;
         var dir = (target.transform.position - newArrow.transform.position).normalized;
         dir.y = 0;
@@ -625,7 +646,7 @@ public class ModelE_Sniper : EnemyEntity
         var player = Physics.OverlapSphere(attackPivot.position, radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
         if (player != null)
         {          
-            player.GetDamage(attackDamage, transform, false, false);
+            player.GetDamage(attackDamage, transform, false, false, this);
         }
     }
 
