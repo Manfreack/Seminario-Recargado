@@ -37,6 +37,10 @@ public class ViewerE_Melee : MonoBehaviour
     public ParticleSystem lightHit;
     public ParticleSystem heavyHit;
     public ParticleSystem lockParticle;
+    public CapsuleCollider myCollider;
+
+    public List<Rigidbody> boneRigs = new List<Rigidbody>();
+    public List<BoxCollider> boneColliders = new List<BoxCollider>();
 
     public enum EnemyMeleeAnim {TakeDamage ,TakeDamage2, TakeDamage3, Dead, Attack1, Attack2, Attack3, HeavyAttack, WalkStreaf, Persuit, IdleCombat, Patrol, Retreat, Stuned, Knocked, AttackBlocked, Blocked, CounterAttack, IdleDefence, Idle };
 
@@ -98,8 +102,10 @@ public class ViewerE_Melee : MonoBehaviour
     public IEnumerator DeadCorrutine()
     {
         yield return new WaitForSeconds(3);
-        GetComponent<CapsuleCollider>().enabled = false;
+
+        myCollider.enabled = false;
         GetComponent<Rigidbody>().useGravity = false;
+
         float posY = transform.position.y;
         while (posY - 2.1f <= transform.position.y)
         {
@@ -110,18 +116,6 @@ public class ViewerE_Melee : MonoBehaviour
         }
     }
 
-   /* public IEnumerator SlowAnimSpeed()
-    {
-        if (!slowSpeed)
-        {
-            slowSpeed = true;
-            _anim.speed = 0;
-            yield return new WaitForSeconds(0.1f);
-            _anim.speed = 1;
-            slowSpeed = false;
-        }
-    }
-    */
     IEnumerator StopHitParticles()
     {
         yield return new WaitForSeconds(1);
@@ -139,6 +133,9 @@ public class ViewerE_Melee : MonoBehaviour
         ess = GetComponent<EnemyScreenSpace>();
         canvas = GameObject.Find("Canvas");
 
+       // boneRigs.AddRange(GetComponentsInChildren<Transform>().Where(x => x.gameObject.layer == LayerMask.NameToLayer("Bones")).Where(x => x.GetComponent<Rigidbody>()).Select(x => x.GetComponent<Rigidbody>()));
+        //boneColliders.AddRange(GetComponentsInChildren<Transform>().Where(x => x.gameObject.layer == LayerMask.NameToLayer("Bones")).Where(x => x.GetComponent<BoxCollider>()).Select(x => x.GetComponent<BoxCollider>()));
+
         _anim.SetBool("Idle", true);
 
         foreach (var item in myMeshes)
@@ -146,7 +143,6 @@ public class ViewerE_Melee : MonoBehaviour
             myMats.Add(item.materials[0]);
             item.materials[0].SetFloat("_Intensity", 0);
         }
-
 
         var clips = _anim.runtimeAnimatorController.animationClips.ToList();
 
@@ -392,6 +388,9 @@ public class ViewerE_Melee : MonoBehaviour
     public void DeadAnim()
     {
         _anim.SetBool("Dead", true);
+        //_anim.enabled = false;
+
+        DeadBody();
         var pool = Instantiate(bloodPool);
         matPool = pool.GetComponent<MeshRenderer>().material;
         pool.transform.forward = transform.forward;

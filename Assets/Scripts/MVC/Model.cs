@@ -250,7 +250,17 @@ public class Model : MonoBehaviour
 
         while (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
         {
-            
+            timeToRoll -= Time.deltaTime;
+
+            view.anim.SetFloat("RollTime", timeToRoll);
+
+            if (timeToRoll <= 0)
+            {
+                onDash = false;
+                view.anim.SetBool("Roll", false);
+                view.EndDodge();
+                onRoll = false;
+            }
             yield return new WaitForEndOfFrame();
         }
 
@@ -807,7 +817,20 @@ public class Model : MonoBehaviour
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat]
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Run]))
         {
-            rb.MovePosition(rb.position + dir * acceleration * speed * Time.deltaTime);
+            if (!isRuning)
+            {
+                rb.MovePosition(rb.position + dir * acceleration * speed * Time.deltaTime);
+            }
+
+            else
+            {
+                Run();
+                Quaternion targetRotation;
+                dir.y = 0;
+                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                rb.MovePosition(rb.position + dir * acceleration * runSpeed * Time.deltaTime);
+            }
         }
 
         if (!onDamage && countAnimAttack == 0 && !targetLockedOn && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]

@@ -35,6 +35,9 @@ public class ViewerE_Sniper : MonoBehaviour
     public ParticleSystem heavyHit;
     public ParticleSystem lockParticle;
 
+    public List<Rigidbody> boneRigs = new List<Rigidbody>();
+    public List<BoxCollider> boneColliders = new List<BoxCollider>();
+
     public enum EnemyWizzardAnims {Attack, Dead, TakeDamage, Move, Idle, CombatIdle, Stuned, StunedIdle, UpFly, UpStuned };
 
     public Dictionary<EnemyWizzardAnims, string> animDictionary = new Dictionary<EnemyWizzardAnims, string>();
@@ -105,8 +108,10 @@ public class ViewerE_Sniper : MonoBehaviour
     {
         
         yield return new WaitForSeconds(3);
-        GetComponent<CapsuleCollider>().enabled = false;
+
         GetComponent<Rigidbody>().useGravity = false;
+        GetComponent<CapsuleCollider>().enabled = false;
+
         float posY = transform.position.y;
         while (posY - 2.1f <= transform.position.y)
         {
@@ -136,8 +141,15 @@ public class ViewerE_Sniper : MonoBehaviour
             myMats.Add(item.materials[0]);
             item.materials[0].SetFloat("_Intensity", 0);
         }
+/*
+        boneRigs.AddRange(GetComponentsInChildren<Transform>().Where(x => x.gameObject.layer == LayerMask.NameToLayer("Bones")).Where(x => x.GetComponent<Rigidbody>()).Select(x => x.GetComponent<Rigidbody>()));
+        boneColliders.AddRange(GetComponentsInChildren<Transform>().Where(x => x.gameObject.layer == LayerMask.NameToLayer("Bones")).Where(x => x.GetComponent<BoxCollider>()).Select(x => x.GetComponent<BoxCollider>()));
 
-
+        foreach (var item in boneRigs)
+        {
+            item.mass = 100;
+        }
+        */
         var clips = anim.runtimeAnimatorController.animationClips.ToList();
 
         //Iterate over the clips and gather their information
@@ -242,7 +254,6 @@ public class ViewerE_Sniper : MonoBehaviour
     {
         transform.position += new Vector3(0, -0.2f, 0);
         anim.applyRootMotion = false;
-        anim.SetBool("Dead", true);
         var pool = Instantiate(bloodPool);
         matPool = pool.GetComponent<MeshRenderer>().material;
         pool.transform.forward = transform.forward;

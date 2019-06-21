@@ -7,6 +7,7 @@ public class Rune : MonoBehaviour
     public float healingAmount;
     public float cooldownTime;
     public ParticleSystem particles;
+    particleAttractorLinear particleAttractor;
     bool used;
     bool useParticles;
     Material mat;
@@ -17,7 +18,6 @@ public class Rune : MonoBehaviour
         used = false;
         mat = transform.GetChild(0).GetComponent<Renderer>().material;
         player = FindObjectOfType<Model>();
-        particles = player.view.healParticles;
     }
 
     void OnTriggerStay(Collider c)
