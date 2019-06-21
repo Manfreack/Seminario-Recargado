@@ -252,8 +252,9 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void DeadAnim()
     {
-        transform.position += new Vector3(0, -0.2f, 0);
+        anim.SetBool("Dead", true);
         anim.applyRootMotion = false;
+        transform.position += new Vector3(0, -0.2f, 0);       
         var pool = Instantiate(bloodPool);
         matPool = pool.GetComponent<MeshRenderer>().material;
         pool.transform.forward = transform.forward;

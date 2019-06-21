@@ -198,7 +198,7 @@ public class ViewerE_Melee : MonoBehaviour
             timeOnDamage -= Time.deltaTime;
             if (timeOnDamage <= 0)
             {
-                _anim.SetBool("TakeDamage", false);
+                _anim.SetInteger("TakeDamageCounter", 0);
                 auxTakeDamage = false;
             }
         }

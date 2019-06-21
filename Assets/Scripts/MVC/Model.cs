@@ -183,6 +183,12 @@ public class Model : MonoBehaviour
     public float fadeTimer;
     public enum DogeDirecctions {Left,Right,Back, Roll };
 
+    IEnumerator DashTimer()
+    {
+        yield return new WaitForSeconds(0.2f);
+        onDash = false;
+    }
+
     IEnumerator CanRollAttackCorrutine()
     {
         canRollAttackTimer = 3;
@@ -574,6 +580,7 @@ public class Model : MonoBehaviour
                 if (directions == DogeDirecctions.Left)
                 {
                     onDash = true;
+                    StartCoroutine(DashTimer());
                     DogeLeftEvent();
                     timeToRoll = 0.2f;
                     
@@ -582,6 +589,7 @@ public class Model : MonoBehaviour
                 if (directions == DogeDirecctions.Right)
                 {
                     onDash = true;
+                    StartCoroutine(DashTimer());
                     DogeRightEvent();
                     timeToRoll = 0.2f;
                    
@@ -590,6 +598,7 @@ public class Model : MonoBehaviour
                 if (directions == DogeDirecctions.Back)
                 {
                     onDash = true;
+                    StartCoroutine(DashTimer());
                     DogeBackEvent();
                     timeToRoll = 0.2f;
                     
@@ -800,7 +809,7 @@ public class Model : MonoBehaviour
         
     }
 
-    public void CombatMovement(Vector3 dir, bool key, bool rotate)
+    public void CombatMovement(Vector3 dir, bool key, bool rotate, bool diagonalBack)
     {
         ECM.UpdateEnemyAggressive();
 
@@ -854,7 +863,15 @@ public class Model : MonoBehaviour
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
                 }
 
-                if(rotate)
+                if (diagonalBack)
+                {
+
+                    dir.y = 0;
+                    targetRotation = Quaternion.LookRotation(-dir, Vector3.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                }
+
+                if (rotate)
                 {
                     var camDir = mainCamera.forward;
                     camDir.y = 0;
