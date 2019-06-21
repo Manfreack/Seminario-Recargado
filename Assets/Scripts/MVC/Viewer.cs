@@ -69,6 +69,12 @@ public class Viewer : MonoBehaviour
 
     public GameObject smashParticle;
 
+    IEnumerator DamageDelay()
+    {
+        yield return new WaitForSeconds(0.2f);
+        anim.SetInteger("TakeDamage", 0);
+    }
+
     public IEnumerator DestroyParticles(GameObject p)
     {
         yield return new WaitForSeconds(0.5f);
@@ -572,6 +578,7 @@ public class Viewer : MonoBehaviour
         blood.Play();
         if (!model.onPowerState)
         {
+            StartCoroutine(DamageDelay());
             ShakeCameraDamage(1, 1.5f, 0.5f);
             var random = Random.Range(1, 4);
             anim.SetInteger("TakeDamage", random);
