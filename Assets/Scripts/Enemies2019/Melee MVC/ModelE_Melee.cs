@@ -225,7 +225,7 @@ public class ModelE_Melee : EnemyEntity
 
     public IEnumerator DelayTurn()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.1f);
         checkTurn = false;
 
     }
@@ -846,8 +846,8 @@ public class ModelE_Melee : EnemyEntity
             _view._anim.SetBool("WalkL", false);
             _view._anim.SetBool("WalkR", false);
             _view._anim.SetBool("Idle", false);
-            if (distanceToBack == 1) timeToRetreat = 1.5f;
-            if (distanceToBack == 2) timeToRetreat = 3.5f;
+            if (distanceToBack == 1) timeToRetreat = 0.5f;
+            if (distanceToBack == 2) timeToRetreat = 1.5f;
         };
 
         retreat.OnFixedUpdate += () =>
@@ -1419,4 +1419,9 @@ public class ModelE_Melee : EnemyEntity
         if (c.GetComponent<CombatNode>() && isWaitArea) c.GetComponent<CombatNode>().myOwner = null;
     }
 
+    void OnDestroy()
+    {
+        target.ReturnPointer(myPointer);
+        myPointer = null;
+    }
 }

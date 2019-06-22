@@ -25,10 +25,11 @@ public class ViewerE_Sniper : MonoBehaviour
     public Camera cam;
     float _timeShaderMeleeAttack;
     bool _shaderMeleeAttackTrigger;
-    float timerExpandPool;
-    float timerVanishPool;
-    public GameObject bloodPool;
-    public Material matPool;
+    //float timerExpandPool;
+    //float timerVanishPool;
+    //public GameObject bloodPool;
+    //public Material matPool;
+    public GameObject ragdollPrefab;
     bool startFireHands;
     bool auxTakeDamage;
     float timeOnDamage;
@@ -73,6 +74,7 @@ public class ViewerE_Sniper : MonoBehaviour
         }
     }
 
+    /*
     public IEnumerator BloodPoolAnim()
     {
         while (timerExpandPool < 1)
@@ -121,6 +123,7 @@ public class ViewerE_Sniper : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
     }
+    */
 
     void Awake()
     {
@@ -252,6 +255,9 @@ public class ViewerE_Sniper : MonoBehaviour
 
     public void DeadAnim()
     {
+        StartCoroutine(Die());
+
+        /*
         anim.SetBool("Dead", true);
         anim.applyRootMotion = false;
         transform.position += new Vector3(0, -0.2f, 0);       
@@ -261,12 +267,24 @@ public class ViewerE_Sniper : MonoBehaviour
         pool.transform.position = transform.position - transform.forward/2 + new Vector3(0,0.2f,0);
         StartCoroutine(BloodPoolAnim());
         DeadBody();
+        */
     }
 
+    IEnumerator Die()
+    {
+        yield return new WaitForEndOfFrame();
+        var ragdoll = Instantiate(ragdollPrefab);
+        ragdoll.transform.position = transform.position;
+        ragdoll.transform.rotation = transform.rotation;
+        Destroy(gameObject);
+    }
+
+    /*
     public void DeadBody()
     {
         StartCoroutine(DeadCorrutine());
     }
+    */
 
     public void AttackRangeAnim()
     {

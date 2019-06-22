@@ -29,7 +29,7 @@ public class PostProcessController : MonoBehaviour
         {
             FillAmount += Time.deltaTime / 5;
             OverlayExtraIntensity += Time.deltaTime /5;
-            if (FillAmount > 1) FillAmount = 1;
+            if (FillAmount > 0.5f) FillAmount = 0.5f;
             if (OverlayExtraIntensity > 0.05f) OverlayExtraIntensity = 0.05f;
         }
 
@@ -38,7 +38,7 @@ public class PostProcessController : MonoBehaviour
             FillAmount += Time.deltaTime /5;
             OverlayExtraIntensity += Time.deltaTime /5;
             if (FillAmount > 1) FillAmount = 1;
-            if (OverlayExtraIntensity > 0.8f) OverlayExtraIntensity = 0.8f;
+            if (OverlayExtraIntensity > 0.08f) OverlayExtraIntensity = 0.08f;
         }
 
         if(player.life>=50)

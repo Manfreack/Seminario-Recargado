@@ -766,4 +766,9 @@ public class ModelE_Sniper : EnemyEntity
         return node;
     }
 
+    void OnDestroy()
+    {
+        target.ReturnPointer(myPointer);
+        myPointer = null;
+    }
 }

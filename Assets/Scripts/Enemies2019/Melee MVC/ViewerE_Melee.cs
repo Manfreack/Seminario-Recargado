@@ -14,8 +14,9 @@ public class ViewerE_Melee : MonoBehaviour
     float timeShaderDamage;
     public ParticleSystem sparks;
     public ParticleSystem blood;
-    public GameObject bloodPool;
-    public Material matPool;
+    //public GameObject bloodPool;
+    //public Material matPool;
+    public GameObject ragdollPrefab;
     EnemyScreenSpace ess;
     float timeOnDamage;
     bool auxTakeDamage;
@@ -29,8 +30,8 @@ public class ViewerE_Melee : MonoBehaviour
     public float timeShaderHeavyAttack;
     bool heavyAttackShaderTrigger;
     public string animClipName;
-    float timerExpandPool;
-    float timerVanishPool;
+    //float timerExpandPool;
+    //float timerVanishPool;
     float timeToEndCounterAttackAnim;
     float timeToEndHeavyAttackAnim;
     bool slowSpeed;
@@ -67,6 +68,7 @@ public class ViewerE_Melee : MonoBehaviour
         }       
     }
 
+    /*
     public IEnumerator BloodPoolAnim()
     {
         while(timerExpandPool<1)
@@ -114,7 +116,7 @@ public class ViewerE_Melee : MonoBehaviour
                 gameObject.SetActive(false);
             yield return new WaitForEndOfFrame();
         }
-    }
+    }*/
 
     IEnumerator StopHitParticles()
     {
@@ -387,7 +389,8 @@ public class ViewerE_Melee : MonoBehaviour
 
     public void DeadAnim()
     {
-        _anim.SetBool("Dead", true);
+        StartCoroutine(Die());
+        /*_anim.SetBool("Dead", true);
         //_anim.enabled = false;
 
         DeadBody();
@@ -395,13 +398,24 @@ public class ViewerE_Melee : MonoBehaviour
         matPool = pool.GetComponent<MeshRenderer>().material;
         pool.transform.forward = transform.forward;
         pool.transform.position = transform.position - transform.forward;
-        StartCoroutine(BloodPoolAnim());
+        StartCoroutine(BloodPoolAnim());*/
     }
 
+    IEnumerator Die()
+    {
+        yield return new WaitForEndOfFrame();
+        var ragdoll = Instantiate(ragdollPrefab);
+        ragdoll.transform.position = transform.position;
+        ragdoll.transform.rotation = transform.rotation;
+        Destroy(gameObject);
+    }
+
+    /*
     public void DeadBody()
     {
         StartCoroutine(DeadCorrutine());
     }
+    */
 
     public void AttackAnim()
     {
