@@ -22,6 +22,7 @@ public class Model : MonoBehaviour
     public List<CombatNode> combatNodesArea = new List<CombatNode>();
 
     public Transform pointerParent;
+    public Transform pointerParent2;
     public EnemyPointer pointerPrefab;
     public Pool<EnemyPointer> pointerPool;
 
@@ -178,6 +179,7 @@ public class Model : MonoBehaviour
     public float maxTimeToRecoverDefence;
     public float timeToRecoverDefence;
     float tdefence;
+    float amountOfPointers;
 
     [HideInInspector]
     public float fadeTimer;
@@ -632,13 +634,24 @@ public class Model : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
             }
 
-            if (targetLocked.isDead && targetLocked)
+            if (targetLocked.isDead && targetLocked && enemiesToLock.Count<=0)
             {
                 mainCamera.GetComponent<CamController>().StopLockedTarget();
                 targetLocked = null;
                 targetLockedOn = false;
 
             }
+
+            if(targetLocked.isDead && targetLocked && enemiesToLock.Count > 0)
+            {            
+                ChangeTarget();
+            }
+        }
+
+        if (!targetLocked && targetLockedOn)
+        {
+            targetLockedOn = false;
+            mainCamera.GetComponent<CamController>().StopLockedTarget();
         }
 
         timeOnCombat -= Time.deltaTime;
@@ -824,7 +837,7 @@ public class Model : MonoBehaviour
 
         if (!onDamage && countAnimAttack == 0 && targetLockedOn && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat]
-            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Run]))
+            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Run] || timeToRoll <= 0) && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right])
         {
             if (!isRuning)
             {
@@ -843,8 +856,8 @@ public class Model : MonoBehaviour
         }
 
         if (!onDamage && countAnimAttack == 0 && !targetLockedOn && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
-            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat]
-            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Run]))
+            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat]|| animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] 
+            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Run] || timeToRoll<=0) && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right])
         {
 
             EndCombo();
@@ -1374,11 +1387,15 @@ public class Model : MonoBehaviour
     }
 
     public EnemyPointer PointerFactory()
-    {
+    {       
         EnemyPointer p = Instantiate(pointerPrefab);
         p.mat = p.GetComponent<MeshRenderer>().material;
-        p.transform.position = pointerParent.position;
+        p.transform.position = pointerParent.position + new Vector3(0,amountOfPointers,0);
+        p.myPos = amountOfPointers;
+        p.myParent2 = pointerParent2;
         p.transform.SetParent(pointerParent);
+        p.myParent = pointerParent;
+        amountOfPointers += 0.01f;
         return p;
     }
 

@@ -3765,9 +3765,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0.36631578
   m_TransitionOffset: 0
-  m_ExitTime: 0.7580662
+  m_ExitTime: 0.60635066
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -6250,15 +6250,18 @@ AnimatorStateTransition:
   - m_ConditionMode: 4
     m_ConditionEvent: RollTime
     m_EventTreshold: 0.01
+  - m_ConditionMode: 2
+    m_ConditionEvent: runAnim
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102946748073724072}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.12760842
+  m_TransitionDuration: 0.18924588
   m_TransitionOffset: 0
-  m_ExitTime: 0.8961264
+  m_ExitTime: 0.83238137
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -6715,10 +6718,10 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0.07748538
   m_TransitionOffset: 0
-  m_ExitTime: 0.7580644
-  m_HasExitTime: 0
+  m_ExitTime: 0.90008515
+  m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -8175,10 +8178,10 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0.12339121
   m_TransitionOffset: 0
-  m_ExitTime: 0.7580644
-  m_HasExitTime: 0
+  m_ExitTime: 0.92822635
+  m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -10082,6 +10085,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: runAnim
     m_EventTreshold: 0
+  - m_ConditionMode: 4
+    m_ConditionEvent: RollTime
+    m_EventTreshold: 0.01
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102038909314745532}
   m_Solo: 0
@@ -10091,7 +10097,7 @@ AnimatorStateTransition:
   m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.82558244
-  m_HasExitTime: 1
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -14593,7 +14599,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: P_Warrior_V6_DodgeR
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101232894775256164}
@@ -15532,7 +15538,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: P_Warrior_V6_DodgeL
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101467238630443106}
