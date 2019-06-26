@@ -1,10 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
+    public Transform _CheckTransform;
+
     public enum TextImputs { DOOR_OPEN, GET_KEY, DOOR_CLOSE }
     public EnemyEntity enemyDropKey;
     public bool dropKey;
@@ -15,6 +19,8 @@ public class LevelManager : MonoBehaviour
     bool startFadeText;
 
     public Dictionary<TextImputs, string> textsDictionary = new Dictionary<TextImputs, string>();
+
+   
 
     public IEnumerator DesapearText()
     {
@@ -31,8 +37,7 @@ public class LevelManager : MonoBehaviour
         textFade.enabled = false;
     }
 
-    // Update is called once per frame
-    void Update()
+   void Update()
     {
         if(enemyDropKey.isDead && !dropKey)
         {
@@ -57,4 +62,5 @@ public class LevelManager : MonoBehaviour
         startFadeText = false;
         StartCoroutine(DesapearText());
     }
+
 }
