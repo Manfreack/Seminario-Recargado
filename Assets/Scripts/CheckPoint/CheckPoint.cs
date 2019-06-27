@@ -8,11 +8,14 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 {
     public Model _Player;
     //public Image marco;
+
+    Material mat;    
     public GameObject textCheck;
     public GameObject buttonRespawn;
     public Transform checkTransform;
     public Transform ph;
     public ButtonManager ButtonManager;
+   
 
     public List<CheckPoint> listaChecks = new List<CheckPoint>();
     bool move1;
@@ -22,11 +25,12 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 
     public IEnumerator Messenge()
     {
+         
         move1 = true;
         textCheck.SetActive(true);
         yield return new WaitForSeconds(4);
         move1 = false;
-        textCheck.SetActive(false);          
+        textCheck.SetActive(false);      
     }
 
     public IEnumerator Respawn()
@@ -39,6 +43,8 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
     {
         ButtonManager = FindObjectOfType<ButtonManager>();
         listaChecks.AddRange(FindObjectsOfType<CheckPoint>());
+
+        mat = transform.GetChild(0).GetComponent<Renderer>().material;
         Subscribe(ButtonManager);
     }
 

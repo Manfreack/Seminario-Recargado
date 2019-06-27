@@ -15,6 +15,8 @@ public class Rune : MonoBehaviour
     Material mat;
     Model player;
     public Transform myPH;
+    public float _ColorRune = 0.75f;
+    float timer = 0;
 
     void Start()
     {
@@ -28,8 +30,20 @@ public class Rune : MonoBehaviour
     {
 
         if (!used && c.GetComponent<Model>())
-        {
+        {         
             buttonManager.OnNotify(myPH);
+
+            timer += Time.deltaTime;
+
+            if (timer < 4)
+            {
+                mat.SetFloat("_RuneusedState", _ColorRune);
+            }
+            else
+            {
+                mat.SetFloat("_RuneusedState", _ColorRune - _ColorRune);
+            }
+
             if (player != null)
             {
                 if (player.life != player.maxLife || player.stamina != player.maxStamina)
@@ -39,7 +53,7 @@ public class Rune : MonoBehaviour
                         used = true;
                         StartCoroutine(Opacity(false, player));
                         StartCoroutine(Cooldown());
-                        StartCoroutine(HealParticlesOpacity());
+                        StartCoroutine(HealParticlesOpacity());                                                                   
                     }
                     else
                     {
