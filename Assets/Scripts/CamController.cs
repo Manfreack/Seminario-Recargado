@@ -10,9 +10,13 @@ public class CamController : MonoBehaviour {
     public bool blockMouse;
 
     Model model;
+    CinematicActivator CinematicActive;
     public CinemachineFreeLook cinemaCam;
     public CinemachineFreeLook cinemaCam2;
     public CinemachineFreeLook cinemaCam_KickCam;
+    public CinemachineFreeLook CinemaCam_Cinematic01;
+    public CinemachineFreeLook CinemaCam_Cinematic02;
+
     public float distanceIdle;
     public float distanceCombat;
     public float actualCamDistance;
@@ -27,6 +31,8 @@ public class CamController : MonoBehaviour {
     bool onAttack;
     bool onMovement;
 
+    public bool PlayerCanMove;
+
     public float ShakeDuration = 0.3f;
     public float ShakeAmplitude = 1.2f;
     public float ShakeFrequency = 2.0f;
@@ -39,13 +45,14 @@ public class CamController : MonoBehaviour {
     CinemachineComposer topRig;
     CinemachineComposer bottonRig;
 
+   //public List<IEnumerator> CinematicsList = new List<IEnumerator>();
+
 
     public IEnumerator AttackTiltCamera()
     {
         onAttack = true;
         yield return new WaitForSeconds(0.2f);
         onAttack = false;
-
     }
 
     public IEnumerator KickCameraChange()
@@ -66,6 +73,43 @@ public class CamController : MonoBehaviour {
             cinemaCam.Priority = 1;
         }
     }
+    public IEnumerator Cinematic01()
+    {
+        CinemaCam_Cinematic01.Priority = 1;
+        cinemaCam.Priority = 0;
+        cinemaCam2.Priority = 0;
+
+        PlayerCanMove = true;
+        yield return new WaitForSeconds(3);
+        CinemaCam_Cinematic01.Priority = 0;
+        cinemaCam2.Priority = 0;
+        cinemaCam_KickCam.Priority = 0;
+        cinemaCam.Priority = 1;
+
+        PlayerCanMove = false;
+    }
+    public IEnumerator Cinematic02()
+    {
+
+        CinemaCam_Cinematic02.Priority = 1;
+        CinemaCam_Cinematic01.Priority = 0;
+        cinemaCam.Priority = 0;
+        cinemaCam2.Priority = 0;
+        PlayerCanMove = true;
+
+
+        yield return new WaitForSeconds(4);
+
+        CinemaCam_Cinematic01.Priority = 0;
+        CinemaCam_Cinematic02.Priority = 0;
+        cinemaCam2.Priority = 0;
+        cinemaCam_KickCam.Priority = 0;
+        cinemaCam.Priority = 1;
+
+        PlayerCanMove = false;
+
+    }
+
 
     void Start()
     {
@@ -271,6 +315,7 @@ public class CamController : MonoBehaviour {
         cinemaCam2.LookAt = e.transform;
 
     }
+
 
     public void StopLockedTarget()
     {

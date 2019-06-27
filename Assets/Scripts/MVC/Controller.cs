@@ -23,6 +23,7 @@ public class Controller : MonoBehaviour
     public bool pushS;
     public bool pushA;
     public bool pushD;
+    public CamController Cam;
 
     public bool firstPushW;
     public bool firstPushS;
@@ -57,6 +58,9 @@ public class Controller : MonoBehaviour
         model.DogeBackEvent += view.DogeBackAnim;
         model.DogeLeftEvent += view.DodgeLeftAnim;
         model.DogeRightEvent += view.DogeRightAnim;
+
+        Cam = FindObjectOfType<CamController>();
+
     }
 
     // Update is called once per frame
@@ -276,7 +280,7 @@ public class Controller : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!model.isInCombat && !model.onPowerState)
+        if (!model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false )
         {
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
@@ -352,7 +356,7 @@ public class Controller : MonoBehaviour
 
         }
 
-        else if(model.isInCombat && !model.onPowerState)
+        else if(model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false)
         {
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0)
             {
