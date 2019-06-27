@@ -356,84 +356,86 @@ public class Controller : MonoBehaviour
 
         }
 
-        else if(model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false && model.fadeTimer > view.fadeTime && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TurnAttack_Damage]
-                && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TurnAttack_End] && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TurnAttack_Pre])
+        if(model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false && model.fadeTimer > view.fadeTime && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TurnAttack_Damage]
+                && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TurnAttack_End] && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TurnAttack_Pre] 
+                && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage])
         {
+
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = _SpeedWalkFight;
-                model.runSpeed = _SpeedRunFight;
-                firstPushW = true;
-                if(!model.targetLockedOn) model.CombatMovement(model.mainCamera.forward, true, false, false);
-                else model.CombatMovement(model.transform.forward, true, false, false);
+                    model.speed = _SpeedWalkFight;
+                    model.runSpeed = _SpeedRunFight;
+                    firstPushW = true;
+                    if(!model.targetLockedOn) model.CombatMovement(model.mainCamera.forward, true, false, false);
+                    else model.CombatMovement(model.transform.forward, true, false, false);
             }
 
             if (pushS && !pushA && !firstPushW && !pushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                firstPushS = true;
-                model.speed = _SpeedWalkFight;
-                model.runSpeed = _SpeedRunFight;
-                if (!model.targetLockedOn) model.CombatMovement(-model.mainCamera.forward, false, true, false);
-                else model.CombatMovement(-model.transform.forward, false, true, false);
+                    firstPushS = true;
+                    model.speed = _SpeedWalkFight;
+                    model.runSpeed = _SpeedRunFight;
+                    if (!model.targetLockedOn) model.CombatMovement(-model.mainCamera.forward, false, true, false);
+                    else model.CombatMovement(-model.transform.forward, false, true, false);
                 
             }
 
             if (pushA && !firstPushD && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = _SpeedWalkFight;
-                model.runSpeed = _SpeedRunFight;
-                firstPushA = true;
-                if (!model.targetLockedOn) model.CombatMovement(-model.mainCamera.right, false, true, false);
-                else model.CombatMovement(-model.transform.right, false, true, false);
+                    model.speed = _SpeedWalkFight;
+                    model.runSpeed = _SpeedRunFight;
+                    firstPushA = true;
+                    if (!model.targetLockedOn) model.CombatMovement(-model.mainCamera.right, false, true, false);
+                    else model.CombatMovement(-model.transform.right, false, true, false);
             }
 
             if (pushD && !firstPushA && !pushS && !pushW && !model.isDead && model.countAnimAttack <= 0)
             {
-                model.speed = _SpeedWalkFight;
-                model.runSpeed = _SpeedRunFight;
-                firstPushD = true;
-                if (!model.targetLockedOn) model.CombatMovement(model.mainCamera.right, false, true, false); 
-                else model.CombatMovement(model.transform.right, false, true, false); 
+                    model.speed = _SpeedWalkFight;
+                    model.runSpeed = _SpeedRunFight;
+                    firstPushD = true;
+                    if (!model.targetLockedOn) model.CombatMovement(model.mainCamera.right, false, true, false); 
+                    else model.CombatMovement(model.transform.right, false, true, false); 
             }
 
             if (pushW && pushA && !firstPushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0 )
             {
-                firstPushW = true;
-                model.speed = _SpeedWalkFight;
-                model.runSpeed = _SpeedRunFight;
-                if (!firstPushD) firstPushA = true;
-                Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
-                if(firstPushA) model.CombatMovement(dir.normalized, true, false, false);
+                    firstPushW = true;
+                    model.speed = _SpeedWalkFight;
+                    model.runSpeed = _SpeedRunFight;
+                    if (!firstPushD) firstPushA = true;
+                    Vector3 dir = (model.mainCamera.forward + -model.mainCamera.right) / 2;
+                    if(firstPushA) model.CombatMovement(dir.normalized, true, false, false);
             }
 
             if (pushW && !firstPushA && !firstPushS && pushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                firstPushW = true;
-                model.speed = _SpeedWalkFight;
-                model.runSpeed = _SpeedRunFight;
-                if (!firstPushA) firstPushD = true;
-                Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
-                if (firstPushD) model.CombatMovement(dir.normalized, true, false, false);
+                    firstPushW = true;
+                    model.speed = _SpeedWalkFight;
+                    model.runSpeed = _SpeedRunFight;
+                    if (!firstPushA) firstPushD = true;
+                    Vector3 dir = (model.mainCamera.forward + model.mainCamera.right) / 2;
+                    if (firstPushD) model.CombatMovement(dir.normalized, true, false, false);
             }
 
             if (!firstPushW && pushA && pushS && !firstPushD && !model.isDead && model.countAnimAttack <= 0)
             {
-                firstPushS = true;
-                model.speed = _SpeedWalkFight;
-                model.runSpeed = _SpeedRunFight;
-                if (!firstPushD) firstPushA = true;
-                Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
-                if (firstPushA) model.CombatMovement(dir.normalized, false, false, true);
+                    firstPushS = true;
+                    model.speed = _SpeedWalkFight;
+                    model.runSpeed = _SpeedRunFight;
+                    if (!firstPushD) firstPushA = true;
+                    Vector3 dir = (-model.mainCamera.forward + -model.mainCamera.right) / 2;
+                    if (firstPushA) model.CombatMovement(dir.normalized, false, false, true);
             }
 
             if (!firstPushW && !firstPushA && pushS && pushD && !model.isDead && model.countAnimAttack <= 0 )
             {
-                model.speed = _SpeedWalkFight;
-                model.runSpeed = _SpeedRunFight;
-                firstPushS = true;
-                if (!firstPushA) firstPushD = true;
-                Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
-                if (firstPushD) model.CombatMovement(dir.normalized, false, false, true);
+                    model.speed = _SpeedWalkFight;
+                    model.runSpeed = _SpeedRunFight;
+                    firstPushS = true;
+                    if (!firstPushA) firstPushD = true;
+                    Vector3 dir = (-model.mainCamera.forward + model.mainCamera.right) / 2;
+                    if (firstPushD) model.CombatMovement(dir.normalized, false, false, true);
             }
         }      
     }
