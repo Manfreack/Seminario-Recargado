@@ -8,16 +8,20 @@ public class Rune : MonoBehaviour
     public float cooldownTime;
     public ParticleSystem particles;
     particleAttractorLinear particleAttractor;
+    public GameObject runeCircle;
+    ButtonManager buttonManager;
     bool used;
     bool useParticles;
     Material mat;
     Model player;
+    public Transform myPH;
 
     void Start()
     {
         used = false;
         mat = transform.GetChild(0).GetComponent<Renderer>().material;
         player = FindObjectOfType<Model>();
+        buttonManager = FindObjectOfType<ButtonManager>();
     }
 
     void OnTriggerStay(Collider c)
@@ -25,6 +29,7 @@ public class Rune : MonoBehaviour
 
         if (!used && c.GetComponent<Model>())
         {
+            buttonManager.OnNotify(myPH);
             if (player != null)
             {
                 if (player.life != player.maxLife || player.stamina != player.maxStamina)
@@ -39,13 +44,18 @@ public class Rune : MonoBehaviour
                     else
                     {
                         particles.Play();
+                        runeCircle.SetActive(true);
                         useParticles = true;
                         player.UpdateLife(healingAmount * Time.deltaTime);
                         player.UpdateStamina(healingAmount * Time.deltaTime);
                     }
                 }
 
-                else particles.Stop();
+                else
+                {
+                    particles.Stop();
+                    runeCircle.SetActive(false);
+                }
             }
         }
     }
@@ -65,8 +75,10 @@ public class Rune : MonoBehaviour
     IEnumerator HealParticlesOpacity()
     {
         particles.Play();
+        runeCircle.SetActive(true);
         yield return new WaitForSeconds(2);
         particles.Stop();
+        runeCircle.SetActive(false);
     }
 
     IEnumerator Opacity(bool show, Model player = null)

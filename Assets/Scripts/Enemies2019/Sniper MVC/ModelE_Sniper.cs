@@ -44,6 +44,8 @@ public class ModelE_Sniper : EnemyEntity
 	
 	public float maxLife;
 
+    Vector3 startPos;
+
     public IEnumerator OnDamageCorrutine()
     {
         onDamage = true;
@@ -58,7 +60,8 @@ public class ModelE_Sniper : EnemyEntity
 
     public void Awake()
     {
-       
+
+        startPos = transform.position;
         var myEntites = FindObjectsOfType<EnemyEntity>().Where(x => x != this && x.EnemyID_Area == EnemyID_Area);
         nearEntities.Clear();
         nearEntities.AddRange(myEntites);
@@ -110,6 +113,7 @@ public class ModelE_Sniper : EnemyEntity
           .SetTransition(EnemyInputs.MELEE_ATTACK, melee_attack)
           .SetTransition(EnemyInputs.FOLLOW, follow)
           .SetTransition(EnemyInputs.STUNED, stuned)
+          .SetTransition(EnemyInputs.PATROL, patrol)
           .SetTransition(EnemyInputs.DIE, die)
           .Done();
 
@@ -117,6 +121,7 @@ public class ModelE_Sniper : EnemyEntity
          .SetTransition(EnemyInputs.ATTACK, attack)
          .SetTransition(EnemyInputs.MELEE_ATTACK, melee_attack)
          .SetTransition(EnemyInputs.FOLLOW, follow)
+          .SetTransition(EnemyInputs.PATROL, patrol)
          .SetTransition(EnemyInputs.STUNED, stuned)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
@@ -125,6 +130,7 @@ public class ModelE_Sniper : EnemyEntity
          .SetTransition(EnemyInputs.MELEE_ATTACK, melee_attack)
          .SetTransition(EnemyInputs.PERSUIT, persuit)
          .SetTransition(EnemyInputs.FOLLOW, follow)
+          .SetTransition(EnemyInputs.PATROL, patrol)
          .SetTransition(EnemyInputs.RETREAT, retreat)
          .SetTransition(EnemyInputs.STUNED, stuned)
          .SetTransition(EnemyInputs.DIE, die)
@@ -141,6 +147,7 @@ public class ModelE_Sniper : EnemyEntity
         StateConfigurer.Create(stuned)
          .SetTransition(EnemyInputs.PERSUIT, persuit)
          .SetTransition(EnemyInputs.ATTACK, attack)
+          .SetTransition(EnemyInputs.PATROL, patrol)
          .SetTransition(EnemyInputs.FOLLOW, follow)
          .SetTransition(EnemyInputs.RETREAT, retreat)
          .SetTransition(EnemyInputs.DIE, die)
@@ -149,6 +156,7 @@ public class ModelE_Sniper : EnemyEntity
         StateConfigurer.Create(follow)
          .SetTransition(EnemyInputs.PERSUIT, persuit)
          .SetTransition(EnemyInputs.ATTACK, attack)
+          .SetTransition(EnemyInputs.PATROL, patrol)
          .SetTransition(EnemyInputs.STUNED, stuned)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
@@ -156,10 +164,13 @@ public class ModelE_Sniper : EnemyEntity
         StateConfigurer.Create(answerCall)
         .SetTransition(EnemyInputs.PERSUIT, persuit)
         .SetTransition(EnemyInputs.ATTACK, attack)
+         .SetTransition(EnemyInputs.PATROL, patrol)
         .SetTransition(EnemyInputs.DIE, die)
         .Done();
 
-        StateConfigurer.Create(die).Done();
+        StateConfigurer.Create(die)
+        .SetTransition(EnemyInputs.PATROL, patrol)
+        .Done();
 
         patrol.OnFixedUpdate += () =>
         {
@@ -770,5 +781,19 @@ public class ModelE_Sniper : EnemyEntity
     {
         target.ReturnPointer(myPointer);
         myPointer = null;
+    }
+
+    public override void Respawn()
+    {
+        transform.position = startPos;
+        life = maxLife;
+        view.LifeBar(life / maxLife);
+        view.anim.SetBool("IsDead", false);
+        view.anim.SetBool("IdleCombat", true);
+        view.BackFromAttackRange();
+        view.BackFromDamage();
+        onDamage = false;
+        isDead = false;
+        SendInputToFSM(EnemyInputs.PATROL);
     }
 }

@@ -94,6 +94,7 @@ public class ModelE_Melee : EnemyEntity
     public bool cooldwonReposition;
 
     bool delayWaitState;
+    Vector3 startPos;
 
     public IEnumerator ChangeDirRotation()
     {
@@ -253,6 +254,7 @@ public class ModelE_Melee : EnemyEntity
 
     public void Awake()
     {
+        startPos = transform.position;
         cm = FindObjectOfType<EnemyCombatManager>();
         myNodes.AddRange(NodePath.GetComponentsInChildren<Node>());
         var myEntites = FindObjectsOfType<EnemyEntity>().Where(x => x != this && x.EnemyID_Area == EnemyID_Area);
@@ -318,6 +320,7 @@ public class ModelE_Melee : EnemyEntity
           .SetTransition(EnemyInputs.PERSUIT, persuit)
           .SetTransition(EnemyInputs.FOLLOW, follow)
           .SetTransition(EnemyInputs.WAIT, wait)
+          .SetTransition(EnemyInputs.PATROL, patrol)
           .SetTransition(EnemyInputs.DIE, die)
           .Done();
 
@@ -325,6 +328,7 @@ public class ModelE_Melee : EnemyEntity
        .SetTransition(EnemyInputs.PERSUIT, persuit)
        .SetTransition(EnemyInputs.FOLLOW, follow)
        .SetTransition(EnemyInputs.WAIT, wait)
+       .SetTransition(EnemyInputs.PATROL, patrol)
        .SetTransition(EnemyInputs.DIE, die)
        .Done();
 
@@ -333,6 +337,7 @@ public class ModelE_Melee : EnemyEntity
          .SetTransition(EnemyInputs.FOLLOW, follow)
          .SetTransition(EnemyInputs.STUNED, stuned)
          .SetTransition(EnemyInputs.KNOCK, knocked)
+         .SetTransition(EnemyInputs.PATROL, patrol)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
 
@@ -341,6 +346,7 @@ public class ModelE_Melee : EnemyEntity
          .SetTransition(EnemyInputs.ATTACK, attack)
          .SetTransition(EnemyInputs.DEFENCE, defence)
          .SetTransition(EnemyInputs.STUNED, stuned)
+         .SetTransition(EnemyInputs.PATROL, patrol)
          .SetTransition(EnemyInputs.KNOCK, knocked)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
@@ -350,6 +356,7 @@ public class ModelE_Melee : EnemyEntity
        .SetTransition(EnemyInputs.FOLLOW, follow)
        .SetTransition(EnemyInputs.WAIT, wait)
        .SetTransition(EnemyInputs.DEFENCE, defence)
+       .SetTransition(EnemyInputs.PATROL, patrol)
        .SetTransition(EnemyInputs.KNOCK, knocked)
        .SetTransition(EnemyInputs.DIE, die)
        .Done();
@@ -362,6 +369,7 @@ public class ModelE_Melee : EnemyEntity
         .SetTransition(EnemyInputs.WAIT, wait)
         .SetTransition(EnemyInputs.RETREAT, retreat)
         .SetTransition(EnemyInputs.STUNED, stuned)
+        .SetTransition(EnemyInputs.PATROL, patrol)
         .SetTransition(EnemyInputs.KNOCK, knocked)
         .SetTransition(EnemyInputs.DIE, die)
         .Done();
@@ -371,6 +379,7 @@ public class ModelE_Melee : EnemyEntity
          .SetTransition(EnemyInputs.PERSUIT, persuit)
          .SetTransition(EnemyInputs.STUNED, stuned)
          .SetTransition(EnemyInputs.WAIT, wait)
+         .SetTransition(EnemyInputs.PATROL, patrol)
          .SetTransition(EnemyInputs.KNOCK, knocked)
          .SetTransition(EnemyInputs.DIE, die)
          .Done();
@@ -380,6 +389,7 @@ public class ModelE_Melee : EnemyEntity
            .SetTransition(EnemyInputs.FOLLOW, follow)
            .SetTransition(EnemyInputs.WAIT, wait)
            .SetTransition(EnemyInputs.STUNED, stuned)
+           .SetTransition(EnemyInputs.PATROL, patrol)
            .SetTransition(EnemyInputs.DIE, die)
            .Done();
 
@@ -389,7 +399,9 @@ public class ModelE_Melee : EnemyEntity
         .SetTransition(EnemyInputs.DIE, die)
         .Done();
 
-        StateConfigurer.Create(die).Done();
+        StateConfigurer.Create(die)
+        .SetTransition(EnemyInputs.PATROL, patrol)
+        .Done();
 
         patrol.OnEnter += x =>
         {
@@ -404,11 +416,13 @@ public class ModelE_Melee : EnemyEntity
             timeToPatrol -= Time.deltaTime;
             currentAction = new A_Patrol(this);
 
-            if ((!isDead && isPersuit && !isWaitArea && !target.view.startFade.enabled) || onDamage) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (target.fadeTimer > target.view.fadeTime) IdleEvent();
 
-            if (!isDead && isAnswerCall) SendInputToFSM(EnemyInputs.ANSWER);
+            if ((!isDead && isPersuit && !isWaitArea && target.fadeTimer > target.view.fadeTime) || onDamage) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isAnswerCall && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.ANSWER);
+
+            if (!isDead && isWaitArea && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.WAIT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -1423,5 +1437,22 @@ public class ModelE_Melee : EnemyEntity
     {
         target.ReturnPointer(myPointer);
         myPointer = null;
+    }
+
+    public override void Respawn()
+    {
+        transform.position = startPos;
+        life = maxLife;
+        _view.LifeBar(life / maxLife);
+        _view._anim.SetBool("IsDead", false);
+        _view._anim.SetBool("Idle", true);
+        _view._anim.SetBool("IdleCombat", false);
+        _view.EndChainAttack();
+        _view.HeavyAttackFalse();
+        _view._anim.SetInteger("TakeDamageCounter", 0);
+        onDamage = false;
+        _view._anim.Play("Idle_EM");
+        isDead = false;
+        SendInputToFSM(EnemyInputs.PATROL);
     }
 }

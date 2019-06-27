@@ -257,17 +257,6 @@ public class ViewerE_Sniper : MonoBehaviour
     {
         StartCoroutine(Die());
 
-        /*
-        anim.SetBool("Dead", true);
-        anim.applyRootMotion = false;
-        transform.position += new Vector3(0, -0.2f, 0);       
-        var pool = Instantiate(bloodPool);
-        matPool = pool.GetComponent<MeshRenderer>().material;
-        pool.transform.forward = transform.forward;
-        pool.transform.position = transform.position - transform.forward/2 + new Vector3(0,0.2f,0);
-        StartCoroutine(BloodPoolAnim());
-        DeadBody();
-        */
     }
 
     IEnumerator Die()
@@ -276,7 +265,7 @@ public class ViewerE_Sniper : MonoBehaviour
         var ragdoll = Instantiate(ragdollPrefab);
         ragdoll.transform.position = transform.position;
         ragdoll.transform.rotation = transform.rotation;
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     /*

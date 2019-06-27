@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ButtonManager : MonoBehaviour, ICheckObserver
 {
@@ -16,10 +17,16 @@ public class ButtonManager : MonoBehaviour, ICheckObserver
     public bool startRespawn;
     public bool pause;
     public bool startFirstRespawn;
+    public RawImage startFade;
+    public GameObject diedMenu;
+
+    List<EnemyEntity> enemies = new List<EnemyEntity>();
 
     public void Awake()
     {
         cam = FindObjectOfType<CamController>();
+
+        enemies.AddRange(FindObjectsOfType<EnemyEntity>());
 
         if (SceneManager.GetActiveScene().buildIndex == 0)
         {
@@ -33,9 +40,10 @@ public class ButtonManager : MonoBehaviour, ICheckObserver
     }
     public void Update()
     {
-        if (player.life <= 0 && !startRespawn) StartCoroutine(Respawn());
+      /*  if (player.life <= 0 && !startRespawn) StartCoroutine(Respawn());
         if (startRespawn) RespawnScene();
         if (startFirstRespawn) RespawnFirstCheck();
+        */
     }
     public void OnNotify(Transform check)
     {
@@ -114,19 +122,32 @@ public class ButtonManager : MonoBehaviour, ICheckObserver
 
     public void RespawnScene()
     {
-       // buttonRespawn.SetActive(false);
+        Time.timeScale = 1;
+        pause = false;
         pauseMenu.SetActive(false);
+        player.transform.position = CheckTransform.position;
+        player.life = player.maxLife;
+        player.UpdateLife(0);
+        player.stamina = player.maxStamina;
+        player.UpdateStamina(0);
+        player.mana = player.maxMana;       
+        player.isIdle = true;
+        player.isDead = false;
+        player.view.anim.SetBool("IsDead", false);
+        startRespawn = false;
+        startFade.enabled = true;
+        startFade.CrossFadeAlpha(0, 5, false);
+        diedMenu.SetActive(false);
+        cam.blockMouse = true;
+        player.fadeTimer = 0;
 
-        if (Starting)
-        {            
-            player.transform.position = CheckTransform.transform.position;
-            player.life = player.maxLife;
-            player.life = player.maxStamina;
-            player.mana = player.maxMana;
-            player.isIdle = true;
-            player.isDead = false;
-
-            startRespawn = false;
+        foreach (var item in enemies)
+        {
+            if (!item.cantRespawn)
+            {
+                if (item.isDead) item.gameObject.SetActive(true);
+                item.Respawn();
+            }
         }
     }
 

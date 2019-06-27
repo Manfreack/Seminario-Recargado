@@ -14,7 +14,7 @@ public class CombatArea : MonoBehaviour
     bool firstPass;
     EnemyCombatManager cm;
     public int EnemyID_Area;
-
+    bool endArea;
 
     private void Awake()
     {
@@ -36,12 +36,23 @@ public class CombatArea : MonoBehaviour
 
     void Update()
     {
+        if (player.isDead && !endArea)
+        {
+            foreach (var item in walls) item.SetActive(false);
+            myEntities = myNPCs.Count;
+            firstPass = false;
+        }
 
         if (myEntities <= 0 && !aux)
         {
             foreach (var item in walls) item.SetActive(false);
             cm.times = 2;
+            foreach (var item in myNPCs)
+            {
+                item.cantRespawn = true;
+            }
             aux = true;
+            endArea = true;
         }
 
         var auxMyEntites = 0;

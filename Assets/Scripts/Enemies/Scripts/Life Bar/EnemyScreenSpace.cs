@@ -30,6 +30,7 @@ public class EnemyScreenSpace : MonoBehaviour
         canvas.GetComponent<ScreenSpaceCanvas>().AddToCanvas(healthBar);
         healthBar.SetActive(false);
         timer = 0;
+        enemy.healthBar = healthBar;
     }
 
     void Update()

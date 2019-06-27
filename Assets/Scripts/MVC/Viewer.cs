@@ -592,6 +592,7 @@ public class Viewer : MonoBehaviour
 
     public void NoReciveDamage()
     {
+        Debug.Log(1);
         anim.SetInteger("TakeDamage", 0);
     }
 
@@ -621,6 +622,8 @@ public class Viewer : MonoBehaviour
         youDied.gameObject.SetActive(true);
         var tempColor = youDied.GetComponent<Image>().color;
         var alpha = 0f;
+        startFade.enabled = true;
+        startFade.CrossFadeAlpha(1, 1f, false);
         while (alpha <= 1)
         {
             alpha += 0.5f * Time.deltaTime;

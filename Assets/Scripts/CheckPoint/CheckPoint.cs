@@ -16,7 +16,6 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 
     public List<CheckPoint> listaChecks = new List<CheckPoint>();
     bool move1;
-    public GameObject RunaParticle;
   
     List<ICheckObserver> _allObservers = new List<ICheckObserver>();
 
@@ -56,7 +55,6 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
         if (c.gameObject.GetComponent(typeof(Model)) && !move1)
         {
             
-            RunaParticle.SetActive(true);
             _Player = c.GetComponent<Model>();
             foreach (var item in listaChecks)
             {
@@ -71,11 +69,6 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
     public void OnTriggerExit (Collider c)
     {
 
-        if (c.gameObject.GetComponent(typeof(Model)))
-        {
-            new WaitForSeconds(1);
-            RunaParticle.SetActive(false);
-        }
     }
 
     public void Subscribe(ICheckObserver observer)

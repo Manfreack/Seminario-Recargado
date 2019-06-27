@@ -6,6 +6,8 @@ using UnityEngine.AI;
 public abstract class EnemyEntity: MonoBehaviour
 {
     public bool onCombat;
+    public bool cantRespawn;
+    public GameObject healthBar;
     public EnemyPointer myPointer;
     public NavMeshAgent navMeshAgent;
     public int EnemyID_Area;
@@ -58,6 +60,7 @@ public abstract class EnemyEntity: MonoBehaviour
     public List<CombatNode> playerNodes = new List<CombatNode>();
     public abstract CombatNode FindNearAggressiveNode();
     public abstract CombatNode FindNearNon_AggressiveNode();
+    public abstract void Respawn();
     public CombatNode myCombatNode;
     public CombatNode lastCombatNode;
     public SkinnedMeshRenderer renderObject;

@@ -390,15 +390,7 @@ public class ViewerE_Melee : MonoBehaviour
     public void DeadAnim()
     {
         StartCoroutine(Die());
-        /*_anim.SetBool("Dead", true);
-        //_anim.enabled = false;
 
-        DeadBody();
-        var pool = Instantiate(bloodPool);
-        matPool = pool.GetComponent<MeshRenderer>().material;
-        pool.transform.forward = transform.forward;
-        pool.transform.position = transform.position - transform.forward;
-        StartCoroutine(BloodPoolAnim());*/
     }
 
     IEnumerator Die()
@@ -407,15 +399,11 @@ public class ViewerE_Melee : MonoBehaviour
         var ragdoll = Instantiate(ragdollPrefab);
         ragdoll.transform.position = transform.position;
         ragdoll.transform.rotation = transform.rotation;
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+        _model.healthBar.SetActive(false);
     }
 
-    /*
-    public void DeadBody()
-    {
-        StartCoroutine(DeadCorrutine());
-    }
-    */
+
 
     public void AttackAnim()
     {

@@ -181,7 +181,7 @@ public class Model : MonoBehaviour
     float tdefence;
     float amountOfPointers;
 
-    [HideInInspector]
+    //[HideInInspector]
     public float fadeTimer;
     public enum DogeDirecctions {Left,Right,Back, Roll };
 
@@ -526,8 +526,8 @@ public class Model : MonoBehaviour
             view.NoDefence();
         }
 
-        if (fadeTimer < view.fadeTime) fadeTimer += Time.deltaTime;
-        else view.startFade.enabled = false;
+        if (fadeTimer < view.fadeTime && !isDead) fadeTimer += Time.deltaTime;
+
     }
 
     public void ModifyNodes()
@@ -634,24 +634,21 @@ public class Model : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
             }
 
-            if (targetLocked.isDead && targetLocked && enemiesToLock.Count<=0)
+            if (targetLocked.isDead && targetLocked && enemiesToLock.Count == 1 || isDead)
             {
                 mainCamera.GetComponent<CamController>().StopLockedTarget();
                 targetLocked = null;
-                targetLockedOn = false;
-
+                targetLockedOn = false;            
             }
 
-            if(targetLocked.isDead && targetLocked && enemiesToLock.Count > 0)
-            {            
+            if (targetLocked.isDead && targetLocked && enemiesToLock.Count > 1 && targetLocked)
+            {
+                var e = targetLocked;
                 ChangeTarget();
+                enemiesToLock.Remove(e);
             }
-        }
 
-        if (!targetLocked && targetLockedOn)
-        {
-            targetLockedOn = false;
-            mainCamera.GetComponent<CamController>().StopLockedTarget();
+
         }
 
         timeOnCombat -= Time.deltaTime;
@@ -1371,16 +1368,15 @@ public class Model : MonoBehaviour
             }
             if (life > 0 && !onPowerState && !onRoll) OnDamage();
             
-            if(life<=0)
-            {
-                if (!dieOnce)
-                {
-                    Dead();
-                    isDead = true;
-                    StartCoroutine(view.YouDied());
-                    dieOnce = true;
-                }
-            }       
+          
+        }
+
+        if (life <= 0 && !isDead)
+        {
+            fadeTimer = 0;
+            Dead();
+            isDead = true;
+            StartCoroutine(view.YouDied());
         }
 
         StartCoroutine(OnDamageCorrutine());
