@@ -530,10 +530,20 @@ public class Model : MonoBehaviour
 
         if (fadeTimer < view.fadeTime && !isDead) fadeTimer += Time.deltaTime;
 
-        if(timeToRoll>0)
+        if (timeToRoll <= 0)
+        {
+            timeToRoll = 0;
+            view.EndDodge();
+        }
+
+        if (timeToRoll>0)
         {
             timeToRoll -= Time.deltaTime;
-            if (timeToRoll <= 0) timeToRoll = 0;
+            if (timeToRoll <= 0)
+            {
+                timeToRoll = 0;
+                view.EndDodge();
+            }
             view.anim.SetFloat("RollTime", timeToRoll);
         }
     }

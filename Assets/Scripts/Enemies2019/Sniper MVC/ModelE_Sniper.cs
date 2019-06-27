@@ -442,7 +442,7 @@ public class ModelE_Sniper : EnemyEntity
                 myPointer = target.pointerPool.GetObjectFromPool();
                 myPointer.owner = this;
             }
-
+            healthBar.SetActive(false);
             navMeshAgent.enabled = false;
             DeadEvent();
             currentAction = null;

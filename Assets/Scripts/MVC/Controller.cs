@@ -202,7 +202,7 @@ public class Controller : MonoBehaviour
 
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) && model.animClipName != "GetDamage1" && model.animClipName != "GetDamage2" && model.animClipName != "GetDamage3" && model.isInCombat)
+            if (Input.GetKeyDown(KeyCode.Space) && model.animClipName != "GetDamage1" && model.animClipName != "GetDamage2" && model.animClipName != "GetDamage3" && model.isInCombat && model.timeToRoll <= 0)
             {
                 if (!pushW && !pushA && !pushS && !pushD) model.Roll(model.transform.forward, Model.DogeDirecctions.Roll);
                 if (pushW && !pushA && !firstPushS && !pushD) model.Roll(model.mainCamera.forward, Model.DogeDirecctions.Roll);
@@ -235,7 +235,7 @@ public class Controller : MonoBehaviour
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) &&  !model.isInCombat)
+            if (Input.GetKeyDown(KeyCode.Space) &&  !model.isInCombat && model.timeToRoll<=0)
             {
                 if (!pushW && !pushA && !pushS && !pushD) model.Roll(model.transform.forward, Model.DogeDirecctions.Roll);
                 if (pushW && !pushA && !firstPushS && !pushD) model.Roll(model.mainCamera.forward, Model.DogeDirecctions.Roll);
@@ -356,7 +356,8 @@ public class Controller : MonoBehaviour
 
         }
 
-        else if(model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false && model.fadeTimer > view.fadeTime)
+        else if(model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false && model.fadeTimer > view.fadeTime && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TurnAttack_Damage]
+                && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TurnAttack_End] && model.animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TurnAttack_Pre])
         {
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0)
             {

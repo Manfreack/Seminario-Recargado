@@ -993,7 +993,7 @@ public class ModelE_Melee : EnemyEntity
             DeadEvent();
             currentAction = null;
             timeToAttack = false;
-
+            healthBar.SetActive(false);
             if (myWarriorFriends.Count > 0)
             {
                 foreach (var item in myWarriorFriends)

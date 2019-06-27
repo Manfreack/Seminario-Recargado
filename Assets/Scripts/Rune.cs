@@ -12,16 +12,15 @@ public class Rune : MonoBehaviour
     ButtonManager buttonManager;
     bool used;
     bool useParticles;
-    Material mat;
+    public Material mat;
     Model player;
     public Transform myPH;
-    public float _ColorRune = 0.75f;
-    float timer = 0;
+    public float timer = 0;
 
     void Start()
     {
         used = false;
-        mat = transform.GetChild(0).GetComponent<Renderer>().material;
+        mat = GetComponent<MeshRenderer>().material;
         player = FindObjectOfType<Model>();
         buttonManager = FindObjectOfType<ButtonManager>();
     }
@@ -33,23 +32,19 @@ public class Rune : MonoBehaviour
         {         
             buttonManager.OnNotify(myPH);
 
-            timer += Time.deltaTime;
-
-            if (timer < 4)
-            {
-                mat.SetFloat("_RuneusedState", _ColorRune);
-            }
-            else
-            {
-                mat.SetFloat("_RuneusedState", _ColorRune - _ColorRune);
-            }
-
             if (player != null)
             {
                 if (player.life != player.maxLife || player.stamina != player.maxStamina)
                 {
                     if (player.isInCombat)
                     {
+                        timer += Time.deltaTime;
+
+                        if (timer > 1) timer = 1;
+
+                        mat.SetFloat("_RuneusedState", timer);
+
+                        runeCircle.SetActive(true);
                         used = true;
                         StartCoroutine(Opacity(false, player));
                         StartCoroutine(Cooldown());
@@ -57,7 +52,7 @@ public class Rune : MonoBehaviour
                     }
                     else
                     {
-                        particles.Play();
+                        StartCoroutine(HealParticlesOpacity());
                         runeCircle.SetActive(true);
                         useParticles = true;
                         player.UpdateLife(healingAmount * Time.deltaTime);
@@ -68,7 +63,6 @@ public class Rune : MonoBehaviour
                 else
                 {
                     particles.Stop();
-                    runeCircle.SetActive(false);
                 }
             }
         }
@@ -76,20 +70,31 @@ public class Rune : MonoBehaviour
 
     public void OnTriggerExit(Collider c)
     {
+        particles.Stop();
+        StartCoroutine(ChangeColorRune());
         if (c.GetComponent<Model>())
         {
             if (!player.isInCombat)
             {
-                particles.Stop();
+              
                 useParticles = false;
             }
+        }
+    }
+
+    IEnumerator ChangeColorRune()
+    {
+        while (timer>0)
+        {
+            timer -= Time.deltaTime;
+            mat.SetFloat("_RuneusedState", timer);
+            yield return new WaitForEndOfFrame();
         }
     }
 
     IEnumerator HealParticlesOpacity()
     {
         particles.Play();
-        runeCircle.SetActive(true);
         yield return new WaitForSeconds(2);
         particles.Stop();
         runeCircle.SetActive(false);
