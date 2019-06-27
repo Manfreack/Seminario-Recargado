@@ -188,6 +188,10 @@ MonoBehaviour:
   healingAmount: 30
   cooldownTime: 5
   particles: {fileID: 0}
+  runeCircle: {fileID: 0}
+  mat: {fileID: 0}
+  myPH: {fileID: 0}
+  timer: 0
 --- !u!1 &1080980172511153305
 GameObject:
   m_ObjectHideFlags: 0
@@ -28776,7 +28780,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4446325811839131865
 Transform:
   m_ObjectHideFlags: 0
@@ -34738,7 +34742,7 @@ ParticleSystem:
       maxGradient:
         serializedVersion: 2
         key0: {r: 0, g: 1, b: 0, a: 0}
-        key1: {r: 0.99002707, g: 0.00997293, b: 0, a: 0.53333336}
+        key1: {r: 0.99002707, g: 0.00997293, b: 0, a: 0.13725491}
         key2: {r: 0.02745098, g: 1, b: 0, a: 0}
         key3: {r: 1, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 1, b: 0, a: 0}
