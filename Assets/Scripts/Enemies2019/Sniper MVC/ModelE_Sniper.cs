@@ -174,6 +174,7 @@ public class ModelE_Sniper : EnemyEntity
 
         patrol.OnFixedUpdate += () =>
         {
+            if (myPointer) myPointer.StopAdvertisement();
 
             currentAction = new A_SniperPatrol(this);
 

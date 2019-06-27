@@ -9,7 +9,7 @@ public class CombatArea : MonoBehaviour
     public List<GameObject> walls = new List<GameObject>();
     Model player;
     public int myEntities;
-    bool aux;
+    public bool aux;
     public bool startArea;
     bool firstPass;
     EnemyCombatManager cm;
@@ -43,8 +43,9 @@ public class CombatArea : MonoBehaviour
             firstPass = false;
         }
 
-        if (myEntities <= 0 && !aux)
+        if (myEntities <= 0 && !endArea)
         {
+            Debug.Log(1);
             foreach (var item in walls) item.SetActive(false);
             cm.times = 2;
             foreach (var item in myNPCs)

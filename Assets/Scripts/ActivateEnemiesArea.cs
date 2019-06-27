@@ -25,7 +25,10 @@ public class ActivateEnemiesArea : MonoBehaviour
 
             foreach (var item in enemies)
             {
-                item.SetActive(true);
+                if (item.GetComponent<EnemyEntity>())
+                {
+                   if(!item.GetComponent<EnemyEntity>().cantRespawn) item.SetActive(true);
+                }
             }
         }
     }

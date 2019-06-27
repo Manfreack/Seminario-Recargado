@@ -837,7 +837,7 @@ public class Model : MonoBehaviour
         acceleration += 3 * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
-        if (!onDamage && countAnimAttack == 0 && targetLockedOn && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
+        if (!onDamage && countAnimAttack == 0 && targetLockedOn && !onDefence && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat]
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Run] || timeToRoll <= 0) && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right] 
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage3] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage2] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage1])
@@ -1354,29 +1354,16 @@ public class Model : MonoBehaviour
 
         if ((!onDefence || (onDefence && isBehind) || isProyectile) && !heavyDamage && !invulnerable)
         {
+            UpdateLife(-damage);
+            timeToHeal = maxTimeToHeal;
+            impulse = false;
 
-            if (armor >= damage)
-            {
-                armor -= damage;
-                view.UpdateArmorBar(armor / maxArmor);
-            }
-            else
-            {
-                float dmg = damage - armor;
-                armor = 0;
-                view.UpdateArmorBar(armor / maxArmor);
-                UpdateLife(-dmg);
-                timeToHeal = maxTimeToHeal;
-                impulse = false;
-            }
-
-            if (!onPowerState)
-            {
-               // onDamage = true;
-            }
-            if (life > 0 && !onPowerState && !onRoll) OnDamage();
-            
-          
+            if (life > 0 && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack]
+                        && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Back]
+                        && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left]
+                        && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right]
+                        && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage]) OnDamage();
+                    
         }
 
         if (life <= 0 && !isDead)

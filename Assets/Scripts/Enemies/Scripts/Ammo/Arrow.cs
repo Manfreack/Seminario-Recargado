@@ -39,7 +39,7 @@ public class Arrow : Munition {
 	// Update is called once per frame
 	void Update () {
 
-        if (owner.myPointer) owner.myPointer.StartAdvertisement();
+    
         timer += Time.deltaTime;
         if (timer >= 5) ammoAmount.ReturnBulletToPool(this);
 

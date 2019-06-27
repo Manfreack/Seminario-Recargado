@@ -414,6 +414,7 @@ public class ModelE_Melee : EnemyEntity
 
         patrol.OnFixedUpdate += () =>
         {
+
             timeToPatrol -= Time.deltaTime;
             currentAction = new A_Patrol(this);
 
@@ -433,6 +434,12 @@ public class ModelE_Melee : EnemyEntity
 
         patrol.OnUpdate += () =>
         {
+            if (myPointer)
+            {
+                target.ReturnPointer(myPointer);
+                myPointer = null;
+            }
+
             timeToPatrol -= Time.deltaTime;
         };
 
