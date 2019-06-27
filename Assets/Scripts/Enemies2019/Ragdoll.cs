@@ -19,7 +19,7 @@ public class Ragdoll : MonoBehaviour
     void Start()
     {
         player = FindObjectOfType<Model>();
-        forcePosition.AddForce(-player.transform.forward * forceAmount);
+        forcePosition.AddForce(player.transform.forward * forceAmount);
         allRigidbodies = GetComponentsInChildren<Rigidbody>();
         StartCoroutine(Bury());
     }

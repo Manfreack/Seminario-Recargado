@@ -45,7 +45,6 @@ public class CombatArea : MonoBehaviour
 
         if (myEntities <= 0 && !endArea)
         {
-            Debug.Log(1);
             foreach (var item in walls) item.SetActive(false);
             cm.times = 2;
             foreach (var item in myNPCs)

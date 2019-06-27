@@ -184,6 +184,7 @@ public class Model : MonoBehaviour
     //[HideInInspector]
     public float fadeTimer;
     public enum DogeDirecctions {Left,Right,Back, Roll };
+    public DogeDirecctions dirToDash;
 
     IEnumerator DashTimer()
     {
@@ -250,15 +251,17 @@ public class Model : MonoBehaviour
 
     public IEnumerator RollImpulseCorrutine()
     {
-        while(onRoll)
+        while(timeToRoll>0)
         {
             RollImpulse();
             yield return new WaitForEndOfFrame();
         }
 
+        view.EndDodge();
+
         while (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
         {
-
+           
             view.anim.SetFloat("RollTime", timeToRoll);
 
             if (timeToRoll <= 0)
@@ -564,7 +567,9 @@ public class Model : MonoBehaviour
     public void Roll(Vector3 dir, DogeDirecctions directions )
     {
         EndCombo();
-      
+
+        dirToDash = directions;
+
         if (stamina - rollStamina >= 0 && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") 
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] 
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Back]
@@ -692,9 +697,7 @@ public class Model : MonoBehaviour
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right])
         {
             view.NoReciveDamage();
-
          
-
             if(animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
             {
                 transform.position += transform.forward * 5 * Time.deltaTime;
@@ -717,7 +720,10 @@ public class Model : MonoBehaviour
 
             if (animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
             {
-                transform.position += dirToDahs * 7.5f * Time.deltaTime;
+                if(targetLockedOn && (dirToDash == DogeDirecctions.Right || dirToDash == DogeDirecctions.Left)) transform.position += dirToDahs * 12 * Time.deltaTime;
+
+                if (targetLockedOn && dirToDash == DogeDirecctions.Back) transform.position += dirToDahs * 7.5f * Time.deltaTime;
+
 
                 var dir = mainCamera.transform.forward;
 
@@ -978,28 +984,12 @@ public class Model : MonoBehaviour
             view.AwakeTrail();
             Attack();
             if (!makingDamage) StartCoroutine(TimeToDoDamage());
-            //if (d != Vector3.zero)
             StartCoroutine(AttackRotation());
             CombatState();
             attackDamage = attack1Damage;
         }
         
-        if((animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Back] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] 
-           || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right]) && countAnimAttack == 0)
-        {
 
-            view.EndDodge();
-            countAnimAttack++;
-            view.AwakeTrail();
-            Attack();
-            if (!makingDamage) StartCoroutine(TimeToDoDamage());
-            // if (d != Vector3.zero && view.anim.GetBool("DodgeLeft") && view.anim.GetBool("DodgeRight") && view.anim.GetBool("DodgeBack")) 
-            StartCoroutine(AttackRotation());
-            attackDamage = attack1Damage;
-            CombatState();
-        }
-
-        //if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
         if (canRollAttackTimer>0)
         {
             attackDamage = attackRollDamage;
@@ -1032,7 +1022,6 @@ public class Model : MonoBehaviour
                timeEndImpulse = 0.25f;
                StartCoroutine(ImpulseAttackAnimation());
                CombatState();
-                // if (d != Vector3.zero) 
                StartCoroutine(AttackRotation());
                attackDamage = attack4Damage;
             }
@@ -1050,14 +1039,12 @@ public class Model : MonoBehaviour
                 timeEndImpulse = 0.25f;
                 StartCoroutine(ImpulseAttackAnimation());
                 CombatState();
-                // if (d != Vector3.zero)
                 StartCoroutine(AttackRotation());
                 attackDamage = attack3Damage;
             }
 
             if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Attack1_End])
             {
-
                 view.EndDodge();
                 countAnimAttack++;
                 view.AwakeTrail();
@@ -1071,7 +1058,6 @@ public class Model : MonoBehaviour
                 }
                 StartCoroutine(ImpulseAttackAnimation());
                 CombatState();
-                //if(d != Vector3.zero)
                 StartCoroutine(AttackRotation());
                 attackDamage = attack2Damage;
             }
@@ -1087,8 +1073,7 @@ public class Model : MonoBehaviour
                     countAnimAttack++;
                     view.AwakeTrail();
                     Attack();                   
-                    if(!makingDamage)StartCoroutine(TimeToDoDamage());
-                    // if (d != Vector3.zero && view.anim.GetBool("DodgeLeft") && view.anim.GetBool("DodgeRight") && view.anim.GetBool("DodgeBack")) 
+                    if(!makingDamage)StartCoroutine(TimeToDoDamage());           
                     StartCoroutine(AttackRotation());
                     attackDamage = attack1Damage;
                     CombatState();
