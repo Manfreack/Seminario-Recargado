@@ -720,9 +720,20 @@ public class Model : MonoBehaviour
 
             if (animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
             {
-                if(targetLockedOn && (dirToDash == DogeDirecctions.Right || dirToDash == DogeDirecctions.Left)) transform.position += dirToDahs * 12 * Time.deltaTime;
+                if (targetLockedOn && (dirToDash == DogeDirecctions.Right || dirToDash == DogeDirecctions.Left))
+                {
+                    transform.position += dirToDahs * 12 * Time.deltaTime;
+                }
 
-                if (targetLockedOn && dirToDash == DogeDirecctions.Back) transform.position += dirToDahs * 7.5f * Time.deltaTime;
+                if (targetLockedOn && dirToDash == DogeDirecctions.Back)
+                {
+                    transform.position += dirToDahs * 7.5f * Time.deltaTime;
+                }
+
+                if(!targetLockedOn)
+                {
+                    transform.position += dirToDahs * 7.5f * Time.deltaTime;
+                }
 
 
                 var dir = mainCamera.transform.forward;
@@ -990,7 +1001,7 @@ public class Model : MonoBehaviour
         }
         
 
-        if (canRollAttackTimer>0)
+        if (canRollAttackTimer>0 && animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
         {
             attackDamage = attackRollDamage;
             RollAttackEvent();
@@ -1068,7 +1079,6 @@ public class Model : MonoBehaviour
             {
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
                 {
- 
                     view.EndDodge();
                     countAnimAttack++;
                     view.AwakeTrail();
