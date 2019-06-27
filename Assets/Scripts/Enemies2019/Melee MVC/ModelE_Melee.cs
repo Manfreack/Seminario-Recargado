@@ -356,6 +356,7 @@ public class ModelE_Melee : EnemyEntity
        .SetTransition(EnemyInputs.FOLLOW, follow)
        .SetTransition(EnemyInputs.WAIT, wait)
        .SetTransition(EnemyInputs.DEFENCE, defence)
+       .SetTransition(EnemyInputs.STUNED, stuned)
        .SetTransition(EnemyInputs.PATROL, patrol)
        .SetTransition(EnemyInputs.KNOCK, knocked)
        .SetTransition(EnemyInputs.DIE, die)
@@ -501,13 +502,13 @@ public class ModelE_Melee : EnemyEntity
 
             var d = Vector3.Distance(transform.position, target.transform.position);
 
-            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea && !isStuned) SendInputToFSM(EnemyInputs.WAIT);
 
             if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
 
             if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
 
-            if (!isDead && !isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isWaitArea && !isStuned) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
         };
@@ -563,11 +564,11 @@ public class ModelE_Melee : EnemyEntity
                 transform.position += transform.forward * 2 * Time.deltaTime;
             }
 
-            if (!isDead && !isPersuit && !isWaitArea && !onRetreat  && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence] && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isStuned && !isWaitArea && !onRetreat  && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence] && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && !isWaitArea && isPersuit  && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence] && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isWaitArea && !isStuned && isPersuit  && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence] && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isWaitArea && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence] && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea && !isStuned && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.CounterAttack] && animClipName != _view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.IdleDefence] && timeToHoldDefence <= 0 || timeToHoldDefence <= 0) SendInputToFSM(EnemyInputs.WAIT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -679,11 +680,11 @@ public class ModelE_Melee : EnemyEntity
 
             foreach (var item in nearEntities) if (!item.isAnswerCall && !item.firstSaw) item.isAnswerCall = true;
 
-            if (!isDead && !isWaitArea && isPersuit && !onDefence) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && !isWaitArea && isPersuit && !onDefence && !isStuned) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && !isWaitArea && !isPersuit && !onDefence) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isWaitArea && !isPersuit && !onDefence && !isStuned) SendInputToFSM(EnemyInputs.FOLLOW);
 
-            if (!isDead && delayToAttack <= 0 && !onDefence) SendInputToFSM(EnemyInputs.ATTACK);
+            if (!isDead && delayToAttack <= 0 && !onDefence && !isStuned) SendInputToFSM(EnemyInputs.ATTACK);
 
             if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
 
@@ -747,7 +748,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
 
-            if (onRetreat && !onDefence) SendInputToFSM(EnemyInputs.RETREAT);
+            if (onRetreat && !onDefence && !isStuned) SendInputToFSM(EnemyInputs.RETREAT);
 
             if (!isDead && actualHits <= 0 && !isKnock && !isStuned) SendInputToFSM(EnemyInputs.DEFENCE);
 
@@ -783,6 +784,8 @@ public class ModelE_Melee : EnemyEntity
 
         stuned.OnUpdate += () =>
         {
+
+
             transform.forward = stunedForward;
 
             timeStuned -= Time.deltaTime;
@@ -804,6 +807,7 @@ public class ModelE_Melee : EnemyEntity
 
         stuned.OnExit += x =>
         {
+ 
             isStuned = false;
             _view.StunedAnimFalse();
         };
@@ -873,9 +877,9 @@ public class ModelE_Melee : EnemyEntity
 
             var d = Vector3.Distance(transform.position, target.transform.position);
 
-            if (!isDead && isPersuit && !isWaitArea && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && isPersuit && !isWaitArea && timeToRetreat <= 0 && !isStuned) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && !isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isPersuit && !isWaitArea && !isStuned) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (!isDead && actualHits <= 0 && !isKnock && !isStuned) SendInputToFSM(EnemyInputs.DEFENCE);
 
@@ -883,7 +887,7 @@ public class ModelE_Melee : EnemyEntity
 
             if (!isDead && isKnock) SendInputToFSM(EnemyInputs.KNOCK);
 
-            if (!isDead && isWaitArea && timeToRetreat <= 0) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea && timeToRetreat <= 0 && !isStuned) SendInputToFSM(EnemyInputs.WAIT);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -942,9 +946,9 @@ public class ModelE_Melee : EnemyEntity
 
             if (!onDamage) CombatWalkEvent();
 
-            if (!isDead && isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && isPersuit && !isWaitArea && !isStuned) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.WAIT);
+            if (!isDead && isWaitArea && !isStuned) SendInputToFSM(EnemyInputs.WAIT);
 
             if (!isDead && isStuned && !isKnock) SendInputToFSM(EnemyInputs.STUNED);
 
@@ -1447,6 +1451,7 @@ public class ModelE_Melee : EnemyEntity
         _view._anim.SetBool("IsDead", false);
         _view._anim.SetBool("Idle", true);
         _view._anim.SetBool("IdleCombat", false);
+        _view._anim.Play("Idle_EM");
         _view.EndChainAttack();
         _view.HeavyAttackFalse();
         _view._anim.SetInteger("TakeDamageCounter", 0);

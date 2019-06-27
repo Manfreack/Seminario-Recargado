@@ -8,6 +8,8 @@ public class Ragdoll : MonoBehaviour
     public float forceAmount;
     Rigidbody[] allRigidbodies;
 
+    Model player;
+
     public GameObject bloodPool;
     Material matPool;
     float timerExpandPool;
@@ -16,7 +18,8 @@ public class Ragdoll : MonoBehaviour
 
     void Start()
     {
-        forcePosition.AddForce(-forcePosition.transform.up * forceAmount);
+        player = FindObjectOfType<Model>();
+        forcePosition.AddForce(-player.transform.forward * forceAmount);
         allRigidbodies = GetComponentsInChildren<Rigidbody>();
         StartCoroutine(Bury());
     }

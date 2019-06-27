@@ -382,6 +382,8 @@ public class ModelE_Sniper : EnemyEntity
         {
             if (myPointer) myPointer.StopAdvertisement();
 
+            view.BackFromAttackRange();
+
             timeToStopBack -= Time.deltaTime;
 
             currentAction = new A_GoBackFromAttack(this);

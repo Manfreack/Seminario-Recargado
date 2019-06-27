@@ -94,7 +94,10 @@ public class EnemyCombatManager : MonoBehaviour {
 
         else
         {
-            influencedTarget = e2;
+            influencedTarget = e;
+            e.timeToAttack = true;
+            e.checkTurn = true;
+            e.delayToAttack = e2.delayToAttack;
 
         }
 

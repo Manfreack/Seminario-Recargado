@@ -68,55 +68,7 @@ public class ViewerE_Melee : MonoBehaviour
         }       
     }
 
-    /*
-    public IEnumerator BloodPoolAnim()
-    {
-        while(timerExpandPool<1)
-        {
-            MatPoolExpand();
-            yield return new WaitForEndOfFrame();
-        }
-
-        yield return new WaitForSeconds(2.5f);
-
-        while (timerVanishPool< 1)
-        {
-            MatPoolVanish();
-            yield return new WaitForEndOfFrame();
-        }
-
-    }
-
-    public void MatPoolExpand()
-    {
-        timerExpandPool += Time.deltaTime * 0.5f;
-        if (timerExpandPool >= 1) timerExpandPool = 1;
-        matPool.SetFloat("_FillAmount", timerExpandPool);
-    }
-
-    public void MatPoolVanish()
-    {
-        timerVanishPool += Time.deltaTime / 2.2f;
-        if (timerVanishPool >= 1) timerVanishPool = 1;
-        matPool.SetFloat("_Vanish", timerVanishPool);
-    }
-
-    public IEnumerator DeadCorrutine()
-    {
-        yield return new WaitForSeconds(3);
-
-        myCollider.enabled = false;
-        GetComponent<Rigidbody>().useGravity = false;
-
-        float posY = transform.position.y;
-        while (posY - 2.1f <= transform.position.y)
-        {
-            transform.position += Vector3.down * Time.deltaTime * 0.15f;
-            if (posY - 2 >= transform.position.y)
-                gameObject.SetActive(false);
-            yield return new WaitForEndOfFrame();
-        }
-    }*/
+  
 
     IEnumerator StopHitParticles()
     {

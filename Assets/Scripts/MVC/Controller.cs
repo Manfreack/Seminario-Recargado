@@ -76,7 +76,7 @@ public class Controller : MonoBehaviour
             model.ChangeTarget();
         }
 
-        if (!model.isPlatformJumping && !view.startFade.enabled && !view.pauseMenu.activeSelf)
+        if (!model.isPlatformJumping && model.fadeTimer > view.fadeTime && !view.pauseMenu.activeSelf)
         {         
 
             if(Input.GetKeyDown(KeyCode.Q))
@@ -274,13 +274,13 @@ public class Controller : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha2)) model.DrinkPotion(2);
         }
 
-        if(!view.startFade.enabled)
+        if(model.fadeTimer > view.fadeTime)
             if (Input.GetKeyDown(KeyCode.Escape)) view.TogglePause();
     }
 
     private void FixedUpdate()
     {
-        if (!model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false )
+        if (!model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false && model.fadeTimer > view.fadeTime)
         {
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0 && !model.onRoll)
             {
@@ -356,7 +356,7 @@ public class Controller : MonoBehaviour
 
         }
 
-        else if(model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false)
+        else if(model.isInCombat && !model.onPowerState && Cam.PlayerCanMove == false && model.fadeTimer > view.fadeTime)
         {
             if (pushW && !pushA && !firstPushS && !pushD && !model.isDead && model.countAnimAttack <= 0)
             {

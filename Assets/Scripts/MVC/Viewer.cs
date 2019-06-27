@@ -493,6 +493,7 @@ public class Viewer : MonoBehaviour
 
     public void TogglePause()
     {
+
         if (!youWin.activeSelf && !youDied.activeSelf)
         {
             if (pauseMenu.activeSelf)
@@ -592,7 +593,6 @@ public class Viewer : MonoBehaviour
 
     public void NoReciveDamage()
     {
-        Debug.Log(1);
         anim.SetInteger("TakeDamage", 0);
     }
 
