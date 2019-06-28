@@ -980,10 +980,10 @@ public class ModelE_Melee : EnemyEntity
 
         die.OnEnter += x =>
         {
-            if(myPointer)
+            if (myPointer)
             {
-                myPointer = target.pointerPool.GetObjectFromPool();
-                myPointer.owner = this;
+                target.ReturnPointer(myPointer);
+                myPointer = null;
             }
 
             if (navMeshAgent)

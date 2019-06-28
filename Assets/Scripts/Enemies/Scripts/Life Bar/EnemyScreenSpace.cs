@@ -8,11 +8,11 @@ public class EnemyScreenSpace : MonoBehaviour
     EnemyEntity enemy;
 
     public Canvas canvas;
-    public GameObject barPrefab;
+    public HealthBar barPrefab;
 
     public LayerMask lm;
 
-    GameObject healthBar;
+    HealthBar healthBar;
     Image healthFill;
     public Camera cam;
     DepthUI depthUI;
@@ -27,10 +27,12 @@ public class EnemyScreenSpace : MonoBehaviour
         healthFill = healthBar.transform.GetChild(0).GetComponent<Image>();
 
         depthUI = healthBar.GetComponent<DepthUI>();
-        canvas.GetComponent<ScreenSpaceCanvas>().AddToCanvas(healthBar);
-        healthBar.SetActive(false);
+        canvas.GetComponent<ScreenSpaceCanvas>().AddToCanvas(healthBar.gameObject);
+        healthBar.gameObject.SetActive(false);
         timer = 0;
-        enemy.healthBar = healthBar;
+        enemy.healthBar = healthBar.gameObject;
+
+        healthBar.enemy = enemy;
     }
 
     void Update()
@@ -49,12 +51,12 @@ public class EnemyScreenSpace : MonoBehaviour
         if (timer > 0)
         {
             if (healthFill.fillAmount > 0 && (vp.x >= 0 && vp.x <= 1 && vp.y >= 0 && vp.y <= 1 && vp.z > 0))
-                healthBar.SetActive(true);
+                healthBar.gameObject.SetActive(true);
             else
-                healthBar.SetActive(false);
+                healthBar.gameObject.SetActive(false);
         }
         else
-            healthBar.SetActive(false);
+            healthBar.gameObject.SetActive(false);
     }
 
     public IEnumerator UpdateLifeBar(float target)
@@ -80,7 +82,7 @@ public class EnemyScreenSpace : MonoBehaviour
     void OnDestroy()
     {
         if (canvas)
-            canvas.GetComponent<ScreenSpaceCanvas>().RemoveFromCanvas(healthBar);
+            canvas.GetComponent<ScreenSpaceCanvas>().RemoveFromCanvas(healthBar.gameObject);
         Destroy(healthBar);
     }
 }

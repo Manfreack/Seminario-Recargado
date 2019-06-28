@@ -13,6 +13,7 @@ public class EnemyPointer : MonoBehaviour
     public MeshRenderer myMesh;
     public MeshRenderer arrow2Mesh;
     Color attackColor;
+    Model player;
 
     public Color rangedAdvertisementColor;
     public Color meleeAdvertisementColor;
@@ -21,6 +22,7 @@ public class EnemyPointer : MonoBehaviour
     {
         myMesh = GetComponent<MeshRenderer>();
         mat2 = arrow2Mesh.material;
+        player = FindObjectOfType<Model>();
     }
 
 
@@ -37,6 +39,9 @@ public class EnemyPointer : MonoBehaviour
             var dir = (owner.transform.position - transform.position).normalized;
             dir.y = 0;
             transform.forward = -dir;
+
+            if (owner.life <= 0)
+                player.ReturnPointer(this);
         }
 
         if (!myMesh.isVisible)

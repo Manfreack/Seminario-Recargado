@@ -439,8 +439,8 @@ public class ModelE_Sniper : EnemyEntity
         {
             if(myPointer)
             {
-                myPointer = target.pointerPool.GetObjectFromPool();
-                myPointer.owner = this;
+                target.ReturnPointer(myPointer);
+                myPointer = null;
             }
             healthBar.SetActive(false);
             navMeshAgent.enabled = false;
