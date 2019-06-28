@@ -440,6 +440,8 @@ public class ModelE_Melee : EnemyEntity
                 myPointer = null;
             }
 
+            healthBar.SetActive(false);
+
             timeToPatrol -= Time.deltaTime;
         };
 
@@ -1465,6 +1467,7 @@ public class ModelE_Melee : EnemyEntity
         onDamage = false;
         _view._anim.Play("Idle_EM");
         isDead = false;
+        onCombat = false;
         SendInputToFSM(EnemyInputs.PATROL);
     }
 }

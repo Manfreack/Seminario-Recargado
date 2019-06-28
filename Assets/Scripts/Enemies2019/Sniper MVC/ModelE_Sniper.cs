@@ -31,6 +31,8 @@ public class ModelE_Sniper : EnemyEntity
     public Transform scapeNodesParent;
     public int dirToMoveOnAttack;
     public string animClipName;
+    public float maxTimeToAttack;
+    public float minTimeToAttack;
 
     public Action TakeDamageEvent;
     public Action DeadEvent;
@@ -72,7 +74,7 @@ public class ModelE_Sniper : EnemyEntity
         rb = gameObject.GetComponent<Rigidbody>();
         view = GetComponent<ViewerE_Sniper>();
         munition = FindObjectOfType<EnemyAmmo>();
-        timeToShoot = UnityEngine.Random.Range(3, 5);
+        timeToShoot = UnityEngine.Random.Range(minTimeToAttack, maxTimeToAttack);
         timeToMeleeAttack = UnityEngine.Random.Range(minTimeDelayMeleeAttack, maxTimeDelayMeleeAttack);
         timeToStopBack = UnityEngine.Random.Range(3, 4);
 		maxLife = life;
@@ -174,19 +176,19 @@ public class ModelE_Sniper : EnemyEntity
 
         patrol.OnFixedUpdate += () =>
         {
-            if (myPointer) myPointer.StopAdvertisement();
+            if (myPointer) target.ReturnPointer(myPointer);
 
+            healthBar.SetActive(false);
+          
             currentAction = new A_SniperPatrol(this);
 
-            if (!isDead && isPersuit && !isWaitArea) SendInputToFSM(EnemyInputs.PERSUIT);
+            if (!isDead && isPersuit && !isWaitArea && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isAnswerCall) SendInputToFSM(EnemyInputs.ANSWER);
+            if (!isDead && isAnswerCall && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.ANSWER);
 
-            if (!isDead && isWaitArea) SendInputToFSM(EnemyInputs.ATTACK);
+            if (!isDead && isWaitArea && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.ATTACK);
 
-          //  if (!isDead && onMeleeAttack && onDamage) SendInputToFSM(EnemyInputs.MELEE_ATTACK);
-
-            if (!isDead && !isWaitArea && !isPersuit && !onMeleeAttack && onDamage) SendInputToFSM(EnemyInputs.FOLLOW);
+            if (!isDead && !isWaitArea && !isPersuit && !onMeleeAttack && onDamage && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
 
@@ -797,6 +799,7 @@ public class ModelE_Sniper : EnemyEntity
         view.BackFromDamage();
         onDamage = false;
         isDead = false;
+        onCombat = false;
         SendInputToFSM(EnemyInputs.PATROL);
     }
 }

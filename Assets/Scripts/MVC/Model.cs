@@ -941,21 +941,36 @@ public class Model : MonoBehaviour
     public void LockEnemies()
     {
         enemiesToLock.Clear();
-        enemiesToLock.AddRange(FindObjectsOfType<EnemyEntity>().Where(x=> !x.isDead).Where(x =>
+        /* enemiesToLock.AddRange(FindObjectsOfType<EnemyEntity>().Where(x=> !x.isDead).Where(x =>
+         {
+             RaycastHit hit;
+
+             var _dirToTarget = (x.transform.position - transform.position).normalized;
+
+             var _distanceToTarget = Vector3.Distance(x.transform.position, transform.position);
+
+             if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), _dirToTarget, out hit, _distanceToTarget, layerEnemies))
+             {
+                 if (hit.transform.name == x.transform.name) return true;
+                 else return false;
+             }
+
+             else return false;
+
+         }).OrderBy(x =>
+         {
+             var d = Vector3.Distance(x.transform.position, transform.position);
+             return d;
+         }));
+         */
+
+        enemiesToLock.AddRange(FindObjectsOfType<EnemyEntity>().Where(x => !x.isDead).Where(x=> 
         {
-            RaycastHit hit;
+            var d = Vector3.Distance(x.transform.position, transform.position);
 
-            var _dirToTarget = (x.transform.position - transform.position).normalized;
+            if (d > 10) return false;
 
-            var _distanceToTarget = Vector3.Distance(x.transform.position, transform.position);
-
-            if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), _dirToTarget, out hit, _distanceToTarget, layerEnemies))
-            {
-                if (hit.transform.name == x.transform.name) return true;
-                else return false;
-            }
-
-            else return false;
+            else return true;
 
         }).OrderBy(x =>
         {
@@ -1377,6 +1392,7 @@ public class Model : MonoBehaviour
             Dead();
             isDead = true;
             StartCoroutine(view.YouDied());
+            timeOnCombat = 0;
         }
 
         StartCoroutine(OnDamageCorrutine());
