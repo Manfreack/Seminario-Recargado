@@ -653,10 +653,10 @@ public class Viewer : MonoBehaviour
             youWin.GetComponent<Image>().color = tempColor;
             if (alpha >= 1)
             {
+                cam.blockMouse = false;
                 for (int i = 0; i < youDied.transform.childCount; i++)
                     youWin.transform.GetChild(i).gameObject.SetActive(true);
                 Time.timeScale = 0;
-                cam.blockMouse = false;
             }
             yield return new WaitForEndOfFrame();
         }
