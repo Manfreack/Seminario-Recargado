@@ -74,12 +74,18 @@ public class CombatArea : MonoBehaviour
     {
         if (c.GetComponent<Model>() && !firstPass)
         {
-            var orderEnemies = myNPCs.OrderBy(X =>
-            {
-                var d = Vector3.Distance(X.transform.position, player.transform.position);
-                return d;
-            }).ToList();
 
+            c.GetComponent<Model>().enemiesToLock.Clear();
+           
+
+            var enemies = myNPCs.OrderBy(x =>
+            {
+                var d = Vector3.Distance(x.transform.position, transform.position);
+                return d;
+
+            }).Where(x=> !x.isDead);
+
+            c.GetComponent<Model>().enemiesToLock.AddRange(enemies);
 
             foreach (var item in myNPCs) item.target = player;
             foreach (var item in walls)

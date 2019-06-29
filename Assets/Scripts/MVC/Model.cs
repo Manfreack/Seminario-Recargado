@@ -654,20 +654,20 @@ public class Model : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
             }
 
-            if (targetLocked.isDead && targetLocked && enemiesToLock.Count == 1 || isDead)
+            if (targetLocked.isDead && targetLocked || isDead)
             {
-                mainCamera.GetComponent<CamController>().StopLockedTarget();
-                targetLocked = null;
-                targetLockedOn = false;            
-            }
+                enemiesToLock.Remove(targetLocked);
 
-            if (targetLocked.isDead && targetLocked && enemiesToLock.Count > 1 && targetLocked)
-            {
-                var e = targetLocked;
-                ChangeTarget();
-                enemiesToLock.Remove(e);
+                if (enemiesToLock.Count <= 0)
+                {
+                    mainCamera.GetComponent<CamController>().StopLockedTarget();
+                    targetLocked = null;
+                    targetLockedOn = false;
+                }
+                
+                if (enemiesToLock.Count > 0) ChangeTarget();
+                           
             }
-
 
         }
 
@@ -940,44 +940,7 @@ public class Model : MonoBehaviour
    
     public void LockEnemies()
     {
-        enemiesToLock.Clear();
-        /* enemiesToLock.AddRange(FindObjectsOfType<EnemyEntity>().Where(x=> !x.isDead).Where(x =>
-         {
-             RaycastHit hit;
-
-             var _dirToTarget = (x.transform.position - transform.position).normalized;
-
-             var _distanceToTarget = Vector3.Distance(x.transform.position, transform.position);
-
-             if (Physics.Raycast(transform.position + new Vector3(0, 0.5f, 0), _dirToTarget, out hit, _distanceToTarget, layerEnemies))
-             {
-                 if (hit.transform.name == x.transform.name) return true;
-                 else return false;
-             }
-
-             else return false;
-
-         }).OrderBy(x =>
-         {
-             var d = Vector3.Distance(x.transform.position, transform.position);
-             return d;
-         }));
-         */
-
-        enemiesToLock.AddRange(FindObjectsOfType<EnemyEntity>().Where(x => !x.isDead).Where(x=> 
-        {
-            var d = Vector3.Distance(x.transform.position, transform.position);
-
-            if (d > 10) return false;
-
-            else return true;
-
-        }).OrderBy(x =>
-        {
-            var d = Vector3.Distance(x.transform.position, transform.position);
-            return d;
-        }));
-
+       
         if (enemiesToLock.Any())
         {
             if (!targetLockedOn)
@@ -999,7 +962,7 @@ public class Model : MonoBehaviour
 
     public void ChangeTarget()
     {
-        if(targetLockedOn && enemiesToLock.Count>1)
+        if(targetLockedOn && enemiesToLock.Count>=1)
         {
             lockIndex++;
             if (lockIndex > enemiesToLock.Count-1) lockIndex=0;

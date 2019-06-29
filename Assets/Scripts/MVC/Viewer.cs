@@ -15,6 +15,7 @@ public class Viewer : MonoBehaviour
     bool melleCombo1;
     bool melleCombo2;
     bool melleCombo3;
+    public bool attacking;
     public CamShake camShake;
     public Transform head;
     Quaternion headBaseRot;
@@ -181,7 +182,17 @@ public class Viewer : MonoBehaviour
 
     public void Update()
     {
+        
+
         animClipName = model.animClipName;
+
+        /* if (animClipName == AnimDictionary[AnimPlayerNames.Attack1_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack1_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack1_Pre]
+           || animClipName == AnimDictionary[AnimPlayerNames.Attack2_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack2_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack2_Pre]
+           || animClipName == AnimDictionary[AnimPlayerNames.Attack3_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack3_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack3_Pre]
+           || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Pre]) attacking = true;
+
+         else attacking = false;
+         */
 
         currentAttackAnimation = model.countAnimAttack;
 
@@ -297,6 +308,7 @@ public class Viewer : MonoBehaviour
 
     public void Awake()
     {
+   
         trail.SetActive(false);
         anim.SetLayerWeight(1, 0);
         cam = GameObject.Find("Main Camera").GetComponent<CamController>();
