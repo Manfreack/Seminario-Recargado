@@ -186,13 +186,13 @@ public class Viewer : MonoBehaviour
 
         animClipName = model.animClipName;
 
-        /* if (animClipName == AnimDictionary[AnimPlayerNames.Attack1_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack1_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack1_Pre]
+         if (animClipName == AnimDictionary[AnimPlayerNames.Attack1_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack1_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack1_Pre]
            || animClipName == AnimDictionary[AnimPlayerNames.Attack2_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack2_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack2_Pre]
            || animClipName == AnimDictionary[AnimPlayerNames.Attack3_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack3_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack3_Pre]
            || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Pre]) attacking = true;
 
          else attacking = false;
-         */
+         
 
         currentAttackAnimation = model.countAnimAttack;
 

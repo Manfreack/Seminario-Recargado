@@ -10,12 +10,14 @@ public class CamController : MonoBehaviour {
     public bool blockMouse;
 
     Model model;
+    public Transform middleTargets;
     CinematicActivator CinematicActive;
     public CinemachineFreeLook cinemaCam;
     public CinemachineFreeLook cinemaCam2;
     public CinemachineFreeLook cinemaCam_KickCam;
     public CinemachineFreeLook CinemaCam_Cinematic01;
     public CinemachineFreeLook CinemaCam_Cinematic02;
+    Transform currentTarget;
 
     public float distanceIdle;
     public float distanceCombat;
@@ -120,7 +122,18 @@ public class CamController : MonoBehaviour {
         middleRig = cinemaCam.GetRig(1).GetCinemachineComponent<CinemachineComposer>();
         topRig = cinemaCam.GetRig(0).GetCinemachineComponent<CinemachineComposer>();
         bottonRig = cinemaCam.GetRig(2).GetCinemachineComponent<CinemachineComposer>();
+        cinemaCam2.LookAt = middleTargets;
 
+    }
+
+    void LateUpdate()
+    {
+        if(cinemaCam2.Priority>=1)
+        {
+            var bounds = new Bounds(model.transform.position, currentTarget.transform.position);
+
+            middleTargets.position = bounds.center;
+        }
     }
 
     void Update()
@@ -312,7 +325,12 @@ public class CamController : MonoBehaviour {
     {
         cinemaCam.m_Priority = 0;
         cinemaCam2.m_Priority = 1;
-        cinemaCam2.LookAt = e.transform;
+
+        currentTarget = e.transform;
+
+        var bounds = new Bounds(model.transform.position, currentTarget.transform.position);
+
+        middleTargets.position = bounds.center;    
 
     }
 

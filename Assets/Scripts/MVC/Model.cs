@@ -192,6 +192,13 @@ public class Model : MonoBehaviour
         onDash = false;
     }
 
+    IEnumerator OnRollDealy(float time)
+    {
+        onRoll = true;
+        yield return new WaitForSeconds(time);
+        onRoll = false;
+    }
+
     IEnumerator CanRollAttackCorrutine()
     {
         canRollAttackTimer = 3;
@@ -269,13 +276,12 @@ public class Model : MonoBehaviour
                 onDash = false;
                 view.anim.SetBool("Roll", false);
                 view.EndDodge();
-                onRoll = false;
+
             }
             yield return new WaitForEndOfFrame();
         }
 
         view.RollAttackAnimFalse();
-        onRoll = false;
     }
 
     public IEnumerator OnDefenceCorrutine()
@@ -299,7 +305,7 @@ public class Model : MonoBehaviour
         onDamage = true;
         while (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage3] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage2] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage1])
         {
-            onRoll = false;
+      
             view.anim.SetBool("Roll", false);
             view.anim.SetBool("RollAttack", false);
             yield return new WaitForEndOfFrame();
@@ -580,12 +586,14 @@ public class Model : MonoBehaviour
 
         dirToDash = directions;
 
-        if (stamina - rollStamina >= 0 && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") 
+      
+
+        if (stamina - rollStamina >= 0 && !onRoll && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") 
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] 
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Back]
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right]
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage1] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage2] 
-            && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage3])
+            && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.TakeDamage3] || (view.attacking && !onRoll))
         {
 
             StartCoroutine(InvulnerableCorrutine());
@@ -605,7 +613,7 @@ public class Model : MonoBehaviour
                     StartCoroutine(DashTimer());
                     DogeLeftEvent();
                     timeToRoll = 0.2f;
-                    
+                    StartCoroutine(OnRollDealy(0.5f));
                 }
 
                 if (directions == DogeDirecctions.Right)
@@ -614,7 +622,7 @@ public class Model : MonoBehaviour
                     StartCoroutine(DashTimer());
                     DogeRightEvent();
                     timeToRoll = 0.2f;
-                   
+                    StartCoroutine(OnRollDealy(0.5f));
                 }
 
                 if (directions == DogeDirecctions.Back)
@@ -623,13 +631,12 @@ public class Model : MonoBehaviour
                     StartCoroutine(DashTimer());
                     DogeBackEvent();
                     timeToRoll = 0.2f;
-                    
+                    StartCoroutine(OnRollDealy(0.5f));
                 }
             }
 
             stamina -= rollStamina;
             view.UpdateStaminaBar(stamina / maxStamina);           
-            onRoll = true;
             dirToDahs = dir;
             dirToDahs.y = 0;
             makingDamage = false;
@@ -704,7 +711,7 @@ public class Model : MonoBehaviour
         }
         if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] 
             || animClipName == "P_RollEstocada_End" || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Back] 
-            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right])
+            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right] || view.attacking)
         {
             view.NoReciveDamage();
          
@@ -761,8 +768,7 @@ public class Model : MonoBehaviour
             {
                 onDash = false;
                 view.anim.SetBool("Roll", false);
-                view.EndDodge();
-                onRoll = false;            
+                view.EndDodge();          
             }            
         }
     }
