@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.Events;
+using UnityEngine.Playables;
 
 public class CamController : MonoBehaviour {
 
@@ -47,7 +48,8 @@ public class CamController : MonoBehaviour {
     CinemachineComposer topRig;
     CinemachineComposer bottonRig;
 
-   //public List<IEnumerator> CinematicsList = new List<IEnumerator>();
+    AnimationTimeLineScenes AnimationsCutScenes;
+
 
 
     public IEnumerator AttackTiltCamera()
@@ -81,7 +83,10 @@ public class CamController : MonoBehaviour {
         cinemaCam.Priority = 0;
         cinemaCam2.Priority = 0;
 
-        PlayerCanMove = true;
+       
+        AnimationsCutScenes.StartCoroutine(AnimationsCutScenes.AnimationTimelinePlay());
+
+
         yield return new WaitForSeconds(3);
         CinemaCam_Cinematic01.Priority = 0;
         cinemaCam2.Priority = 0;
@@ -123,6 +128,8 @@ public class CamController : MonoBehaviour {
         topRig = cinemaCam.GetRig(0).GetCinemachineComponent<CinemachineComposer>();
         bottonRig = cinemaCam.GetRig(2).GetCinemachineComponent<CinemachineComposer>();
         cinemaCam2.LookAt = middleTargets;
+
+        AnimationsCutScenes = FindObjectOfType<AnimationTimeLineScenes>();
 
     }
 
