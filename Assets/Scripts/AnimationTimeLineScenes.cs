@@ -6,25 +6,26 @@ using UnityEngine.Playables;
 
 public class AnimationTimeLineScenes : MonoBehaviour
 {
-    public List<PlayableDirector>TimeLineAnimations;
+
+    public PlayableDirector CutScene01;
+    public PlayableDirector CutScene02;
 
     public int value;
 
     public IEnumerator AnimationTimelinePlay()
     {
-        foreach (var item in TimeLineAnimations)
+
+        yield return new WaitForSeconds(0.5f);
+
+        if (CutScene01)
         {
-            yield return new WaitForSeconds(0.5f);
-            item.Play();        
+            CutScene01.Play(); 
         }
     }
 
     public IEnumerator AnimationTimelineStop()
     {
         yield return new WaitForSeconds(0.5f);
-        foreach (var item in TimeLineAnimations)
-        {
-            item.Stop();
-        }
+     
     }
 }
