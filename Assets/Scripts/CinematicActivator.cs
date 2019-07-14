@@ -27,6 +27,10 @@ public class CinematicActivator : MonoBehaviour
             if (NumberClipAnimation == 2)
             {
                 cam.StartCoroutine(cam.Cinematic02());
+            }
+            if (NumberClipAnimation == 3)
+            {
+                cam.StartCoroutine(cam.Cinematic03());
             }         
                       
         }

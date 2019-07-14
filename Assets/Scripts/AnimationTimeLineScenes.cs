@@ -12,20 +12,24 @@ public class AnimationTimeLineScenes : MonoBehaviour
 
     public int value;
 
-    public IEnumerator AnimationTimelinePlay()
+    public IEnumerator CutSceneRocks()
     {
 
         yield return new WaitForSeconds(0.5f);
-
         if (CutScene01)
         {
             CutScene01.Play(); 
         }
     }
-
-    public IEnumerator AnimationTimelineStop()
+    public IEnumerator CutSceneLever()
     {
+
         yield return new WaitForSeconds(0.5f);
-     
+        if (CutScene02)
+        {
+            CutScene02.Play(); 
+        }
     }
+
+
 }

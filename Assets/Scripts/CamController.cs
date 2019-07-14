@@ -18,6 +18,7 @@ public class CamController : MonoBehaviour {
     public CinemachineFreeLook cinemaCam_KickCam;
     public CinemachineFreeLook CinemaCam_Cinematic01;
     public CinemachineFreeLook CinemaCam_Cinematic02;
+    public CinemachineFreeLook CinemaCam_Cinematic03;
     Transform currentTarget;
 
     public float distanceIdle;
@@ -84,7 +85,7 @@ public class CamController : MonoBehaviour {
         cinemaCam2.Priority = 0;
 
        
-        AnimationsCutScenes.StartCoroutine(AnimationsCutScenes.AnimationTimelinePlay());
+        AnimationsCutScenes.StartCoroutine(AnimationsCutScenes.CutSceneRocks());
 
 
         yield return new WaitForSeconds(3);
@@ -111,6 +112,34 @@ public class CamController : MonoBehaviour {
         CinemaCam_Cinematic02.Priority = 0;
         cinemaCam2.Priority = 0;
         cinemaCam_KickCam.Priority = 0;
+        cinemaCam.Priority = 1;
+
+        PlayerCanMove = false;
+
+    }
+
+    public IEnumerator Cinematic03()
+    {
+
+        AnimationsCutScenes.StartCoroutine(AnimationsCutScenes.CutSceneLever());
+
+        yield return new WaitForSeconds(3.5f);
+
+        CinemaCam_Cinematic03.Priority = 1;
+        CinemaCam_Cinematic02.Priority = 0;
+        CinemaCam_Cinematic01.Priority = 0;
+        cinemaCam.Priority = 0;
+        cinemaCam2.Priority = 0;
+        PlayerCanMove = true;
+
+
+        yield return new WaitForSeconds(4);
+
+        CinemaCam_Cinematic01.Priority = 0;
+        CinemaCam_Cinematic02.Priority = 0;
+        cinemaCam2.Priority = 0;
+        cinemaCam_KickCam.Priority = 0;
+        CinemaCam_Cinematic03.Priority = 0;
         cinemaCam.Priority = 1;
 
         PlayerCanMove = false;
