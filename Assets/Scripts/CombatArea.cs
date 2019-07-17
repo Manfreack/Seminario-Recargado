@@ -15,6 +15,7 @@ public class CombatArea : MonoBehaviour
     EnemyCombatManager cm;
     public int EnemyID_Area;
     bool endArea;
+    public bool puzzleblock;
 
     private void Awake()
     {
@@ -72,7 +73,7 @@ public class CombatArea : MonoBehaviour
 
     public void OnTriggerEnter(Collider c)
     {
-        if (c.GetComponent<Model>() && !firstPass)
+        if (c.GetComponent<Model>() && !firstPass && !puzzleblock)
         {
 
             c.GetComponent<Model>().enemiesToLock.Clear();
