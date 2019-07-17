@@ -9,6 +9,7 @@ public class AnimationTimeLineScenes : MonoBehaviour
 
     public PlayableDirector CutScene01;
     public PlayableDirector CutScene02;
+    public PlayableDirector CutScene02_Bars;
 
     public int value;
 
@@ -28,6 +29,13 @@ public class AnimationTimeLineScenes : MonoBehaviour
         if (CutScene02)
         {
             CutScene02.Play(); 
+        }
+
+        yield return new WaitForSeconds(4);
+
+        if (CutScene02_Bars)
+        {
+            CutScene02_Bars.Play();
         }
     }
 
