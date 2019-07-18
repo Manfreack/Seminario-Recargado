@@ -820,7 +820,7 @@ public class Model : MonoBehaviour
             timeImpulse = 0.6f;
             timeEndImpulse = 0.2f;
             StartCoroutine(ImpulseAttackAnimation());
-            StartCoroutine(PowerDelayImpulse(0.6f, 0.2f, 0.1f, 0.2f));
+            StartCoroutine(PowerDelayImpulse(0.2f, 0.2f, 0.1f, 0.2f));
             StartCoroutine(PowerColdown(timeCdPower2, 2));            
         }
     }

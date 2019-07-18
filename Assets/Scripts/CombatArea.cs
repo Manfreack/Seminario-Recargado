@@ -73,20 +73,22 @@ public class CombatArea : MonoBehaviour
 
     public void OnTriggerEnter(Collider c)
     {
-        if (c.GetComponent<Model>() && !firstPass && !puzzleblock)
+        if (c.GetComponent<Model>() && !firstPass)
         {
-
-            c.GetComponent<Model>().enemiesToLock.Clear();
-           
-
-            var enemies = myNPCs.OrderBy(x =>
+            if (!puzzleblock)
             {
-                var d = Vector3.Distance(x.transform.position, transform.position);
-                return d;
+                c.GetComponent<Model>().enemiesToLock.Clear();
 
-            }).Where(x=> !x.isDead);
 
-            c.GetComponent<Model>().enemiesToLock.AddRange(enemies);
+                var enemies = myNPCs.OrderBy(x =>
+                {
+                    var d = Vector3.Distance(x.transform.position, transform.position);
+                    return d;
+
+                }).Where(x => !x.isDead);
+
+                c.GetComponent<Model>().enemiesToLock.AddRange(enemies);
+            }
 
             foreach (var item in myNPCs) item.target = player;
             foreach (var item in walls)
