@@ -9,6 +9,7 @@ public class CinematicActivator : MonoBehaviour
     Camera myCamera;
     public GameObject interactiveKey;
     public GameObject prefabInteractiveKey;
+    public float positionFix;
 
     DepthUI depthUI;
 
@@ -29,7 +30,7 @@ public class CinematicActivator : MonoBehaviour
 
     private void Update()
     {
-        Vector3 worldPos = transform.position + Vector3.up ;
+        Vector3 worldPos = transform.position + Vector3.up * positionFix ;
         Vector3 screenPos = myCamera.WorldToScreenPoint(worldPos);
         interactiveKey.transform.position = screenPos;
 
