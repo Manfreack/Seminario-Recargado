@@ -7,19 +7,36 @@ using UnityEngine.Playables;
 public class AnimationTimeLineScenes : MonoBehaviour
 {
 
-    public PlayableDirector CutScene01;
+    public Animator CutScene01_ROCKS;
     public PlayableDirector CutScene02;
     public PlayableDirector CutScene02_Bars;
 
+
+
+    public GameObject RocksAnim;
     public int value;
+
+    CinematicActivator cinema;
+
+    private void Start()
+    {
+        CutScene01_ROCKS = RocksAnim.GetComponent<Animator>();
+
+        cinema = GetComponent<CinematicActivator>();
+    }
 
     public IEnumerator CutSceneRocks()
     {
 
         yield return new WaitForSeconds(0.5f);
-        if (CutScene01)
+        if (CutScene01_ROCKS)
         {
-            CutScene01.Play(); 
+
+            if (cinema.RockIsActivate == true)
+            {
+                print("Rocks");
+            }
+            CutScene01_ROCKS.SetBool("RockActivate", cinema.RockIsActivate);
         }
     }
     public IEnumerator CutSceneLever()

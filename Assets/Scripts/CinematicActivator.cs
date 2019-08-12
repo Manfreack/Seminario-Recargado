@@ -9,7 +9,10 @@ public class CinematicActivator : MonoBehaviour
     Camera myCamera;
     public GameObject interactiveKey;
     public GameObject prefabInteractiveKey;
+
     public float positionFix;
+
+    public bool RockIsActivate;
 
     DepthUI depthUI;
 
@@ -45,8 +48,9 @@ public class CinematicActivator : MonoBehaviour
             if(NumberClipAnimation != 3 && NumberClipAnimation != 0) isActive = true;
 
             if (NumberClipAnimation == 1)
-            {
+            {             
                 NumberClipAnimation = 0;
+                RockIsActivate = true;
                 cam.StartCoroutine(cam.Cinematic01());
             }
             if (NumberClipAnimation == 2)
