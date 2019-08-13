@@ -311,7 +311,7 @@ public class Viewer : MonoBehaviour
    
         trail.SetActive(false);
         anim.SetLayerWeight(1, 0);
-        cam = GameObject.Find("Main Camera").GetComponent<CamController>();
+        cam = FindObjectOfType<CamController>();
         headBaseRot = head.transform.rotation;
 
         startFade.enabled = true;

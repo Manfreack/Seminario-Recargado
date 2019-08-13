@@ -16,13 +16,13 @@ public class AnimationTimeLineScenes : MonoBehaviour
     public GameObject RocksAnim;
     public int value;
 
-    CinematicActivator cinema;
+    public CinematicActivator cinema;
 
     private void Start()
     {
-        CutScene01_ROCKS = RocksAnim.GetComponent<Animator>();
+       // CutScene01_ROCKS = RocksAnim.GetComponent<Animator>();
 
-        cinema = GetComponent<CinematicActivator>();
+       // cinema = GetComponent<CinematicActivator>();
     }
 
     public IEnumerator CutSceneRocks()
