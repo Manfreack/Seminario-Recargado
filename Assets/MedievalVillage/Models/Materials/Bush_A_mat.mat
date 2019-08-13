@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Bush_A_mat
+  m_Shader: {fileID: 4800000, guid: a9a97b2abb0b4c9439cabbdde41fee39, type: 3}
+  m_ShaderKeywords: EFFECT_BUMP GEOM_TYPE_LEAF
+  m_LightmapFlags: 5
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AOMap:
+        m_Texture: {fileID: 2800000, guid: d2dc2036e13f842469f62422bdf0412c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BaseColor:
+        m_Texture: {fileID: 2800000, guid: 0e028ca30f7edab4c9516657323812f7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: e102eac3ca0a44249b01cfc1af65089e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 0e028ca30f7edab4c9516657323812f7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetalicMap:
+        m_Texture: {fileID: 2800000, guid: 4d117ed518d8005449311c5270063c71, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 2800000, guid: e102eac3ca0a44249b01cfc1af65089e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _AOPower: 1
+    - _AlphaCutoff: 0.55
+    - _Cull: 0
+    - _Cutoff: 0.333
+    - _EmissivePower: 0.05
+    - _Gloss: 0.042
+    - _Metalic: 1
+    - _Shininess: 0.1
+    - _WindIntensity: 0.0414
+    - _WindQuality: 0
+    m_Colors:
+    - _BaseColorTint: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _HueVariation: {r: 1, g: 0.5, b: 0, a: 0.1}
+    - _SpecColor: {r: 0, g: 0, b: 0, a: 0}
