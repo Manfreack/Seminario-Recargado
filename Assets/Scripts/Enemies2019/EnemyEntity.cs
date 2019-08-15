@@ -45,6 +45,7 @@ public abstract class EnemyEntity: MonoBehaviour
     public List<Node> pathToTarget = new List<Node>();
     public abstract void GetDamage(float damage, string typeOfDamage, int damageAnimationIndex);
     public abstract void MakeDamage();
+    public abstract void ChangeChatAnimation();
     public List<Node> myNodes = new List<Node>();
     public i_EnemyActions currentAction;
     public Rigidbody rb;
@@ -64,4 +65,13 @@ public abstract class EnemyEntity: MonoBehaviour
     public CombatNode myCombatNode;
     public CombatNode lastCombatNode;
     public SkinnedMeshRenderer renderObject;
+
+    [Header("Enemy PatrolOptions:")]
+
+    public float timeToPatrol;
+    public float timeToChat;
+    public float chatCurrentTime;
+    public bool enemyPointer;
+    public bool chating;
+    public bool patroling;
 }

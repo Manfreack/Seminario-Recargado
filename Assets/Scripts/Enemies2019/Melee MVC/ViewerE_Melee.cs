@@ -43,7 +43,8 @@ public class ViewerE_Melee : MonoBehaviour
     public List<Rigidbody> boneRigs = new List<Rigidbody>();
     public List<BoxCollider> boneColliders = new List<BoxCollider>();
 
-    public enum EnemyMeleeAnim {TakeDamage ,TakeDamage2, TakeDamage3, Dead, Attack1, Attack2, Attack3, HeavyAttack, WalkStreaf, Persuit, IdleCombat, Patrol, Retreat, Stuned, Knocked, AttackBlocked, Blocked, CounterAttack, IdleDefence, Idle };
+    public enum EnemyMeleeAnim {TakeDamage ,TakeDamage2, TakeDamage3, Dead, Attack1, Attack2, Attack3, HeavyAttack, WalkStreaf, Persuit, IdleCombat, Patrol, Retreat, Stuned, Knocked, AttackBlocked, Blocked, CounterAttack, IdleDefence, Idle,
+    Chat1, Chat2, Chat3, Point};
 
     public Dictionary<EnemyMeleeAnim, string> animDictionary = new Dictionary<EnemyMeleeAnim, string>();
 
@@ -129,6 +130,10 @@ public class ViewerE_Melee : MonoBehaviour
         animDictionary.Add(EnemyMeleeAnim.TakeDamage, clips[19].name);
         animDictionary.Add(EnemyMeleeAnim.TakeDamage2, clips[20].name);
         animDictionary.Add(EnemyMeleeAnim.TakeDamage3, clips[21].name);
+        animDictionary.Add(EnemyMeleeAnim.Chat3, clips[22].name);
+        animDictionary.Add(EnemyMeleeAnim.Chat2, clips[23].name);
+        animDictionary.Add(EnemyMeleeAnim.Chat1, clips[24].name);
+        animDictionary.Add(EnemyMeleeAnim.Point, clips[24].name);
     }
 
     void Update()
@@ -194,6 +199,42 @@ public class ViewerE_Melee : MonoBehaviour
             _model._view.StunedAnimFalse();
         }
 
+    }
+
+    public void ChangeChatAnimation()
+    {
+        int r = Random.Range(0, 2);
+
+        if (r == 0)
+        {
+            _anim.SetBool("Chat1", true);
+            _anim.SetBool("Chat2", false);
+            _anim.SetBool("Chat3", false);
+        }
+
+        if (r == 1)
+        {
+            _anim.SetBool("Chat1", false);
+            _anim.SetBool("Chat2", true);
+            _anim.SetBool("Chat3", false);
+        }
+
+        if (r == 2)
+        {
+            _anim.SetBool("Chat1", false);
+            _anim.SetBool("Chat2", false);
+            _anim.SetBool("Chat3", true);
+        }
+    }
+
+    public void PointAnimation()
+    {
+        _anim.SetBool("Point", true);
+    }
+
+    public void PointAnimationFalse()
+    {
+        _anim.SetBool("Point", false);
     }
 
     public void LightHitAntisipation()

@@ -802,4 +802,9 @@ public class ModelE_Sniper : EnemyEntity
         onCombat = false;
         SendInputToFSM(EnemyInputs.PATROL);
     }
+
+    public override void ChangeChatAnimation()
+    {
+        throw new NotImplementedException();
+    }
 }

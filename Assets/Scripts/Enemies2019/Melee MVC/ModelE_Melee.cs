@@ -12,7 +12,7 @@ public class ModelE_Melee : EnemyEntity
     public Transform NodePath;
     public EventFSM<EnemyInputs> _myFsm;
     public List<CombatNode> restOfNodes = new List<CombatNode>();
-    public float timeToPatrol;
+    
     public LayerMask layerPlayer;
     public LayerMask layerObst;
     public LayerMask layerObstAndBarrels;
@@ -63,6 +63,8 @@ public class ModelE_Melee : EnemyEntity
     public Action StunedEvent;
     public Action KnockEvent;
     public Action PerfectBlocked;
+    public Action ChatEvent;
+    public Action PointEvent;
     public Node endPatrolNode;
 
     float maxLife;
@@ -92,6 +94,7 @@ public class ModelE_Melee : EnemyEntity
     public bool RetreatState;
     public bool reposition;
     public bool cooldwonReposition;
+    
 
     bool delayWaitState;
     Vector3 startPos;
@@ -104,7 +107,14 @@ public class ModelE_Melee : EnemyEntity
         cooldwonReposition = true;
     }
 
-
+    IEnumerator DelayPoint()
+    {
+        enemyPointer = true;
+        PointEvent();
+        yield return new WaitForSeconds(1);
+        enemyPointer = false;
+        _view.PointAnimationFalse();
+    }
 
     public void RepositionMoveRight()
     {
@@ -295,7 +305,8 @@ public class ModelE_Melee : EnemyEntity
         StunedEvent += _view.StunedAnim;
         KnockEvent += _view.KnockedAnim;
         PerfectBlocked += _view.PerfectBlockedAnim;
-
+        ChatEvent += _view.ChangeChatAnimation;
+        PointEvent += _view.PointAnimation;
 
         var patrol = new FSM_State<EnemyInputs>("PATROL");
         var defence = new FSM_State<EnemyInputs>("DEFENCE");
@@ -415,19 +426,46 @@ public class ModelE_Melee : EnemyEntity
         patrol.OnFixedUpdate += () =>
         {
 
-            timeToPatrol -= Time.deltaTime;
-            currentAction = new A_Patrol(this);
+            if (patroling)
+            {
 
-            if (target.fadeTimer > target.view.fadeTime) IdleEvent();
+                timeToPatrol -= Time.deltaTime;
+                currentAction = new A_Patrol(this);
 
-            if ((!isDead && isPersuit && !isWaitArea && target.fadeTimer > target.view.fadeTime) || onDamage) SendInputToFSM(EnemyInputs.PERSUIT);
+                if (target.fadeTimer > target.view.fadeTime) IdleEvent();
 
-            if (!isDead && isAnswerCall && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.ANSWER);
+                if ((!isDead && isPersuit && !isWaitArea && target.fadeTimer > target.view.fadeTime) || onDamage) SendInputToFSM(EnemyInputs.PERSUIT);
 
-            if (!isDead && isWaitArea && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.WAIT);
+                if (!isDead && isAnswerCall && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.ANSWER);
 
-            if (isDead) SendInputToFSM(EnemyInputs.DIE);
+                if (!isDead && isWaitArea && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.WAIT);
 
+                if (isDead) SendInputToFSM(EnemyInputs.DIE);
+
+            }
+
+            if (chating)
+            {
+                currentAction = new A_Chating(this);
+
+                if (!isDead && isPersuit && !isWaitArea && target.fadeTimer > target.view.fadeTime && enemyPointer)
+                {
+                    var dir = target.transform.position - transform.position;
+                    dir.y = 0;
+                    transform.forward = dir;
+                    StartCoroutine(DelayPoint());
+                }
+
+                if (target.fadeTimer > target.view.fadeTime && !enemyPointer) IdleEvent();
+
+                if ((!isDead && isPersuit && !isWaitArea && target.fadeTimer > target.view.fadeTime && !enemyPointer) || onDamage) SendInputToFSM(EnemyInputs.PERSUIT);
+
+                if (!isDead && isAnswerCall && target.fadeTimer > target.view.fadeTime && !enemyPointer) SendInputToFSM(EnemyInputs.ANSWER);
+
+                if (!isDead && isWaitArea && target.fadeTimer > target.view.fadeTime && !enemyPointer) SendInputToFSM(EnemyInputs.WAIT);
+
+                if (isDead) SendInputToFSM(EnemyInputs.DIE);
+            }
             
 
         };
@@ -1469,5 +1507,10 @@ public class ModelE_Melee : EnemyEntity
         isDead = false;
         onCombat = false;
         SendInputToFSM(EnemyInputs.PATROL);
+    }
+
+    public override void ChangeChatAnimation()
+    {
+        ChatEvent();
     }
 }
