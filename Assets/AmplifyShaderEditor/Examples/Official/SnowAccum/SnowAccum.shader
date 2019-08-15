@@ -1,16 +1,43 @@
-// Made with Amplify Shader Editor
-// Available at the Unity Asset Store - http://u3d.as/y3X 
-Shader "ASESampleShaders/SnowAccum"
+Shader "NatureManufacture Shaders/Standard Shaders/Standard Metalic Snow"
 {
 	Properties
 	{
-		_RockAlbedo("Rock Albedo", 2D) = "white" {}
-		_RockNormal("Rock Normal", 2D) = "bump" {}
-		_RockSpecular("Rock Specular", 2D) = "white" {}
-		_SnowAlbedo("Snow Albedo", 2D) = "white" {}
-		_SnowNormal("Snow Normal", 2D) = "bump" {}
-		_SnowSpecular("Snow Specular", 2D) = "white" {}
-		_SnowAmount("SnowAmount", Range( 0 , 2)) = 0.13
+		_MainTex("MainTex ", 2D) = "white" {}
+		_Color("Color", Color) = (1,1,1,1)
+		_BumpMap("BumpMap", 2D) = "bump" {}
+		_BumpScale("BumpScale", Range( 0 , 5)) = 0
+		_MetalicRAmbientOcclusionGSmoothnessA("Metalic (R) Ambient Occlusion (G) Smoothness (A)", 2D) = "white" {}
+		_MetallicPower("Metallic Power", Range( 0 , 2)) = 1
+		_AmbientOcclusionPower("Ambient Occlusion Power", Range( 0 , 1)) = 1
+		_SmoothnessPower("Smoothness Power", Range( 0 , 2)) = 1
+		_DetailMask("DetailMask", 2D) = "white" {}
+		_DetailAlbedoPower("Detail Albedo Power", Range( 0 , 2)) = 0
+		_DetailAlbedoMap("DetailAlbedoMap", 2D) = "black" {}
+		[NoScaleOffset]_DetailNormalMap("DetailNormalMap", 2D) = "bump" {}
+		_DetailNormalMapScale("DetailNormalMapScale", Range( 0 , 5)) = 0
+		[Toggle(_USESNOW_ON)] _UseSnow("Use Snow", Float) = 1
+		[Toggle(_USEDYNAMICSNOWTSTATICMASKF_ON)] _UseDynamicSnowTStaticMaskF("Use Dynamic Snow (T) Static Mask (F)", Float) = 1
+		_SnowMaskB("Snow Mask (B)", 2D) = "white" {}
+		_SnowMaskPower("Snow Mask Power", Range( 0 , 10)) = 1
+		_Snow_Amount("Snow_Amount", Range( 0 , 2)) = 0.13
+		_Snow_AmountGrowSpeed("Snow_Amount Grow Speed", Range( 1 , 3)) = 3
+		_TriplanarCoverFalloff("Triplanar Cover Falloff", Range( 1 , 100)) = 8
+		_SnowAlbedoRGB("Snow Albedo (RGB)", 2D) = "white" {}
+		_SnowTiling("Snow Tiling", Range( 0.0001 , 100)) = 15
+		_SnowAlbedoColor("Snow Albedo Color", Color) = (1,1,1,1)
+		_SnowNormalRGB("Snow Normal (RGB)", 2D) = "white" {}
+		_SnowMetalicRAmbientOcclusionGSmothnessA("Snow Metalic (R) Ambient Occlusion(G) Smothness (A)", 2D) = "white" {}
+		_SnowNormalScale("Snow Normal Scale", Range( 0 , 5)) = 0
+		_SnowNormalCoverHardness("Snow Normal Cover Hardness", Range( 0 , 10)) = 0
+		_SnowMetallicPower("Snow Metallic Power", Range( 0 , 2)) = 1
+		_SnowAmbientOcclusionPower("Snow Ambient Occlusion Power", Range( 0 , 1)) = 1
+		_SnowSmoothnessPower("Snow Smoothness Power", Range( 0 , 2)) = 1
+		_SnowMaxAngle("Snow Max Angle ", Range( 0.001 , 90)) = 90
+		_SnowHardness("Snow Hardness", Range( 1 , 10)) = 5
+		_Snow_Min_Height("Snow_Min_Height", Range( -1000 , 10000)) = -1000
+		_Snow_Min_Height_Blending("Snow_Min_Height_Blending", Range( 0 , 500)) = 1
+		_SnowHeightG("Snow Height (G)", 2D) = "white" {}
+		_SnowHeightSharpness("Snow Height Sharpness", Range( 0 , 2)) = 0.3
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
@@ -21,60 +48,172 @@ Shader "ASESampleShaders/SnowAccum"
 		Cull Back
 		ZTest LEqual
 		CGINCLUDE
+		#include "UnityStandardUtils.cginc"
 		#include "UnityPBSLighting.cginc"
 		#include "Lighting.cginc"
 		#pragma target 3.0
+		#pragma multi_compile_instancing
+		#pragma shader_feature _USESNOW_ON
+		#pragma shader_feature _USEDYNAMICSNOWTSTATICMASKF_ON
+		#include "NM_indirect.cginc"
+		#pragma multi_compile GPU_FRUSTUM_ON __
+		#pragma instancing_options procedural:setup
 		#ifdef UNITY_PASS_SHADOWCASTER
 			#undef INTERNAL_DATA
 			#undef WorldReflectionVector
 			#undef WorldNormalVector
 			#define INTERNAL_DATA half3 internalSurfaceTtoW0; half3 internalSurfaceTtoW1; half3 internalSurfaceTtoW2;
 			#define WorldReflectionVector(data,normal) reflect (data.worldRefl, half3(dot(data.internalSurfaceTtoW0,normal), dot(data.internalSurfaceTtoW1,normal), dot(data.internalSurfaceTtoW2,normal)))
-			#define WorldNormalVector(data,normal) fixed3(dot(data.internalSurfaceTtoW0,normal), dot(data.internalSurfaceTtoW1,normal), dot(data.internalSurfaceTtoW2,normal))
+			#define WorldNormalVector(data,normal) half3(dot(data.internalSurfaceTtoW0,normal), dot(data.internalSurfaceTtoW1,normal), dot(data.internalSurfaceTtoW2,normal))
 		#endif
 		struct Input
 		{
 			float2 uv_texcoord;
+			float3 worldPos;
 			float3 worldNormal;
 			INTERNAL_DATA
 		};
 
-		uniform sampler2D _RockNormal;
-		uniform float4 _RockNormal_ST;
-		uniform sampler2D _SnowNormal;
-		uniform float4 _SnowNormal_ST;
-		uniform float _SnowAmount;
-		uniform sampler2D _RockAlbedo;
-		uniform float4 _RockAlbedo_ST;
-		uniform sampler2D _SnowAlbedo;
-		uniform float4 _SnowAlbedo_ST;
-		uniform sampler2D _RockSpecular;
-		uniform float4 _RockSpecular_ST;
-		uniform sampler2D _SnowSpecular;
-		uniform float4 _SnowSpecular_ST;
+		uniform float _BumpScale;
+		uniform sampler2D _BumpMap;
+		uniform sampler2D _MainTex;
+		uniform float4 _MainTex_ST;
+		uniform float _DetailNormalMapScale;
+		uniform sampler2D _DetailNormalMap;
+		uniform sampler2D _DetailAlbedoMap;
+		uniform float4 _DetailAlbedoMap_ST;
+		uniform sampler2D _DetailMask;
+		uniform float4 _DetailMask_ST;
+		uniform sampler2D _SnowNormalRGB;
+		uniform float _SnowTiling;
+		uniform float _TriplanarCoverFalloff;
+		uniform float _SnowNormalScale;
+		uniform sampler2D _SnowMaskB;
+		uniform float4 _SnowMaskB_ST;
+		uniform float _SnowMaskPower;
+		uniform float _SnowNormalCoverHardness;
+		uniform float _Snow_Amount;
+		uniform float _Snow_AmountGrowSpeed;
+		uniform float _SnowMaxAngle;
+		uniform float _SnowHardness;
+		uniform float _Snow_Min_Height;
+		uniform float _Snow_Min_Height_Blending;
+		uniform sampler2D _SnowHeightG;
+		uniform float _SnowHeightSharpness;
+		uniform float4 _Color;
+		uniform float _DetailAlbedoPower;
+		uniform sampler2D _SnowAlbedoRGB;
+		uniform float4 _SnowAlbedoColor;
+		uniform sampler2D _MetalicRAmbientOcclusionGSmoothnessA;
+		uniform float _MetallicPower;
+		uniform sampler2D _SnowMetalicRAmbientOcclusionGSmothnessA;
+		uniform float _SnowMetallicPower;
+		uniform float _SmoothnessPower;
+		uniform float _SnowSmoothnessPower;
+		uniform float _AmbientOcclusionPower;
+		uniform float _SnowAmbientOcclusionPower;
 
-		void surf( Input i , inout SurfaceOutputStandardSpecular o )
+
+		inline float3 TriplanarSamplingSNF( sampler2D topTexMap, float3 worldPos, float3 worldNormal, float falloff, float tilling, float3 normalScale, float3 index )
 		{
-			float2 uv_RockNormal = i.uv_texcoord * _RockNormal_ST.xy + _RockNormal_ST.zw;
-			float2 uv_SnowNormal = i.uv_texcoord * _SnowNormal_ST.xy + _SnowNormal_ST.zw;
+			float3 projNormal = ( pow( abs( worldNormal ), falloff ) );
+			projNormal /= projNormal.x + projNormal.y + projNormal.z;
+			float3 nsign = sign( worldNormal );
+			half4 xNorm; half4 yNorm; half4 zNorm;
+			xNorm = ( tex2D( topTexMap, tilling * worldPos.zy * float2( nsign.x, 1.0 ) ) );
+			yNorm = ( tex2D( topTexMap, tilling * worldPos.xz * float2( nsign.y, 1.0 ) ) );
+			zNorm = ( tex2D( topTexMap, tilling * worldPos.xy * float2( -nsign.z, 1.0 ) ) );
+			xNorm.xyz = half3( UnpackNormal( xNorm ).xy * float2( nsign.x, 1.0 ) + worldNormal.zy, worldNormal.x ).zyx;
+			yNorm.xyz = half3( UnpackNormal( yNorm ).xy * float2( nsign.y, 1.0 ) + worldNormal.xz, worldNormal.y ).xzy;
+			zNorm.xyz = half3( UnpackNormal( zNorm ).xy * float2( -nsign.z, 1.0 ) + worldNormal.xy, worldNormal.z ).xyz;
+			return normalize( xNorm.xyz * projNormal.x + yNorm.xyz * projNormal.y + zNorm.xyz * projNormal.z );
+		}
+
+
+		inline float4 TriplanarSamplingSF( sampler2D topTexMap, float3 worldPos, float3 worldNormal, float falloff, float tilling, float3 normalScale, float3 index )
+		{
+			float3 projNormal = ( pow( abs( worldNormal ), falloff ) );
+			projNormal /= projNormal.x + projNormal.y + projNormal.z;
+			float3 nsign = sign( worldNormal );
+			half4 xNorm; half4 yNorm; half4 zNorm;
+			xNorm = ( tex2D( topTexMap, tilling * worldPos.zy * float2( nsign.x, 1.0 ) ) );
+			yNorm = ( tex2D( topTexMap, tilling * worldPos.xz * float2( nsign.y, 1.0 ) ) );
+			zNorm = ( tex2D( topTexMap, tilling * worldPos.xy * float2( -nsign.z, 1.0 ) ) );
+			return xNorm * projNormal.x + yNorm * projNormal.y + zNorm * projNormal.z;
+		}
+
+
+		void surf( Input i , inout SurfaceOutputStandard o )
+		{
+			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
+			float3 tex2DNode4 = UnpackScaleNormal( tex2D( _BumpMap, uv_MainTex ), _BumpScale );
+			float2 uv_DetailAlbedoMap = i.uv_texcoord * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
+			float3 tex2DNode485 = UnpackScaleNormal( tex2D( _DetailNormalMap, uv_DetailAlbedoMap ), _DetailNormalMapScale );
+			float2 uv_DetailMask = i.uv_texcoord * _DetailMask_ST.xy + _DetailMask_ST.zw;
+			float4 tex2DNode481 = tex2D( _DetailMask, uv_DetailMask );
+			float3 lerpResult479 = lerp( tex2DNode4 , BlendNormals( tex2DNode4 , tex2DNode485 ) , tex2DNode481.a);
+			float temp_output_265_0 = ( 1.0 / _SnowTiling );
+			float3 ase_worldPos = i.worldPos;
 			float3 ase_worldNormal = WorldNormalVector( i, float3( 0, 0, 1 ) );
-			float3 lerpResult15 = lerp( UnpackNormal( tex2D( _RockNormal, uv_RockNormal ) ) , UnpackNormal( tex2D( _SnowNormal, uv_SnowNormal ) ) , saturate( ( ase_worldNormal.y * _SnowAmount ) ));
-			o.Normal = lerpResult15;
-			float2 uv_RockAlbedo = i.uv_texcoord * _RockAlbedo_ST.xy + _RockAlbedo_ST.zw;
-			float2 uv_SnowAlbedo = i.uv_texcoord * _SnowAlbedo_ST.xy + _SnowAlbedo_ST.zw;
-			float temp_output_18_0 = saturate( ( WorldNormalVector( i , lerpResult15 ).y * _SnowAmount ) );
-			float4 lerpResult10 = lerp( tex2D( _RockAlbedo, uv_RockAlbedo ) , tex2D( _SnowAlbedo, uv_SnowAlbedo ) , temp_output_18_0);
-			o.Albedo = lerpResult10.rgb;
-			float2 uv_RockSpecular = i.uv_texcoord * _RockSpecular_ST.xy + _RockSpecular_ST.zw;
-			float2 uv_SnowSpecular = i.uv_texcoord * _SnowSpecular_ST.xy + _SnowSpecular_ST.zw;
-			float4 lerpResult17 = lerp( tex2D( _RockSpecular, uv_RockSpecular ) , tex2D( _SnowSpecular, uv_SnowSpecular ) , temp_output_18_0);
-			o.Specular = lerpResult17.rgb;
+			float3 ase_worldTangent = WorldNormalVector( i, float3( 1, 0, 0 ) );
+			float3 ase_worldBitangent = WorldNormalVector( i, float3( 0, 1, 0 ) );
+			float3x3 ase_worldToTangent = float3x3( ase_worldTangent, ase_worldBitangent, ase_worldNormal );
+			float3 triplanar457 = TriplanarSamplingSNF( _SnowNormalRGB, ase_worldPos, ase_worldNormal, _TriplanarCoverFalloff, temp_output_265_0, 1.0, 0 );
+			float3 tanTriplanarNormal457 = mul( ase_worldToTangent, triplanar457 );
+			float3 appendResult458 = (float3(_SnowNormalScale , _SnowNormalScale , 1.0));
+			float2 uv_SnowMaskB = i.uv_texcoord * _SnowMaskB_ST.xy + _SnowMaskB_ST.zw;
+			float4 tex2DNode494 = tex2D( _SnowMaskB, uv_SnowMaskB );
+			float clampResult501 = clamp( ( tex2DNode494.b * _SnowMaskPower ) , 0.0 , 1.0 );
+			float3 normalizeResult483 = normalize( BlendNormals( UnpackScaleNormal( tex2D( _BumpMap, uv_MainTex ), _SnowNormalCoverHardness ) , tex2DNode485 ) );
+			float temp_output_489_0 = ( 4.0 - _Snow_AmountGrowSpeed );
+			float clampResult492 = clamp( pow( ( _Snow_Amount / temp_output_489_0 ) , temp_output_489_0 ) , 0.0 , 2.0 );
+			float clampResult87 = clamp( ase_worldNormal.y , 0.0 , 0.999999 );
+			float temp_output_85_0 = ( _SnowMaxAngle / 45.0 );
+			float clampResult83 = clamp( ( clampResult87 - ( 1.0 - temp_output_85_0 ) ) , 0.0 , 2.0 );
+			float temp_output_329_0 = ( ( 1.0 - _Snow_Min_Height ) + ase_worldPos.y );
+			float clampResult336 = clamp( ( temp_output_329_0 + 1.0 ) , 0.0 , 1.0 );
+			float clampResult335 = clamp( ( ( 1.0 - ( ( temp_output_329_0 + _Snow_Min_Height_Blending ) / temp_output_329_0 ) ) + -0.5 ) , 0.0 , 1.0 );
+			float clampResult338 = clamp( ( clampResult336 + clampResult335 ) , 0.0 , 1.0 );
+			float temp_output_349_0 = ( pow( ( clampResult83 * ( 1.0 / temp_output_85_0 ) ) , _SnowHardness ) * clampResult338 );
+			float3 lerpResult15 = lerp( normalizeResult483 , tanTriplanarNormal457 , ( saturate( ( ase_worldNormal.y * clampResult492 ) ) * temp_output_349_0 ));
+			float clampResult368 = clamp( ( ( (WorldNormalVector( i , lerpResult15 )).y * clampResult492 ) * ( ( clampResult492 * _SnowHardness ) * temp_output_349_0 ) ) , 0.0 , 1.0 );
+			float4 triplanar460 = TriplanarSamplingSF( _SnowHeightG, ase_worldPos, ase_worldNormal, _TriplanarCoverFalloff, temp_output_265_0, 1.0, 0 );
+			#ifdef _USEDYNAMICSNOWTSTATICMASKF_ON
+				float staticSwitch493 = ( clampResult501 * saturate( ( clampResult368 * pow( triplanar460.y , _SnowHeightSharpness ) ) ) );
+			#else
+				float staticSwitch493 = clampResult501;
+			#endif
+			#ifdef _USESNOW_ON
+				float staticSwitch497 = staticSwitch493;
+			#else
+				float staticSwitch497 = 1E-07;
+			#endif
+			float3 lerpResult369 = lerp( lerpResult479 , ( tanTriplanarNormal457 * appendResult458 ) , staticSwitch497);
+			o.Normal = lerpResult369;
+			float4 temp_output_77_0 = ( tex2D( _MainTex, uv_MainTex ) * _Color );
+			float4 blendOpSrc474 = temp_output_77_0;
+			float4 blendOpDest474 = ( _DetailAlbedoPower * tex2D( _DetailAlbedoMap, uv_DetailAlbedoMap ) );
+			float4 lerpResult480 = lerp( temp_output_77_0 , (( blendOpDest474 > 0.5 ) ? ( 1.0 - ( 1.0 - 2.0 * ( blendOpDest474 - 0.5 ) ) * ( 1.0 - blendOpSrc474 ) ) : ( 2.0 * blendOpDest474 * blendOpSrc474 ) ) , ( _DetailAlbedoPower * tex2DNode481.a ));
+			float4 triplanar455 = TriplanarSamplingSF( _SnowAlbedoRGB, ase_worldPos, ase_worldNormal, _TriplanarCoverFalloff, temp_output_265_0, 1.0, 0 );
+			float4 lerpResult10 = lerp( lerpResult480 , ( triplanar455 * _SnowAlbedoColor ) , staticSwitch497);
+			o.Albedo = lerpResult10.xyz;
+			float4 tex2DNode2 = tex2D( _MetalicRAmbientOcclusionGSmoothnessA, uv_MainTex );
+			float4 triplanar459 = TriplanarSamplingSF( _SnowMetalicRAmbientOcclusionGSmothnessA, ase_worldPos, ase_worldNormal, _TriplanarCoverFalloff, temp_output_265_0, 1.0, 0 );
+			float4 break323 = triplanar459;
+			float lerpResult17 = lerp( ( tex2DNode2.r * _MetallicPower ) , ( break323.x * _SnowMetallicPower ) , staticSwitch497);
+			o.Metallic = lerpResult17;
+			float lerpResult27 = lerp( ( tex2DNode2.a * _SmoothnessPower ) , ( break323.w * _SnowSmoothnessPower ) , staticSwitch497);
+			o.Smoothness = lerpResult27;
+			float clampResult96 = clamp( tex2DNode2.g , ( 1.0 - _AmbientOcclusionPower ) , 1.0 );
+			float clampResult94 = clamp( break323.y , ( 1.0 - _SnowAmbientOcclusionPower ) , 1.0 );
+			float lerpResult28 = lerp( clampResult96 , clampResult94 , staticSwitch497);
+			o.Occlusion = lerpResult28;
 			o.Alpha = 1;
 		}
 
 		ENDCG
 		CGPROGRAM
-		#pragma surface surf StandardSpecular keepalpha fullforwardshadows 
+		#pragma surface surf Standard keepalpha fullforwardshadows 
 
 		ENDCG
 		Pass
@@ -113,10 +252,10 @@ Shader "ASESampleShaders/SnowAccum"
 				UNITY_TRANSFER_INSTANCE_ID( v, o );
 				Input customInputData;
 				float3 worldPos = mul( unity_ObjectToWorld, v.vertex ).xyz;
-				fixed3 worldNormal = UnityObjectToWorldNormal( v.normal );
-				fixed3 worldTangent = UnityObjectToWorldDir( v.tangent.xyz );
-				fixed tangentSign = v.tangent.w * unity_WorldTransformParams.w;
-				fixed3 worldBinormal = cross( worldNormal, worldTangent ) * tangentSign;
+				half3 worldNormal = UnityObjectToWorldNormal( v.normal );
+				half3 worldTangent = UnityObjectToWorldDir( v.tangent.xyz );
+				half tangentSign = v.tangent.w * unity_WorldTransformParams.w;
+				half3 worldBinormal = cross( worldNormal, worldTangent ) * tangentSign;
 				o.tSpace0 = float4( worldTangent.x, worldBinormal.x, worldNormal.x, worldPos.x );
 				o.tSpace1 = float4( worldTangent.y, worldBinormal.y, worldNormal.y, worldPos.y );
 				o.tSpace2 = float4( worldTangent.z, worldBinormal.z, worldNormal.z, worldPos.z );
@@ -125,7 +264,7 @@ Shader "ASESampleShaders/SnowAccum"
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET( o )
 				return o;
 			}
-			fixed4 frag( v2f IN
+			half4 frag( v2f IN
 			#if !defined( CAN_SKIP_VPOS )
 			, UNITY_VPOS_TYPE vpos : VPOS
 			#endif
@@ -136,13 +275,14 @@ Shader "ASESampleShaders/SnowAccum"
 				UNITY_INITIALIZE_OUTPUT( Input, surfIN );
 				surfIN.uv_texcoord = IN.customPack1.xy;
 				float3 worldPos = float3( IN.tSpace0.w, IN.tSpace1.w, IN.tSpace2.w );
-				fixed3 worldViewDir = normalize( UnityWorldSpaceViewDir( worldPos ) );
+				half3 worldViewDir = normalize( UnityWorldSpaceViewDir( worldPos ) );
+				surfIN.worldPos = worldPos;
 				surfIN.worldNormal = float3( IN.tSpace0.z, IN.tSpace1.z, IN.tSpace2.z );
 				surfIN.internalSurfaceTtoW0 = IN.tSpace0.xyz;
 				surfIN.internalSurfaceTtoW1 = IN.tSpace1.xyz;
 				surfIN.internalSurfaceTtoW2 = IN.tSpace2.xyz;
-				SurfaceOutputStandardSpecular o;
-				UNITY_INITIALIZE_OUTPUT( SurfaceOutputStandardSpecular, o )
+				SurfaceOutputStandard o;
+				UNITY_INITIALIZE_OUTPUT( SurfaceOutputStandard, o )
 				surf( surfIN, o );
 				#if defined( CAN_SKIP_VPOS )
 				float2 vpos = IN.pos;
@@ -153,46 +293,4 @@ Shader "ASESampleShaders/SnowAccum"
 		}
 	}
 	Fallback "Diffuse"
-	CustomEditor "ASEMaterialInspector"
 }
-/*ASEBEGIN
-Version=14504
-713;92;740;673;2183;870.8956;1.9;True;False
-Node;AmplifyShaderEditor.RangedFloatNode;12;-1773.599,-115.1001;Float;False;Property;_SnowAmount;SnowAmount;6;0;Create;True;0;0;False;0;0.13;0.95;0;2;0;1;FLOAT;0
-Node;AmplifyShaderEditor.WorldNormalVector;20;-1685.906,-319.7951;Float;False;False;1;0;FLOAT3;0,0,0;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;21;-1444.505,-272.8951;Float;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SamplerNode;14;-1548.101,267.1998;Float;True;Property;_SnowNormal;Snow Normal;4;0;Create;True;0;0;False;0;None;24e31ecbf813d9e49bf7a1e0d4034916;True;0;True;bump;Auto;True;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;0,0;False;1;FLOAT2;0,0;False;2;FLOAT;1;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SamplerNode;4;-1548.101,72.7999;Float;True;Property;_RockNormal;Rock Normal;1;0;Create;True;0;0;False;0;None;0bebe40e9ebbecc48b8e9cfea982da7e;True;0;True;bump;Auto;True;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;0,0;False;1;FLOAT2;0,0;False;2;FLOAT;1;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SaturateNode;22;-1283.806,-264.4951;Float;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.LerpOp;15;-1067.3,73.59992;Float;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.WorldNormalVector;19;-865.5047,-194.2967;Float;False;False;1;0;FLOAT3;0,0,0;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;11;-651.7996,-116.3;Float;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SaturateNode;18;-496.7049,-110.1974;Float;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SamplerNode;16;-704.8019,470.7009;Float;True;Property;_SnowSpecular;Snow Specular;5;0;Create;True;0;0;False;0;None;84d76c914224da14a8210ba4ba8a2992;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;0,0;False;1;FLOAT2;0,0;False;2;FLOAT;1;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SamplerNode;1;-811.4,-722.1001;Float;True;Property;_RockAlbedo;Rock Albedo;0;0;Create;True;0;0;False;0;None;b297077dae62c1944ba14cad801cddf5;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;0,0;False;1;FLOAT2;0,0;False;2;FLOAT;1;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SamplerNode;2;-693.0005,253.9001;Float;True;Property;_RockSpecular;Rock Specular;2;0;Create;True;0;0;False;0;None;6618005f6bafebf40b3d09f498401fba;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;0,0;False;1;FLOAT2;0,0;False;2;FLOAT;1;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.SamplerNode;9;-824.2003,-500.8003;Float;True;Property;_SnowAlbedo;Snow Albedo;3;0;Create;True;0;0;False;0;None;4112a019314dad94f9ffc2f8481f31bc;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;0,0;False;1;FLOAT2;0,0;False;2;FLOAT;1;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.LerpOp;17;-223.4019,317.8009;Float;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.LerpOp;10;-127.1,-308.6001;Float;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;146.9001,42.89999;Float;False;True;2;Float;ASEMaterialInspector;0;0;StandardSpecular;ASESampleShaders/SnowAccum;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;-1;3;False;-1;False;0;0;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;All;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;0;4;10;25;False;0.5;True;0;Zero;Zero;0;Zero;Zero;Add;Add;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;0;0;False;0;0;0;False;-1;-1;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
-WireConnection;21;0;20;2
-WireConnection;21;1;12;0
-WireConnection;22;0;21;0
-WireConnection;15;0;4;0
-WireConnection;15;1;14;0
-WireConnection;15;2;22;0
-WireConnection;19;0;15;0
-WireConnection;11;0;19;2
-WireConnection;11;1;12;0
-WireConnection;18;0;11;0
-WireConnection;17;0;2;0
-WireConnection;17;1;16;0
-WireConnection;17;2;18;0
-WireConnection;10;0;1;0
-WireConnection;10;1;9;0
-WireConnection;10;2;18;0
-WireConnection;0;0;10;0
-WireConnection;0;1;15;0
-WireConnection;0;3;17;0
-ASEEND*/
-//CHKSM=ADF5A2109BEC255F388E49268BE3862C27F6C709
