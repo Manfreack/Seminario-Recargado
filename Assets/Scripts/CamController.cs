@@ -7,7 +7,7 @@ using UnityEngine.Playables;
 
 public class CamController : MonoBehaviour {
 
-    [HideInInspector]
+   
     public bool blockMouse;
 
     Model model;

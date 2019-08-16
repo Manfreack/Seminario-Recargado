@@ -82,7 +82,7 @@ public class CombatArea : MonoBehaviour
 
                 var enemies = myNPCs.OrderBy(x =>
                 {
-                    var d = Vector3.Distance(x.transform.position, transform.position);
+                    var d = Vector3.Distance(x.transform.position, player.transform.position);
                     return d;
 
                 }).Where(x => !x.isDead);

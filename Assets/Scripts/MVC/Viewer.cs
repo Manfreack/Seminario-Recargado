@@ -53,7 +53,8 @@ public class Viewer : MonoBehaviour
 
     float timeToSaveSword;
 
-    CamController cam;
+    public CamController cam;
+
     public GameObject pauseMenu;
 
     bool slowSpeed;
