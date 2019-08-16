@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 189720626}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.98439986, y: 2.1271996, z: 0}
+  m_LocalPosition: {x: -0.98439986, y: 2.323, z: 0}
   m_LocalScale: {x: 0.66286623, y: 0.6628662, z: 0.66286623}
   m_Children: []
   m_Father: {fileID: 1103664795}
@@ -955,7 +955,7 @@ ParticleSystem:
           outWeight: 0.33333334
         - serializedVersion: 3
           time: 1
-          value: 1
+          value: 0.56557465
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -1091,7 +1091,7 @@ ParticleSystem:
     enabled: 1
     x:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 0
       maxCurve:
@@ -1144,7 +1144,7 @@ ParticleSystem:
         m_RotationOrder: 4
     y:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 0
       maxCurve:
@@ -9769,7 +9769,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1831361030}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.98439986, y: 2.1847, z: 0}
+  m_LocalPosition: {x: -0.9797, y: 2.2306, z: -0.0268}
   m_LocalScale: {x: 0.66286623, y: 0.6628661, z: 0.66286606}
   m_Children: []
   m_Father: {fileID: 1103664795}
@@ -9784,7 +9784,7 @@ ParticleSystem:
   m_GameObject: {fileID: 1831361030}
   serializedVersion: 6
   lengthInSec: 10
-  simulationSpeed: 1
+  simulationSpeed: 0.7
   stopAction: 0
   cullingMode: 3
   ringBufferMode: 0
@@ -10238,8 +10238,8 @@ ParticleSystem:
     startRotation:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.2617994
-      minScalar: -0.2617994
+      scalar: 0
+      minScalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -10277,7 +10277,7 @@ ParticleSystem:
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -0.12
+      scalar: -0.11
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -10536,7 +10536,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 3
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -10654,20 +10654,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 1.3800216
-          outSlope: 1.3800216
+          inSlope: 2.3135757
+          outSlope: 2.3135757
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
-          outWeight: 0.119298235
+          outWeight: 0.11437032
         - serializedVersion: 3
-          time: 1
-          value: 0.32647228
-          inSlope: -0.63439035
-          outSlope: -0.63439035
+          time: 0.991272
+          value: 0.45902252
+          inSlope: 0.40288597
+          outSlope: 0.40288597
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.23508781
+          inWeight: 0.123160884
           outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -11020,15 +11020,15 @@ ParticleSystem:
           time: 0
           value: 0
           inSlope: 0.5525771
-          outSlope: 1
+          outSlope: 0.8360615
           tangentMode: 65
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
           time: 1
-          value: 1
-          inSlope: 1
+          value: 0.8360615
+          inSlope: 0.8360615
           outSlope: 0
           tangentMode: 5
           weightedMode: 0
@@ -12103,7 +12103,7 @@ ParticleSystem:
     magnitude:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.35
+      scalar: 0.3
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -14322,7 +14322,7 @@ ParticleSystemRenderer:
   m_RenderMode: 0
   m_SortMode: 1
   m_MinParticleSize: 0
-  m_MaxParticleSize: 0.5
+  m_MaxParticleSize: 0.4
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
@@ -14383,9 +14383,9 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 2
-  m_Color: {r: 0.8679245, g: 0.67800933, b: 0.28248486, a: 1}
-  m_Intensity: 1.5
-  m_Range: 8.25
+  m_Color: {r: 1, g: 0.7090864, b: 0.10849059, a: 1}
+  m_Intensity: 2.3
+  m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
