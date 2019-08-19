@@ -4674,6 +4674,7 @@ GameObject:
   - component: {fileID: 1101681291}
   - component: {fileID: 1101703095}
   - component: {fileID: 1092495931}
+  - component: {fileID: 2968285337657538741}
   m_Layer: 21
   m_Name: StreetLamp_mdl
   m_TagString: Untagged
@@ -4771,6 +4772,22 @@ CapsuleCollider:
   m_Height: 0.5
   m_Direction: 1
   m_Center: {x: -0.98, y: 2.23, z: 0}
+--- !u!114 &2968285337657538741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1103913899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2e8d2f56f74d149b4c10d67009881b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  light: {fileID: 8459070227517164219}
+  minIntensity: 2.1
+  maxIntensity: 2.9
+  smoothing: 5
 --- !u!1 &1103938017
 GameObject:
   m_ObjectHideFlags: 0

@@ -14052,6 +14052,7 @@ GameObject:
   - component: {fileID: 6904102072685388594}
   - component: {fileID: 6904102072666093928}
   - component: {fileID: 6904102072688642304}
+  - component: {fileID: 5221650105368242398}
   m_Layer: 0
   m_Name: FirePit_mdl
   m_TagString: Untagged
@@ -14121,6 +14122,22 @@ CapsuleCollider:
   m_Height: 1.2
   m_Direction: 1
   m_Center: {x: 0, y: 0.38, z: 0}
+--- !u!114 &5221650105368242398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6904102072685617062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2e8d2f56f74d149b4c10d67009881b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  light: {fileID: 7809956843019977385}
+  minIntensity: 0
+  maxIntensity: 3
+  smoothing: 5
 --- !u!1 &6904102072685646430
 GameObject:
   m_ObjectHideFlags: 0
