@@ -74,56 +74,6 @@ public class ViewerE_Sniper : MonoBehaviour
         }
     }
 
-    /*
-    public IEnumerator BloodPoolAnim()
-    {
-        while (timerExpandPool < 1)
-        {
-            MatPoolExpand();
-            yield return new WaitForEndOfFrame();
-        }
-
-        yield return new WaitForSeconds(2.5f);
-
-        while (timerVanishPool < 1)
-        {
-            MatPoolVanish();
-            yield return new WaitForEndOfFrame();
-        }
-    }
-
-    public void MatPoolExpand()
-    {
-        timerExpandPool += Time.deltaTime * 0.5f;
-        if (timerExpandPool >= 1) timerExpandPool = 1;
-        matPool.SetFloat("_FillAmount", timerExpandPool);
-    }
-
-    public void MatPoolVanish()
-    {
-        timerVanishPool += Time.deltaTime / 2.2f;
-        if (timerVanishPool >= 1) timerVanishPool = 1;
-        matPool.SetFloat("_Vanish", timerVanishPool);
-    }
-
-    public IEnumerator DeadCorrutine()
-    {
-        
-        yield return new WaitForSeconds(3);
-
-        GetComponent<Rigidbody>().useGravity = false;
-        GetComponent<CapsuleCollider>().enabled = false;
-
-        float posY = transform.position.y;
-        while (posY - 2.1f <= transform.position.y)
-        {
-            transform.position += Vector3.down * Time.deltaTime * 0.15f;
-            if (posY - 2 >= transform.position.y)
-                gameObject.SetActive(false);
-            yield return new WaitForEndOfFrame();
-        }
-    }
-    */
 
     void Awake()
     {
@@ -176,6 +126,32 @@ public class ViewerE_Sniper : MonoBehaviour
     }
 
     // Update is called once per frame
+
+    public void ChangeChatAnimation()
+    {
+        int r = Random.Range(0, 2);
+
+        if (r == 0)
+        {
+            anim.SetBool("Chat1", true);
+            anim.SetBool("Chat2", false);
+            anim.SetBool("Chat3", false);
+        }
+
+        if (r == 1)
+        {
+            anim.SetBool("Chat1", false);
+            anim.SetBool("Chat2", true);
+            anim.SetBool("Chat3", false);
+        }
+
+        if (r == 2)
+        {
+            anim.SetBool("Chat1", false);
+            anim.SetBool("Chat2", false);
+            anim.SetBool("Chat3", true);
+        }
+    }
 
     public void HeavyHitAntisipation()
     {

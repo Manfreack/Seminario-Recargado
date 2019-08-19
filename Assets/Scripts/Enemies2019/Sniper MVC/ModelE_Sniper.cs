@@ -43,6 +43,7 @@ public class ModelE_Sniper : EnemyEntity
     public Action StunedEvent;
     public Action FlyRightEvent;
     public Action FlyLeftEvent;
+    public Action ChatEvent;
 	
 	public float maxLife;
 
@@ -99,6 +100,7 @@ public class ModelE_Sniper : EnemyEntity
         StunedEvent += view.StunedAnim;
         FlyRightEvent += view.FlyRightAnim;
         FlyLeftEvent += view.FlyLeftAnim;
+        ChatEvent += view.ChangeChatAnimation;
 
         StateConfigurer.Create(patrol)
            .SetTransition(EnemyInputs.PERSUIT, persuit)
@@ -180,7 +182,9 @@ public class ModelE_Sniper : EnemyEntity
 
             healthBar.SetActive(false);
           
-            currentAction = new A_SniperPatrol(this);
+            if(patroling) currentAction = new A_SniperPatrol(this);
+
+            if (chating) currentAction = new A_Chating(this);
 
             if (!isDead && isPersuit && !isWaitArea && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.PERSUIT);
 
@@ -191,6 +195,7 @@ public class ModelE_Sniper : EnemyEntity
             if (!isDead && !isWaitArea && !isPersuit && !onMeleeAttack && onDamage && target.fadeTimer > target.view.fadeTime) SendInputToFSM(EnemyInputs.FOLLOW);
 
             if (isDead) SendInputToFSM(EnemyInputs.DIE);
+
 
         };
 
@@ -805,6 +810,6 @@ public class ModelE_Sniper : EnemyEntity
 
     public override void ChangeChatAnimation()
     {
-        throw new NotImplementedException();
+        ChatEvent();
     }
 }
