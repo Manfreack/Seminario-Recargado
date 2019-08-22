@@ -27,7 +27,11 @@ public class ActivateEnemiesArea : MonoBehaviour
             {
                 if (item.GetComponent<EnemyEntity>())
                 {
-                   if(!item.GetComponent<EnemyEntity>().cantRespawn) item.SetActive(true);
+                    if (!item.GetComponent<EnemyEntity>().cantRespawn)
+                    {
+                        item.SetActive(true);
+                        item.GetComponent<EnemyEntity>().SetChatAnimation();
+                    }
                 }
             }
         }

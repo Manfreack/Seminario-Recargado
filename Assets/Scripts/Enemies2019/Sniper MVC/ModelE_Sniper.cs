@@ -176,6 +176,11 @@ public class ModelE_Sniper : EnemyEntity
         .SetTransition(EnemyInputs.PATROL, patrol)
         .Done();
 
+        patrol.OnEnter += x =>
+        {
+           
+        };
+
         patrol.OnFixedUpdate += () =>
         {
             if (myPointer) target.ReturnPointer(myPointer);
@@ -811,5 +816,12 @@ public class ModelE_Sniper : EnemyEntity
     public override void ChangeChatAnimation()
     {
         ChatEvent();
+    }
+
+    public override void SetChatAnimation()
+    {
+        view.anim.SetBool("Chat1", chat1);
+        view.anim.SetBool("Chat2", chat2);
+        view.anim.SetBool("Chat3", chat3);
     }
 }

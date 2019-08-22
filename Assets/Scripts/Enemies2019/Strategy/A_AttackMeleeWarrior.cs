@@ -15,7 +15,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
 
         if (!_e.onDamage)
         {
-            if (!_e.onAttackArea && !_e.firstAttack && !_e.onDamage &&  (_e.animClipName == _e._view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Patrol] || _e.animClipName == _e._view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Persuit]))
+            if (!_e.onAttackArea && /*!_e.firstAttack &&*/ !_e.onDamage)// &&  (_e.animClipName == _e._view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Patrol] || _e.animClipName == _e._view.animDictionary[ViewerE_Melee.EnemyMeleeAnim.Persuit]))
             {
                 Quaternion targetRotation;
                 var dir = (_e.target.transform.position - _e.transform.position).normalized;
@@ -39,7 +39,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                 _e.CombatIdleEvent();
             }
 
-            else if(_e.onAttackArea && !_e.onRetreat && !_e.firstAttack && !_e.target.onCounterAttack)
+            else if(_e.onAttackArea && !_e.onRetreat /*&& !_e.firstAttack*/ && !_e.target.onCounterAttack)
             {
                 _e._view.RunAttackAnim();
 
@@ -49,7 +49,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                
                 var player = Physics.OverlapSphere(_e.attackPivot.position, _e.radiusAttack).Where(x => x.GetComponent<Model>()).Select(x => x.GetComponent<Model>()).FirstOrDefault();
 
-                if (player != null && !_e.firstAttack)
+                if (player != null /*&& !_e.firstAttack*/)
                 {
                     int r = Random.Range(0, 2);
 
@@ -57,7 +57,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                     {
                         _e.AttackEvent();
                         _e.onRetreat = true;
-                        _e.firstAttack = true;
+                       // _e.firstAttack = true;
 
                     }
 
@@ -65,7 +65,7 @@ public class A_AttackMeleeWarrior : i_EnemyActions
                     {
                         _e.HeavyAttackEvent();
                         _e.onRetreat = true;
-                        _e.firstAttack = true;
+                       // _e.firstAttack = true;
                     }
 
                     

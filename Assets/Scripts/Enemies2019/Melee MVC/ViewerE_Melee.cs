@@ -80,6 +80,7 @@ public class ViewerE_Melee : MonoBehaviour
 
     void Awake()
     {
+
         _player = FindObjectOfType<Model>();
         heavyMat = sword.GetComponent<SkinnedMeshRenderer>().materials[1];
         _anim = GetComponent<Animator>();
@@ -88,6 +89,7 @@ public class ViewerE_Melee : MonoBehaviour
         ess = GetComponent<EnemyScreenSpace>();
         canvas = GameObject.Find("Canvas");
 
+       
        // boneRigs.AddRange(GetComponentsInChildren<Transform>().Where(x => x.gameObject.layer == LayerMask.NameToLayer("Bones")).Where(x => x.GetComponent<Rigidbody>()).Select(x => x.GetComponent<Rigidbody>()));
         //boneColliders.AddRange(GetComponentsInChildren<Transform>().Where(x => x.gameObject.layer == LayerMask.NameToLayer("Bones")).Where(x => x.GetComponent<BoxCollider>()).Select(x => x.GetComponent<BoxCollider>()));
 

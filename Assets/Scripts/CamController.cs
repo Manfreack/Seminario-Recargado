@@ -281,7 +281,7 @@ public class CamController : MonoBehaviour {
                 {
                     new CinemachineFreeLook.Orbit(2.5f, actualCamDistance),
                     new CinemachineFreeLook.Orbit(2.5f, actualCamDistance),
-                    new CinemachineFreeLook.Orbit(0.4f, actualCamDistance)
+                    new CinemachineFreeLook.Orbit(0.4f, 1.3f)
                 };
             }
 

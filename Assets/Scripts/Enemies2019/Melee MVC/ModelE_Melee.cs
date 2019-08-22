@@ -420,7 +420,7 @@ public class ModelE_Melee : EnemyEntity
             if (navMeshAgent)
             {
                 if (navMeshAgent.enabled) navMeshAgent.enabled = false;
-            }
+            }      
         };
 
         patrol.OnFixedUpdate += () =>
@@ -671,6 +671,7 @@ public class ModelE_Melee : EnemyEntity
            
 
             _view._anim.SetBool("WalkBack", false);
+            _view._anim.SetBool("RunAttack", false);
              if (!reposition) timeToChangeRotation -= Time.deltaTime;
 
              if (timeToChangeRotation <= 0 && changeRotateWarrior)
@@ -1512,5 +1513,12 @@ public class ModelE_Melee : EnemyEntity
     public override void ChangeChatAnimation()
     {
         ChatEvent();
+    }
+
+    public override void SetChatAnimation()
+    {
+        _view._anim.SetBool("Chat1", chat1);
+        _view._anim.SetBool("Chat2", chat2);
+        _view._anim.SetBool("Chat3", chat3);
     }
 }

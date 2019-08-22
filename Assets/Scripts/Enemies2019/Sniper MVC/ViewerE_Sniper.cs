@@ -86,6 +86,10 @@ public class ViewerE_Sniper : MonoBehaviour
 		ess = GetComponent<EnemyScreenSpace>();
         fireHandsMat = fireHandsRenderer.materials[2];
 
+        anim.SetBool("Chat1", _model.chat1);
+        anim.SetBool("Chat2", _model.chat2);
+        anim.SetBool("Chat3", _model.chat3);
+
         //_model.timeToShoot = 1;
         startFireHands = true;
 

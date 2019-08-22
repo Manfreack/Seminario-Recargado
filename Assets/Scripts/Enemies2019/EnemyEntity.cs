@@ -74,4 +74,10 @@ public abstract class EnemyEntity: MonoBehaviour
     public bool enemyPointer;
     public bool chating;
     public bool patroling;
+    public bool chat1;
+    public bool chat2;
+    public bool chat3;
+
+    public abstract void SetChatAnimation();
+ 
 }
