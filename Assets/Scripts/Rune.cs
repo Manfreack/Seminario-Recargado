@@ -12,15 +12,21 @@ public class Rune : MonoBehaviour
     ButtonManager buttonManager;
     bool used;
     bool useParticles;
+    public MeshRenderer mr;
     public Material mat;
     Model player;
     public Transform myPH;
     public float timer = 0;
+    bool checkpoint = false;
+
+    bool isHealing = false;
+
+    float t = -1;
 
     void Start()
     {
         used = false;
-        mat = GetComponent<MeshRenderer>().material;
+        mat = mr.material;
         player = FindObjectOfType<Model>();
         buttonManager = FindObjectOfType<ButtonManager>();
     }
@@ -42,7 +48,7 @@ public class Rune : MonoBehaviour
 
                         if (timer > 1) timer = 1;
 
-                        mat.SetFloat("_RuneusedState", timer);
+                        //mat.SetFloat("_RuneusedState", timer);
 
                         runeCircle.SetActive(true);
                         used = true;
@@ -57,12 +63,16 @@ public class Rune : MonoBehaviour
                         useParticles = true;
                         player.UpdateLife(healingAmount * Time.deltaTime);
                         player.UpdateStamina(healingAmount * Time.deltaTime);
+                        if (!isHealing)
+                            StartCoroutine(StartHealEffect());
                     }
                 }
 
                 else
                 {
                     particles.Stop();
+                    if (isHealing)
+                        StartCoroutine(StopHealEffect());
                 }
             }
         }
@@ -71,6 +81,8 @@ public class Rune : MonoBehaviour
     public void OnTriggerExit(Collider c)
     {
         particles.Stop();
+        if (isHealing)
+            StartCoroutine(StopHealEffect());
         StartCoroutine(ChangeColorRune());
         if (c.GetComponent<Model>())
         {
@@ -87,7 +99,7 @@ public class Rune : MonoBehaviour
         while (timer>0)
         {
             timer -= Time.deltaTime;
-            mat.SetFloat("_RuneusedState", timer);
+            //mat.SetFloat("_RuneusedState", timer);
             yield return new WaitForEndOfFrame();
         }
     }
@@ -102,17 +114,19 @@ public class Rune : MonoBehaviour
 
     IEnumerator Opacity(bool show, Model player = null)
     {
-        float time = 0;
+        float time = -1;
         while (time < 1)
         {
-            time += Time.deltaTime;
+            time += Time.deltaTime * 2;
             if (show)
-                mat.SetFloat("_GlobalOpacity", time);
+                mat.SetFloat("_Fill", time);
             else
             {
-                mat.SetFloat("_GlobalOpacity", 1 - time);
+                mat.SetFloat("_Fill", 1 - time);
                 player.UpdateLife(healingAmount * Time.deltaTime);
                 player.UpdateStamina(healingAmount * Time.deltaTime);
+                if (!isHealing)
+                    StartCoroutine(StartHealEffect());
             }
             yield return new WaitForEndOfFrame();
         }
@@ -123,5 +137,54 @@ public class Rune : MonoBehaviour
         yield return new WaitForSeconds(cooldownTime + 1);
         StartCoroutine(Opacity(true));
         used = false;
+    }
+
+    public IEnumerator Checkpoint()
+    {
+        float time = -1;
+        mat.SetColor("_EmissionColor1", Color.yellow);
+        while (time < 1)
+        {
+            time += Time.deltaTime * 2;
+            mat.SetFloat("_Fill", time);
+            yield return new WaitForEndOfFrame();
+        }
+        while (time > -1)
+        {
+            time -= Time.deltaTime * 2;
+            mat.SetFloat("_Fill", time);
+            yield return new WaitForEndOfFrame();
+        }
+        checkpoint = true;
+    }
+
+    IEnumerator StartHealEffect()
+    {
+        isHealing = true;
+        while (isHealing && t < 1)
+        {
+            if (checkpoint)
+            {
+                t += Time.deltaTime * 2;
+                mat.SetColor("_EmissionColor1", Color.green);
+                mat.SetFloat("_Fill", t);
+            }
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    IEnumerator StopHealEffect()
+    {
+        isHealing = false;
+        while (!isHealing && t > -1)
+        {
+            if (checkpoint)
+            {
+                t -= Time.deltaTime * 2;
+                mat.SetColor("_EmissionColor1", Color.green);
+                mat.SetFloat("_Fill", t);
+            }
+            yield return new WaitForEndOfFrame();
+        }
     }
 }

@@ -15,7 +15,10 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
     public Transform checkTransform;
     public Transform ph;
     public ButtonManager ButtonManager;
-   
+    Rune rune;
+    bool done = false;
+    public GameObject orb;
+    public Transform player;
 
     public List<CheckPoint> listaChecks = new List<CheckPoint>();
     bool move1;
@@ -25,7 +28,6 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 
     public IEnumerator Messenge()
     {
-         
         move1 = true;
         textCheck.SetActive(true);
         yield return new WaitForSeconds(4);
@@ -43,6 +45,7 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
     {
         ButtonManager = FindObjectOfType<ButtonManager>();
         listaChecks.AddRange(FindObjectsOfType<CheckPoint>());
+        rune = GetComponent<Rune>();
 
         mat = transform.GetChild(0).GetComponent<Renderer>().material;
         Subscribe(ButtonManager);
@@ -58,7 +61,7 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 
     public void OnTriggerEnter(Collider c)
     {
-        if (c.gameObject.GetComponent(typeof(Model)) && !move1)
+        if (c.gameObject.GetComponent(typeof(Model)) && !move1 && !done)
         {
             
             _Player = c.GetComponent<Model>();
@@ -68,8 +71,27 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
             }
             ButtonManager.OnNotify(ph);
             StartCoroutine(Messenge());
+            StartCoroutine(rune.Checkpoint());
+            done = true;
+            StartCoroutine(AttractOrb());
         }
 
+    }
+
+    IEnumerator AttractOrb()
+    {
+        GameObject o = Instantiate(orb);
+        Vector3 initialPos = orb.transform.position;
+        orb.SetActive(false);
+        float t = 1;
+        while (t > 0)
+        {
+            t -= Time.deltaTime / 2;
+            o.transform.position = Vector3.LerpUnclamped(player.position, initialPos, t);
+            o.transform.localScale = new Vector3(t * 0.3f, t * 0.3f, t * 0.3f);
+            yield return new WaitForEndOfFrame();
+        }
+        Destroy(o);
     }
 
     public void OnTriggerExit (Collider c)
