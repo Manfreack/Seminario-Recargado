@@ -1493,6 +1493,7 @@ public class ModelE_Melee : EnemyEntity
 
     public override void Respawn()
     {
+
         transform.position = startPos;
         life = maxLife;
         _view.LifeBar(life / maxLife);
@@ -1507,6 +1508,10 @@ public class ModelE_Melee : EnemyEntity
         _view._anim.Play("Idle_EM");
         isDead = false;
         onCombat = false;
+        _view._anim.SetBool("Chat1", chat1);
+        _view._anim.SetBool("Chat2", chat2);
+        _view._anim.SetBool("Chat3", chat3);
+        chatCurrentTime = 0;
         SendInputToFSM(EnemyInputs.PATROL);
     }
 

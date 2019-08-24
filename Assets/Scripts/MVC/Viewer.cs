@@ -190,10 +190,14 @@ public class Viewer : MonoBehaviour
          if (animClipName == AnimDictionary[AnimPlayerNames.Attack1_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack1_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack1_Pre]
            || animClipName == AnimDictionary[AnimPlayerNames.Attack2_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack2_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack2_Pre]
            || animClipName == AnimDictionary[AnimPlayerNames.Attack3_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack3_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack3_Pre]
-           || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Pre]) attacking = true;
+           || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Damage] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_End] || animClipName == AnimDictionary[AnimPlayerNames.Attack4_Pre]
+           || animClipName == AnimDictionary[AnimPlayerNames.TurnAttack_Damage] || animClipName == AnimDictionary[AnimPlayerNames.TurnAttack_End] || animClipName == AnimDictionary[AnimPlayerNames.TurnAttack_Pre]) attacking = true;
 
          else attacking = false;
-         
+
+        if (animClipName == AnimDictionary[AnimPlayerNames.TakeDamage1] || animClipName == AnimDictionary[AnimPlayerNames.TakeDamage2] || animClipName == AnimDictionary[AnimPlayerNames.TakeDamage3]) model.onDamage = true;
+
+        else model.onDamage = false;
 
         currentAttackAnimation = model.countAnimAttack;
 

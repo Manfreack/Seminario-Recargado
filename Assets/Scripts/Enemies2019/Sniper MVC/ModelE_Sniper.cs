@@ -810,6 +810,10 @@ public class ModelE_Sniper : EnemyEntity
         onDamage = false;
         isDead = false;
         onCombat = false;
+        view.anim.SetBool("Chat1", chat1);
+        view.anim.SetBool("Chat2", chat2);
+        view.anim.SetBool("Chat3", chat3);
+        chatCurrentTime = 0;
         SendInputToFSM(EnemyInputs.PATROL);
     }
 
