@@ -33,7 +33,7 @@ public class Rune : MonoBehaviour
 
     void OnTriggerStay(Collider c)
     {
-
+/*
         if (!used && c.GetComponent<Model>())
         {         
             buttonManager.OnNotify(myPH);
@@ -76,6 +76,7 @@ public class Rune : MonoBehaviour
                 }
             }
         }
+        */
     }
 
     public void OnTriggerExit(Collider c)

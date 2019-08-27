@@ -24,7 +24,6 @@ public class CinematicActivator : MonoBehaviour
     {
         myCamera = cam.GetComponent<Camera>();
         canvas = FindObjectOfType<Canvas>();
-        cam = FindObjectOfType<CamController>();
         interactiveKey = Instantiate(prefabInteractiveKey);
         interactiveKey.transform.SetParent(canvas.transform, false);
         interactiveKey.SetActive(false);
