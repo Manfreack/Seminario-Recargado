@@ -1,2 +1,1 @@
-# Seminario_ProyectoFinal
- 
+# Seminario
