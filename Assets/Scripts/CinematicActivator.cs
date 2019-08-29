@@ -9,8 +9,12 @@ public class CinematicActivator : MonoBehaviour
     Camera myCamera;
     public GameObject interactiveKey;
     public GameObject prefabInteractiveKey;
+    public GameObject ph;
+
+    Model player;
 
     public float positionFix;
+    public float timeToMove;
 
     public bool RockIsActivate;
 
@@ -20,6 +24,61 @@ public class CinematicActivator : MonoBehaviour
 
     public int NumberClipAnimation;
 
+
+    IEnumerator AnimationAdjustment()
+    {
+        player.GetComponent<Controller>().ShutDownControlls(timeToMove + 0.2f + 1);
+
+        float actualTime = 0;
+
+        var playerStartPos = player.transform.position;
+
+        while (actualTime < timeToMove)
+        {
+            Quaternion targetRotation;
+
+            var dir = ph.transform.position - player.transform.position;
+            dir.y = 0;
+
+            targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+
+            player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, 7 * Time.deltaTime);
+
+            player.view.anim.SetBool("trotAnim", true);
+            actualTime += Time.deltaTime;
+            player.transform.position = Vector3.Lerp(playerStartPos, ph.transform.position, actualTime / timeToMove);
+
+            yield return new WaitForEndOfFrame();
+
+        }
+
+        actualTime = 0;
+
+        while (actualTime < 0.1f)
+        {
+            Quaternion targetRotation;
+
+            targetRotation = Quaternion.LookRotation(ph.transform.forward, Vector3.up);
+
+            player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, 20 * Time.deltaTime);
+
+            player.view.anim.SetBool("trotAnim", true);
+            actualTime += Time.deltaTime;
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        player.view.anim.SetBool("trotAnim", false);
+        player.view.anim.SetBool("Idle", true);
+        player.view.anim.SetBool("InteractLevel", true);
+        
+        yield return new WaitForSeconds(1);
+
+        player.view.anim.SetBool("InteractLevel", false);
+        player.view.anim.SetBool("Idle", true);
+        cam.StartCoroutine(cam.Cinematic03());
+    }
+
     public void Start()
     {
         myCamera = cam.GetComponent<Camera>();
@@ -28,6 +87,7 @@ public class CinematicActivator : MonoBehaviour
         interactiveKey.transform.SetParent(canvas.transform, false);
         interactiveKey.SetActive(false);
         depthUI = interactiveKey.GetComponent<DepthUI>();
+        player = FindObjectOfType<Model>();
     }
 
     private void Update()
@@ -71,7 +131,8 @@ public class CinematicActivator : MonoBehaviour
             if (NumberClipAnimation == 3 && Input.GetKeyDown(KeyCode.F))
             {
                 NumberClipAnimation = 0;
-                cam.StartCoroutine(cam.Cinematic03());
+                StartCoroutine(AnimationAdjustment());
+                interactiveKey.SetActive(false);
                 isActive = true;
             }
         }

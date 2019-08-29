@@ -8,7 +8,8 @@ public class Rune : MonoBehaviour
     public float cooldownTime;
     public ParticleSystem particles;
     particleAttractorLinear particleAttractor;
-    public GameObject runeCircle;
+    public CheckPoint myCheckPoint;
+    public ParticleSystem runeCircle;
     ButtonManager buttonManager;
     bool used;
     bool useParticles;
@@ -20,6 +21,9 @@ public class Rune : MonoBehaviour
     bool checkpoint = false;
 
     bool isHealing = false;
+
+    public GameObject particle1;
+    public GameObject particle2;
 
     float t = -1;
 
@@ -33,66 +37,37 @@ public class Rune : MonoBehaviour
 
     void OnTriggerStay(Collider c)
     {
-/*
-        if (!used && c.GetComponent<Model>())
-        {         
-            buttonManager.OnNotify(myPH);
-
-            if (player != null)
-            {
-                if (player.life != player.maxLife || player.stamina != player.maxStamina)
-                {
-                    if (player.isInCombat)
-                    {
-                        timer += Time.deltaTime;
-
-                        if (timer > 1) timer = 1;
-
-                        //mat.SetFloat("_RuneusedState", timer);
-
-                        runeCircle.SetActive(true);
-                        used = true;
-                        StartCoroutine(Opacity(false, player));
-                        StartCoroutine(Cooldown());
-                        StartCoroutine(HealParticlesOpacity());                                                                   
-                    }
-                    else
-                    {
-                        StartCoroutine(HealParticlesOpacity());
-                        runeCircle.SetActive(true);
-                        useParticles = true;
-                        player.UpdateLife(healingAmount * Time.deltaTime);
-                        player.UpdateStamina(healingAmount * Time.deltaTime);
-                        if (!isHealing)
-                            StartCoroutine(StartHealEffect());
-                    }
-                }
-
-                else
-                {
-                    particles.Stop();
-                    if (isHealing)
-                        StartCoroutine(StopHealEffect());
-                }
-            }
+       if(myCheckPoint.checkPointActivated && (player.life != player.maxLife || player.stamina != player.maxStamina) && c.GetComponent<Model>())
+       {
+            particles.Play();
+            player.UpdateLife(healingAmount * Time.deltaTime);
+            player.UpdateStamina(healingAmount * Time.deltaTime);
+            runeCircle.Play();
         }
-        */
+    }
+
+    public void ActivateParticles()
+    {
+        StartCoroutine(DelayParticles());
+    }
+
+    IEnumerator DelayParticles()
+    {
+        particle2.SetActive(false);
+        particle1.SetActive(false);
+        yield return new WaitForSeconds(2.5f);
+        particle1.SetActive(true);
+        yield return new WaitForSeconds(2);
+        particle2.SetActive(true);
+        yield return new WaitForSeconds(2);
+        particle2.SetActive(false);
+        particle1.SetActive(false);
     }
 
     public void OnTriggerExit(Collider c)
     {
         particles.Stop();
-        if (isHealing)
-            StartCoroutine(StopHealEffect());
-        StartCoroutine(ChangeColorRune());
-        if (c.GetComponent<Model>())
-        {
-            if (!player.isInCombat)
-            {
-              
-                useParticles = false;
-            }
-        }
+        runeCircle.Stop();
     }
 
     IEnumerator ChangeColorRune()
@@ -110,7 +85,7 @@ public class Rune : MonoBehaviour
         particles.Play();
         yield return new WaitForSeconds(2);
         particles.Stop();
-        runeCircle.SetActive(false);
+      
     }
 
     IEnumerator Opacity(bool show, Model player = null)

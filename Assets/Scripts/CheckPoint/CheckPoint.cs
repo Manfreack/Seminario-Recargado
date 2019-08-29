@@ -150,6 +150,12 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
             {
                 ActivateCheckPoint();
                 interactiveKey.SetActive(false);
+                ButtonManager.OnNotify(ph);
+                StartCoroutine(Messenge());
+                StartCoroutine(rune.Checkpoint());
+                rune.ActivateParticles();
+                done = true;
+                StartCoroutine(AttractOrb());
             }
         }
     }
@@ -164,11 +170,7 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
             {
                 if (item != this) item.player = null;
             }
-            ButtonManager.OnNotify(ph);
-            StartCoroutine(Messenge());
-            StartCoroutine(rune.Checkpoint());
-            done = true;
-            StartCoroutine(AttractOrb());
+          
         }
 
      
@@ -176,7 +178,7 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 
     IEnumerator AttractOrb()
     {
-        GameObject o = Instantiate(orb);
+        /*GameObject o = Instantiate(orb);
         Vector3 initialPos = orb.transform.position;
         orb.SetActive(false);
         float t = 1;
@@ -188,6 +190,8 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
             yield return new WaitForEndOfFrame();
         }
         Destroy(o);
+        */
+        yield return new WaitForEndOfFrame();
     }
 
     public void OnTriggerExit (Collider c)
