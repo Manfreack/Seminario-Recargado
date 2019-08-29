@@ -595,7 +595,6 @@ public class Model : MonoBehaviour
         dirToDash = directions;
 
       
-
         if (stamina - rollStamina >= 0 && !onRoll && animClipName2 != "Idel Whit Sword sheathe" && !view.anim.GetBool("SaveSword2") 
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] 
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Back]
@@ -725,11 +724,13 @@ public class Model : MonoBehaviour
          
             if(animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
             {
-                transform.position += transform.forward * 5 * Time.deltaTime;
+               
+                transform.position += transform.forward * 6 * Time.deltaTime;
             }
 
             if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
             {
+               
                 if (!targetLockedOn)
                 {
                     Quaternion targetRotation;
@@ -740,23 +741,24 @@ public class Model : MonoBehaviour
                     transform.position += transform.forward * 5 * Time.deltaTime;
                 }
 
-                else transform.position += transform.forward * 5 * Time.deltaTime;
+                else
+                {
+                    
+                    transform.position += transform.forward * 5 * Time.deltaTime;
+                }
             }
 
             if (animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
             {
-                if(!view.attacking) transform.position += dirToDahs * 5 * Time.deltaTime;
-
-                if (view.attacking && (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right]))
+                if (dirToDash == DogeDirecctions.Back || dirToDash == DogeDirecctions.Right || dirToDash == DogeDirecctions.Left)
                 {
-                  transform.position += dirToDahs * 7.5f * Time.deltaTime;
+                   if(!view.attacking) transform.position += dirToDahs * 5 * Time.deltaTime;
+                   
+                   else transform.position += dirToDahs * 7 * Time.deltaTime;
                 }
 
-                if (view.attacking && animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Back])
-                {
-                    transform.position += dirToDahs * 9 * Time.deltaTime;
-                }
-
+                else transform.position += dirToDahs * 4 * Time.deltaTime;
+      
                 var dir = mainCamera.transform.forward;
 
                 dir.y = 0;
@@ -833,7 +835,7 @@ public class Model : MonoBehaviour
         acceleration += 3f * Time.deltaTime;
         if (acceleration > maxAcceleration) acceleration = maxAcceleration;
 
-        if (!InAction && !onDamage && countAnimAttack == 0 && !onRoll)
+        if (!InAction && !onDamage && countAnimAttack == 0 && !onRoll && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
         {          
             Quaternion targetRotation;
 
@@ -874,27 +876,16 @@ public class Model : MonoBehaviour
 
         if ((animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
            || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat] 
-           || (!view.attacking && timeToRoll<=0.5f)) && targetLockedOn)
+           || (!view.attacking && timeToRoll<=0.5f)) && targetLockedOn && !onDefence)
         {
-            if (!isRuning)
-            {
-                rb.MovePosition(rb.position + dir * acceleration * speed * Time.deltaTime);
-            }
 
-            else
-            {
-                Run();
-                Quaternion targetRotation;
-                dir.y = 0;
-                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-                rb.MovePosition(rb.position + dir * acceleration * runSpeed * Time.deltaTime);
-            }
+           rb.MovePosition(rb.position + dir * acceleration * speed * Time.deltaTime);
+
         }
  
         if ((animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS]
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat] 
-            || (!view.attacking && timeToRoll <= 0.5f)) && !targetLockedOn)
+            || (!view.attacking && timeToRoll <= 0.5f)) && !targetLockedOn && !onDefence)
         { 
 
             EndCombo();
@@ -903,6 +894,8 @@ public class Model : MonoBehaviour
 
             if (!isRuning)
             {
+               
+
                 Trot();
 
                 if (key)
@@ -934,11 +927,14 @@ public class Model : MonoBehaviour
 
             else
             {
-                Run();
-                dir.y = 0;
-                targetRotation = Quaternion.LookRotation(dir, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
-                rb.MovePosition(rb.position + dir * acceleration * runSpeed * Time.deltaTime);
+                if (!targetLockedOn)
+                {                   
+                    Run();
+                    dir.y = 0;
+                    targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                    rb.MovePosition(rb.position + dir * acceleration * runSpeed * Time.deltaTime);
+                }
             }
         }
     }
@@ -1010,7 +1006,7 @@ public class Model : MonoBehaviour
         if (!isDead && !onDefence && !view.anim.GetBool("SaveSword2") && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll]
             && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Back] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right])
         {
-
+            
             view.anim.SetLayerWeight(0, 1);
             view.anim.SetLayerWeight(1, 0);
             view.anim.SetBool("TakeSword2", false);
@@ -1068,10 +1064,11 @@ public class Model : MonoBehaviour
 
             if ((animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkW] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkS] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkD] 
                 || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.WalkA] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Blocked] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Idle] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Walk] 
-                || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.IdleCombat])  && countAnimAttack==0)
+                || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RunCombat] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollEstocada_Damage])  && countAnimAttack==0)
             {
+               
                 if (isInCombat && !view.anim.GetBool("TakeSword2"))
-                {
+                {                
                     view.EndDodge();
                     countAnimAttack++;
                     view.AwakeTrail();

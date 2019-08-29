@@ -162,7 +162,7 @@ public class Viewer : MonoBehaviour
         AnimDictionary.Add(AnimPlayerNames.Blocked, clips[27].name);
         AnimDictionary.Add(AnimPlayerNames.FailDefence, clips[28].name);
         AnimDictionary.Add(AnimPlayerNames.Kick, clips[29].name);
-        AnimDictionary.Add(AnimPlayerNames.IdleCombat, clips[58].name);
+        AnimDictionary.Add(AnimPlayerNames.IdleCombat, clips[60].name);
         AnimDictionary.Add(AnimPlayerNames.WalkW, clips[36].name);
         AnimDictionary.Add(AnimPlayerNames.WalkS, clips[37].name);
         AnimDictionary.Add(AnimPlayerNames.WalkD, clips[38].name);

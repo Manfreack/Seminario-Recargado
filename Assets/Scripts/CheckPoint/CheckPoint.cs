@@ -33,7 +33,7 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 
     IEnumerator AnimationAdjustment()
     {
-        player.GetComponent<Controller>().ShutDownControlls(timeToMove + 0.2f + 1);
+        player.GetComponent<Controller>().ShutDownControlls(timeToMove + 0.2f + 2.5f);
 
         float actualTime = 0;
 
@@ -41,6 +41,11 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 
         while (actualTime < timeToMove)
         {
+            player.view.anim.SetBool("runAnim", false);
+            player.view.anim.SetBool("IdleCombat", false);
+            player.view.anim.SetBool("IsInCombat", false);
+            player.timeOnCombat = 0;
+
             Quaternion targetRotation;
 
             var dir = ph.transform.position - player.transform.position;
