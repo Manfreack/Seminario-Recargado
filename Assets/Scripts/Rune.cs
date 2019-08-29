@@ -14,7 +14,7 @@ public class Rune : MonoBehaviour
     bool used;
     bool useParticles;
     public MeshRenderer mr;
-    public Material mat;
+    Material mat;
     Model player;
     public Transform myPH;
     public float timer = 0;
@@ -25,7 +25,11 @@ public class Rune : MonoBehaviour
     public GameObject particle1;
     public GameObject particle2;
 
-    float t = -1;
+    public GameObject orb;
+    public Transform orbTarget;
+    bool effectDone = false;
+
+    float t = 0;
 
     void Start()
     {
@@ -37,12 +41,29 @@ public class Rune : MonoBehaviour
 
     void OnTriggerStay(Collider c)
     {
-       if(myCheckPoint.checkPointActivated && (player.life != player.maxLife || player.stamina != player.maxStamina) && c.GetComponent<Model>())
-       {
-            particles.Play();
-            player.UpdateLife(healingAmount * Time.deltaTime);
-            player.UpdateStamina(healingAmount * Time.deltaTime);
-            runeCircle.Play();
+        if (myCheckPoint.checkPointActivated && c.GetComponent<Model>() && effectDone)
+        {
+            if (player.life != player.maxLife || player.stamina != player.maxStamina)
+            {
+                player.UpdateLife(healingAmount * Time.deltaTime);
+                player.UpdateStamina(healingAmount * Time.deltaTime);
+
+                if (!isHealing)
+                {
+                    particles.Play();
+                    runeCircle.Play();
+                    StartCoroutine(StartHealEffect());
+                }
+            }
+            else
+            {
+                if (isHealing)
+                {
+                    particles.Stop();
+                    runeCircle.Stop();
+                    StartCoroutine(StopHealEffect());
+                }
+            }
         }
     }
 
@@ -57,8 +78,12 @@ public class Rune : MonoBehaviour
         particle1.SetActive(false);
         yield return new WaitForSeconds(2.5f);
         particle1.SetActive(true);
+        StartCoroutine(Checkpoint());
+        StartCoroutine(myCheckPoint.Message());
         yield return new WaitForSeconds(2);
         particle2.SetActive(true);
+        StartCoroutine(AttractOrb());
+        effectDone = true;
         yield return new WaitForSeconds(2);
         particle2.SetActive(false);
         particle1.SetActive(false);
@@ -68,16 +93,9 @@ public class Rune : MonoBehaviour
     {
         particles.Stop();
         runeCircle.Stop();
-    }
 
-    IEnumerator ChangeColorRune()
-    {
-        while (timer>0)
-        {
-            timer -= Time.deltaTime;
-            //mat.SetFloat("_RuneusedState", timer);
-            yield return new WaitForEndOfFrame();
-        }
+        if (isHealing)
+            StartCoroutine(StopHealEffect());
     }
 
     IEnumerator HealParticlesOpacity()
@@ -85,49 +103,14 @@ public class Rune : MonoBehaviour
         particles.Play();
         yield return new WaitForSeconds(2);
         particles.Stop();
-      
-    }
-
-    IEnumerator Opacity(bool show, Model player = null)
-    {
-        float time = -1;
-        while (time < 1)
-        {
-            time += Time.deltaTime * 2;
-            if (show)
-                mat.SetFloat("_Fill", time);
-            else
-            {
-                mat.SetFloat("_Fill", 1 - time);
-                player.UpdateLife(healingAmount * Time.deltaTime);
-                player.UpdateStamina(healingAmount * Time.deltaTime);
-                if (!isHealing)
-                    StartCoroutine(StartHealEffect());
-            }
-            yield return new WaitForEndOfFrame();
-        }
-    }
-     
-    IEnumerator Cooldown()
-    {
-        yield return new WaitForSeconds(cooldownTime + 1);
-        StartCoroutine(Opacity(true));
-        used = false;
     }
 
     public IEnumerator Checkpoint()
     {
         float time = -1;
-        mat.SetColor("_EmissionColor1", Color.yellow);
         while (time < 1)
         {
-            time += Time.deltaTime * 2;
-            mat.SetFloat("_Fill", time);
-            yield return new WaitForEndOfFrame();
-        }
-        while (time > -1)
-        {
-            time -= Time.deltaTime * 2;
+            time += Time.deltaTime;
             mat.SetFloat("_Fill", time);
             yield return new WaitForEndOfFrame();
         }
@@ -141,9 +124,9 @@ public class Rune : MonoBehaviour
         {
             if (checkpoint)
             {
-                t += Time.deltaTime * 2;
-                mat.SetColor("_EmissionColor1", Color.green);
-                mat.SetFloat("_Fill", t);
+                t += Time.deltaTime;
+                mat.SetFloat("_ColorLerp", t);
+                mat.SetFloat("_EmissionIntensity", t + 2);
             }
             yield return new WaitForEndOfFrame();
         }
@@ -152,15 +135,32 @@ public class Rune : MonoBehaviour
     IEnumerator StopHealEffect()
     {
         isHealing = false;
-        while (!isHealing && t > -1)
+        while (!isHealing && t > 0)
         {
             if (checkpoint)
             {
-                t -= Time.deltaTime * 2;
-                mat.SetColor("_EmissionColor1", Color.green);
-                mat.SetFloat("_Fill", t);
+                t -= Time.deltaTime;
+                mat.SetFloat("_ColorLerp", t);
+                mat.SetFloat("_EmissionIntensity", t + 2);
             }
             yield return new WaitForEndOfFrame();
         }
+    }
+
+    IEnumerator AttractOrb()
+    {
+        GameObject o = Instantiate(orb);
+        Vector3 initialPos = orb.transform.position;
+        orb.SetActive(false);
+        float t = 1;
+        while (t > 0)
+        {
+            t -= Time.deltaTime / 2;
+            o.transform.position = Vector3.LerpUnclamped(orbTarget.transform.position, initialPos, t);
+            o.transform.localScale = new Vector3(t * 0.3f, t * 0.3f, t * 0.3f);
+            yield return new WaitForEndOfFrame();
+        }
+        Destroy(o);
+        yield return new WaitForEndOfFrame();
     }
 }

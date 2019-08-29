@@ -13,6 +13,7 @@ public class EnemyScreenSpace : MonoBehaviour
     public LayerMask lm;
 
     HealthBar healthBar;
+    Image tempHealthFill;
     Image healthFill;
     public Camera cam;
     DepthUI depthUI;
@@ -24,7 +25,8 @@ public class EnemyScreenSpace : MonoBehaviour
         enemy = GetComponent<EnemyEntity>();
         healthBar = Instantiate(barPrefab);
         healthBar.transform.SetParent(canvas.transform, false);
-        healthFill = healthBar.transform.GetChild(0).GetComponent<Image>();
+        tempHealthFill = healthBar.transform.GetChild(0).GetComponent<Image>();
+        healthFill = healthBar.transform.GetChild(1).GetComponent<Image>();
 
         depthUI = healthBar.GetComponent<DepthUI>();
         canvas.GetComponent<ScreenSpaceCanvas>().AddToCanvas(healthBar.gameObject);
@@ -50,7 +52,7 @@ public class EnemyScreenSpace : MonoBehaviour
 
         if (timer > 0)
         {
-            if (healthFill.fillAmount > 0 && (vp.x >= 0 && vp.x <= 1 && vp.y >= 0 && vp.y <= 1 && vp.z > 0))
+            if (tempHealthFill.fillAmount > 0 && (vp.x >= 0 && vp.x <= 1 && vp.y >= 0 && vp.y <= 1 && vp.z > 0))
                 healthBar.gameObject.SetActive(true);
             else
                 healthBar.gameObject.SetActive(false);
@@ -64,15 +66,16 @@ public class EnemyScreenSpace : MonoBehaviour
         bool timerRunning = true;
         float smoothTimer = 0;
 
-        float current = healthFill.fillAmount;
+        float current = tempHealthFill.fillAmount;
+        healthFill.fillAmount = target;
 
         if (current - target <= 0.025f)
-            healthFill.fillAmount = target;
+            tempHealthFill.fillAmount = target;
 
         while (timerRunning)
         {
-            smoothTimer += Time.deltaTime * 1.5f;
-            healthFill.fillAmount = Mathf.Lerp(current, target, smoothTimer);
+            smoothTimer += Time.deltaTime;
+            tempHealthFill.fillAmount = Mathf.Lerp(current, target, smoothTimer);
             if (smoothTimer > 1)
                 timerRunning = false;
             yield return new WaitForEndOfFrame();

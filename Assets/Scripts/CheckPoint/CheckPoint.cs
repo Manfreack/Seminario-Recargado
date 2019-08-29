@@ -19,11 +19,9 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
     public Transform ph;
     public ButtonManager ButtonManager;
     Rune rune;
-    bool done = false;
-    public GameObject orb;
     public Model player;
     public float timeToMove;
-    public bool checkPointActivated;
+    public bool checkPointActivated = false;
 
     public List<CheckPoint> listaChecks = new List<CheckPoint>();
     bool move1;
@@ -89,7 +87,7 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
         player.view.anim.SetBool("Idle", true);
     }
 
-    public IEnumerator Messenge()
+    public IEnumerator Message()
     {
         move1 = true;
         textCheck.SetActive(true);
@@ -142,7 +140,7 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
     {
         if (c.GetComponent<Model>() && !checkPointActivated) interactiveKey.SetActive(true);
 
-        if (c.GetComponent<Model>() && Input.GetKeyDown(KeyCode.F))
+        if (c.GetComponent<Model>() && Input.GetKeyDown(KeyCode.F) && !checkPointActivated)
         {
             var totarget = (player.transform.position - transform.position).normalized;
 
@@ -151,47 +149,20 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
                 ActivateCheckPoint();
                 interactiveKey.SetActive(false);
                 ButtonManager.OnNotify(ph);
-                StartCoroutine(Messenge());
-                StartCoroutine(rune.Checkpoint());
                 rune.ActivateParticles();
-                done = true;
-                StartCoroutine(AttractOrb());
+                checkPointActivated = true;
             }
         }
     }
 
     public void OnTriggerEnter(Collider c)
     {
-        if (c.gameObject.GetComponent(typeof(Model)) && !move1 && !done)
+        if (c.gameObject.GetComponent(typeof(Model)) && !move1 && !checkPointActivated)
         {
-            
             player = c.GetComponent<Model>();
             foreach (var item in listaChecks)
-            {
                 if (item != this) item.player = null;
-            }
-          
         }
-
-     
-    }
-
-    IEnumerator AttractOrb()
-    {
-        /*GameObject o = Instantiate(orb);
-        Vector3 initialPos = orb.transform.position;
-        orb.SetActive(false);
-        float t = 1;
-        while (t > 0)
-        {
-            t -= Time.deltaTime / 2;
-            o.transform.position = Vector3.LerpUnclamped(player.transform.position, initialPos, t);
-            o.transform.localScale = new Vector3(t * 0.3f, t * 0.3f, t * 0.3f);
-            yield return new WaitForEndOfFrame();
-        }
-        Destroy(o);
-        */
-        yield return new WaitForEndOfFrame();
     }
 
     public void OnTriggerExit (Collider c)
