@@ -246,6 +246,8 @@ public class ViewerE_Sniper : MonoBehaviour
         ragdoll.transform.position = transform.position;
         ragdoll.transform.rotation = transform.rotation;
         gameObject.SetActive(false);
+        var dc = FindObjectOfType<DamageControll>();
+        dc.SetMeDead(_model);
     }
 
     /*

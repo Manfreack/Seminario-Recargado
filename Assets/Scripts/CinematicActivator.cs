@@ -10,6 +10,8 @@ public class CinematicActivator : MonoBehaviour
     public GameObject interactiveKey;
     public GameObject prefabInteractiveKey;
     public GameObject ph;
+    public GameObject lever;
+    public Animator leverAnimator;
 
     Model player;
 
@@ -27,6 +29,8 @@ public class CinematicActivator : MonoBehaviour
 
     IEnumerator AnimationAdjustment()
     {
+        lever.GetComponent<BoxCollider>().isTrigger= true;
+
         player.GetComponent<Controller>().ShutDownControlls(timeToMove + 0.2f + 1);
 
         float actualTime = 0;
@@ -71,11 +75,14 @@ public class CinematicActivator : MonoBehaviour
         player.view.anim.SetBool("trotAnim", false);
         player.view.anim.SetBool("Idle", true);
         player.view.anim.SetBool("InteractLevel", true);
+      
         
         yield return new WaitForSeconds(1);
 
+        leverAnimator.SetBool("open", true);
         player.view.anim.SetBool("InteractLevel", false);
         player.view.anim.SetBool("Idle", true);
+        lever.GetComponent<BoxCollider>().isTrigger = false;
         cam.StartCoroutine(cam.Cinematic03());
     }
 

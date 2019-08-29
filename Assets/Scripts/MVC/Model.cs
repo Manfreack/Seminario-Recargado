@@ -721,49 +721,52 @@ public class Model : MonoBehaviour
             || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Left] || animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Dodge_Right] || view.attacking || timeToRoll<=1.4f)
         {
             view.NoReciveDamage();
-         
-            if(animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
-            {
-               
-                transform.position += transform.forward * 6 * Time.deltaTime;
+
+            if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
+            {   
+                 Quaternion targetRotation;
+                 targetRotation = Quaternion.LookRotation(dirToDahs, Vector3.up);
+                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
+                 transform.position += transform.forward * 5 * Time.deltaTime;              
             }
 
             if (animClipName == view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack])
             {
-               
+              
                 if (!targetLockedOn)
                 {
+
                     Quaternion targetRotation;
-                    var dir = mainCamera.transform.forward;
-                    dir.y = 0;
-                    targetRotation = Quaternion.LookRotation(dir, Vector3.up);
+                    targetRotation = Quaternion.LookRotation(dirToDahs, Vector3.up);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 7 * Time.deltaTime);
                     transform.position += transform.forward * 5 * Time.deltaTime;
+
                 }
 
                 else
                 {
-                    
+
                     transform.position += transform.forward * 5 * Time.deltaTime;
                 }
             }
 
             if (animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.RollAttack] && animClipName != view.AnimDictionary[Viewer.AnimPlayerNames.Roll])
             {
+               
+
                 if (dirToDash == DogeDirecctions.Back || dirToDash == DogeDirecctions.Right || dirToDash == DogeDirecctions.Left)
                 {
-                   if(!view.attacking) transform.position += dirToDahs * 5 * Time.deltaTime;
-                   
-                   else transform.position += dirToDahs * 7 * Time.deltaTime;
+                    if (!view.attacking) transform.position += dirToDahs * 5 * Time.deltaTime;
+
+                    else
+                    {
+                        transform.position += dirToDahs * 7 * Time.deltaTime;
+                    }
+                  
                 }
 
-                else transform.position += dirToDahs * 4 * Time.deltaTime;
-      
                 var dir = mainCamera.transform.forward;
 
-                dir.y = 0;
-
-                transform.forward = dir;
             }
 
             view.anim.SetFloat("RollTime", timeToRoll);

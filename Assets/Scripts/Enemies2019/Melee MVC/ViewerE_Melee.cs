@@ -396,6 +396,8 @@ public class ViewerE_Melee : MonoBehaviour
         ragdoll.transform.rotation = transform.rotation;
         gameObject.SetActive(false);
         _model.healthBar.SetActive(false);
+        var dc = FindObjectOfType<DamageControll>();
+        dc.SetMeDead(_model);
     }
 
 

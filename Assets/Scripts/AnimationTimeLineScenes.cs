@@ -42,12 +42,12 @@ public class AnimationTimeLineScenes : MonoBehaviour
     public IEnumerator CutSceneLever()
     {
 
-        yield return new WaitForSeconds(0.5f);
+       /* yield return new WaitForSeconds(0.5f);
         if (CutScene02)
         {
             CutScene02.Play(); 
         }
-
+        */
         yield return new WaitForSeconds(4);
 
         if (CutScene02_Bars)

@@ -22,6 +22,7 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
     public Model player;
     public float timeToMove;
     public bool checkPointActivated = false;
+    bool onRange;
 
     public List<CheckPoint> listaChecks = new List<CheckPoint>();
     bool move1;
@@ -139,12 +140,20 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 
         float distance = Vector3.Distance(worldPos, cam.transform.position);
         depthUI.depth = -distance;
+
+        if (interactiveKey.activeSelf && ButtonManager.pauseMenu.activeSelf) interactiveKey.SetActive(false);
+
+        if(!interactiveKey.activeSelf && !ButtonManager.pauseMenu.activeSelf && onRange) interactiveKey.SetActive(true);
     }
 
     public void OnTriggerStay(Collider c)
     {
-        if (c.GetComponent<Model>() && !checkPointActivated) interactiveKey.SetActive(true);
 
+        if (c.GetComponent<Model>() && !checkPointActivated)
+        {
+            onRange = true;
+            interactiveKey.SetActive(true);
+        }
         if (c.GetComponent<Model>() && Input.GetKeyDown(KeyCode.F) && !checkPointActivated)
         {
             var totarget = (player.transform.position - transform.position).normalized;
@@ -172,6 +181,7 @@ public class CheckPoint : MonoBehaviour, ICheckObservable
 
     public void OnTriggerExit (Collider c)
     {
+        onRange = false;
         interactiveKey.SetActive(false);
     }
 
